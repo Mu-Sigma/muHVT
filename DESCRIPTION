@@ -1,0 +1,13 @@
+Package: muHVT
+Type: Package
+Title: Constructing hierarchical voronoi tessellations and overlay
+        heatmaps for data analysis.
+Version: 0.1.0
+Author: Meet Dave <dave.kirankumar@mu-sigma.com>
+Maintainer: Meet Dave <dave.kirankumar@mu-sigma.com>
+Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmaps for variables at various levels of the tessellations for in-depth data analysis.
+License: file LICENSE
+Encoding: UTF-8
+Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc, plyr
+LazyData: true
+RoxygenNote: 6.0.1
