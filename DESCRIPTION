@@ -1,13 +1,17 @@
 Package: muHVT
 Type: Package
 Title: Constructing hierarchical voronoi tessellations and overlay
-        heatmaps for data analysis.
+        heatmaps for data analysis
 Version: 0.1.0
-Author: Meet Dave <dave.kirankumar@mu-sigma.com>
-Maintainer: Meet Dave <dave.kirankumar@mu-sigma.com>
-Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmaps for variables at various levels of the tessellations for in-depth data analysis.
-License: file LICENSE
+Authors@R: c(
+    person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
+    person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
+    person("Meet", "Dave", email = "dave.kirankumar@mu-sigma.com", role = c("aut","cre")))
+Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmaps for variables at various levels of the tessellations for in-depth data analysis.Credits to Mu Sigma for their continuous support throughout the development of the package.
+License: GPL-2 | GPL-3
 Encoding: UTF-8
 Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc, plyr
+Depends: R (>= 3.1.0)
 LazyData: true
 RoxygenNote: 6.0.1
+

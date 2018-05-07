@@ -7,15 +7,15 @@
 VQ_codebookSplit(dataset, quant.err = 0.5, epsilon = NULL)
 }
 \arguments{
+\item{dataset}{Matrix. A matrix of multivariate data. Each row corresponds
+to an observation, and each column corresponds to a variable. Missing values
+are not accepted.}
+
 \item{quant.err}{Numeric. The quantization error for the algorithm.}
 
 \item{epsilon}{Numeric. The value to offset the codebooks during the
 codebook split. Default is NULL, in which case the value is set to quant.err
 parameter.}
-
-\item{x}{Matrix. A matrix of multivariate data. Each row corresponds to an
-observation, and each column corresponds to a variable. Missing values are
-not accepted.}
 }
 \value{
 \item{clusters}{ List. A list showing each ID assigned to a cluster.
@@ -41,16 +41,18 @@ done iteratively until all the clusters meet the quantization criteria.
 }
 \examples{
 
+
 \dontrun{
 customers <- read.csv("customers_data.csv",header=T)
 
 vqOutput = VQ_codebookSplit(customers, quant.err = 0.3)
 }
 
+
 }
 \seealso{
 \code{\link{hvtHmap}}
 }
 \author{
-Karthik Devaraj <karthik.devaraj@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }

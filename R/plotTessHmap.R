@@ -6,7 +6,7 @@ function(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3){
   
   for(lev in 1: length(del_results)){
     for(lev1 in 1: length(del_results[[lev]])){
-      plot.deldir(del_results[[lev]][[lev1]], wlines = "tess", add = T, lty = 1, col = color.vec[lev], 
+      deldir::plot.deldir(del_results[[lev]][[lev1]], wlines = "tess", add = T, lty = 1, col = color.vec[lev], 
                   lwd = line.width[lev], pch = pch1, cex = (centroid.size / lev))
     }
   }

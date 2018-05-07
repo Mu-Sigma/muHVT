@@ -40,6 +40,7 @@ protrude outside the parent polygon.
 }
 \examples{
 
+
 \dontrun{
 customers <- read.csv("customers_data.csv",header=T)
 vq.results <- list()
@@ -58,11 +59,12 @@ projection.scale = 10)
 plotHVT(vq.results, line.width = c(4), color.vec = c("red"))
 }
 
+
 }
 \seealso{
 \code{\link{plotHVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Karthik Devaraj <karthik.devaraj@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }
 \keyword{hplot}

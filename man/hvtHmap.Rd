@@ -83,6 +83,7 @@ the desired variables.
 \examples{
 
 
+
 \dontrun{
 
 customers <- read.csv("customers_data.csv",header=T)
@@ -104,11 +105,12 @@ line.width = c(4,3),color.vec = c("green","blue"),show.points=TRUE)
 }
 
 
+
 }
 \seealso{
 \code{\link{plotHVT}}
 }
 \author{
-Vignesh C Prabhu, Pravin V <pravin.v@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }
 \keyword{hplot}

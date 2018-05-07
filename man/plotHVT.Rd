@@ -30,6 +30,7 @@ Plot the hierarchical tesselations.
 }
 \examples{
 
+
 \dontrun{
 customers <- read.csv("customers_data.csv",header=T)
 hvt.results <- list()
@@ -47,11 +48,12 @@ projection.scale = 10, normalize = TRUE)
 plotHVT(hvt.results, line.width = c(4,3,2), color.vec = c("red", "green", "black"))
 }
 
+
 }
 \seealso{
 \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Vignesh C Prabhu, Pravin V <pravin.v@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }
 \keyword{hplot}

@@ -4,7 +4,7 @@
 \alias{jsd}
 \title{Jensen-Shannon-Bregman distance}
 \usage{
-jsd(inm, pc = 1e-06, ...)
+jsd(inm, pc = 1e-06)
 }
 \arguments{
 \item{inm}{a numeric matrix or a data frame that comprises of non zero
@@ -42,11 +42,13 @@ only between positive vectors with non-zero components.
 }
 \examples{
 
+
 data(sampledata)
 
 dMat = jsd(sampledata)
 
+
 }
 \author{
-Anupam Gupta <anupam.gupta@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }

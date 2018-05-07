@@ -30,6 +30,10 @@ jsd_pair <- function(x, y){
 
 
 
+
+
+
+
 #' Jensen-Shannon-Bregman distance
 #' 
 #' Jensen-Shannon-Bregman distance d(x, y) between vectors x and y
@@ -57,15 +61,17 @@ jsd_pair <- function(x, y){
 #' @return A distance matrix
 #' @note The limitation with this metric is that the divergence can be computed
 #' only between positive vectors with non-zero components.
-#' @author Anupam Gupta <anupam.gupta@@mu-sigma.com>
+#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @examples
+#' 
 #' 
 #' data(sampledata)
 #' 
 #' dMat = jsd(sampledata)
 #' 
+#' 
 #' @export jsd
-jsd <- function(inm, pc=0.000001, ...) {
+jsd <- function(inm, pc=0.000001) {
     Cols <- ncol(inm)
     Rows <- nrow(inm)
     names <- rownames(inm)

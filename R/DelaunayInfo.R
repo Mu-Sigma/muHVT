@@ -1,11 +1,11 @@
 DelaunayInfo <-
 function(gidata, poly_info, rawdeldati, nclust){
   
-  require(deldir)       #deldir function 
-  require(grDevices)    #chull function
-  require(splancs)      #csr function 
-  require(sp)           #point.in.polygon function
-  require(conf.design)  #factorize function
+  requireNamespace("deldir")       #deldir function 
+  requireNamespace("grDevices")    #chull function
+  requireNamespace("splancs")      #csr function 
+  requireNamespace("sp")           #point.in.polygon function
+  requireNamespace("conf.design")  #factorize function
   
   new_pt <-  matrix(0, ncol = 2, nrow = 1)
   #function to perform the transformation to get the new points which will be inside the parent polygon
@@ -40,7 +40,7 @@ function(gidata, poly_info, rawdeldati, nclust){
     
     for(i in 1: length(xseq_parent)){
       #points on line with constant 'x' and those that are inside the polygon
-      x_points_inside_polygon[[i]] <- Points_on_xlines[[i]][c(which(point.in.polygon(Points_on_xlines[[i]][, 1], 
+      x_points_inside_polygon[[i]] <- Points_on_xlines[[i]][c(which(sp::point.in.polygon(Points_on_xlines[[i]][, 1], 
                                                                                      Points_on_xlines[[i]][, 2],
                                                                                      output_polygon[, 1], 
                                                                                      output_polygon[, 2]) != 0)), , 
@@ -82,18 +82,18 @@ function(gidata, poly_info, rawdeldati, nclust){
   #function to chop sammon space into smaller boxes
   Sammon_Space_Boxes <- function(input_polygon, nbox){
     
-    require(grDevices)    #chull function
-    require(splancs)      #csr function 
-    require(sp)           #point.in.polygon function
-    require(conf.design)  #factorize function
+    requireNamespace("grDevices")    #chull function
+    requireNamespace("splancs")      #csr function 
+    requireNamespace("sp")           #point.in.polygon function
+    requireNamespace("conf.design")  #factorize function
     
     xrange_sammon_poly <- range(input_polygon[, 1])
     yrange_sammon_poly <- range(input_polygon[, 2])
     #create same number of boxes as that in parent polygon
-    nbox_factors <- factorize(nbox)
+    nbox_factors <- conf.design:: factorize(nbox)
     if(length(nbox_factors) == 1){
       nbox <- nbox - 1
-      nbox_factors <- factorize(nbox)
+      nbox_factors <- conf.design:: factorize(nbox)
     }
     xseq_sammon <- seq(xrange_sammon_poly[1], 
                        xrange_sammon_poly[2],
@@ -202,7 +202,7 @@ function(gidata, poly_info, rawdeldati, nclust){
     
     for(j in 1: length(rawdeldati[[ind1]][, 1])){
       for(k in 1: length(boxes_in_sammon_space[[ind1]])){
-        if(point.in.polygon(rawdeldati[[ind1]][j, 1], 
+        if(sp::point.in.polygon(rawdeldati[[ind1]][j, 1], 
                             rawdeldati[[ind1]][j, 2],
                             boxes_in_sammon_space[[ind1]][[k]][, 1], 
                             boxes_in_sammon_space[[ind1]][[k]][, 2]) != 0){

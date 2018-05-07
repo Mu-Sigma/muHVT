@@ -1,17 +1,17 @@
 Corrected_Tessellations <-
 function(current_dirsgs, current_tile, current_polygon){
   
-  require(splancs)      #csr function 
-  require(sp)           #point.in.polygon function
+  requireNamespace("splancs")      #csr function 
+  requireNamespace("sp")           #point.in.polygon function
     
   initial_dirsgs <- current_dirsgs
   #vert_outside1 and vert_outside2 check for the points which are outside the parent polygon
-  vert_outside1 <- which(point.in.polygon(current_dirsgs[, "x1"], 
+  vert_outside1 <- which(sp::point.in.polygon(current_dirsgs[, "x1"], 
                                           current_dirsgs[, "y1"], 
                                           current_tile$x,
                                           current_tile$y) == 0)
   
-  vert_outside2 <- which(point.in.polygon(current_dirsgs[, "x2"], 
+  vert_outside2 <- which(sp::point.in.polygon(current_dirsgs[, "x2"], 
                                           current_dirsgs[, "y2"],
                                           current_tile$x,
                                           current_tile$y) == 0)
@@ -112,12 +112,12 @@ function(current_dirsgs, current_tile, current_polygon){
       
       #check which points among all the points of intersection lies on the boundary of parent polygon
       pt_intersect <- matrix(NA, ncol = 2, nrow = (nrow(mat1) - 1))
-      xy.poly <- as.points(mat1)
+      xy.poly <- splancs::as.points(mat1)
       for(j in 1: (nrow(mat1) - 1)){
-        xy <- as.points(x[j], y[j])
-        if((nrow(pip(xy, xy.poly, out = F, bound = T)) != 0) ||
-             (point.in.polygon(x[j], y[j], mat1[, 1], mat1[, 2]) !=0) ||
-             (point.in.polygon(as.character(x[j]), as.character(y[j]), mat1[, 1], mat1[, 2]) != 0)){
+        xy <- splancs::as.points(x[j], y[j])
+        if((nrow(splancs::pip(xy, xy.poly, out = F, bound = T)) != 0) ||
+             (sp::point.in.polygon(x[j], y[j], mat1[, 1], mat1[, 2]) !=0) ||
+             (sp::point.in.polygon(as.character(x[j]), as.character(y[j]), mat1[, 1], mat1[, 2]) != 0)){
           pt_intersect[j, ] <- xy
         }
       }
@@ -141,12 +141,12 @@ function(current_dirsgs, current_tile, current_polygon){
         #choose the point which is a boundary point
         if(ptsout[i, "bp1"] == T){
           distmat[1, ] <- as.matrix(ptsout[i, c("x1", "y1")])
-          desired_pt <- distmat[which(dist(distmat) == min(as.matrix(dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
+          desired_pt <- distmat[which(stats::dist(distmat) == min(as.matrix(stats::dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
           ptsout[i, c("x1", "y1")] <- desired_pt
         }
         if(ptsout[i, "bp2"] == T){
           distmat[1, ] <- as.matrix(ptsout[i, c("x2", "y2")])
-          desired_pt <- distmat[which(dist(distmat) == min(as.matrix(dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
+          desired_pt <- distmat[which(stats::dist(distmat) == min(as.matrix(stats::dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
           ptsout[i, c("x2", "y2")] <- desired_pt
         }
       }

@@ -1,5 +1,4 @@
-library(plyr)
-require(deldir)   
+requireNamespace("deldir")   
 
 #======================================================================================
 # Global variables
@@ -14,7 +13,7 @@ errorCode <- 0
 
 split_codevec = function(codeVec,epsilon){
   #errorValue=errorValue/100
-  codeVec <- llply(codeVec, .fun= function(X) return(list((1+epsilon)*X, (1-epsilon)*X)))
+  codeVec <- plyr::llply(codeVec, .fun= function(X) return(list((1+epsilon)*X, (1-epsilon)*X)))
   return(codeVec)  
 }
 
@@ -28,7 +27,7 @@ findMape <- function(cluster, centroid){
   return(mape)
 }
 
-mapeTest = function(cluster, centroid){
+mapeTest = function(cluster, centroid,errorValue){
   
   if(is.null(dim(cluster))){
     return(TRUE)
@@ -73,9 +72,9 @@ findSeque <- function(dataset, clusters){
     clusters <- lapply(clusters , function(X){colnames(X)<- colnames(dataset); return(X)})
     oneRowIndices <- which(lapply(lapply(clusters, dim), function(X)return(X[2]))==1)
     clusters[oneRowIndices] <- lapply(clusters[oneRowIndices], t)
-    pointPos <- lapply(clusters, FUN=function(X)rownames(match_df(dataset, as.data.frame(X))))
+    pointPos <- lapply(clusters, FUN=function(X)rownames(plyr::match_df(dataset, as.data.frame(X))))
     pointPos <- lapply(pointPos, as.numeric)
-    sequeDf <<- as.data.frame(1:nrow(dataset))
+    sequeDf <- as.data.frame(1:nrow(dataset))
     lapply(1:length(pointPos), FUN=function(X){sequeDf[pointPos[[X]],]<<- X})
     clust.list <- sequeDf[,1]
   },
@@ -110,9 +109,9 @@ lbgVQ = function(dataset,quant.err,epsilon){
   # Set the quantization error
   mape <- 1/nrow(dataset) * sum(apply(dataset, MARGIN = 1, FUN= function(X){ return(abs(sum((X-unlist(cnew)), na.rm=TRUE))/length(X))}))
   if(mape != 0){
-    errorValue <<- mape*quant.err
+    errorValue <- mape*quant.err
   } else {
-    errorValue <<- quant.err
+    errorValue <- quant.err
   }
   
   # clust.list is the indices of the members of a cluster
@@ -124,7 +123,7 @@ lbgVQ = function(dataset,quant.err,epsilon){
     cluster <- lapply(clust.list, FUN=function(Y) { dataset[Y,] })
     
     # codesToSplit is the codebooks which have q error greater than the treshold 
-    tryCatch({codesToSplit <- cnew[which(!unlist(lapply(1:length(cluster), FUN= function(i){mapeTest(cluster[[i]], cnew[[i]])})))]}, 
+    tryCatch({codesToSplit <- cnew[which(!unlist(lapply(1:length(cluster), FUN= function(i){mapeTest(cluster[[i]], cnew[[i]],errorValue)})))]}, 
              error=function(err){print(err)}, 
              finally={})
     
@@ -169,7 +168,7 @@ lbgVQ = function(dataset,quant.err,epsilon){
   
   cFin <- lapply(cFin, FUN = as.numeric)
   
-  return(list(clusters = finalClusters, codebooks = cFin))
+  return(list(clusters = finalClusters, codebooks = cFin,errorValue=errorValue))
 }
 
 #_____________________________________________________________________________________
@@ -184,14 +183,14 @@ euDistance <- function(index, codebooks){
 # Function checks if the clusters should be merged based on the quantization error
 #_____________________________________________________________________________________
 
-shouldMergeClusters <- function(X, clusters){ 
+shouldMergeClusters <- function(X, clusters,errorValue){ 
   
   # merge the two clusters and compute the new mean
   newCluster <- do.call(rbind, list(clusters[[X[1]]], clusters[[X[2]]]))
   meanCb <- apply(newCluster, MARGIN = 2, FUN= mean)
   
   # check for the quantization error
-  tryCatch({mapeFlag <- mapeTest(newCluster, meanCb)}, 
+  tryCatch({mapeFlag <- mapeTest(newCluster, meanCb,errorValue)}, 
            error=function(err){print(err)}, 
            finally={})
   
@@ -199,10 +198,10 @@ shouldMergeClusters <- function(X, clusters){
 }
 
 
-mergeClusters <- function(codebooks, clusters){
+mergeClusters <- function(codebooks, clusters,errorValue){
   
   # find the index of the centroids that are closest (X)
-  pairs <- t(combn(length(codebooks),2))
+  pairs <- t(utils::combn(length(codebooks),2))
   
   tryCatch({euD <- sqrt(colSums(apply(pairs, MARGIN=1, FUN=function(X){euDistance(X, codebooks)})))},
            error=function(err){print(err)}, 
@@ -211,7 +210,7 @@ mergeClusters <- function(codebooks, clusters){
   X<- pairs[which(euD==min(euD)),]
   
   
-  if(shouldMergeClusters(X, clusters)){
+  if(shouldMergeClusters(X, clusters,errorValue)){
     # merge the two clusters and compute the new mean
     newCluster <- do.call(rbind, list(clusters[[X[1]]], clusters[[X[2]]]))
     meanCb <- list(apply(newCluster, MARGIN = 2, FUN= mean))
@@ -223,9 +222,9 @@ mergeClusters <- function(codebooks, clusters){
     codebooks[[X[2]]] <- NULL
     
     # recurse to find the next merge-able codebook pair
-    mergeClusters(codebooks, clusters)
+    mergeClusters(codebooks, clusters,errorValue)
   } else {
-    return(list(clusters =clusters, codebooks = codebooks))
+    return(list(clusters =clusters, codebooks = codebooks,errorValue=errorValue))
   }
   
 }
@@ -242,10 +241,11 @@ vectorQuantize <- function(dataset,quant.err,epsilon){
   
   if(length(lbgvq$codebooks) > 1){
     
-    tryCatch({model <- mergeClusters(lbgvq$codebooks, lbgvq$clusters)}, 
+    tryCatch({model <- mergeClusters(lbgvq$codebooks, lbgvq$clusters,lbgvq$errorValue)}, 
              error=function(err){print(err)},
              finally={})
     
+
     return(model)
     
   } else {
@@ -312,6 +312,10 @@ trilaterate <- function(d){
 
 
 
+
+
+
+
 #' VQ_codebookSplit
 #' 
 #' Vector Quantization by codebook split method
@@ -324,9 +328,9 @@ trilaterate <- function(d){
 #' neighbour condition and the means recomputed for the new clusters. This is
 #' done iteratively until all the clusters meet the quantization criteria.
 #' 
-#' @param x Matrix. A matrix of multivariate data. Each row corresponds to an
-#' observation, and each column corresponds to a variable. Missing values are
-#' not accepted.
+#' @param dataset Matrix. A matrix of multivariate data. Each row corresponds
+#' to an observation, and each column corresponds to a variable. Missing values
+#' are not accepted.
 #' @param quant.err Numeric. The quantization error for the algorithm.
 #' @param epsilon Numeric. The value to offset the codebooks during the
 #' codebook split. Default is NULL, in which case the value is set to quant.err
@@ -339,15 +343,17 @@ trilaterate <- function(d){
 #' nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
 #' quantization error was met. } \item{zdata}{ Summary. Output table with
 #' summary. }
-#' @author Karthik Devaraj <karthik.devaraj@@mu-sigma.com>
+#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
 #' @examples
+#' 
 #' 
 #' \dontrun{
 #' customers <- read.csv("customers_data.csv",header=T)
 #' 
 #' vqOutput = VQ_codebookSplit(customers, quant.err = 0.3)
 #' }
+#' 
 #' 
 #' @export VQ_codebookSplit
 VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
@@ -372,9 +378,9 @@ VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
     
     # Reduce the dimensionality of the codebooks to 2
     codebooks <- do.call(rbind, model$codebooks)
-    distances <- dist(codebooks)
+    distances <- stats::dist(codebooks)
     if(length(distances) != 0){
-      tryCatch({twoDCodebooks <- trilaterate(distances)}, error=function(err){flog.error("error occoured in trilaterate:%s",err, name=logNS)}, finally={})
+      tryCatch({twoDCodebooks <- trilaterate(distances)}, error=function(err){print(err)}, finally={})
     } else {
       twoDCodebooks <- model$codebooks[[1]][1:2]
     }
@@ -386,7 +392,7 @@ VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
     idnodes <- lapply(model$clusters, rownames)
     idnodes <- list(lapply(1:length(idnodes), FUN=function(i){data.frame('tet..k..'=idnodes[[i]], 'X1'=rep(1, length(idnodes[[i]])), 'X1.1'=rep(1, length(idnodes[[i]])), 'k'= i)}))
     
-    return(list('clusters'=model$clusters, 'nodes.clust'= list(model$clusters), 'idnodes'= idnodes, 'error.quant'= list(mapes), plt.clust= list(mapes<errorValue), 'ztab'= ztab))
+    return(list('clusters'=model$clusters, 'nodes.clust'= list(model$clusters), 'idnodes'= idnodes, 'error.quant'= list(mapes), plt.clust= list(mapes<model$errorValue), 'ztab'= ztab))
     
        
   } else {

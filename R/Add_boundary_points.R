@@ -20,7 +20,7 @@ function (tile.child, tile.parent, data.points) {
       tile.y <- c(tile.child[[desired_index[i]]]$y, tile.parent$y[m])
       tile.bp <- c(tile.child[[desired_index[i]]]$bp, tile.parent$bp[m])
       #use only those points which form a convex hull
-      var1 <- chull(tile.x,tile.y)
+      var1 <- grDevices::chull(tile.x,tile.y)
       tile.child[[desired_index[i]]]$x <- tile.x[var1]
       tile.child[[desired_index[i]]]$y <- tile.y[var1]
       tile.child[[desired_index[i]]]$bp <- tile.bp[var1]

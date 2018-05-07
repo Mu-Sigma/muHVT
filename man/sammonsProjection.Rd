@@ -4,7 +4,7 @@
 \alias{sammonsProjection}
 \title{sammonsProjection}
 \usage{
-sammonsProjection(d, y = cmdscale(d, k), k = 2, niter = 100,
+sammonsProjection(d, y = stats::cmdscale(d, k), k = 2, niter = 100,
   trace = TRUE, magic = 0.2, tol = 1e-04)
 }
 \arguments{
@@ -52,9 +52,11 @@ that it always goes downhill.
 }
 \examples{
 
+
 swiss.x <- as.matrix(swiss[, -1])
 swiss.sam <- sammonsProjection(dist(swiss.x))
 plot(swiss.sam$points, type = "n")
 text(swiss.sam$points, labels = as.character(1:nrow(swiss.x)))
+
 
 }

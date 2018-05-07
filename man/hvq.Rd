@@ -52,6 +52,7 @@ hierarchically arranged vector quantized data.
 }
 \examples{
 
+
 \dontrun{
 
 customers <- read.csv("customers_data.csv",header=T)
@@ -61,10 +62,11 @@ rownames(scaledata) <- rownames(customers)
 hvqOutput = hvq(scaledata, nclust = 6, depth = 4, quant.err = 0.3)
 }
 
+
 }
 \seealso{
 \code{\link{hvtHmap}}
 }
 \author{
-Vignesh C Prabhu, Pravin V <pravin.v@mu-sigma.com>
+Meet K. Dave <dave.kirankumar@mu-sigma.com>
 }

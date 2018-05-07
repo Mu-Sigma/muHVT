@@ -33,15 +33,17 @@
 #' \item{stress}{ The final stress achieved. }
 #' @examples
 #' 
+#' 
 #' swiss.x <- as.matrix(swiss[, -1])
 #' swiss.sam <- sammonsProjection(dist(swiss.x))
 #' plot(swiss.sam$points, type = "n")
 #' text(swiss.sam$points, labels = as.character(1:nrow(swiss.x)))
 #' 
+#' 
 #' @export sammonsProjection
-sammonsProjection <- function(d, y = cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
+sammonsProjection <- function(d, y = stats::cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
        magic = 0.2, tol = 1e-4){
 	   
-    return(sammon(d, y = cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
+    return(MASS::sammon(d, y = stats::cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
        magic = 0.2, tol = 1e-4))
 }

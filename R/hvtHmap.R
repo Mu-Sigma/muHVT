@@ -53,10 +53,11 @@
 #' = NULL)
 #' @param label.size Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
-#' @author Vignesh C Prabhu, Pravin V <pravin.v@@mu-sigma.com>
+#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords hplot
 #' @examples
+#' 
 #' 
 #' 
 #' \dontrun{
@@ -80,12 +81,13 @@
 #' }
 #' 
 #' 
+#' 
 #' @export hvtHmap
 hvtHmap <-
 function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1, palette.color = 1, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5)
   {
-    require(MASS)
-    require(deldir)
+    requireNamespace("MASS")
+    requireNamespace("deldir")
     #require(gtools)
     #require(seas)
   #  require(futile.logger)
@@ -178,7 +180,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
       
       #for each variable in the hvqdata
       for(i in 1: length(gtitles)){
-        close.screen(all = T)
+        graphics::close.screen(all = T)
         #tiles information of user-defined level. It is the output of tile.list.
         pdat <- polinfo[[child.level]]
         #gradient of colors is divided into n colors
@@ -187,13 +189,13 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         vec_colors <- eval(parse(text = pal.col[palette.color]))
         #specify the dimensions to divide the plot area and show the gradient
         mymat <- rbind(c(0, 0.9, 0, 1), c(0.1, .8, 0, 0.1), c(0.8, 1, 0.05, 1))
-        split.screen(mymat)
+        graphics::split.screen(mymat)
         #select the plot area
-        screen(1)
+        graphics::screen(1)
         #hide the axes
-        par(xaxt = 'n', yaxt = 'n')
+        graphics::par(xaxt = 'n', yaxt = 'n')
         #plot the first level tessellations as base upon which all other levels are plotted
-        plot(tess_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = "", ylab = "") 
+        graphics::plot(tess_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = "", ylab = "") 
         
         #selecting the indices of the colors after normalization
         xrange <- range (hlevel_data[, i])
@@ -203,7 +205,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         
         vec_colors500 <- vec_colors[1:500]
         #interactive usage; prompting the user to return before the next plot is shown.
-        par(ask = ask)
+        graphics::par(ask = ask)
         
         #call the function which plots the heat map for the user-defined level
         plotTileHmap(pdat, ptext = tess.label, polycol = vec_colors500[xcolind], 
@@ -221,7 +223,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
           len <- length(polinfo[[lev]])
           for(ind1 in 1: len){
             for(ind2 in 1: length(polinfo[[lev]][[ind1]])){
-              polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
+              graphics::polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
                       lwd = line.width[lev], border = color.vec[lev])
             }
           }
@@ -229,41 +231,41 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         }
         
         #title of the plot; name of the variable for which heat map is plotted.
-        title(gtitles[i])
+        graphics::title(gtitles[i])
         
         #go to the screen where the gradient is shown.
-        screen(2)
+        graphics::screen(2)
         #format for pretty printing the labels on the gradient
         colind <- format(seq(min(grad_scale[, i]), 
                              max(grad_scale[, i]), 
                              length = 10), digit = 1)
         #plotting region boundaries
-        zusr <- par("usr") * 0.9
+        zusr <- graphics::par("usr") * 0.9
         #create a sequence of values
         zseq <- seq(zusr[1], zusr[2], length = length(vec_colors) + 1)
         zseq <- seq(0, 1, length = length(vec_colors) + 1)
         
         #draw a rectangle showing the gradient of colors
-        rect(zseq[-length(zseq)], 0.5, zseq[-1], 1, col = vec_colors, 
+        graphics::rect(zseq[-length(zseq)], 0.5, zseq[-1], 1, col = vec_colors, 
              border = NA)
         tseq1 <- seq(0, 1, length = 10)
         #show the numbers indicative of the color gradient
-        text(tseq1, 0.45, colind, cex = 0.7, adj = 0.5)
+        graphics::text(tseq1, 0.45, colind, cex = 0.7, adj = 0.5)
         # flog.info("Heatmap for parameter %s has been plotted", i)
         
-        screen(3)
+        graphics::screen(3)
         
         if(parlevel > 1){
           for(j in 1: parlevel){
-            text(0.27, (0.8 - (0.1 * j)), paste("Level ", j))
-            segments(0.6,(0.8 - (0.1 * j)),0.8,(0.8 - (0.1 * j)),col=color.vec[j],lty=1,lwd=line.width[j])
+            graphics::text(0.27, (0.8 - (0.1 * j)), paste("Level ", j))
+            graphics::segments(0.6,(0.8 - (0.1 * j)),0.8,(0.8 - (0.1 * j)),col=color.vec[j],lty=1,lwd=line.width[j])
             #print(paste("Level ", j))
           }
-          text(0.27, (0.8 - (0.1 * (j + 1))), paste("Level ", child.level))
-          segments(0.6,(0.8-(0.1*(j+1))),0.8,(0.8-(0.1*(j+1))),col="black",lty=2,lwd=(line.width[1]/child.level))
+          graphics::text(0.27, (0.8 - (0.1 * (j + 1))), paste("Level ", child.level))
+          graphics::segments(0.6,(0.8-(0.1*(j+1))),0.8,(0.8-(0.1*(j+1))),col="black",lty=2,lwd=(line.width[1]/child.level))
         } else {
-          text(0.27,0.7, paste("Level ", child.level))
-          segments(0.6,0.7,0.8,0.7,col="black",lty=1,lwd=(line.width[1]/child.level))
+          graphics::text(0.27,0.7, paste("Level ", child.level))
+          graphics::segments(0.6,0.7,0.8,0.7,col="black",lty=1,lwd=(line.width[1]/child.level))
         }
         
       }

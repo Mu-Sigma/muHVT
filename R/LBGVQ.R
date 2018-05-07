@@ -24,10 +24,11 @@
 #' \item{[[1]] }{List. Information about the tesselation co-ordinates}
 #' \item{[[2]] }{List. Information about the polygon co-ordinates} \item{[[3]]
 #' }{List. Information about the hierarchical vector quantized data}
-#' @author Karthik Devaraj <karthik.devaraj@@mu-sigma.com>
+#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}} \cr \code{\link{hvtHmap}}
 #' @keywords hplot
 #' @examples
+#' 
 #' 
 #' \dontrun{
 #' customers <- read.csv("customers_data.csv",header=T)
@@ -47,21 +48,22 @@
 #' plotHVT(vq.results, line.width = c(4), color.vec = c("red"))
 #' }
 #' 
+#' 
 #' @export LBGVQ
 LBGVQ <-
 function (dataset, quant.err, projection.scale) {
     
-    require(MASS)         #sammon function
-    require(deldir)       #deldir function 
-    require(Hmisc)        #ceil function
+    requireNamespace("MASS")         #sammon function
+    requireNamespace("deldir")       #deldir function 
+    requireNamespace("Hmisc")        #ceil function
     #require(gtools)
     #require(seas)
     #require(mgcv)
     #require(spatstat)
-    require(grDevices)    #chull function
-    require(splancs)      #csr function 
-    require(sp)           #point.in.polygon function
-    require(conf.design)  #factorize function
+    requireNamespace("grDevices")    #chull function
+    requireNamespace("splancs")      #csr function 
+    requireNamespace("sp")           #point.in.polygon function
+    requireNamespace("conf.design")  #factorize function
     
     scaledata<- dataset
 	depth =1
@@ -78,7 +80,7 @@ function (dataset, quant.err, projection.scale) {
     gdata <- hvqoutput  #assign the output of hvq file to gdata
     #cleaning the data by deleting the rows containing NA's
     #gdata <- gdata[-which(is.na(gdata[, 5])), ]
-    gdata <- hvqoutput[complete.cases(hvqoutput),]
+    gdata <- hvqoutput[stats::complete.cases(hvqoutput),]
     hvqdata <- gdata
     # flog.info("NA's are removed from the HVQ output")
     
@@ -109,7 +111,7 @@ function (dataset, quant.err, projection.scale) {
       input.tessdata[[i]] <- tessdata[[i]][, (newcols+1): ncol(hvqoutput)]
       
       #sammon function output is 2d coordinates which are saved level-wise
-      points2d[[i]] <- projection.scale * (sammon(dist(unique(input.tessdata[[i]])),niter = 10^5,trace=FALSE)$points)
+      points2d[[i]] <- projection.scale * (MASS::sammon(stats::dist(unique(input.tessdata[[i]])),niter = 10^5,trace=FALSE)$points)
       
       #sammon datapoints grouped according to the hierarchy
       intermediate.rawdata <- list()
@@ -135,7 +137,7 @@ function (dataset, quant.err, projection.scale) {
 	#scaleFactor <- scaleFactor[-c(which(is.nan(scaleFactor)), which(scaleFactor==Inf))]
     scaleFactor <- mean(scaleFactor, na.rm=TRUE)	
 	
-    deldat2[[1]] <- deldir(new_rawdeldata[[1]][[1]][, 1]*scaleFactor, 
+    deldat2[[1]] <- deldir::deldir(new_rawdeldata[[1]][[1]][, 1]*scaleFactor, 
                            new_rawdeldata[[1]][[1]][, 2])
     deldat1[[1]] <- deldat2
     rm(deldat2)
@@ -145,7 +147,7 @@ function (dataset, quant.err, projection.scale) {
     
     #polygon_info stores parent tile vertices information
     #polygon_info is the modified tile.list output except for first level.
-    pol_info[[1]] <- tile.list(deldat1[[1]][[1]])
+    pol_info[[1]] <- deldir::tile.list(deldat1[[1]][[1]])
     polygon_info[[1]] <- pol_info
     rm(pol_info)
     par_tile_indices <- n_par_tile <- list()
@@ -207,13 +209,13 @@ function (dataset, quant.err, projection.scale) {
             last_index <- nclust
           }
           #divide to get the parent tile
-          sec_index <- ceil(par_tile_indices[[i]][tileNo] / nclust)
+          sec_index <- Hmisc::ceil(par_tile_indices[[i]][tileNo] / nclust)
 		  
 		  scaleFactor <- new_rawdeldata[[i]][[tileNo]][, 2]/new_rawdeldata[[i]][[tileNo]][, 1]
 	      #scaleFactor <- scaleFactor[-c(which(is.nan(scaleFactor)), which(scaleFactor==Inf))]
           scaleFactor <- mean(scaleFactor, na.rm=T)	
           
-          deldat2[[tileNo]] <- deldir(new_rawdeldata[[i]][[tileNo]][, 1]*scaleFactor, 
+          deldat2[[tileNo]] <- deldir::deldir(new_rawdeldata[[i]][[tileNo]][, 1]*scaleFactor, 
                                       new_rawdeldata[[i]][[tileNo]][, 2], 
                                       rw = c(range(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$x) - c(0.5, -0.5),
                                              range(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$y) - c(0.5, -0.5)))
@@ -262,7 +264,7 @@ function (dataset, quant.err, projection.scale) {
         polygon_info[[i]] <- list()
         #polygon information to correct the polygons
         for(parentIndex in 1: n_par_tile[[i]]){
-          polygon_info[[i]][[parentIndex]] <- suppressMessages(tile.list(deldat1[[i]][[parentIndex]]))
+          polygon_info[[i]][[parentIndex]] <- suppressMessages(deldir::tile.list(deldat1[[i]][[parentIndex]]))
         }
         
         #to delete the points which are outside the parent tile
@@ -286,7 +288,7 @@ function (dataset, quant.err, projection.scale) {
             last_index <- nclust
           }
           #divide to get second index
-          sec_index <- ceil(par_tile_indices[[i]] / nclust)[parentIndex]
+          sec_index <- Hmisc::ceil(par_tile_indices[[i]] / nclust)[parentIndex]
           
           polygon_info[[i]][[parentIndex]] <- Add_boundary_points(polygon_info[[i]][[parentIndex]], 
                                                                   polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]],
