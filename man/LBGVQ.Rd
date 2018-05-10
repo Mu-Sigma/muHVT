@@ -41,23 +41,14 @@ protrude outside the parent polygon.
 \examples{
 
 
-\dontrun{
-customers <- read.csv("customers_data.csv",header=T)
+data("iris",package="datasets")
+iris <- iris[,1:2]
 vq.results <- list()
-vq.results <- LBGVQ(customers, quant.err = 0.2, 
+vq.results <- LBGVQ(iris, quant.err = 0.5, 
 projection.scale = 10)
 
 
 plotHVT(vq.results, line.width = c(3), color.vec = c("blue"))
-
-
-vq.results <- list()
-vq.results <- LBGVQ(customers, quant.err = 0.5, 
-projection.scale = 10)
-
-
-plotHVT(vq.results, line.width = c(4), color.vec = c("red"))
-}
 
 
 }

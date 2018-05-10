@@ -33,11 +33,11 @@
 #' \item{stress}{ The final stress achieved. }
 #' @examples
 #' 
-#' 
+#' require(MASS)
 #' swiss.x <- as.matrix(swiss[, -1])
 #' swiss.sam <- sammonsProjection(dist(swiss.x))
-#' plot(swiss.sam$points, type = "n")
-#' text(swiss.sam$points, labels = as.character(1:nrow(swiss.x)))
+#' 
+#' 
 #' 
 #' 
 #' @export sammonsProjection

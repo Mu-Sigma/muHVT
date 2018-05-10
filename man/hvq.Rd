@@ -8,7 +8,7 @@ hvq(x, nclust = 3, depth = 3, quant.err = 10,
   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"))
 }
 \arguments{
-\item{x}{Matrix. A matrix of multivariate data. Each row corresponds to an
+\item{x}{Data Frame. A dataframe of multivariate data. Each row corresponds to an
 observation, and each column corresponds to a variable. Missing values are
 not accepted.}
 
@@ -52,15 +52,10 @@ hierarchically arranged vector quantized data.
 }
 \examples{
 
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3)
 
-\dontrun{
-
-customers <- read.csv("customers_data.csv",header=T)
-scaledata <- scale(customers, scale = TRUE, center = TRUE)
-rownames(scaledata) <- rownames(customers)
-
-hvqOutput = hvq(scaledata, nclust = 6, depth = 4, quant.err = 0.3)
-}
 
 
 }

@@ -15,7 +15,7 @@
 #' threshold quantization error is met. The output of this technique will be
 #' hierarchically arranged vector quantized data.
 #' 
-#' @param x Matrix. A matrix of multivariate data. Each row corresponds to an
+#' @param x Data Frame. A dataframe of multivariate data. Each row corresponds to an
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
 #' @param nclust Numeric. Indicating the number of nodes per hierarchy.
@@ -37,15 +37,10 @@
 #' @seealso \code{\link{hvtHmap}}
 #' @examples
 #' 
+#' data("iris",package="datasets")
+#' iris <- iris[,1:2]
+#' hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3)
 #' 
-#' \dontrun{
-#' 
-#' customers <- read.csv("customers_data.csv",header=T)
-#' scaledata <- scale(customers, scale = TRUE, center = TRUE)
-#' rownames(scaledata) <- rownames(customers)
-#' 
-#' hvqOutput = hvq(scaledata, nclust = 6, depth = 4, quant.err = 0.3)
-#' }
 #' 
 #' 
 #' @export hvq

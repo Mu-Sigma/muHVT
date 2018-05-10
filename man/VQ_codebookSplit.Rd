@@ -42,11 +42,10 @@ done iteratively until all the clusters meet the quantization criteria.
 \examples{
 
 
-\dontrun{
-customers <- read.csv("customers_data.csv",header=T)
+data("iris",package="datasets")
+iris <- iris[,1:2]
 
-vqOutput = VQ_codebookSplit(customers, quant.err = 0.3)
-}
+vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
 
 
 }

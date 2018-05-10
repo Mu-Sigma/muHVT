@@ -60,25 +60,14 @@
 #' 
 #' 
 #' 
-#' \dontrun{
 #' 
-#' customers <- read.csv("customers_data.csv",header=T)
-#' hvt.results = NULL
-#' hvt.results <- HVT(customers, nclust = 6, depth = 1, quant.err = 0.2, 
+#' data("iris",package="datasets")
+#' iris <- iris[,1:2]
+#' hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
 #' projection.scale = 10, normalize = TRUE)
 #' 
-#' hvtHmap(hvt.results, customers, child.level = 1,hmap.cols =c(7:10), show.points=TRUE)
+#' hvtHmap(hvt.results, iris, child.level = 1,hmap.cols =c(1:2), show.points=TRUE)
 #' 
-#' dev.off()
-#' 
-#' hvt.results <- list()
-#' hvt.results <- HVT(customers, nclust = 6, depth = 3, quant.err = 0.2, 
-#' projection.scale = 10, normalize = TRUE)
-#' 
-#' hvtHmap(hvt.results, customers, child.level = 3, hmap.cols = c(9:12), 
-#' line.width = c(4,3),color.vec = c("green","blue"),show.points=TRUE)
-#' 
-#' }
 #' 
 #' 
 #' 
@@ -195,7 +184,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         #hide the axes
         graphics::par(xaxt = 'n', yaxt = 'n')
         #plot the first level tessellations as base upon which all other levels are plotted
-        graphics::plot(tess_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = "", ylab = "") 
+        deldir::plot.deldir(tess_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = "", ylab = "") 
         
         #selecting the indices of the colors after normalization
         xrange <- range (hlevel_data[, i])

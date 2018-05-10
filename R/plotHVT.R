@@ -20,22 +20,20 @@
 #' @examples
 #' 
 #' 
-#' \dontrun{
-#' customers <- read.csv("customers_data.csv",header=T)
+#' data("iris",package="datasets")
+#' iris <- iris[,1:2]
 #' hvt.results <- list()
-#' hvt.results <- HVT(customers, nclust = 6, depth = 1, quant.err = 0.2,
+#' hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
 #' projection.scale = 10, normalize = TRUE)
-#' 
 #' 
 #' plotHVT(hvt.results, line.width = c(3), color.vec = c("blue"))
 #' 
 #' hvt.results <- list()
-#' hvt.results <- HVT(customers, nclust = 6, depth = 3, quant.err = 0.2,
+#' hvt.results <- HVT(iris, nclust = 6, depth = 3, quant.err = 0.2, 
 #' projection.scale = 10, normalize = TRUE)
 #' 
 #' 
-#' plotHVT(hvt.results, line.width = c(4,3,2), color.vec = c("red", "green", "black"))
-#' }
+#' plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
 #' 
 #' 
 #' @export plotHVT
@@ -54,7 +52,7 @@ function(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3,title=
   
   if(length(line.width) == parlevel && length(color.vec) == parlevel){
     
-  graphics::plot(del_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = " ", ylab = " ",main=title)
+  deldir::plot.deldir(del_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = " ", ylab = " ",main=title)
   
   for(lev in 1: length(del_results)){
     for(lev1 in 1: length(del_results[[lev]])){

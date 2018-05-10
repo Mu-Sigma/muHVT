@@ -84,25 +84,14 @@ the desired variables.
 
 
 
-\dontrun{
 
-customers <- read.csv("customers_data.csv",header=T)
-hvt.results = NULL
-hvt.results <- HVT(customers, nclust = 6, depth = 1, quant.err = 0.2, 
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
 projection.scale = 10, normalize = TRUE)
 
-hvtHmap(hvt.results, customers, child.level = 1,hmap.cols =c(7:10), show.points=TRUE)
+hvtHmap(hvt.results, iris, child.level = 1,hmap.cols =c(1:2), show.points=TRUE)
 
-dev.off()
-
-hvt.results <- list()
-hvt.results <- HVT(customers, nclust = 6, depth = 3, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-hvtHmap(hvt.results, customers, child.level = 3, hmap.cols = c(9:12), 
-line.width = c(4,3),color.vec = c("green","blue"),show.points=TRUE)
-
-}
 
 
 
