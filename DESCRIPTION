@@ -11,7 +11,7 @@ Description: Constructing hierarchical Voronoi tessellations for a given data se
     heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.  
 License: GPL-2 | GPL-3
 Encoding: UTF-8
-Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc,plyr
+Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc,plyr,ggplot2
 Depends: R (>= 3.1.0)
 LazyData: true
 RoxygenNote: 6.0.1

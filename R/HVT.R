@@ -49,8 +49,7 @@
 #' projection.scale = 10, normalize = TRUE)
 #' 
 #' 
-#' #plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
-#' 
+#' plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
 #' 
 #' 
 #' @export HVT

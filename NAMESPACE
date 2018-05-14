@@ -3,6 +3,7 @@
 export(HVT)
 export(LBGVQ)
 export(VQ_codebookSplit)
+export(ggplotHVT)
 export(hvq)
 export(hvtHmap)
 export(jsd)

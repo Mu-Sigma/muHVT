@@ -63,8 +63,7 @@ hvt.results <- HVT(iris, nclust = 6, depth = 3, quant.err = 0.2,
 projection.scale = 10, normalize = TRUE)
 
 
-#plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
-
+plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
 
 
 }
