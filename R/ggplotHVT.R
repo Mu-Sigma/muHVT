@@ -50,7 +50,7 @@ function(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3,title=
     
   plot_gg <- ggplot2::ggplot()
 
-  for(lev in 1: length(del_results)){
+  for(lev in length(del_results):1 ){
     for(lev1 in 1: length(del_results[[lev]])){
 
 
