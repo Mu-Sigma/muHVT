@@ -154,7 +154,7 @@ The minimization can be performed either by gradient descent, as proposed initia
 data("iris",package="datasets")
 iris <- iris[,1:2]
 hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 1,quant.err = 0.2,projection.scale = 10,normalize = T)
-ggplotHVT(hvt.results,line.width = c(1.5), color.vec = c("#26532B"))
+plotHVT(hvt.results,line.width = c(1.5), color.vec = c("#26532B"))
 ```
 
 
@@ -162,7 +162,7 @@ ggplotHVT(hvt.results,line.width = c(1.5), color.vec = c("#26532B"))
 data("iris",package="datasets")
 iris <- iris[,1:2]
 hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 2,quant.err = 0.2,projection.scale = 10,normalize = T)
-ggplotHVT(hvt.results, line.width = c(1.5, 0.8), color.vec = c("#26532B","#ADB2D3"))
+plotHVT(hvt.results, line.width = c(1.5, 0.8), color.vec = c("#26532B","#ADB2D3"))
 
 ```
 
@@ -170,7 +170,7 @@ ggplotHVT(hvt.results, line.width = c(1.5, 0.8), color.vec = c("#26532B","#ADB2D
 data("iris",package="datasets")
 iris <- iris[,1:2]
 hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 3,quant.err = 0.2,projection.scale = 10,normalize = T)
-ggplotHVT(hvt.results,line.width = c(1.5,0.8,0.2),color.vec = c("#26532B","#ADB2D3","#BFA89E"))
+plotHVT(hvt.results,line.width = c(1.5,0.8,0.2),color.vec = c("#26532B","#ADB2D3","#BFA89E"))
 ```
 
 ```{r hmp first level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for a variable in the ’iris’ dataset'}
