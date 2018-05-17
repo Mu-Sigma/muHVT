@@ -1,0 +1,219 @@
+---
+title: "muHVT: Collection of functions used for clustering and construction
+of hierarchical Voronoi Tessellations for data analysis in R"
+author: "Meet Dave"
+date: "`r Sys.Date()`"
+output: 
+      rmarkdown::html_vignette:
+      toc: true
+      toc_depth: 2
+      number_sections: true
+        
+vignette: >
+  %\VignetteIndexEntry{muHVT Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 8, 
+  fig.height = 5, 
+  fig.align = "center",
+  dpi = 96
+)
+
+library(muHVT)
+```
+
+
+# Abstract
+
+
+The muHVT package is a collection of R functions for clustering and
+construction of hierarchical Voronoi tessellations as a data visualization
+tool to visualize clusters using quantization. The hierarchical clusters are computed using
+Hierarchical K-means where a quantization threshold governs the levels
+in the hierarchy for a set $k$ parameter (the maximum number of clusters
+at each level). The LBG Vector Quantization (LBG VQ) algorithm is also
+implemented which detects the number of clusters for level one, based on
+a specified quantization threshold.The package is helpful to visualize rich mutlivariate data. 
+
+
+This package additionally provides functions for computing the
+Jensen-Shannon-Bregman Divergence, Sammon’s projection and plotting the
+heat map of the variables on the tiles of the tessellations.
+
+
+#Clustering
+
+
+The clustering is done using two algorithms- 
+
+1. Hierarchical k-means
+1. LBG Vector Quantization.
+
+##Hierarchical k-means
+
+### k-means clustering
+
+1. The k-means algorithm randomly selects *k* data points as initial means.
+1. *K* clusters are formed by assigning each data point to its closest cluster mean. The algorithm uses the Euclidean distance.
+1. Virtual means for each cluster are calculated by using all datapoints contained in a cluster.
+
+
+The second and third step is iterated until a predefined number of iteration is reached or the clusters converge. The runtime for the algorithm is O(n).
+
+### Hierarchical k-means clustering
+
+The algorithm divides the dataset recursively into clusters. The $k-means$ algorithm is used by setting $k$ to say, two in order to divide the dataset into two subsets.Then, the two subsets are divided again into two subsets by setting $k$ to two to result in a total of four subsets. The recursion terminates when the clusters contain single data points or a stop criterion is reached. In this case, the stop criterion is when the cluster error exceeds the quantization threshold.
+The cluster error is the Mean Absolute Percentage Error (MAPE) :
+$$M = \frac{100\%}{n}\sum_{t=1}^n|\frac{A_t-F_t}{A_t}|$$ 
+where $A_t$ is the actual value and $F_t$ is the forecast value. In which case, $A_t$ is the centroid and $F_t$ is the data point in the cluster. $n$ is the number of points in the cluster.
+
+
+The difference between $A_t$ and $F_t$ is divided by the Actual value $A_t$ again. The absolute value in this calculation is summed for every fitted or forecasted point in time and divided again by the number of fitted points $n$. Multiplying by 100 makes it a percentage error.
+
+## LBG Vector Quantization
+
+
+The Linde Buzo Gray design algorithm is an iterative algorithm which alternatively solves the two optimality criteria:
+
+1. Nearest Neighbor Condition
+$$S_n=\{x:||x-c_n||^2\leq||x-c_{n'}||^2  \forall n' = 1,2,.., N\}$$
+
+2. Centroid Condition
+$$c_n = \frac{\sum_{x_m \in S_n}x_m}{\sum_{x_m \in S_n}1} ;n= 1,2,.. N$$
+
+
+The algorithm requires an initial codebook $c_{0}$. This initial codebook is obtained by the splitting method. In this method, an initial codevector is set as the average of the entire training sequence. This codevector is then split into two. The iterative algorithm is run with these two vectors as the initial codebook. The final two codevectors are split into four and the process is repeated until the desired number of codevectors is obtained. The algorithm is summarized below.
+
+###LBG Design Algorithm:
+
+We assume that there is a training sequence consisting of *M* source vectors: 
+
+$$\tau = \{x_1, x_2, ..., x_M\}$$ 
+Let *N* be the number of codevectors and let 
+
+$$c=\{c_1, c_2, ..., c_N\}$$ 
+
+1. Given $\tau$, fix $\epsilon > 0$ ; the quantization threshold, to be a ‘small’ number.
+
+2. Let $N=1$ and 
+$$c_1^*= \frac{1}{M}\sum_{m=1}^M x_m$$ 
+calculate squared-error distortion measure
+$$D_{ave}^*= \frac{1}{Mk}\sum_{m=1}^M||x_m - c_1^*||^2$$ 
+
+3. **Splitting**: For $i=1,2..N$, set 
+$$c_i^0 = (1+\epsilon) c_i^*$$
+$$c_{N+i}^0 = (1-\epsilon)c_i^*$$ 
+
+4. **Iteration**: Let
+$D_{ave}^0=D_{ave}^*$. Set the iteration index $i=0$.
+
+    i. For $m=1,2, ..., M$, find the minimum value of 
+    $$||x_m-c_n^i||^2$$
+    over all $n=1,2,..,N$. Let $n^*$ be the index which achieves the
+    minimum. Set 
+    $$Q(x_m)=c_{n^*}^i$$
+    
+    ii. For $n=1,2,..,N$, update the codevector
+    $$c_n^{(i+1)}= \frac{\sum_{Q(x_m)=c_n^i}x_m}{\sum_{Q(x_m)=c_n^i}1}$$
+
+    iii. Set $i=i+1$
+
+    iv. Calculate 
+    $$D_{ave}^i=\frac{1}{Mk}\sum_{m=1}^M ||x_m-Q(x_m)||^2$$
+
+    v. If $(D_{ave}^{(i-1)}-D_{ave}^{(i)}/D_{ave}^{(i-1)}>\epsilon$, go backto Step (i).
+
+    vi. Set $D_{ave}^*=D_{ave}^{(i)}$. For $n=1,2,.., N$ set 
+    $$c_n^*=c_n^{(i)}$$ 
+    as the final codevectors.
+    
+5. Repeat Steps 3 and 4 until the desired number of codevectors is obtained.
+
+
+#Voronoi Tessellations
+
+A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed there will be a corresponding region consisting of all points closer to that seed than to any other. The regions are called Voronoi cells. It is dual to the Delaunay triangulation.
+
+##Sammon’s projection
+
+Sammon projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality by trying to preserve the structure of inter-point distances in high-dimensional space in the lower-dimension projection. It is particularly suited for use in exploratory data analysis. It is considered a non-linear approach as the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
+
+
+Denote the distance between $i^{th}$ and $j^{th}$ objects in the original space by $d_{ij}^*$, and the distance between their projections by $d_{ij}$. Sammon’s mapping aims to minimize the following error function, which is often referred to as Sammon’s stress or Sammon’s error:
+$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
+The minimization can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
+
+
+```{r first level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 3 clusters in the dataset ’iris’'}
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 1,quant.err = 0.2,projection.scale = 10,normalize = T)
+ggplotHVT(hvt.results,line.width = c(1.5), color.vec = c("#26532B"))
+```
+
+
+```{r second level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for level 2 shown for the 3 clusters in the dataset ’iris’'}
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 2,quant.err = 0.2,projection.scale = 10,normalize = T)
+ggplotHVT(hvt.results, line.width = c(1.5, 0.8), color.vec = c("#26532B","#ADB2D3"))
+
+```
+
+```{r third level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for level 3 shown for the 3 clusters in the dataset ’iris’'}
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 3,quant.err = 0.2,projection.scale = 10,normalize = T)
+ggplotHVT(hvt.results,line.width = c(1.5,0.8,0.2),color.vec = c("#26532B","#ADB2D3","#BFA89E"))
+```
+
+```{r hmp first level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for a variable in the ’iris’ dataset'}
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 1,quant.err = 0.2,projection.scale = 10,normalize = T)
+hvtHmap(hvt.results, iris, child.level = 1,hmap.cols =c(1), show.points=TRUE)
+```
+
+```{r hmp third level,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for a variable in the ’iris’ dataset'}
+data("iris",package="datasets")
+iris <- iris[,1:2]
+hvt.results <- muHVT::HVT(iris,nclust = 3,depth = 2,quant.err = 0.2,projection.scale = 10,normalize = T)
+hvtHmap(hvt.results, iris, child.level = 2, hmap.cols = c(2),
+line.width = c(4),color.vec = c("green"),show.points=TRUE)
+```
+
+# Jensen-Shannon-Bregman Distance
+
+The Jensen–Shannon divergence is a method of measuring the similarity between two probability distributions. It is also known as information radius (IRad) or total divergence to the average. The square root of the Jensen–Shannon divergence is a metric often referred to as Jensen-Shannon distance.
+
+Jensen-Shannon-Bregman distance $D_{x,y}$ between vectors $x$ and $y$ is defined as: 
+$$D_{x,y} = \sqrt{JD_{x, y}}$$ 
+where,
+1. $x$, $y$: probability distributions (i.e., $\sum x$ = $\sum y$ = 1)
+2. $JD_{x, y}$ is Jensen-Shannon-Bregman divergence, a symmetrized Bregman Divergence between non-negative vectors $x$ and $y$.
+$$JD_{x, y} = 0.5 * (ID_{x, m} + ID_{y, m})$$ 
+where,
+$$m = 0.5 * (x + y)$$
+I-divergence is defined as:
+$$ID_{x, y} = \sum_{i=1}^N x_i \log (x_i / y_i) - \sum_{i=1}^N x_i + \sum_{i=1}^N y_i$$
+The limitation with this measure is that the components of $x$ and $y$ vectors should be positive and non-zero.
+
+
+#References
+
+
+1. Vector Quantization : http://www.data-compression.com/vq.html#lbg
+
+2. Hierarchical k-means : http://gecco.org.chemie.uni-frankfurt.de/hkmeans/H-k-means.pdf
+
+3. Jensen-Shannon-Bregman Divergence : http://machinelearning.wustl.edu/mlpapers/paper_files/BanerjeeMDG05.pdf
+
+4. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+
+5. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation

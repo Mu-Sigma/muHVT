@@ -68,7 +68,7 @@ function(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3,title=
                                 ggplot2::aes_string(x="x",y="y"),
                                 pch=21,
                                 size = (centroid.size/lev),
-                                fill = color.vec[lev]) + ggplot2::theme_bw()
+                                fill = color.vec[lev]) + ggplot2::theme_bw() + ggplot2::theme(panel.grid.major = ggplot2::element_blank(), panel.grid.minor = ggplot2::element_blank())
 
     }
   }
