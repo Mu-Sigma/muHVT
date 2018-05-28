@@ -81,7 +81,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize) {
     polinfo <- hvqdata <- list()
     hvq_k <- hvq(scaledata, nclust = nclust, depth = depth, quant.err = quant.err)
     # flog.info("HVQ output is ready")
-    hvqoutput <- hvq_k$ztab
+    hvqoutput <- hvq_k$summary
     
     gdata <- hvqoutput  #assign the output of hvq file to gdata
     #cleaning the data by deleting the rows containing NA's

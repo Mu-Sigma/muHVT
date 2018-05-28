@@ -62,11 +62,11 @@ function (dataset, quant.err, projection.scale) {
     polinfo <- hvqdata <- list()
     #hvq_k <- hvq(scaledata, nclust = nclust, depth = depth, quant.err = quant.err)
 	hvq_k <- VQ_codebookSplit(scaledata, quant.err=quant.err)
-	nclust=nrow(hvq_k$ztab)
-	colnames(hvq_k$ztab)<- c("Segment Level", "Segment Parent", "Segment Child", 
+	nclust=nrow(hvq_k$summary)
+	colnames(hvq_k$summary)<- c("Segment Level", "Segment Parent", "Segment Child", 
                      "n", "Quant Error", colnames(dataset))
 	# flog.info("HVQ output is ready")
-    hvqoutput <- hvq_k$ztab
+    hvqoutput <- hvq_k$summary
     
     gdata <- hvqoutput  #assign the output of hvq file to gdata
     #cleaning the data by deleting the rows containing NA's

@@ -3,6 +3,8 @@
 export(HVT)
 export(LBGVQ)
 export(VQ_codebookSplit)
+export(gghvtHmap)
+export(gghvtHmap_old)
 export(hvq)
 export(hvtHmap)
 export(jsd)

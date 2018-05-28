@@ -24,7 +24,7 @@ parameter.}
 \code{nodes.clust} with additional columns for nodes ID. }
 \item{error.quant}{ List. A list of quantization error for all levels and
 nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
-quantization error was met. } \item{zdata}{ Summary. Output table with
+quantization error was met. } \item{summary}{ Summary. Output table with
 summary. }
 }
 \description{

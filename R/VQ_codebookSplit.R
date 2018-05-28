@@ -341,7 +341,7 @@ trilaterate <- function(d){
 #' \code{nodes.clust} with additional columns for nodes ID. }
 #' \item{error.quant}{ List. A list of quantization error for all levels and
 #' nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
-#' quantization error was met. } \item{zdata}{ Summary. Output table with
+#' quantization error was met. } \item{summary}{ Summary. Output table with
 #' summary. }
 #' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
@@ -391,7 +391,7 @@ VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
     idnodes <- lapply(model$clusters, rownames)
     idnodes <- list(lapply(1:length(idnodes), FUN=function(i){data.frame('tet..k..'=idnodes[[i]], 'X1'=rep(1, length(idnodes[[i]])), 'X1.1'=rep(1, length(idnodes[[i]])), 'k'= i)}))
     
-    return(list('clusters'=model$clusters, 'nodes.clust'= list(model$clusters), 'idnodes'= idnodes, 'error.quant'= list(mapes), plt.clust= list(mapes<model$errorValue), 'ztab'= ztab))
+    return(list('clusters'=model$clusters, 'nodes.clust'= list(model$clusters), 'idnodes'= idnodes, 'error.quant'= list(mapes), plt.clust= list(mapes<model$errorValue), 'summary'= ztab))
     
        
   } else {

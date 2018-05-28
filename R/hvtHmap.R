@@ -91,7 +91,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
     tess_results <- hvt.results[[1]]
     polinfo <- hvt.results[[2]]
     hvq_k <- hvt.results[[3]]
-    hvqdata <- hvq_k$ztab
+    hvqdata <- hvq_k$summary
     
     if(length(color.vec) == length(line.width) && (length(line.width)+1) == child.level){
       
@@ -164,8 +164,8 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
                    "terrain.colors(n)", "topo.colors(n)", "cm.colors(n)", 
                    "colorRampPalette(c(crp1, crp2))(500)")
       #select the two colors for two color gradient heat map
-      crp1 <- "white"
-      crp2 <- "blue"
+      crp1 <- "#DADDD8"
+      crp2 <- "#8FB339"
       
       #for each variable in the hvqdata
       for(i in 1: length(gtitles)){
