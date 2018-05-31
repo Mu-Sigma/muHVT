@@ -7,6 +7,7 @@ function (plot_gg,tilesinfo,gradient_values,ptext = NULL, verbose = FALSE, lnwid
   x.all <- y.all <- x.pts <- y.pts <- NULL
   gradient_values <- gradient_values
   gradient_palette <- polycol
+  gradient_col_name <- colnames(gradient_values)
   
   
   
@@ -54,8 +55,8 @@ function (plot_gg,tilesinfo,gradient_values,ptext = NULL, verbose = FALSE, lnwid
         #draw the polygon with appropriate colors representative of its value for that variable
         #graphics::polygon(object[[j]][[k]], col = polycol[ind + k], 
                 #border = ptcol[ind + k], lwd = lnwid, lty = 2)
-      df_pol <- data.frame(x=object[[j]][[k]]$x,y=object[[j]][[k]]$y,gradient_values = gradient_values[k,])
-      plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y",fill="gradient_values"),size=lnwid) + ggplot2::scale_fill_gradientn(colours = eval(parse(text = gradient_palette)))
+      df_pol <- data.frame(x=object[[j]][[k]]$x,y=object[[j]][[k]]$y) %>% dplyr::mutate(!!gradient_col_name:= gradient_values[ind+k,])
+      plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y",fill=as.name(gradient_col_name)),size=lnwid) + ggplot2::scale_fill_gradientn(colours = eval(parse(text = gradient_palette)))
       # plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y",color=gradient_values),fill=polycol[ind+k],size=lnwid,colour = ptcol[ind + k])
       }
       else{

@@ -1,32 +1,28 @@
 getCentroids <-
-function (x, kout, nclust){
-  
-  outl <- list()
-  nout <- list()
-  centl <- list()
-  for(i in 1: nclust) {
-    #datapoints according to each cluster
-    outl[[i]] <- x[kout$cluster == i, ,drop=F ]
-    #size of each cluster
-    nout[[i]] <- kout$size[i]  
+  function (x, kout, nclust){
     
-    #
-    #  Generating lists of outputs
-    #
-    if(nrow(outl[[i]]) > 1) {
-      #intermediate centroid calculated using mean of the datapoints in a cluster
-      icent <- apply(outl[[i]], 2, mean)
-      #centroid for each cluster
-      centl[[i]] <- mean(apply(outl[[i]], 1,FUN =  function(x, y){
-        mean(abs(x - y), na.rm = T)}
-        , icent), na.rm = T)
+    outl <- list()
+    nout <- list()
+    centl <- list()
+    
+    x <- data.frame(x)
+    # function to calculate centroid for each cluster
+    calculate_error_for_each_cluster <- function(x){
+      if(nrow(x) > 1){
+        mean(sqrt(rowSums(scale(x,center = T,scale = F)^2)))
+      }
+      else{
+        return(0)
+      }
     }
-    else {
-      #no centroids if the number of points is not greater than 1
-      centl[[i]] <- 0
-      icent <- outl[[i]]
-    }
+    
+    calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = calculate_error_for_each_cluster(.))
+    centl <- calculate_error$err
+    outl <-  c(1:nclust) %>% purrr::map(~x[kout$cluster==.x,])
+    nout <- as.list(kout$size)
+
+
+    
+    #return centroids, datapoints and size of each cluster
+    return(list(centers = centl, values = outl, nsize = nout))
   }
-  #return centroids, datapoints and size of each cluster
-  return(list(centers = centl, values = outl, nsize = nout))
-}

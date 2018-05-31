@@ -369,23 +369,6 @@ gghvtHmap(hvt.results, d_u, child.level = 1,hmap.cols =c(3), show.points=TRUE,li
 
 ```
 
-Let's plot quantization error heatmap
-
-```{r hmp quant level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for quantization error in the ’uber’ dataset'}
-
-
-gghvtHmap(hvt.results, d_u, child.level = 1,hmap.cols =c(0), show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
-
-```
-
-Let's plot heat map for no of points in a cluster
-
-```{r hmp data points level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for quantization error in the ’uber’ dataset'}
-
-
-gghvtHmap(hvt.results, d_u, child.level = 1,hmap.cols =c(-1), show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
-
-```
 
 Now we will go one level deeper and do hierarchical k-means clustering for level 2. This should give us better insight about the peak hour for different neighbourhoods in a region.
 

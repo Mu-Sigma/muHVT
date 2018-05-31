@@ -66,9 +66,9 @@ function(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3,title=
                                                      )  + ggplot2::scale_color_manual(values = color.vec) +
             ggplot2::geom_point(data = df,
                                 ggplot2::aes_string(x="x",y="y"),
-                                pch=21,
+                                pch=19,
                                 size = (centroid.size/lev),
-                                fill = color.vec[lev]) + ggplot2::theme_bw() +  ggplot2::theme(
+                                fill = color.vec[lev],color= color.vec[lev]) + ggplot2::theme_bw() +  ggplot2::theme(
                                   plot.background = ggplot2::element_blank()
                                   ,panel.grid.major = ggplot2::element_blank()
                                   ,panel.grid.minor = ggplot2::element_blank()
