@@ -58,7 +58,7 @@ hvq <-
     quantinit <- rep(F, nclust)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
-    outkinit <- getCentroids_new(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust)
+    outkinit <- getCentroidsw(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust)
     # flog.info("Level 1 cluster memberships are calculated")
     #datapoints grouped into clusters
     rescl[[1]] <- outkinit$val
@@ -96,7 +96,7 @@ hvq <-
           #that cluster is greater than nclust
           if (quantok[j] & NROW(initclust[[j]]) > nclust) {
             #k-means on the initclust to obtain the next level clustering(sub-clusters)
-            outk <- getCentroids_new(initclust[[j]], kout = stats::kmeans(initclust[[j]], 
+            outk <- getCentroids(initclust[[j]], kout = stats::kmeans(initclust[[j]], 
                                                                nclust, iter.max = 100, algo = algorithm), nclust)
             #store the datapoints
             ijrescl[[j]] <- outk$val
