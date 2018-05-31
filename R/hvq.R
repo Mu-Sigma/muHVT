@@ -58,7 +58,7 @@ hvq <-
     quantinit <- rep(F, nclust)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
-    outkinit <- getCentroidsw(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust)
+    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust)
     # flog.info("Level 1 cluster memberships are calculated")
     #datapoints grouped into clusters
     rescl[[1]] <- outkinit$val
