@@ -184,8 +184,8 @@ hvq <-
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 4] <- ztab2
       ztab[, 6: ncol(ztab)] <- t(ztab3upc)
       ztab[(nclust + 1): sum(nclust^(1: zdepth)), 5] <- ztabn
-      names(ztab) <- c("Segment Level", "Segment Parent", "Segment Child", 
-                       "n", "Quant Error", colnames(x))
+      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
+                       "n", "Quant.Error", colnames(x))
     }
     else {
       ztab <- data.frame(matrix(0, nrow = nclust, ncol = (ncol(x) + 
@@ -197,8 +197,8 @@ hvq <-
       ztab[, 6:ncol(ztab)] <- t(sapply(outkinit$val, colMeans, 
                                        na.rm = T))
       ztab[, 5] <- unlist(outkinit$cent)
-      names(ztab) <- c("Segment Level", "Segment Parent", "Segment Child", 
-                       "n", "Quant Error", colnames(x))
+      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
+                       "n", "Quant.Error", colnames(x))
     }
     ridnames <- resid
     rclnames <- rescl

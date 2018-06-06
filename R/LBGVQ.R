@@ -63,8 +63,8 @@ function (dataset, quant.err, projection.scale) {
     #hvq_k <- hvq(scaledata, nclust = nclust, depth = depth, quant.err = quant.err)
 	hvq_k <- VQ_codebookSplit(scaledata, quant.err=quant.err)
 	nclust=nrow(hvq_k$summary)
-	colnames(hvq_k$summary)<- c("Segment Level", "Segment Parent", "Segment Child", 
-                     "n", "Quant Error", colnames(dataset))
+	colnames(hvq_k$summary)<- c("Segment.Level", "Segment.Parent", "Segment.Child", 
+                     "n", "Quant.Error", colnames(dataset))
 	# flog.info("HVQ output is ready")
     hvqoutput <- hvq_k$summary
     
@@ -86,7 +86,7 @@ function (dataset, quant.err, projection.scale) {
     #contains the vertices of the parent polygon
     pol_info <- polygon_info <- list()
     #number of levels
-    nlevel <- length(unique(gdata[, "Segment Level"]))
+    nlevel <- length(unique(gdata[, "Segment.Level"]))
     #verify if the transformed points are correct
     transpoints <- list()
     
@@ -96,7 +96,7 @@ function (dataset, quant.err, projection.scale) {
     for (i in 1: nlevel) {
       
       #hvqdata segregated according to different levels
-      tessdata[[i]] <- gdata[which(gdata[, "Segment Level"] == i), ]
+      tessdata[[i]] <- gdata[which(gdata[, "Segment.Level"] == i), ]
       
       #data to be used as input to sammon function
       input.tessdata[[i]] <- tessdata[[i]][, (newcols+1): ncol(hvqoutput)]
@@ -107,7 +107,7 @@ function (dataset, quant.err, projection.scale) {
       #sammon datapoints grouped according to the hierarchy
       intermediate.rawdata <- list()
       
-      for(j in 1: length(unique(tessdata[[i]][, "Segment Parent"]))) {
+      for(j in 1: length(unique(tessdata[[i]][, "Segment.Parent"]))) {
         intermediate.rawdata[[j]] <- cbind(points2d[[i]][((nclust * (j - 1)) + 1): (j * nclust), 1], 
                                            points2d[[i]][((nclust * (j - 1)) + 1): (j * nclust), 2])
       }
@@ -142,8 +142,8 @@ function (dataset, quant.err, projection.scale) {
     polygon_info[[1]] <- pol_info
     rm(pol_info)
     par_tile_indices <- n_par_tile <- list()
-    par_tile_indices[[1]] <- unique(tessdata[[1]][, "Segment Parent"])
-    n_par_tile[[1]] <- length(unique(tessdata[[1]][, "Segment Parent"]))
+    par_tile_indices[[1]] <- unique(tessdata[[1]][, "Segment.Parent"])
+    n_par_tile[[1]] <- length(unique(tessdata[[1]][, "Segment.Parent"]))
     
     if(nlevel < 2){
       polinfo <- polygon_info
@@ -160,12 +160,12 @@ function (dataset, quant.err, projection.scale) {
       for(i in 2: nlevel){
         
         new_rawdeldata[[i]] <- list() 
-        par_tile_indices[[i]] <- unique(tessdata[[i]][, "Segment Parent"])
-        n_par_tile[[i]] <- length(unique(tessdata[[i]][, "Segment Parent"]))
+        par_tile_indices[[i]] <- unique(tessdata[[i]][, "Segment.Parent"])
+        n_par_tile[[i]] <- length(unique(tessdata[[i]][, "Segment.Parent"]))
         
         for(tileIndex in 1: n_par_tile[[(i - 1)]]){
           #a chunk of hvqdata which contains the rows corresponding to a particular parent tile
-          gidata <- tessdata[[i]][which(tessdata[[i]][, "Segment Parent"] %in% 
+          gidata <- tessdata[[i]][which(tessdata[[i]][, "Segment.Parent"] %in% 
                                           par_tile_indices[[i]][intersect(which((par_tile_indices[[i]] / nclust ) <= par_tile_indices[[(i - 1)]][tileIndex]),
                                                                           which((par_tile_indices[[(i - 1)]][tileIndex] - 1) < (par_tile_indices[[i]] / nclust )))]), ]
           

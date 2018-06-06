@@ -153,7 +153,7 @@ function(gidata, poly_info, rawdeldati, nclust){
   rect_indices_containing_points <- inter_indices <- list()
   #to store the transformed points
   new_rawdeldati <- list()
-  parentTiles <- unique(gidata[, "Segment Parent"])
+  parentTiles <- unique(gidata[, "Segment.Parent"])
   
   for(ind1 in 1: length(parentTiles)){
     if(((parentTiles[ind1]) %% nclust)){

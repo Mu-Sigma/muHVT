@@ -1,3 +1,5 @@
+requireNamespace("dplyr")
+
 getCentroids <-
   function (x, kout, nclust){
     

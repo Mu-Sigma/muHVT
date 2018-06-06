@@ -385,7 +385,7 @@ VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
     }
     mapes <- lapply(1:length(model$clusters), FUN=function(i){findMape(model$clusters[[i]],model$codebooks[[i]])})
 	
-    ztab <- data.frame('Segment Level' = rep(1, length(model$clusters)), 'segment Parent' = rep(1, length(model$clusters)), 'Segment Child'= 1:length(model$clusters), 'n'=  unlist(lapply(model$clusters, nrow)),'Quant Error'= unlist(mapes))
+    ztab <- data.frame('Segment.Level' = rep(1, length(model$clusters)), 'segment.Parent' = rep(1, length(model$clusters)), 'Segment.Child'= 1:length(model$clusters), 'n'=  unlist(lapply(model$clusters, nrow)),'Quant.Error'= unlist(mapes))
     ztab <- cbind(ztab, do.call(rbind, model$codebooks))
     
     idnodes <- lapply(model$clusters, rownames)
