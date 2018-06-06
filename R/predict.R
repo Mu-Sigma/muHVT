@@ -1,3 +1,4 @@
+#' @export predict
 predict <- function(data,hvt.results){
   
   requireNamespace("dplyr")
@@ -23,16 +24,15 @@ predict <- function(data,hvt.results){
   
   hierachy_structure <- c(1:level) %>% purrr::map(~data.frame(gtools::permutations(n = nclust,r = .x,v = seq(1:nclust),repeats.allowed = T))) %>% purrr::map(~apply(.,1,function(x) paste(x,collapse=''))) %>% unlist()
   
-  pathString <- hierachy_structure %>% purrr::map_chr(~paste(c('cluster',unlist(strsplit(.,''))),collapse='/'))
+  pathString <- hierachy_structure %>% purrr::map_chr(~paste(c('cluster',unlist(strsplit(.,''))),collapse=' -> '))
   
-  summary_table_with_hierarchy <- cbind(summary_list$summary,pathString,index=as.numeric(rownames(summary_list$summary)))
+  summary_table_with_hierarchy <- cbind(summary_list$summary,pathString,index=as.numeric(rownames(summary_list$summary)),stringsAsFactors = FALSE)
   
   #tree_summary <- data.tree::as.Node(summary_table_with_hierarchy)
   path_list <- list()
   
   find_path <- function(summary,data,nclust,final_level,init_level,init_row,path_list){
     
-    browser()
     if(init_level > final_level){
       return(path_list)
     }
@@ -43,16 +43,14 @@ predict <- function(data,hvt.results){
         return(path_list)
       }
       index_min_row <- as.numeric(intermediate_df[which.min(min_dist),"index"])
-      path_list[[init_level]] <- summary[index_min_row,]
+      path_list <- summary[index_min_row,"pathString"]
       next_row_no <- index_min_row*nclust + 1
       find_path(summary,data,nclust,final_level,init_level +1,init_row = next_row_no,path_list)
     }
   }
   
-  path_list <- find_path(summary_table_with_hierarchy,data = data[1,],nclust = nclust ,final_level = level,init_level = 1,init_row = 1,path_list = path_list)
+  path_list <- apply(data, 1,FUN = function(data) find_path(summary_table_with_hierarchy,data = data,nclust = nclust ,final_level = level,init_level = 1,init_row = 1,path_list = path_list))
   
+  return(data.frame(path_list))
 
-  
-
-  
 }
