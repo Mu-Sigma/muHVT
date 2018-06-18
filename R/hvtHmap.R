@@ -27,7 +27,7 @@
 #' @param dataset Data frame. The input data set.
 #' @param child.level Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols Vector. A vector with column names (or) column indices of
+#' @param hmap.cols Numeric or Character. The column number of column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
 #' @param color.vec Vector. A color vector such that length(color.vec) =
@@ -42,7 +42,7 @@
 #' (default = 1)
 #' @param palette.color Numeric. Indicating the heat map color palette. 1 -
 #' rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
-#' cm.colors, 6 - seas color. (default = 1)
+#' cm.colors, 6 - seas color. (default = 6)
 #' @param show.points Logical. Indicating if the size of the centroids should
 #' be relative to the number of data points in that cluster. (default = FALSE)
 #' @param asp Numeric. Indicating the aspect ratio type. For flexible aspect
@@ -53,6 +53,7 @@
 #' = NULL)
 #' @param label.size Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
+#' @param ... The ellipsis is passed to it as additional argument. (Used internally)
 #' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords hplot
@@ -61,25 +62,17 @@
 #' 
 #' 
 #' 
-#' data("iris",package="datasets")
-#' iris <- iris[,1:2]
-#' hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
-#' projection.scale = 10, normalize = TRUE)
-#' 
-#' hvtHmap(hvt.results, iris, child.level = 1,hmap.cols =c(1:2), show.points=TRUE)
-#' 
-#' 
-#' 
-#' 
 #' @export hvtHmap
 hvtHmap <-
-function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1, palette.color = 1, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5)
+function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1, palette.color = 6, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5,...)
   {
     requireNamespace("MASS")
     requireNamespace("deldir")
+    requireNamespace("dplyr")
     #require(gtools)
     #require(seas)
   #  require(futile.logger)
+    options(warn = -1)
     
     #select child level data
     if(child.level > 1){
@@ -93,111 +86,117 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
     hvq_k <- hvt.results[[3]]
     hvqdata <- hvq_k$summary
     
-    if(length(color.vec) == length(line.width) && (length(line.width)+1) == child.level){
+    if(length(color.vec) == length(line.width) && (length(line.width)) == child.level){
       
       # flog.info("Lengths of color vector and line width vector is equal to the number of parent levels")
       #select the data only for the user-defined level
       hvqztab <- hvqdata[which(hvqdata[, 1] == child.level), ]
       ncolumns <- ncol(hvqdata)
       
-      if(length(line.width) == 0){
-        line.width = c(2)
-      }
-      
-      # number of new columns added to the scaled data set
-      newcols <-  ncolumns - ncol(dataset)
-      
-      colnames(hvqztab)[(newcols + 1): ncolumns] <- colnames(dataset)
+
       
       # select only the input columns
-      if(class(hmap.cols)=="character"){
-        hmap.cols = as.vector(apply(as.matrix(hmap.cols),1,function(x) newcols + which(colnames(dataset)==x)))
-      } else {
-        hmap.cols = hmap.cols + newcols
-      }
-      
-      hlevel_data <- hvqztab[, eval(hmap.cols), drop = F]
-      if(any(is.na(hlevel_data[, 1]))){
-        hlevel_data <- hlevel_data[-which(is.na(hlevel_data[, 1])),]
-      }
-      
-      hlevel_data = as.data.frame(hlevel_data)
-      colnames(hlevel_data) = colnames(hvqztab)[hmap.cols]
-      
-      tryCatch(
-        {
-          grad_scale_level <- hvq_k$nodes.clust[[child.level]]
-            
-          if(child.level == 1){
-            grad_scale <- matrix(c(0), ncol = ncol(grad_scale_level[[1]]))
-            
-            for(i in 1: length(grad_scale_level)){  
-              if(!any(is.na(grad_scale_level[[i]]))){
-                grad_scale <- rbind(grad_scale, apply(dataset[rownames(grad_scale_level[[i]]),], 2, mean))
-              }      
-            }
-          }else{
-            grad_scale <- matrix(c(0), ncol = ncol(grad_scale_level[[1]][[1]]))
-            for(i in 1: length(grad_scale_level)){
-              for(j in 1: length(grad_scale_level[[i]])){
-                if(!any(is.na(grad_scale_level[[i]][[j]]))){
-                  grad_scale <- rbind(grad_scale, apply(dataset[rownames(grad_scale_level[[i]][[j]]),], 2, mean))
-                }
-              }
-            }
+      if (class(hmap.cols) == "character") {
+        
+        if(length(list(...))){
+          
+          gradient_data <- hvqztab[,hmap.cols,drop=F]
+          get_indices_for_NA <- is.na(gradient_data)
+          if (any(get_indices_for_NA)) {
+            gradient_data[get_indices_for_NA, 1] <- 0
           }
           
-          grad_scale <- grad_scale[-1, ]
-          grad_scale <- grad_scale[, eval(hmap.cols - 5), drop = F]
-          # flog.info("3")
-          #grad <- grad_scale[-which(is.na(grad_scale[, 1])),]
-          
-          # flog.info("Data for the child level is calculated")  
-        },error = function(err){
-              return("Could not plot the heatmap. Please check the input parameters..")
-        }, finally = {})
+        }
         
+        
+        else{
+        
+        if (hmap.cols == "quant_error") {
+          gradient_data <- hvqztab[, 5, drop = F]
+          get_indices_for_NA <- is.na(gradient_data)
+          if (any(get_indices_for_NA)) {
+            gradient_data[get_indices_for_NA, 1] <- 0
+          }
+        }
+        
+        else if (hmap.cols == "no_of_points") {
+          gradient_data <- hvqztab[, 4, drop = F]
+          get_indices_for_NA <- is.na(gradient_data)
+          if (any(get_indices_for_NA)) {
+            gradient_data[get_indices_for_NA, 1] <- 0
+          }
+        }
+        
+        else{
+          hmap.cols = which(colnames(dataset) == hmap.cols)
+          if (length(hmap.cols) == 0) {
+            stop("Column name for plotting heatmap incorrect")
+            }
+
+        }
+        }
+      }
+      
+      if (is.numeric(hmap.cols)) {
+        column_no_for_hmap = hmap.cols
+        
+        if (length(column_no_for_hmap) == 0) {
+          stop("Column name for plotting heatmap incorrect")
+        }
+        
+        ## Get row index for all clusters in the asked child level
+        row_index_clusters = hvq_k$idnodes[[child.level]]
+        
+        depth <- 2
+        
+        if(child.level==1){
+          depth <- 1
+        }
+        
+        gradient_data <-
+          data.frame(unlist(
+            purrr::modify_depth(row_index_clusters, depth,  ~ colMeans(dataset[as.vector(.x[, 1]), column_no_for_hmap,drop=F]))
+          ))
+        colnames(gradient_data) <-
+          colnames(dataset[, column_no_for_hmap, drop = F])
+      }
+      
+      
       #store the column names
-      gtitles <- names(hlevel_data)
+      grad_scale <- gradient_data
+      gtitles <- 1
       #different color palette
-      pal.col <- c("rainbow(n, start = .7, end = .1)", "heat.colors(n)", 
-                   "terrain.colors(n)", "topo.colors(n)", "cm.colors(n)", 
-                   "colorRampPalette(c(crp1, crp2))(500)")
-      #select the two colors for two color gradient heat map
-      crp1 <- "#DADDD8"
-      crp2 <- "#8FB339"
+      pal.col <- c("rainbow(500, start = .7, end = .1)", "heat.colors(500)", 
+                   "terrain.colors(500)", "topo.colors(500)", "cm.colors(500)", 
+                   "colorRampPalette(c(crp1,crp2,crp3,crp4,crp5))(500)","RColorBrewer::brewer.pal(n,name)")
+      
+      
+      # #select the five colors for two color gradient heat map
+      # crp1 <- "#0000FF"
+      # crp2 <- "#00FFFF"
+      # crp3 <- "#00FF00"
+      # crp4 <- "#FFFF00"
+      # crp5 <- "#FF0000"
+      # 
+      
       
       #for each variable in the hvqdata
       for(i in 1: length(gtitles)){
-        graphics::close.screen(all = T)
+        #graphics::close.screen(all = T)
         #tiles information of user-defined level. It is the output of tile.list.
         pdat <- polinfo[[child.level]]
         #gradient of colors is divided into n colors
         n <- 500
-        #vector of colors containing the user chosen palette
-        vec_colors <- eval(parse(text = pal.col[palette.color]))
-        #specify the dimensions to divide the plot area and show the gradient
-        mymat <- rbind(c(0, 0.9, 0, 1), c(0.1, .8, 0, 0.1), c(0.8, 1, 0.05, 1))
-        graphics::split.screen(mymat)
-        #select the plot area
-        graphics::screen(1)
-        #hide the axes
-        graphics::par(xaxt = 'n', yaxt = 'n')
-        #plot the first level tessellations as base upon which all other levels are plotted
-        deldir::plot.deldir(tess_results[[1]][[1]], wlines = "tess", lty = 1, lwd = line.width[1], xlab = "", ylab = "") 
-        
-        #selecting the indices of the colors after normalization
-        xrange <- range (hlevel_data[, i])
-        mfac <- (n - 1) / (xrange[2] - xrange[1])
-        xcolors <- 1 + (hlevel_data[, i] - xrange[1]) * mfac
-        xcolind <- findInterval(xcolors, 1:500)
-        
-        vec_colors500 <- vec_colors[1:500]
-        #interactive usage; prompting the user to return before the next plot is shown.
-        graphics::par(ask = ask)
+
+        plot_gg <- ggplot2::ggplot() + ggplot2::theme_bw() +  ggplot2::theme(
+                                   plot.background = ggplot2::element_blank()
+                                  ,panel.grid.major = ggplot2::element_blank()
+                                  ,panel.grid.minor = ggplot2::element_blank())
+        #gradient_values = data.frame(grad_scale[,i,drop=FALSE])
+        gradient_palette = pal.col[palette.color]
         
         #call the function which plots the heat map for the user-defined level
-        plotTileHmap(pdat, ptext = tess.label, polycol = vec_colors500[xcolind], 
+        plot_gg <- ggplotTileHmap(plot_gg,pdat,grad_scale,ptext = tess.label, polycol = gradient_palette, 
                       close = T, showpoints = show.points,  
                       lnwid = (line.width[1] / child.level),
                       frame.plot = F, xlab = "", ylab = "", 
@@ -205,60 +204,25 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
                       pointmag = (centroid.size / child.level),pch2=pch2)
         
         #plot the centroids for parent levels
-        plotTessHmap(hvt.results, line.width = line.width, color.vec = color.vec,pch1=pch1)
+        plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch1=pch1,child.level=child.level)
         
         #plot the polygons of the parent levels
         for(lev in parlevel: 1){   
           len <- length(polinfo[[lev]])
           for(ind1 in 1: len){
             for(ind2 in 1: length(polinfo[[lev]][[ind1]])){
-              graphics::polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
-                      lwd = line.width[lev], border = color.vec[lev])
+             # graphics::polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
+                      #lwd = line.width[lev], border = color.vec[lev])
+              df_pol <- data.frame(x=polinfo[[lev]][[ind1]][[ind2]]$x,y=polinfo[[lev]][[ind1]][[ind2]]$y)
+              plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y"),size=line.width[lev],colour = color.vec[lev],fill=NA)
             }
           }
           # flog.debug("Polygons for Level %s are drawn", lev)
         }
-        
-        #title of the plot; name of the variable for which heat map is plotted.
-        graphics::title(gtitles[i])
-        
-        #go to the screen where the gradient is shown.
-        graphics::screen(2)
-        #format for pretty printing the labels on the gradient
-        colind <- format(seq(min(grad_scale[, i]), 
-                             max(grad_scale[, i]), 
-                             length = 10), digit = 1)
-        #plotting region boundaries
-        zusr <- graphics::par("usr") * 0.9
-        #create a sequence of values
-        zseq <- seq(zusr[1], zusr[2], length = length(vec_colors) + 1)
-        zseq <- seq(0, 1, length = length(vec_colors) + 1)
-        
-        #draw a rectangle showing the gradient of colors
-        graphics::rect(zseq[-length(zseq)], 0.5, zseq[-1], 1, col = vec_colors, 
-             border = NA)
-        tseq1 <- seq(0, 1, length = 10)
-        #show the numbers indicative of the color gradient
-        graphics::text(tseq1, 0.45, colind, cex = 0.7, adj = 0.5)
-        # flog.info("Heatmap for parameter %s has been plotted", i)
-        
-        graphics::screen(3)
-        
-        if(parlevel > 1){
-          for(j in 1: parlevel){
-            graphics::text(0.27, (0.8 - (0.1 * j)), paste("Level ", j))
-            graphics::segments(0.6,(0.8 - (0.1 * j)),0.8,(0.8 - (0.1 * j)),col=color.vec[j],lty=1,lwd=line.width[j])
-            #print(paste("Level ", j))
-          }
-          graphics::text(0.27, (0.8 - (0.1 * (j + 1))), paste("Level ", child.level))
-          graphics::segments(0.6,(0.8-(0.1*(j+1))),0.8,(0.8-(0.1*(j+1))),col="black",lty=2,lwd=(line.width[1]/child.level))
-        } else {
-          graphics::text(0.27,0.7, paste("Level ", child.level))
-          graphics::segments(0.6,0.7,0.8,0.7,col="black",lty=1,lwd=(line.width[1]/child.level))
-        }
-        
+  
+        return(plot_gg)
       }
     }else{
-      return("Length of color vector and line width vector should be 1 less than child level")
+      return("Length of color vector and line width vector should be equal to child level")
     }
   }

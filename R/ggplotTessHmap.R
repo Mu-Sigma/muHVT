@@ -1,3 +1,11 @@
+#' Pipe operator
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
 ggplotTessHmap <-
 function(plot_gg,hvt.results, line.width, color.vec,child.level, pch1 = 19, centroid.size = 3){
   

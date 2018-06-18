@@ -1,25 +1,78 @@
+#' Pipe operator
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
+#' 
 requireNamespace("dplyr")
 
+# The function should take dataframe having m rows and n dimension as input. It should return distance from the center for each row or should return 0 if nrow(df) < 1
+
 getCentroids <-
-  function (x, kout, nclust){
+  function (x, kout, nclust,distance_metric = c("Euclidean","Manhattan"),error_metric = c("mean","max")){
     
     outl <- list()
     nout <- list()
     centl <- list()
     
+    options(warn = -1)
+    
+    
     x <- data.frame(x)
     # function to calculate centroid for each cluster
-    calculate_euclidean_error_for_each_cluster <- function(x){
+    calculate_euclidean_distance_for_each_cluster <- function(x){
       if(nrow(x) > 1){
-        mean(sqrt(rowSums(scale(x,center = T,scale = F)^2)))
+        sqrt(rowSums(scale(x,center = T,scale = F)^2))
       }
       else{
         return(0)
       }
     }
     
-    calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = calculate_euclidean_error_for_each_cluster(.))
-    centl <- calculate_error$err
+    calculate_manhattan_distance_for_each_cluster <- function(x){
+      if(nrow(x) > 1){
+        rowSums(abs(scale(x,center = T,scale = F)))
+      }
+      else{
+        return(0)
+      }
+    }
+    
+    if(is.function(distance_metric)){
+      function_to_calculate_distance_metric <- distance_metric
+    }
+    else if(distance_metric=="Euclidean"){
+      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+    }
+    else if(distance_metric=="Manhattan"){
+      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
+    }
+    else{
+      stop('distance_metric must be Euclidean,Manhttan or custom function')
+    }
+    
+    if(is.function(error_metric)){
+      function_to_calculate_error_metric <- error_metric
+    }
+    else if(error_metric=="mean"){
+      function_to_calculate_error_metric <- "mean"
+    }
+    else if(error_metric=="max"){
+      function_to_calculate_error_metric <- "max"
+    }
+    else{
+      stop('error_metric must be max,mean or custom function')
+    }
+    
+    calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
+    distance_for_each_dimension_for_each_cluster <- calculate_error$err
+    
+    calculate_error_for_each_cluster <- lapply(distance_for_each_dimension_for_each_cluster,function_to_calculate_error_metric)
+    
+    centl <- calculate_error_for_each_cluster
     outl <-  c(1:nclust) %>% purrr::map(~x[kout$cluster==.x,])
     nout <- as.list(kout$size)
 

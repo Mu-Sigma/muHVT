@@ -1,3 +1,11 @@
+#' Pipe operator
+#'
+#' @name %>%
+#' @rdname pipe
+#' @keywords internal
+#' @export
+#' @importFrom magrittr %>%
+#' @usage lhs \%>\% rhs
 ggplotTileHmap <-
 function (plot_gg,tilesinfo,gradient_values,ptext = NULL, verbose = FALSE, lnwid = 0.2, close = FALSE, pch2 = 1, polycol = NA, 
                            showpoints = TRUE, asp = 1, label.size = 0.5, pointmag = pointmag,...) 
@@ -43,8 +51,16 @@ function (plot_gg,tilesinfo,gradient_values,ptext = NULL, verbose = FALSE, lnwid
   # ptcol <- ifelse(polycol == hexbla, hexwhi, hexbla)
   ptcol <- hexbla
   
-  crp1 <- "#DADDD8"
-  crp2 <- "#8FB339"
+  #select the five colors for two color gradient heat map
+  crp1 <- "#0000FF"
+  crp2 <- "#00FFFF"
+  crp3 <- "#00FF00"
+  crp4 <- "#FFFF00"
+  crp5 <- "#FF0000"
+  
+  n <- nrow(gradient_values)
+  name <- "GnBu"
+  
   
   for(j in 1: ntiles){
     inner <- !any(object[[j]]$bp)

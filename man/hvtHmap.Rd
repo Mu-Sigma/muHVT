@@ -6,8 +6,8 @@
 \usage{
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec = NULL,
   line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1,
-  palette.color = 1, show.points = F, asp = 1, ask = T,
-  tess.label = NULL, label.size = 0.5)
+  palette.color = 6, show.points = F, asp = 1, ask = T,
+  tess.label = NULL, label.size = 0.5, ...)
 }
 \arguments{
 \item{hvt.results}{List. A list of hvt.results obtained from the HVT
@@ -18,7 +18,7 @@ function.}
 \item{child.level}{Numeric. Indicating the level for which the heat map is
 to be plotted.}
 
-\item{hmap.cols}{Vector. A vector with column names (or) column indices of
+\item{hmap.cols}{Numeric or Character. The column number of column name from
 the dataset indicating the variables for which the heat map is to be
 plotted.}
 
@@ -39,7 +39,7 @@ level. (default = 3)}
 
 \item{palette.color}{Numeric. Indicating the heat map color palette. 1 -
 rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
-cm.colors, 6 - seas color. (default = 1)}
+cm.colors, 6 - seas color. (default = 6)}
 
 \item{show.points}{Logical. Indicating if the size of the centroids should
 be relative to the number of data points in that cluster. (default = FALSE)}
@@ -55,6 +55,8 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 
 \item{label.size}{Numeric. The size by which the tessellation labels should
 be scaled. (default = 0.5)}
+
+\item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
 }
 \description{
 Heat Map over Hierarchical Voronoi Tessellations
@@ -81,16 +83,6 @@ plotted. The heat maps and hierarchical tessellations are obtained for all
 the desired variables.
 }
 \examples{
-
-
-
-
-data("iris",package="datasets")
-iris <- iris[,1:2]
-hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-hvtHmap(hvt.results, iris, child.level = 1,hmap.cols =c(1:2), show.points=TRUE)
 
 
 

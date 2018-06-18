@@ -4,7 +4,9 @@
 \alias{HVT}
 \title{Constructing Hierarchical Voronoi Tessellations}
 \usage{
-HVT(dataset, nclust, depth, quant.err, projection.scale, normalize)
+HVT(dataset, nclust, depth, quant.err, projection.scale, normalize = T,
+  distance_metric = c("Euclidean", "Manhattan"), error_metric = c("mean",
+  "max"))
 }
 \arguments{
 \item{dataset}{Data frame. A data frame with different columns is given as
@@ -24,6 +26,10 @@ the tesselations so as to visualize the sub-tesselations well enough.}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
+
+\item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+
+\item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
 }
 \value{
 A list that contains the hierarchical tesselation information. This
@@ -49,21 +55,6 @@ tessellations are chopped in places so that they do not protrude outside the
 parent polygon. This is done for all the subsequent levels.
 }
 \examples{
-
-data("iris",package="datasets")
-iris <- iris[,1:2]
-hvt.results <- list()
-hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-plotHVT(hvt.results, line.width = c(3), color.vec = c("blue"))
-
-hvt.results <- list()
-hvt.results <- HVT(iris, nclust = 6, depth = 3, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-
-plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
 
 
 }

@@ -1,7 +1,7 @@
 ---
 title: "muHVT: Collection of functions used for clustering and construction
 of hierarchical Voronoi Tessellations for data analysis in R"
-author: "Meet Dave"
+author: "Meet Dave, Avinash Joshi, Zubin Dowlaty"
 date: "`r Sys.Date()`"
 output: 
       rmarkdown::html_document:
@@ -24,6 +24,9 @@ knitr::opts_chunk$set(
 )
 
 library(muHVT)
+library(dplyr)
+global_var <- FALSE
+
 set.seed(420)
 ```
 
@@ -36,27 +39,23 @@ construction of hierarchical voronoi tessellations as a data visualization
 tool to visualize clusters using quantization. The hierarchical clusters are computed using
 Hierarchical K-means where a quantization threshold governs the levels
 in the hierarchy for a set $k$ parameter (the maximum number of clusters
-at each level). The LBG Vector Quantization (LBG VQ) algorithm is also
-implemented which detects the number of clusters for level one, based on
-a specified quantization threshold.The package is helpful to visualize rich mutlivariate data. 
+at each level).The package is helpful to visualize rich mutlivariate data. 
 
 
 This package additionally provides functions for computing the
-Jensen-Shannon-Bregman Divergence, Sammon’s projection and plotting the
-heat map of the variables on the tiles of the tessellations.
+Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
 
 #Clustering
 
 
-This package supports clustering using two algorithms- 
+This package does clustering using the following algorithm- 
 
-1. Hierarchical k-means
-1. LBG Vector Quantization
+1. Hierarchical Vector Quantization using k-means clustering
 
-The hierarchical k-means should be selected if the number of clusters are known beforehand. LBG Vector Quantization detects the number of clusters based on a specific quantization threshold. 
+Now let us understand hierarchical k-means
 
-##Hierarchical k-means
+##Hierarchical VQ using k-means clustering
 
 ### k-means clustering
 
@@ -67,74 +66,22 @@ The hierarchical k-means should be selected if the number of clusters are known 
 
 The second and third step is iterated until a predefined number of iteration is reached or the clusters converge. The runtime for the algorithm is O(n).
 
-### Hierarchical k-means clustering
+### Hierarchical VQ using k-means clustering
 
 The algorithm divides the dataset recursively into clusters. The $k-means$ algorithm is used by setting $k$ to say, two in order to divide the dataset into two subsets.Then, the two subsets are divided again into two subsets by setting $k$ to two to result in a total of four subsets. The recursion terminates when the clusters contain single data points or a stop criterion is reached. In this case, the stop criterion is when the cluster error exceeds the quantization threshold.
-The cluster error is the Mean Absolute Percentage Error (MAPE) :
-$$M = \frac{100\%}{n}\sum_{t=1}^n|\frac{A_t-F_t}{A_t}|$$ 
-where $A_t$ is the centroid and $F_t$ is the data point in the cluster. $n$ is the number of points in the cluster.
+
+The quantization error is defined as follows :
+
+$$M = \frac{1}{n}\sum_{t=1}^m||A-F_t||_{p}$$ 
+
+$$M = \max_{t=1}^m||A-F_t||_{p}$$ 
 
 
-The difference between $A_t$ and $F_t$ is divided by the Actual value $A_t$ again. The absolute value in this calculation is summed for every fitted or forecasted point in time and divided again by the number of fitted points $n$. Multiplying by 100 makes it a percentage error.
+where $A$ is the centroid and $F_t$ is the data point in the cluster. $m$ is the number of points in the cluster.
 
-## LBG Vector Quantization
+In the above equation, p = 1 means Manhattan distance whereas p = 2 means Euclidean distance.In the package, the Euclidean distance is chosen by default. The user can pass either "Euclidean" or "Manhattan" or a custom function to calculate the distance between two points in n dimensions.
 
-
-The Linde Buzo Gray design algorithm is an iterative algorithm which alternatively solves the two optimality criteria:
-
-1. Nearest Neighbor Condition
-$$S_n=\{x:||x-c_n||^2\leq||x-c_{n'}||^2  \forall n' = 1,2,.., N\}$$
-
-2. Centroid Condition
-$$c_n = \frac{\sum_{x_m \in S_n}x_m}{\sum_{x_m \in S_n}1} ;n= 1,2,.. N$$
-
-
-The algorithm requires an initial codebook $c_{0}$. This initial codebook is obtained by the splitting method. In this method, an initial codevector is set as the average of the entire training sequence. This codevector is then split into two. The iterative algorithm is run with these two vectors as the initial codebook. The final two codevectors are split into four and the process is repeated until the desired number of codevectors is obtained. The algorithm is summarized below.
-
-###LBG Design Algorithm:
-
-We assume that there is a training sequence consisting of *M* source vectors: 
-
-$$\tau = \{x_1, x_2, ..., x_M\}$$ 
-Let *N* be the number of codevectors and let 
-
-$$c=\{c_1, c_2, ..., c_N\}$$ 
-
-1. Given $\tau$, fix $\epsilon > 0$ ; the quantization threshold, to be a ‘small’ number.
-
-2. Let $N=1$ and 
-$$c_1^*= \frac{1}{M}\sum_{m=1}^M x_m$$ 
-calculate squared-error distortion measure
-$$D_{ave}^*= \frac{1}{Mk}\sum_{m=1}^M||x_m - c_1^*||^2$$ 
-
-3. **Splitting**: For $i=1,2..N$, set 
-$$c_i^0 = (1+\epsilon) c_i^*$$
-$$c_{N+i}^0 = (1-\epsilon)c_i^*$$ 
-
-4. **Iteration**: Let
-$D_{ave}^0=D_{ave}^*$. Set the iteration index $i=0$.
-
-    i. For $m=1,2, ..., M$, find the minimum value of 
-    $$||x_m-c_n^i||^2$$
-    over all $n=1,2,..,N$. Let $n^*$ be the index which achieves the
-    minimum. Set 
-    $$Q(x_m)=c_{n^*}^i$$
-    
-    ii. For $n=1,2,..,N$, update the codevector
-    $$c_n^{(i+1)}= \frac{\sum_{Q(x_m)=c_n^i}x_m}{\sum_{Q(x_m)=c_n^i}1}$$
-
-    iii. Set $i=i+1$
-
-    iv. Calculate 
-    $$D_{ave}^i=\frac{1}{Mk}\sum_{m=1}^M ||x_m-Q(x_m)||^2$$
-
-    v. If $(D_{ave}^{(i-1)}-D_{ave}^{(i)}/D_{ave}^{(i-1)}>\epsilon$, go backto Step (i).
-
-    vi. Set $D_{ave}^*=D_{ave}^{(i)}$. For $n=1,2,.., N$ set 
-    $$c_n^*=c_n^{(i)}$$ 
-    as the final codevectors.
-    
-5. Repeat Steps 3 and 4 until the desired number of codevectors is obtained.
+Now, after calculating the distance, we have two inbuilt approaches to calculate the error metric i.e. mean, max. The "mean" will take mean of m values where each value is a distance between a point and centroid of the cluster. The "max" will return the max of m values. Moreover, the user can also pass a custom function to calculate the error metric.
 
 
 #Voronoi Tessellations
@@ -150,7 +97,327 @@ Denote the distance between $i^{th}$ and $j^{th}$ objects in the original space 
 $$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
 The minimization can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-###Example Usage
+####Example Usage 1
+
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price,speed,ram,screen,cd,etc. The dataset can be downloaded from [here](https://github.com/thomaspernet/data_csv_r/blob/master/data/Computers.csv)
+
+In this example, we will clusters these computers by using hierarhical VQ clustering and visualize the Voronoi tesselation plots. Later on, we will overlay price variable as heatmap to generate further insights.
+
+Here, we load the data and store into a variable `computers`.
+
+```{r load data computer,warning=FALSE,message=FALSE,eval = global_var}
+
+set.seed(420)
+
+# Load data from csv files
+computers <- read.csv("https://raw.githubusercontent.com/thomaspernet/data_csv_r/master/data/Computers.csv")
+
+```
+
+Let's have a look at sample of the data
+
+```{r sample data computer,warning=FALSE,message=FALSE,eval = global_var}
+
+head(computers)
+
+```
+
+Let's get a summary of the data
+
+```{r data summary computer,warning=FALSE,message=FALSE,eval = global_var}
+summary(computers)
+```
+
+
+Now let us check the structure of the data
+
+```{r data structure computer,warning=FALSE,message=FALSE,eval = global_var}
+str(computers)
+```
+
+Let us first split the data into train and test. We will use 80% of the data as train and remaining as test.
+
+```{r train-test computer,warning=FALSE,message=FALSE,eval = global_var}
+
+no_of_points <- dim(computers)[1]
+train_length <- as.integer(no_of_points * 0.8)
+
+train_computers <- computers[1:train_length,]
+test_computers <- computers[(train_length+1):no_of_points,]
+
+
+```
+
+K-means in not suitable for factor variables as the sample space for factor variables is discrete. A Euclidean distance function on such a space isn't really meaningful. Hence we will delete the factor variables in our dataset. Here we will also delete price variable as we want the algorithm to do price segmentation based on the features.
+
+Here we keep the original train_computers and test_computers as we will use price variable from this dataset to overlay as heatmap and generate some insights.
+
+```{r pre-processing data computer,warning=FALSE,message=FALSE,eval = global_var}
+train_computers_df <- train_computers %>% dplyr::select(-c(price,X,cd,multi,premium,trend))
+test_computers_df <- test_computers %>% dplyr::select(-c(price,X,cd,multi,premium,trend))
+```
+
+Let us try to understand HVT function first. 
+
+```{r HVT function,echo = TRUE, eval= FALSE}
+HVT(dataset, nclust, depth, quant.err, projection.scale, normalize = T, distance_metric = c("Euclidean","Manhattan"), error_metric = c("mean","max"))
+
+```
+
+Here I have explained all the parameters in detail
+
+* __`dataset`__ - Dataframe. A dataframe with numeric columns 
+* __`nlcust`__  - Numeric. An integer indicating the number of clusters per hierarchy (level)
+* __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...). 
+* __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown into further clusters only if thje quantization error of the cell is above quantization error threshold.
+* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough.
+* __`normalize`__	- A logical value indicating if the columns in your dataset should be normalized. Default value is TRUE. The algorithm supports Z-score normalization.
+* __`distance_metric`__	- The distance metric can be `Euclidean` or `Manhattan`. Euclidean is selected by default. The distance metric is used to calculate the distance between a `n` dimensional point and centroid. The user can also pass a custom function to calculate the distacne.
+* __`error_metric`__ - The error metric can be `mean` or `max`. mean is selected by default. The `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cluster. The `max` will return the max of `m` values. Moreover, the user can also pass a custom function to calculate the error metric.
+
+
+First we will perform hierarchical clustering at level 1 by setting the parameter depth to 1. Here level 1 signifies no hierarchy. Let's keep the no of clusters as 5.
+
+
+```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
+
+set.seed(420)
+
+hvt.results <- list()
+
+hvt.results <- muHVT::HVT(train_computers_df,nclust = 5,depth = 1,quant.err = 0.1,projection.scale = 10,normalize = T)
+
+```
+
+Now let's try to understand plotHVT function. Here I have explained all the parameters in detail
+
+```{r plotHVT function,echo = TRUE, eval= FALSE}
+plotHVT(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3, title = NULL)
+```
+
+* __`hvt.results`__ -  A list containing the ouput of HVT function which has the details of the tessellations to be plotted.
+* __`line.width`__	- A vector indicating the line widths of the tessellation boundaries for each level.
+* __`color.vec`__	- A vector indicating the colors of the boundaries of the tessellations at each level.
+* __`pch1`__	- Symbol type of the centroids of the tessellations (parent levels). Refer points. (default = 19)
+* __`centroid.size`__	- Size of centroids of first level tessellations. (default = 3)
+* __`title`__	- Set a title for the plot. (default = NULL)
+
+Let's plot the voronoi tesselation
+
+```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 clusters in the dataset ’computers’',eval = global_var}
+
+# Voronoi tesselation plot for level one
+
+plotHVT(hvt.results,line.width = c(1.5), color.vec = c("#326273"))
+
+```
+
+As per the manual, __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data
+
+__`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, quantization error, centroids for each cluster at every level.
+
+Now let us understand what each column in the summary table means
+
+* __`Segment Level`__ - Level of the cell. In this case, we have done the clustering for depth 1. Hence Segment Level is 1
+* __`Segment Parent`__ - Parent Segment of the cell.
+* __`Segment Child`__ - The children of a particular cell. In this case, first level has 3 clusters. Hence, we can see Segment Child 1,2,3,4,5.
+* __`n`__ - No of points in each cell
+* __`Quant.Error`__ - Quantization error for each cell.
+
+All the columns after this will contains centroids for each cluster for all the variables.
+
+
+```{r summary level one computers,warning=FALSE,eval = global_var}
+
+hvt.results[[3]][['summary']]
+
+```
+
+Let's have a look at `Quant.Error` variable in the above table. It seems that none of the cells have hit the quantization threshold error. Hence we can go one more level deeper and try to compress the data further.
+
+We will now overlay the 'Quant.Error' variable as heatmap over the voronoi tesselation plot to visualize the quantization error better.
+
+Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
+
+```{r hvtHmap function,echo = TRUE, eval= FALSE}
+hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
+```
+
+* __`hvt.results`__ - A list of hvt.results obtained from the HVT function.
+* __`dataset`__	- A dataframe containing the variables that you want to overlay as heatmap. The user can pass an external dataset or the dataset that was used to build the hierarchical clustering. The dataset should have same number of points as the dataset used to cluster in the HVT function
+* __`child.level`__	- A number indicating the level for which the heat map is to be plotted.
+* __`hmap.cols`__	- The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'quant_error'`. Similary to plot the no of points in each cell as heatmap, pass `'no_of_points'` as a parameter
+* __`color.vec`__	- A color vector such that length(color.vec) = child.level (default = NULL)
+* __`line.width`__ - A line width vector such that length(line.width) = child.level. (default = NULL)
+* __`palette.color`__ - A number indicating the heat map color palette. 1 - rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 6 - seas color. (default = 6)
+
+
+Now let's plot the quantization error for each cell at level one as heatmap.
+
+```{r hmp level one quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+
+hvtHmap(hvt.results, train_computers, child.level = 1,hmap.cols = "quant_error", show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
+
+```
+
+Now let's go one level deeper and perform hierarchical vector quantization.
+
+```{r level two computers,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+# We will consider only latitude and longitude data. 
+set.seed(420)
+
+hvt.results2 <- list()
+
+# depth=2 is used for level2 in the hierarchy
+
+hvt.results2 <- muHVT::HVT(train_computers_df,nclust = 5,depth = 2,quant.err = 0.1,projection.scale = 10,normalize = T)
+
+```
+
+Let's plot the voronoi tesselation for both the levels.
+
+```{r plot level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for level 2 shown for the 5 clusters in the dataset ’computers’',eval = global_var}
+
+# Voronoi tesselation plot for level two
+
+plotHVT(hvt.results2, line.width = c(1.5, 0.8), color.vec = c("#326273","#ADB2D3"))
+
+```
+
+In the table below, Segment Level signifies the depth.
+
+Level 1 has 5 clusters
+
+Level 2 has 25 clusters.i.e. each cluster in level1 is divided into 5 clusters
+
+Let's analyze the summary table again for `Quant.Error` and see if any of the cells in the 2nd level have quantization error below quantization error threshold.
+
+```{r summary level two computers,warning=FALSE,eval = global_var}
+
+hvt.results2[[3]][['summary']]
+
+```
+
+As it can be seen in the table above, none of the cells in the 2nd level have quantization error below threshold. Therefore, we can go one more level deeper and try to compress the data further.
+
+We will look at the heatmap for quantization error for level 2.
+
+```{r hmp level two quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+
+hvtHmap(hvt.results2, train_computers, child.level = 2,hmap.cols = "quant_error", line.width = c(0.8,0.2),color.vec = c("#326273","#ADB2D3"),palette.color = 6,show.points=TRUE)
+
+```
+
+As the quantization error criteria is not met, let's build hierarchical vector quantization for level 3.
+
+```{r level three computers,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+set.seed(420)
+
+hvt.results3 <- list()
+
+# depth=3 is used for level3 in the hierarchy
+
+hvt.results3 <- muHVT::HVT(train_computers_df,nclust = 5,depth = 3,quant.err = 0.1,projection.scale = 10,normalize = T)
+
+```
+
+Let's plot the voronoi tesselation for all 3 levels.
+
+```{r plot level three computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation for level 3 shown for the 5 clusters in the dataset ’computers’',eval = global_var}
+
+# Voronoi tesselation plot for level three
+
+plotHVT(hvt.results3,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
+
+```
+
+Each of the 25 cells in level 2 will break down into 5 cells each in level 3. Hence, as it can be seen below, level 3 has 125 cells.
+
+```{r summary level two computers,warning=FALSE,eval = global_var}
+
+hvt.results2[[3]][['summary']]
+
+```
+
+```{r hmp level three quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 6: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+
+hvtHmap(hvt.results2, train_computers, child.level = 3,hmap.cols = "quant_error", line.width = c(0.8,0.2),color.vec = c("#326273","#ADB2D3"),palette.color = 6,show.points=TRUE)
+
+```
+
+
+As it can be seen from the heatmap/table summary above that the quantization error for most of the cells in level 3 fall below quantization threshold. Hence we were succesfully able to compress `80%` of the data.
+
+Now we will try to get more insights from the clusters by overlaying heatmap for variable 'price' at different levels.
+
+Let's do it for level one
+
+####  Heatmap
+
+In the plot below, a heatmap for variable 'price' is overlayed on level one tesselation plot.We calculate the mean price for each cluster and represent it as heatmap. 
+
+The heatmap for 'price' variable for different clusters can be seen in the plot below.It can be seen that we have been able to segment computers in 3 price ranges - (i) 2000-2100 (ii) 2200 - 2500 (iii) 2500 and above
+
+```{r hmp level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for variable ’price’ in the ’computers’ dataset',eval = global_var}
+
+
+hvtHmap(hvt.results, train_computers, child.level = 1,hmap.cols = "price", show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
+
+```
+
+
+Now we will go one level deeper and overlay heatmap for 'price' at level 2. This should give us better insight about the price distribution for different clusters
+
+In the plot below, we have overlayed heatmap for variable 'price' on level 2. 
+
+```{r hmp level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for the variable ’price’ in the ’computer’ dataset',eval = global_var}
+
+
+hvtHmap(hvt.results2, computers, child.level = 2, hmap.cols = "price",line.width = c(0.8,0.2),color.vec = c("#326273","#ADB2D3"),palette.color = 6,show.points=TRUE)
+
+```
+
+
+### Test
+
+Now once we have built the model, let us try to predict using our test dataset which cluster and which level each point belongs to.
+
+Let us see predictHVT function. 
+
+```{r predictHVT function,echo = TRUE, eval= FALSE}
+predictHVT(data,hvt.results,hmap.cols = NULL,child.level = 1,...)
+```
+
+Here I will try to explain the important parameters
+
+* __`data`__ - A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from this dataset can also be used to overlay as heatmap.
+* __`hvt.results`__ - A list of hvt.results obtained from HVT function while clustering on train data
+* __`hmap.cols`__ - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted.(Default = NULL). A heatmap won't be plotted if NULL is passed
+* __`child.level`__ -A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
+* __`...`__ - color.vec and line.width can be passed from here
+
+```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
+
+set.seed(420)
+
+predictions <- muHVT::predictHVT(test_computers,hvt.results3,hmap.cols = "price",child.level = 3)
+
+```
+
+Let's see what cell and which level do each point belongs to. Here I will print first 10 points.
+
+```{r predictHVT pred computers,warning=FALSE,eval = global_var}
+
+predictions$predictions[1:10,]
+
+```
+
+We can see the predictions for all the points in the table above. The variable `cluster_path` shows us the level and the cell that each point is mapped to.
+
+
+###Example Usage 2
 
 In this section, we will work with Uber dataset, which contains data generated by Uber for the city of New York. Uber Technologies Inc. is a peer-to-peer ride sharing platform. The data is freely available on [Kaggle](https://www.kaggle.com/fivethirtyeight/uber-pickups-in-new-york-city/data). The dataset contains raw data on Uber pickups with information such as the date, time of the trip along with longitude-latitude information. In this case, we are taking data for the month of April 2014.
 
@@ -162,71 +429,82 @@ In this section, we will work with Uber dataset, which contains data generated b
 * Bronx
 * Staten Island. 
 
-In this example, we will try to identify these boroughs, areas within these boroughs by applying hierarchical k-means clustering and visualize the clusters by constructing hierarchical voronoi tesselation.
+In this example, we will try to identify these boroughs, areas within these boroughs by applying hierarchical vector quantization using k-means clustering and visualize the cells by constructing hierarchical voronoi tesselation.
 
-```{r load data,warning=FALSE,message=FALSE}
+```{r load data,warning=FALSE,message=FALSE,eval = global_var}
 
 set.seed(420)
 
 # Load data from csv files
-apr14 <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-apr14.csv")
+uber_data <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/uber-tlc-foil-response/master/uber-trip-data/uber-raw-data-apr14.csv")
 
-
-# Bind the data
-uber_data <- apr14
 
 ```
 
-Let's get a summary of the data
+Let's get a quick-peek at the data.
 
-```{r data summary,warning=FALSE,message=FALSE}
+```{r uber quick-peek,warning=FALSE,message=FALSE,eval = global_var}
+head(uber_data)
+```
+
+
+Let's get a summary and structure of the data
+
+```{r uber summary,warning=FALSE,message=FALSE,eval = global_var}
 summary(uber_data)
 ```
-In this example, we will consider only longitude and latitude data. The number of clusters will be 5- the number of boroughs in NYC.
+
+```{r uber structure,warning=FALSE,message=FALSE,eval = global_var}
+str(uber_data)
+```
+
+
+We are dealing with spatial data in this example. Hence we will consider latitude and longitude vraibles from the dataset above for hierarchical vector quantization. The number of clusters will be 5- the number of boroughs in NYC.
 
 First we will perform hierarchical clustering at level 1 by setting the parameter depth to 1. Here level 1 signifies no hierarchy.
 
-```{r level one,warning=FALSE,message=FALSE,results='asis'}
+```{r level one,warning=FALSE,message=FALSE,results='asis',eval = global_var}
 
-# Subsetting latitude and longitude data. 
+
 set.seed(420)
 
+# Subsetting latitude and longitude data. 
 uber_data <- uber_data[,2:3]
 
-hvt.results <- list()
+hvt.uber_results <- list()
 
-# We know beforehand that NewYork has five boroughs. Hence no of cluster is 5. 
+# We know beforehand that New York has five boroughs. Hence no of cluster is 5. 
 # depth=1 is used for level1 in the hierarchy
 
-hvt.results <- muHVT::HVT(uber_data,nclust = 5,depth = 1,quant.err = 0.001,projection.scale = 10,normalize = F)
+hvt.uber_results <- muHVT::HVT(uber_data,nclust = 5,depth = 1,quant.err = 0.001,projection.scale = 10,normalize = T)
 
 ```
 
 Let's plot the voronoi tesselation
 
-```{r plot level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 clusters in the dataset ’uber’'}
+```{r plot level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 clusters in the dataset ’uber’',eval = global_var}
 
 # Voronoi tesselation plot for level one
 
-plotHVT(hvt.results,line.width = c(1.5), color.vec = c("#326273"))
+plotHVT(hvt.uber_results,line.width = c(1.5), color.vec = c("#326273"))
 
 ```
 
-As per the manual, **hvt.results[[3]]** gives us detailed information about the hierarchical vector quantized data
+As per the manual, `hvt.results[[3]]` gives us detailed information about the hierarchical vector quantized data
 
-**hvt.results[[3]][['summary']]** gives a nice tabular data containing no of points, quantization error, centroids for each cluster at every level
+`hvt.results[[3]][['summary']]` gives a nice tabular data containing no of points, quantization error, centroids for each cluster at every level
 
-```{r summary level one,warning=FALSE}
+```{r summary level one,warning=FALSE,eval = global_var}
 
-hvt.results[[3]][['summary']]
+hvt.uber_results[[3]][['summary']]
 
 ```
 
 Now that we have obtained the five clusters, let's look at their centroids
 
-```{r centroids level one,warning=FALSE,eval=FALSE}
+```{r centroids level one,warning=FALSE,eval = global_var}
 
-hvt.results[[3]][['summary']][,6:7]
+hvt.uber_results[[3]][['summary']][,6:7]
 
 ```
 
@@ -244,26 +522,26 @@ As it can be seen, we were successfully able to identify 4 boroughs out of 5.
 
 Now let's go one level deeper and perform hierarchical clustering.
 
-```{r level two,warning=FALSE,message=FALSE,results="hide"}
+```{r level two,warning=FALSE,message=FALSE,results="hide",eval = global_var}
 
 # We will consider only latitude and longitude data. 
 set.seed(420)
 
-hvt.results2 <- list()
+hvt.uber_results2 <- list()
 
 # depth=2 is used for level2 in the hierarchy
 
-hvt.results2 <- muHVT::HVT(uber_data,nclust = 5,depth = 2,quant.err = 0.001,projection.scale = 10,normalize = F)
+hvt.uber_results2 <- muHVT::HVT(uber_data,nclust = 5,depth = 2,quant.err = 0.001,projection.scale = 10,normalize = F)
 
 ```
 
 #### Let's plot the voronoi tesselation for both the levels.
 
-```{r plot level two,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for level 2 shown for the 5 clusters in the dataset ’uber’'}
+```{r plot level two,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for level 2 shown for the 5 clusters in the dataset ’uber’',eval = global_var}
 
 # Voronoi tesselation plot for level two
 
-plotHVT(hvt.results2, line.width = c(1.5, 0.8), color.vec = c("#326273","#ADB2D3"))
+plotHVT(hvt.uber_results2, line.width = c(1.5, 0.8), color.vec = c("#326273","#ADB2D3"))
 
 ```
 
@@ -274,17 +552,17 @@ Level 1 has 5 clusters
 Level 2 has 25 clusters.i.e. each cluster in level1 is divided into 5 clusters
 
 
-```{r summary level two,warning=FALSE}
+```{r summary level two,warning=FALSE,eval = global_var}
 
-hvt.results2[[3]][['summary']]
+hvt.uber_results2[[3]][['summary']]
 
 ```
 
 Let's get the centroids for level two.
 
-```{r centroids level two,warning=FALSE}
+```{r centroids level two,warning=FALSE,eval = global_var}
 
-hvt.results2[[3]][['summary']][6:30,c(1,2,3,6,7)]
+hvt.uber_results2[[3]][['summary']][6:30,c(1,2,3,6,7)]
 
 ```
 
@@ -308,26 +586,26 @@ The reverse geo-code mapping can be checked [here](https://www.latlong.net/Show-
 
 Similary we can repeat the process for level 3.
 
-```{r level three,warning=FALSE,message=FALSE,results="hide"}
+```{r level three,warning=FALSE,message=FALSE,results="hide",eval = global_var}
 
 # We will consider only latitude and longitude data. 
 set.seed(420)
 
-hvt.results3 <- list()
+hvt.uber_results3 <- list()
 
-# depth=2 is used for level2 in the hierarchy
+# depth=3 is used for level2 in the hierarchy
 
-hvt.results3 <- muHVT::HVT(uber_data,nclust = 5,depth = 3,quant.err = 0.001,projection.scale = 10,normalize = F)
+hvt.uber_results3 <- muHVT::HVT(uber_data,nclust = 5,depth = 3,quant.err = 0.001,projection.scale = 10,normalize = F)
 
 ```
 
 Let's plot the voronoi tesselation for all 3 levels.
 
-```{r plot level three,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for level 3 shown for the 5 clusters in the dataset ’uber’'}
+```{r plot level three,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for level 3 shown for the 5 clusters in the dataset ’uber’',eval = global_var}
 
 # Voronoi tesselation plot for level three
 
-plotHVT(hvt.results3,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
+plotHVT(hvt.uber_results3,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
 
 ```
 
@@ -335,7 +613,7 @@ Now we will try to get more insights from the clusters by overlaying heatmap for
 
 Let's do it for level one
 
-```{r hmp first level,warning=FALSE,results='hide',message=FALSE,eval=T}
+```{r hmp first level,warning=FALSE,results='hide',message=FALSE,eval = global_var}
 set.seed(420)
 library(lubridate)
 
@@ -351,61 +629,181 @@ data14$Hour <- factor(hour(data14$Date.Time))
 data14$Minute <- factor(minute(data14$Date.Time))
 data14$Second <- factor(second(data14$Date.Time))
 
-d_u <- data14[,c(2,3,9)]
+d_u <- data14[,c("Lat","Lon","Hour")]
 d_u <- purrr::map_df(d_u,as.numeric)
+d_u <- data.frame(d_u)
 
-hvt.results <- muHVT::HVT(d_u,nclust = 5,depth = 1,quant.err = 0.001,projection.scale = 10,normalize = T)
 ```
 
 
 ####  Heatmap
 
-In the plot below, a heatmap for variable 'hour' is overlayed on level one tesselation plot.We calculate the peak hour for each region and represent it as heatmap. For e.g it seems that Queen region (blue cluster) sees the most number of pick ups between **8AM -8:30AM**.
+In the plot below, a heatmap for variable 'hour' is overlayed on level one tesselation plot.We calculate the peak hour for each region and represent it as heatmap. For e.g it seems that Queen region (blue cluster) sees the most number of pick ups between **12PM - 14PM**.
 
-```{r hmp level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for variable ’hour’ in the ’uber’ dataset'}
+```{r hmp level one,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation with the heat map overlaid for variable ’hour’ in the ’uber’ dataset',eval = global_var}
 
-
-gghvtHmap(hvt.results, d_u, child.level = 1,hmap.cols =c(3), show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
+hvtHmap(hvt.uber_results, d_u, child.level = 1,hmap.cols =3, show.points=TRUE,line.width = c(0.2),color.vec = c("#326273"),palette.color = 6)
 
 ```
 
 
-Now we will go one level deeper and do hierarchical k-means clustering for level 2. This should give us better insight about the peak hour for different neighbourhoods in a region.
 
-```{r hmp third level,warning=FALSE,results='hide',message=FALSE,,eval=T}
-set.seed(420)
-hvt.results <- muHVT::HVT(d_u,nclust = 5,depth = 2,quant.err = 0.001,projection.scale = 10,normalize = T)
-```
 
 In the plot below, we have overlayed heatmap for variable 'hour' on level 2. 
 
-The level 2 heatmap helps us visualize the peak hour distribution at a more granular level. In the Queen region, we can see that the peak hour for neighbourhoods varies from **3AM - 11AM**. We can also see that some of the neighbourhoods in other region have similar peak hour as the region level.
+The level 2 heatmap helps us visualize the peak hour distribution at a more granular level. In the Queen region, we can see that the peak hour for neighbourhoods varies from **10AM - 15PM**. We can also see that some of the neighbourhoods in other region have similar peak hour as the region level.
 
-```{r hmp level three,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for the variable ’hour’ in the ’uber’ dataset'}
+```{r hmp level three,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation with the heat map overlaid for the variable ’hour’ in the ’uber’ dataset',eval = global_var}
 
 
-gghvtHmap(hvt.results, d_u, child.level = 2, hmap.cols = c(3),line.width = c(0.8,0.2),color.vec = c("#326273","#ADB2D3"),palette.color = 6,show.points=TRUE)
+hvtHmap(hvt.uber_results2, d_u, child.level = 2, hmap.cols = 3,line.width = c(0.8,0.2),color.vec = c("#326273","#ADB2D3"),palette.color = 6,show.points=TRUE)
 
 ```
-# Jensen-Shannon-Bregman Distance
 
-The Jensen–Shannon divergence is a method of measuring the similarity between two probability distributions. It is also known as information radius (IRad) or total divergence to the average. The square root of the Jensen–Shannon divergence is a metric often referred to as Jensen-Shannon distance.
+### Example Usage 3
 
-Jensen-Shannon-Bregman distance $D_{x,y}$ between vectors $x$ and $y$ is defined as: 
-$$D_{x,y} = \sqrt{JD_{x, y}}$$ 
-where,
-1. $x$, $y$: probability distributions (i.e., $\sum x$ = $\sum y$ = 1)
-2. $JD_{x, y}$ is Jensen-Shannon-Bregman divergence, a symmetrized Bregman Divergence between non-negative vectors $x$ and $y$.
-$$JD_{x, y} = 0.5 * (ID_{x, m} + ID_{y, m})$$ 
-where,
-$$m = 0.5 * (x + y)$$
-I-divergence is defined as:
-$$ID_{x, y} = \sum_{i=1}^N x_i \log (x_i / y_i) - \sum_{i=1}^N x_i + \sum_{i=1}^N y_i$$
-The limitation with this measure is that the components of $x$ and $y$ vectors should be positive and non-zero.
+In this section, we will see how we can use the package to visualize mutlidimensional data by projecting them to two dimensions using Sammon's projection.
+
+
+#### Torus (Donut)
+
+First of all, let us see how to generate data for torus. We are using an amazing library `geozoo` for this purpose. Geo Zoo stands for Geometric Zoo. It is a compilation of geometric objects ranging from three dimensions all the way to the 10 dimension. Geo Zoo contains regular or well-known object, eg cube and sphere, and some abstract objects, eg Boy's surface, Torus and Hyper-Torus. 
+
+Here will generate a 3D torus with 1000 points.
+
+```{r torus generate,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+library(geozoo)
+library(plotly)
+
+# We will consider only latitude and longitude data. 
+set.seed(420)
+
+# Here p reprensents dimension of object
+# n reperesents number of points
+
+torus <- geozoo::torus(p = 3,n = 1000)
+torus_df <- data.frame(torus$points)
+colnames(torus_df) <- c("x","y","z")
+
+plot_torus <- plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
+print(plot_torus)
+
+```
+
+Now let's do some EDA on the data. First of all, we will see how the data looks like
+
+```{r torus head, warning=FALSE, eval = global_var}
+head(torus_df)
+```
+
+Now let's have a look at summary and structure of the data.
+
+```{r torus structure, warning=FALSE, eval = global_var}
+str(torus_df)
+```
+
+```{r torus summary, warning=FALSE,eval = global_var}
+summary(torus_df)
+```
+
+
+Now let's try to visualize the object in 3D Space.
+
+```{r torus plot,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+plot_torus <- plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
+print(plot_torus)
+
+```
+
+![](../torus.png)
+
+Now let's try to use the package and project the above 3D geographic object in 2D Space. We will start with number of clusters as 100.
+
+```{r torus hvt,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+# We will consider only latitude and longitude data. 
+set.seed(420)
+
+hvt.torus <- muHVT::HVT(torus_df,nclust = 100,depth = 1,quant.err = 0.1,projection.scale = 10,normalize = T)
+
+plotHVT(hvt.torus,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
+
+```
+
+Now let's repeat the same process with 3D Sphere
+
+#### Sphere
+
+Here also, we will generate 1000 points in 3D space to form a sphere.
+
+```{r sphere plot,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+library(geozoo)
+library(plotly)
+
+# We will consider only latitude and longitude data. 
+set.seed(420)
+
+sphere <- geozoo::sphere.hollow()
+sphere_df <- data.frame(sphere$points)
+colnames(sphere_df) <- c("x","y","z")
+
+```
+
+Let's get a quick-peek of the data
+
+```{r sphere head, warning=FALSE, eval = global_var}
+head(sphere_df)
+```
+
+Now let's have a look at summary and structure of the data.
+
+```{r sphere structure, warning=FALSE, eval = global_var}
+str(sphere_df)
+```
+
+```{r sphere summary, warning=FALSE,eval = global_var}
+summary(sphere_df)
+```
+
+
+Now let's try to visualize the object in 3D Space.
+
+```{r sphere plot,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+plot_torus <- plot_ly(sphere_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
+print(plot_torus)
+
+```
+
+![](../sphere.png)
+
+
+
+Now let's try to use the package and project the above 3D geographic object in 2D Space
+
+```{r sphere hvt,warning=FALSE,message=FALSE,results="hide",eval = global_var}
+
+set.seed(420)
+
+hvt.sphere <- muHVT::HVT(sphere_df,nclust = 100,depth = 1,quant.err = 0.1,projection.scale = 10,normalize = T)
+
+plotHVT(hvt.sphere,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
+
+
+```
 
 ## Applications 
 
-The Jensen–Shannon divergence can be applied in bioinformatics and genome comparison in protein surface comparison, in the social sciences, in the quantitative study of history, and in machine learning
+1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers. 
+
+2. Market Segmentation - The package can be helpful in market segmentation where we have to cluster micro and macro segments. The method used in this package can do both kinds of segmentation in one go.
+
+3. Anomaly detection - This method can help us categorize system behaviour over time and help us find anomaly when there are changes in the system. For e.g. Finding fraudulent claims in healthcare insurance.
+
+4. The package can help us understand the underlying structure of the data. Suppose that we want to analyze a curved surface such as sphere or vase, we can approximate it by a lot of small low-order polygons in the form of tesselations
+
+5. In biology, Voronoi diagrams are used to model a number of different biological structures, including cells and bone microarchitecture.
 
 #References
 
@@ -414,8 +812,6 @@ The Jensen–Shannon divergence can be applied in bioinformatics and genome comp
 
 2. Hierarchical k-means : http://gecco.org.chemie.uni-frankfurt.de/hkmeans/H-k-means.pdf
 
-3. Jensen-Shannon-Bregman Divergence : http://machinelearning.wustl.edu/mlpapers/paper_files/BanerjeeMDG05.pdf
+3. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
 
-4. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
-
-5. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
+4. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation

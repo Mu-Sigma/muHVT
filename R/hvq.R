@@ -25,6 +25,8 @@
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
+#' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @return \item{clusters}{ List. A list showing each ID assigned to a cluster.
 #' } \item{nodes.clust}{ List. A list corresponding to nodes' details. }
 #' \item{idnodes}{ List. A list of ID and segments similar to
@@ -38,14 +40,14 @@
 #' @examples
 #' 
 #' data("iris",package="datasets")
-#' iris <- iris[,1:2]
-#' hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3)
-#' 
+#' iris <- data.frame(iris[,1:2])
+#' hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3,
+#' distance_metric="Euclidean",error_metric="mean")
 #' 
 #' 
 #' @export hvq
 hvq <-
-  function (x, nclust = 3, depth = 3, quant.err = 10, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen")) {
+  function (x, nclust = 3, depth = 3, quant.err = 10, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("Euclidean","Manhattan"),error_metric=c("mean","max")) {
     
     rescl <- list()
     resid <- list()
@@ -58,7 +60,7 @@ hvq <-
     quantinit <- rep(F, nclust)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
-    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust)
+    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
     # flog.info("Level 1 cluster memberships are calculated")
     #datapoints grouped into clusters
     rescl[[1]] <- outkinit$val

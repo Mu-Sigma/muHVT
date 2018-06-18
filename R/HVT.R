@@ -25,6 +25,8 @@
 #' the tesselations so as to visualize the sub-tesselations well enough.
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
+#' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @return A list that contains the hierarchical tesselation information. This
 #' list has to be given as input argument to plot the tessellations.
 #' \item{[[1]] }{List. Information about the tesselation co-ordinates - level
@@ -36,26 +38,12 @@
 #' @keywords hplot
 #' @examples
 #' 
-#' data("iris",package="datasets")
-#' iris <- iris[,1:2]
-#' hvt.results <- list()
-#' hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
-#' projection.scale = 10, normalize = TRUE)
-#' 
-#' plotHVT(hvt.results, line.width = c(3), color.vec = c("blue"))
-#' 
-#' hvt.results <- list()
-#' hvt.results <- HVT(iris, nclust = 6, depth = 3, quant.err = 0.2, 
-#' projection.scale = 10, normalize = TRUE)
-#' 
-#' 
-#' plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
-#' 
 #' 
 #' @export HVT
 HVT <-
-function (dataset, nclust, depth, quant.err, projection.scale, normalize) {
-    
+function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,distance_metric = c("Euclidean","Manhattan"),
+          error_metric = c("mean","max")) {
+
     requireNamespace("MASS")         #sammon function
     requireNamespace("deldir")       #deldir function 
     requireNamespace("Hmisc")        #ceil function
@@ -67,6 +55,10 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize) {
     requireNamespace("splancs")      #csr function 
     requireNamespace("sp")           #point.in.polygon function
     requireNamespace("conf.design")  #factorize function
+    
+    options(warn = -1)
+    
+    dataset <- as.data.frame(dataset)
     
     if(normalize){
       scaledata <- scale(dataset, scale = T, center = T)
@@ -238,7 +230,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize) {
                                                    cur_polygon)
           
           #polygon is sufficient to calculate next level tessellations inside this
-          if(all(verify_dirsgs != "-1")){
+          if(all(verify_dirsgs[,1:8] != "-1")){
             deldat2[[tileNo]]$dirsgs <- verify_dirsgs
             # flog.info("Tessellations for level %s is calculated", i)
           }else{

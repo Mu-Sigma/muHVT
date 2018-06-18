@@ -31,21 +31,6 @@ Plot the hierarchical tesselations.
 \examples{
 
 
-data("iris",package="datasets")
-iris <- iris[,1:2]
-hvt.results <- list()
-hvt.results <- HVT(iris, nclust = 6, depth = 1, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-plotHVT(hvt.results, line.width = c(3), color.vec = c("blue"))
-
-hvt.results <- list()
-hvt.results <- HVT(iris, nclust = 6, depth = 3, quant.err = 0.2, 
-projection.scale = 10, normalize = TRUE)
-
-
-plotHVT(hvt.results, line.width = c(4,3), color.vec = c("red", "green"))
-
 
 }
 \seealso{
