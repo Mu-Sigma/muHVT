@@ -202,9 +202,17 @@ hvq <-
       names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
                        "n", "Quant.Error", colnames(x))
     }
+    
+    ## Calculate compress percentage
+    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(No_of_cells = sum(!is.na(Quant.Error)), No_of_Cells_below_Quantization_error = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% mutate(Percent_of_cells_below_Quantization_Error_Threshold = (No_of_Cells_below_Quantization_error/No_of_cells)*100)
+    
+    if(any(is.nan(compression_summary$Percent_of_cells_below_Quantization_Error_Threshold))){
+      compression_summary <- compression_summary[complete.cases(compression_summary),]
+    }
+    
     ridnames <- resid
     rclnames <- rescl
     return(list(clusters = initclust, nodes.clust = rescl, idnodes = resid, 
-                error.quant = resm, plt.clust = resplt, summary = ztab))
+                error.quant = resm, plt.clust = resplt, summary = ztab, compression_summary = compression_summary))
     
   }

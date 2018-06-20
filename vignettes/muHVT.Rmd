@@ -46,14 +46,13 @@ This package additionally provides functions for computing the
 Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
 
-#Clustering
+#Vector Quantization
 
 
-This package does clustering using the following algorithm- 
+This package does vector quantization using the following algorithm- 
 
 1. Hierarchical Vector Quantization using k-means clustering
 
-Now let us understand hierarchical k-means
 
 ##Hierarchical VQ using k-means clustering
 
@@ -63,25 +62,48 @@ Now let us understand hierarchical k-means
 1. *k* clusters are formed by assigning each data point to its closest cluster mean. The algorithm uses the Euclidean distance.
 1. Virtual means for each cluster are calculated by using all datapoints contained in a cluster.
 
-
 The second and third step is iterated until a predefined number of iteration is reached or the clusters converge. The runtime for the algorithm is O(n).
 
 ### Hierarchical VQ using k-means clustering
 
 The algorithm divides the dataset recursively into clusters. The $k-means$ algorithm is used by setting $k$ to say, two in order to divide the dataset into two subsets.Then, the two subsets are divided again into two subsets by setting $k$ to two to result in a total of four subsets. The recursion terminates when the clusters contain single data points or a stop criterion is reached. In this case, the stop criterion is when the cluster error exceeds the quantization threshold.
 
-The quantization error is defined as follows :
+Following are the steps for the method :-
 
-$$M = \frac{1}{n}\sum_{t=1}^m||A-F_t||_{p}$$ 
+1. Select k(number of clusters), depth and quantization error threshold
+1. Perform k-means clustering on the input dataset
+1. Calculate quantization error for each of the k clusters
+1. Compare the quantization error for each cluster to quantization threshold error
+1. Repeat steps 2 to 4 for each of the k clusters whose quantization error is above threshold until stop criterion is reached. The stop criterion is when the quantization error of a cluster reaches below quantization error threshold or there is a single point in the cluster or we have reached the user specified depth.
 
-$$M = \max_{t=1}^m||A-F_t||_{p}$$ 
+The quantization error for a cell is defined as follows :
+
+$$QE  = \frac{1}{m}\sum_{t=1}^m||A-F_t||_{p}$$ 
 
 
 where $A$ is the centroid and $F_t$ is the data point in the cluster. $m$ is the number of points in the cluster.
 
+### Quantization error
+
+Let's try to understand quantization error with an example
+
+![Quantization_Error](../quant_explainer.png)
+
+An example of 2dimensiona VQ is shown above
+
+In the above image, we can see that there are 5 clusters/cells and each clusters contain certain number of points. The centroid for each cluster is shown in blue. We can also call the centroids as codevectors as they represent all the points in that cluster. The set of all codevectors is called a codebook.
+
+Now we want to calculate quantization error for each cluster. For the sake of simplicity, let's consider only cluster for calculating quantization error.
+
+For each point, we calculate the distance between the point and the centroid.
+
+$$ d = ||A - F_t||_{p} $$
+
 In the above equation, p = 1 means Manhattan distance whereas p = 2 means Euclidean distance.In the package, the Euclidean distance is chosen by default. The user can pass either "Euclidean" or "Manhattan" or a custom function to calculate the distance between two points in n dimensions.
 
-Now, after calculating the distance, we have two inbuilt approaches to calculate the error metric i.e. mean, max. The "mean" will take mean of m values where each value is a distance between a point and centroid of the cluster. The "max" will return the max of m values. Moreover, the user can also pass a custom function to calculate the error metric.
+$$ QE  = \frac{1}{m}\sum_{t=1}^m||A-F_t||_{p} $$ 
+
+Now, we take the mean of the distance of all m points. This gives us the average distance of a point in the cell from the centroid which we refer to as Quantization error. If the quantization error is higher than the given threshold, this means that the centroid/codevector is not a good representation for the points in the cell. Now we can cluster this points further and repeat the steps above
 
 
 #Voronoi Tessellations
@@ -214,7 +236,7 @@ plotHVT(hvt.results,line.width = c(1.5), color.vec = c("#326273"))
 
 As per the manual, __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data
 
-__`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, quantization error, centroids for each cluster at every level.
+__`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, quantization error and the codebook.
 
 Now let us understand what each column in the summary table means
 
@@ -224,7 +246,7 @@ Now let us understand what each column in the summary table means
 * __`n`__ - No of points in each cell
 * __`Quant.Error`__ - Quantization error for each cell.
 
-All the columns after this will contains centroids for each cluster for all the variables.
+All the columns after this will contains centroids for each cluster for all the variables. They can be also called as 
 
 
 ```{r summary level one computers,warning=FALSE,eval = global_var}
@@ -335,9 +357,9 @@ plotHVT(hvt.results3,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D
 
 Each of the 25 cells in level 2 will break down into 5 cells each in level 3. Hence, as it can be seen below, level 3 has 125 cells.
 
-```{r summary level two computers,warning=FALSE,eval = global_var}
+```{r summary level three computers,warning=FALSE,eval = global_var}
 
-hvt.results2[[3]][['summary']]
+hvt.results3[[3]][['summary']]
 
 ```
 
@@ -779,17 +801,14 @@ print(plot_torus)
 ![](../sphere.png)
 
 
-
 Now let's try to use the package and project the above 3D geographic object in 2D Space
 
 ```{r sphere hvt,warning=FALSE,message=FALSE,results="hide",eval = global_var}
-
 set.seed(420)
 
 hvt.sphere <- muHVT::HVT(sphere_df,nclust = 100,depth = 1,quant.err = 0.1,projection.scale = 10,normalize = T)
 
 plotHVT(hvt.sphere,line.width = c(1.5,0.8,0.2),color.vec = c("#326273","#ADB2D3","#BFA89E"))
-
 
 ```
 
