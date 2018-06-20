@@ -47,7 +47,9 @@
 #' 
 #' @export hvq
 hvq <-
-  function (x, nclust = 3, depth = 3, quant.err = 10, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("Euclidean","Manhattan"),error_metric=c("mean","max")) {
+  function (x, nclust = 3, depth = 3, quant.err = 10, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
+    
+    requireNamespace("dplyr")
     
     rescl <- list()
     resid <- list()
@@ -60,7 +62,7 @@ hvq <-
     quantinit <- rep(F, nclust)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
-    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algo=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
+    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algorithm=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
     # flog.info("Level 1 cluster memberships are calculated")
     #datapoints grouped into clusters
     rescl[[1]] <- outkinit$val
@@ -99,7 +101,7 @@ hvq <-
           if (quantok[j] & NROW(initclust[[j]]) > nclust) {
             #k-means on the initclust to obtain the next level clustering(sub-clusters)
             outk <- getCentroids(initclust[[j]], kout = stats::kmeans(initclust[[j]], 
-                                                               nclust, iter.max = 100, algo = algorithm), nclust)
+                                                               nclust, iter.max = 100, algorithm = algorithm), nclust,distance_metric = distance_metric,error_metric = error_metric)
             #store the datapoints
             ijrescl[[j]] <- outk$val
             tet <- lapply(outk$val, row.names)

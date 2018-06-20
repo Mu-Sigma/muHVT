@@ -12,7 +12,7 @@ requireNamespace("dplyr")
 # The function should take dataframe having m rows and n dimension as input. It should return distance from the center for each row or should return 0 if nrow(df) < 1
 
 getCentroids <-
-  function (x, kout, nclust,distance_metric = c("Euclidean","Manhattan"),error_metric = c("mean","max")){
+  function (x, kout, nclust,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")){
     
     outl <- list()
     nout <- list()
@@ -44,14 +44,15 @@ getCentroids <-
     if(is.function(distance_metric)){
       function_to_calculate_distance_metric <- distance_metric
     }
-    else if(distance_metric=="Euclidean"){
-      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
-    }
-    else if(distance_metric=="Manhattan"){
+    else if(distance_metric=="L1_Norm"){
       function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
     }
+    else if(distance_metric=="L2_Norm"){
+      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+    }
+
     else{
-      stop('distance_metric must be Euclidean,Manhttan or custom function')
+      stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
     }
     
     if(is.function(error_metric)){

@@ -6,7 +6,7 @@
 \usage{
 hvq(x, nclust = 3, depth = 3, quant.err = 10,
   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
-  distance_metric = c("Euclidean", "Manhattan"), error_metric = c("mean",
+  distance_metric = c("L1_Norm", "L2_Norm"), error_metric = c("mean",
   "max"))
 }
 \arguments{

@@ -41,8 +41,7 @@
 #' 
 #' @export HVT
 HVT <-
-function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,distance_metric = c("Euclidean","Manhattan"),
-          error_metric = c("mean","max")) {
+function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
 
     requireNamespace("MASS")         #sammon function
     requireNamespace("deldir")       #deldir function 
@@ -78,7 +77,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
     }
     
     polinfo <- hvqdata <- list()
-    hvq_k <- hvq(scaledata, nclust = nclust, depth = depth, quant.err = quant.err)
+    hvq_k <- hvq(scaledata, nclust = nclust, depth = depth, quant.err = quant.err,distance_metric = distance_metric,error_metric = error_metric)
     # flog.info("HVQ output is ready")
     hvqoutput <- hvq_k$summary
     

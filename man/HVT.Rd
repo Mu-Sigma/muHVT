@@ -5,7 +5,7 @@
 \title{Constructing Hierarchical Voronoi Tessellations}
 \usage{
 HVT(dataset, nclust, depth, quant.err, projection.scale, normalize = T,
-  distance_metric = c("Euclidean", "Manhattan"), error_metric = c("mean",
+  distance_metric = c("L1_Norm", "L2_Norm"), error_metric = c("mean",
   "max"))
 }
 \arguments{
