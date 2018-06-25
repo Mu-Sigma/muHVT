@@ -4,7 +4,7 @@
 \alias{plotHVT}
 \title{plotHVT}
 \usage{
-plotHVT(hvt.results, line.width, color.vec, pch1 = 19, centroid.size = 3,
+plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3,
   title = NULL)
 }
 \arguments{

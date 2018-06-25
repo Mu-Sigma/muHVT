@@ -5,9 +5,9 @@
 \title{hvtHmap}
 \usage{
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec = NULL,
-  line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1,
-  palette.color = 6, show.points = F, asp = 1, ask = T,
-  tess.label = NULL, label.size = 0.5, ...)
+  line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6,
+  show.points = F, asp = 1, ask = T, tess.label = NULL,
+  label.size = 0.5, ...)
 }
 \arguments{
 \item{hvt.results}{List. A list of hvt.results obtained from the HVT
@@ -31,11 +31,8 @@ plotted.}
 \item{centroid.size}{Numeric. Indicating the centroid size of the first
 level. (default = 3)}
 
-\item{pch1}{Numeric. Indicating the parent level centroid's symbol type.
-(default = 19)}
-
-\item{pch2}{Numeric. Indicating the child level centroid's symbol type.
-(default = 1)}
+\item{pch}{Numeric. Indicating the centroid's symbol type.
+(default = 21)}
 
 \item{palette.color}{Numeric. Indicating the heat map color palette. 1 -
 rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -

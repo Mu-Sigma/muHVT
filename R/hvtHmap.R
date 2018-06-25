@@ -36,10 +36,8 @@
 #' (child.level - 1). (default = NULL)
 #' @param centroid.size Numeric. Indicating the centroid size of the first
 #' level. (default = 3)
-#' @param pch1 Numeric. Indicating the parent level centroid's symbol type.
-#' (default = 19)
-#' @param pch2 Numeric. Indicating the child level centroid's symbol type.
-#' (default = 1)
+#' @param pch Numeric. Indicating the centroid's symbol type.
+#' (default = 21)
 #' @param palette.color Numeric. Indicating the heat map color palette. 1 -
 #' rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
 #' cm.colors, 6 - seas color. (default = 6)
@@ -64,7 +62,7 @@
 #' 
 #' @export hvtHmap
 hvtHmap <-
-function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch1 = 19, pch2 = 1, palette.color = 6, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5,...)
+function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5,...)
   {
     requireNamespace("MASS")
     requireNamespace("deldir")
@@ -73,6 +71,8 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
     #require(seas)
   #  require(futile.logger)
     options(warn = -1)
+
+    
     
     #select child level data
     if(child.level > 1){
@@ -93,8 +93,8 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
       hvqztab <- hvqdata[which(hvqdata[, 1] == child.level), ]
       ncolumns <- ncol(hvqdata)
       
-
       
+
       # select only the input columns
       if (class(hmap.cols) == "character") {
         
@@ -113,19 +113,23 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         
         if (hmap.cols == "quant_error") {
           gradient_data <- hvqztab[, 5, drop = F]
-          get_indices_for_NA <- is.na(gradient_data)
-          if (any(get_indices_for_NA)) {
-            gradient_data[get_indices_for_NA, 1] <- 0
-          }
+          gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
+          # get_indices_for_NA <- is.na(gradient_data)
+          # if (any(get_indices_for_NA)) {
+          #   gradient_data[get_indices_for_NA, 1] <- 0
+          # }
         }
         
         else if (hmap.cols == "no_of_points") {
           gradient_data <- hvqztab[, 4, drop = F]
-          get_indices_for_NA <- is.na(gradient_data)
-          if (any(get_indices_for_NA)) {
-            gradient_data[get_indices_for_NA, 1] <- 0
-          }
+          gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
+          # get_indices_for_NA <- is.na(gradient_data)
+          # if (any(get_indices_for_NA)) {
+          #   gradient_data[get_indices_for_NA, 1] <- 0
+          # }
         }
+          
+          
         
         else{
           hmap.cols = which(colnames(dataset) == hmap.cols)
@@ -146,6 +150,8 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         
         ## Get row index for all clusters in the asked child level
         row_index_clusters = hvq_k$idnodes[[child.level]]
+        # Remove NULL
+        row_index_clusters <- Filter(Negate(is.null),row_index_clusters)
         
         depth <- 2
         
@@ -201,10 +207,10 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
                       lnwid = (line.width[1] / child.level),
                       frame.plot = F, xlab = "", ylab = "", 
                       asp = asp, label.size = label.size, 
-                      pointmag = (centroid.size / child.level),pch2=pch2)
+                      pointmag = (centroid.size / child.level),pch=pch)
         
         #plot the centroids for parent levels
-        plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch1=pch1,child.level=child.level)
+        plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch=pch,child.level=child.level)
         
         #plot the polygons of the parent levels
         for(lev in parlevel: 1){   
@@ -220,7 +226,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
           # flog.debug("Polygons for Level %s are drawn", lev)
         }
   
-        return(plot_gg)
+        return(suppressMessages(plot_gg))
       }
     }else{
       return("Length of color vector and line width vector should be equal to child level")

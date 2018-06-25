@@ -61,9 +61,11 @@ getCentroids <-
     else if(error_metric=="mean"){
       function_to_calculate_error_metric <- "mean"
     }
+    
     else if(error_metric=="max"){
       function_to_calculate_error_metric <- "max"
     }
+
     else{
       stop('error_metric must be max,mean or custom function')
     }

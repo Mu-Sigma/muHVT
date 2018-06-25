@@ -37,9 +37,36 @@ predictHVT <- function(data,hvt.results,hmap.cols= NULL,child.level=1,...){
   
   level <- length(summary_list$nodes.clust)
   
-  hierachy_structure <- c(1:level) %>% purrr::map(~data.frame(gtools::permutations(n = nclust,r = .x,v = seq(1:nclust),repeats.allowed = T))) %>% purrr::map(~apply(.,1,function(x) paste(x,collapse=''))) %>% unlist()
+  # hierachy_structure <- c(1:level) %>% purrr::map(~data.frame(gtools::permutations(n = nclust,r = .x,v = seq(1:nclust),repeats.allowed = T))) %>% purrr::map(~apply(.,1,function(x) paste(x,collapse=''))) %>% unlist()
+  # 
+  # pathString <- hierachy_structure %>% purrr::map_chr(~paste(c('cluster',unlist(strsplit(.,''))),collapse=' -> '))
   
-  pathString <- hierachy_structure %>% purrr::map_chr(~paste(c('cluster',unlist(strsplit(.,''))),collapse=' -> '))
+  
+  hierarchy_structure <- function(nclust,init,depth,temp_list,final_list,sep = "->"){
+
+    empty_list = c()
+    
+    if(init>depth){
+      return(final_list)
+    }
+    
+    if(length(final_list)==0){
+      empty_list <- seq(1:nclust)
+      final_list <- empty_list
+    }
+    else{
+      for(i in temp_list){
+        for(j in 1:nclust){
+          final_list <- c(final_list,paste(i,j,sep = sep))
+          empty_list <- c(empty_list,paste(i,j,sep = sep))
+        }
+      }
+    }
+    hierarchy_structure(nclust= nclust, init+1,depth= depth,temp_list = empty_list,final_list = final_list ,sep = sep)
+    
+  }
+  
+  pathString <- hierarchy_structure(nclust = nclust,init = 1,depth = level,temp_list = list(),final_list  = list(),sep = "->")
   
   summary_table_with_hierarchy <- cbind(summary_list$summary,pathString,index=as.numeric(rownames(summary_list$summary)),stringsAsFactors = FALSE)
   
@@ -69,7 +96,7 @@ predictHVT <- function(data,hvt.results,hmap.cols= NULL,child.level=1,...){
   path_df <- data.frame(path_list)
   
   output_path_with_data <- cbind(data[,train_colnames],path_df)
-  colnames(output_path_with_data) <- c(train_colnames,"cluster_path")
+  colnames(output_path_with_data) <- c(train_colnames,"cell_path")
   
   ### Heatmap
   if (!is.null(hmap.cols)) {
