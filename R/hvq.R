@@ -25,7 +25,7 @@
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
-#' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+#' @param distance_metric character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @return \item{clusters}{ List. A list showing each ID assigned to a cluster.
 #' } \item{nodes.clust}{ List. A list corresponding to nodes' details. }
@@ -37,12 +37,12 @@
 #' summary. }
 #' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
+#' @importFrom magrittr %>%
 #' @examples
 #' 
-#' data("iris",package="datasets")
-#' iris <- data.frame(iris[,1:2])
-#' hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3,
-#' distance_metric="Euclidean",error_metric="mean")
+#' data("USArrests",package="datasets")
+#' hvqOutput = hvq(USArrests, nclust = 2, depth = 3, quant.err = 0.2,
+#' distance_metric="L1_Norm",error_metric="mean")
 #' 
 #' 
 #' @export hvq
@@ -206,10 +206,10 @@ hvq <-
     }
     
     ## Calculate compress percentage
-    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(No_of_cells = sum(!is.na(Quant.Error)), No_of_Cells_below_Quantization_error = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% mutate(Percent_of_cells_below_Quantization_Error_Threshold = (No_of_Cells_below_Quantization_error/No_of_cells)*100)
+    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(No_of_cells = sum(!is.na(Quant.Error)), No_of_Cells_below_Quantization_error = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(Percent_of_cells_below_Quantization_Error_Threshold = (No_of_Cells_below_Quantization_error/No_of_cells))
     
     if(any(is.nan(compression_summary$Percent_of_cells_below_Quantization_Error_Threshold))){
-      compression_summary <- compression_summary[complete.cases(compression_summary),]
+      compression_summary <- compression_summary[stats::complete.cases(compression_summary),]
     }
     
     ridnames <- resid

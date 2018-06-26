@@ -1,11 +1,6 @@
-#' Pipe operator
-#'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
+
 #' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
+
 ggplotTileHmap <-
   function (plot_gg,tilesinfo,gradient_values,ptext = NULL, verbose = FALSE, lnwid = 0.2, close = FALSE, pch = 21, polycol = NA, 
             showpoints = TRUE, asp = 1, label.size = 0.5, pointmag = pointmag,...) 

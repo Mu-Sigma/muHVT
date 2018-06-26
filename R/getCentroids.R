@@ -1,19 +1,13 @@
-#' Pipe operator
-#'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
+
+
+
 #' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
-#' 
-requireNamespace("dplyr")
 
 # The function should take dataframe having m rows and n dimension as input. It should return distance from the center for each row or should return 0 if nrow(df) < 1
 
 getCentroids <-
   function (x, kout, nclust,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")){
-    
+    requireNamespace("dplyr")
     outl <- list()
     nout <- list()
     centl <- list()

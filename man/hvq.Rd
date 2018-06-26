@@ -58,10 +58,9 @@ hierarchically arranged vector quantized data.
 }
 \examples{
 
-data("iris",package="datasets")
-iris <- data.frame(iris[,1:2])
-hvqOutput = hvq(iris, nclust = 2, depth = 3, quant.err = 0.3,
-distance_metric="Euclidean",error_metric="mean")
+data("USArrests",package="datasets")
+hvqOutput = hvq(USArrests, nclust = 2, depth = 3, quant.err = 0.2,
+distance_metric="L1_Norm",error_metric="mean")
 
 
 }

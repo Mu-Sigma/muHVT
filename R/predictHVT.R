@@ -1,17 +1,41 @@
-#' Pipe operator
-#'
-#' @name %>%
-#' @rdname pipe
-#' @keywords internal
-#' @export
+#' predictHVT
+#' 
+#' Predict which cell and what level each point in the test dataset belongs to
+#' 
+#' 
+#' @param data List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
+#' this dataset can also be used to overlay as heatmap
+#' @param hvt.results A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data
+#' @param hmap.cols - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted.(Default = #' NULL). A heatmap won’t be plotted if NULL is passed
+#' @param child.level A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
+#' @param ...  color.vec and line.width can be passed from here
+#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
+#' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
+#' @keywords predict
 #' @importFrom magrittr %>%
-#' @usage lhs \%>\% rhs
+#' @examples
+#' 
+#' 
+#' data("USArrests",package="datasets")
+#' 
+#' #Split in train and test
+#' 
+#' train <- USArrests[1:40,]
+#' test <- USArrests[41:50,]
+#' 
+#' hvt.results <- list()
+#' hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2, 
+#'                   projection.scale = 10, normalize = TRUE)
+#' 
+#'
+#' predictions <- predictHVT(test,hvt.results,hmap.cols = NULL, child.level=2)
+#' print(predictions$predictions)
+#' 
 #' @export predictHVT
 predictHVT <- function(data,hvt.results,hmap.cols= NULL,child.level=1,...){
   
   requireNamespace("dplyr")
   requireNamespace("purrr")
-  requireNamespace("gtools")
 
   options(warn = -1)
   

@@ -56,6 +56,16 @@ parent polygon. This is done for all the subsequent levels.
 }
 \examples{
 
+data("USarrests",package="datasets")
+hvt.results <- list()
+hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
+                  projection.scale = 10, normalize = TRUE)
+plotHVT(hvt.results, line.width = c(0.8), color.vec = c("#141B41""))
+
+hvt.results <- list()
+hvt.results <- HVT(iris, nclust = 3, depth = 3, quant.err = 0.2, 
+                  projection.scale = 10, normalize = TRUE)
+plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c("#141B41","#0582CA","#8BA0B4"))
 
 }
 \seealso{
