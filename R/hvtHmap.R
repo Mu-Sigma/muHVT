@@ -41,6 +41,7 @@
 #' @param palette.color Numeric. Indicating the heat map color palette. 1 -
 #' rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
 #' cm.colors, 6 - seas color. (default = 6)
+#' @param previous_level_heatmap Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted 
 #' @param show.points Logical. Indicating if the size of the centroids should
 #' be relative to the number of data points in that cluster. (default = FALSE)
 #' @param asp Numeric. Indicating the aspect ratio type. For flexible aspect
@@ -57,23 +58,21 @@
 #' @keywords hplot
 #' @importFrom magrittr %>%
 #' @examples
-#' 
-#' data("USArrests",package="datasets")
+#' data(USArrests)
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
 #'                   projection.scale = 10, normalize = TRUE)
-#' hvtHmap(hvt.results, USarrests, child.level = 1,hmap.cols = "Murder", line.width = c(0.2),
-#' color.vec = c("#141B41"),palette.color = 6)
+#' hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', line.width = c(0.2),
+#' color.vec = c('#141B41'),palette.color = 6)
 #'
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
 #'                   projection.scale = 10, normalize = TRUE)
-#' hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = "quant_error", 
-#' line.width = c(1.2,0.8,0.4),color.vec = c("#141B41","#0582CA","#8BA0B4"),palette.color = 6)
-#' 
+#' hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = 'quant_error', 
+#' line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6)
 #' @export hvtHmap
 hvtHmap <-
-function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5,...)
+function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6,previous_level_heatmap = T, show.points = F, asp = 1, ask = T, tess.label = NULL, label.size = .5,...)
   {
     requireNamespace("MASS")
     requireNamespace("deldir")
@@ -101,86 +100,86 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
       
       # flog.info("Lengths of color vector and line width vector is equal to the number of parent levels")
       #select the data only for the user-defined level
-      hvqztab <- hvqdata[which(hvqdata[, 1] == child.level), ]
-      ncolumns <- ncol(hvqdata)
-      
-      
-
-      # select only the input columns
-      if (class(hmap.cols) == "character") {
-        
-        if(length(list(...))){
-          
-          gradient_data <- hvqztab[,hmap.cols,drop=F]
-          get_indices_for_NA <- is.na(gradient_data)
-          if (any(get_indices_for_NA)) {
-            gradient_data[get_indices_for_NA, 1] <- 0
-          }
-          
-        }
-        
-        
-        else{
-        
-        if (hmap.cols == "quant_error") {
-          gradient_data <- hvqztab[, 5, drop = F]
-          gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
-          # get_indices_for_NA <- is.na(gradient_data)
-          # if (any(get_indices_for_NA)) {
-          #   gradient_data[get_indices_for_NA, 1] <- 0
-          # }
-        }
-        
-        else if (hmap.cols == "no_of_points") {
-          gradient_data <- hvqztab[, 4, drop = F]
-          gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
-          # get_indices_for_NA <- is.na(gradient_data)
-          # if (any(get_indices_for_NA)) {
-          #   gradient_data[get_indices_for_NA, 1] <- 0
-          # }
-        }
-          
-          
-        
-        else{
-          hmap.cols = which(colnames(dataset) == hmap.cols)
-          if (length(hmap.cols) == 0) {
-            stop("Column name for plotting heatmap incorrect")
-            }
-
-        }
-        }
-      }
-      
-      if (is.numeric(hmap.cols)) {
-        column_no_for_hmap = hmap.cols
-        
-        if (length(column_no_for_hmap) == 0) {
-          stop("Column name for plotting heatmap incorrect")
-        }
-        
-        ## Get row index for all clusters in the asked child level
-        row_index_clusters = hvq_k$idnodes[[child.level]]
-        # Remove NULL
-        row_index_clusters <- Filter(Negate(is.null),row_index_clusters)
-        
-        depth <- 2
-        
-        if(child.level==1){
-          depth <- 1
-        }
-        
-        gradient_data <-
-          data.frame(unlist(
-            purrr::modify_depth(row_index_clusters, depth,  ~ colMeans(dataset[as.vector(.x[, 1]), column_no_for_hmap,drop=F]))
-          ))
-        colnames(gradient_data) <-
-          colnames(dataset[, column_no_for_hmap, drop = F])
-      }
-      
-      
-      #store the column names
-      grad_scale <- gradient_data
+      # hvqztab <- hvqdata[which(hvqdata[, 1] == child.level), ]
+      # ncolumns <- ncol(hvqdata)
+      # 
+      # 
+      # 
+      # # select only the input columns
+      # if (class(hmap.cols) == "character") {
+      #   
+      #   if(length(list(...))){
+      #     
+      #     gradient_data <- hvqztab[,hmap.cols,drop=F]
+      #     get_indices_for_NA <- is.na(gradient_data)
+      #     if (any(get_indices_for_NA)) {
+      #       gradient_data[get_indices_for_NA, 1] <- 0
+      #     }
+      #     
+      #   }
+      #   
+      #   
+      #   else{
+      #   
+      #   if (hmap.cols == "quant_error") {
+      #     gradient_data <- hvqztab[, 5, drop = F]
+      #     gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
+      #     # get_indices_for_NA <- is.na(gradient_data)
+      #     # if (any(get_indices_for_NA)) {
+      #     #   gradient_data[get_indices_for_NA, 1] <- 0
+      #     # }
+      #   }
+      #   
+      #   else if (hmap.cols == "no_of_points") {
+      #     gradient_data <- hvqztab[, 4, drop = F]
+      #     gradient_data <- gradient_data[complete.cases(hvqztab),,drop=F]
+      #     # get_indices_for_NA <- is.na(gradient_data)
+      #     # if (any(get_indices_for_NA)) {
+      #     #   gradient_data[get_indices_for_NA, 1] <- 0
+      #     # }
+      #   }
+      #     
+      #     
+      #   
+      #   else{
+      #     hmap.cols = which(colnames(dataset) == hmap.cols)
+      #     if (length(hmap.cols) == 0) {
+      #       stop("Column name for plotting heatmap incorrect")
+      #       }
+      # 
+      #   }
+      #   }
+      # }
+      # 
+      # if (is.numeric(hmap.cols)) {
+      #   column_no_for_hmap = hmap.cols
+      #   
+      #   if (length(column_no_for_hmap) == 0) {
+      #     stop("Column name for plotting heatmap incorrect")
+      #   }
+      #   
+      #   ## Get row index for all clusters in the asked child level
+      #   row_index_clusters = hvq_k$idnodes[[child.level]]
+      #   # Remove NULL
+      #   row_index_clusters <- Filter(Negate(is.null),row_index_clusters)
+      #   
+      #   depth <- 2
+      #   
+      #   if(child.level==1){
+      #     depth <- 1
+      #   }
+      #   
+      #   gradient_data <-
+      #     data.frame(unlist(
+      #       purrr::modify_depth(row_index_clusters, depth,  ~ colMeans(dataset[as.vector(.x[, 1]), column_no_for_hmap,drop=F]))
+      #     ))
+      #   colnames(gradient_data) <-
+      #     colnames(dataset[, column_no_for_hmap, drop = F])
+      # }
+      # 
+      # 
+      # #store the column names
+      # grad_scale <- gradient_data
       gtitles <- 1
       #different color palette
       pal.col <- c("rainbow(500, start = .7, end = .1)", "heat.colors(500)", 
@@ -201,7 +200,7 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
       for(i in 1: length(gtitles)){
         #graphics::close.screen(all = T)
         #tiles information of user-defined level. It is the output of tile.list.
-        pdat <- polinfo[[child.level]]
+        #pdat <- polinfo[[child.level]]
         #gradient of colors is divided into n colors
         n <- 500
 
@@ -213,12 +212,106 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         gradient_palette = pal.col[palette.color]
         
         #call the function which plots the heat map for the user-defined level
+        if(previous_level_heatmap==T){
+          start.level = 1
+        }
+        else{
+          start.level = child.level
+        }
+        
+        for(current.child.level in start.level:child.level){
+          
+          
+          hvqztab <- hvqdata[which(hvqdata[, 1] == current.child.level), ]
+          ncolumns <- ncol(hvqdata)
+          
+          
+          
+          # select only the input columns
+          if (class(hmap.cols) == "character") {
+            
+            if(length(list(...))){
+              
+              gradient_data <- hvqztab[,hmap.cols,drop=F]
+              get_indices_for_NA <- is.na(gradient_data)
+              if (any(get_indices_for_NA)) {
+                gradient_data[get_indices_for_NA, 1] <- 0
+              }
+              
+            }
+            
+            
+            else{
+              
+              if (hmap.cols == "quant_error") {
+                gradient_data <- hvqztab[, 5, drop = F]
+                gradient_data <- gradient_data[complete.cases(gradient_data),,drop=F]
+                # get_indices_for_NA <- is.na(gradient_data)
+                # if (any(get_indices_for_NA)) {
+                #   gradient_data[get_indices_for_NA, 1] <- 0
+                # }
+              }
+              
+              else if (hmap.cols == "no_of_points") {
+                gradient_data <- hvqztab[, 4, drop = F]
+                gradient_data <- gradient_data[complete.cases(gradient_data),,drop=F]
+                # get_indices_for_NA <- is.na(gradient_data)
+                # if (any(get_indices_for_NA)) {
+                #   gradient_data[get_indices_for_NA, 1] <- 0
+                # }
+              }
+              
+              
+              
+              else{
+                hmap.cols = which(colnames(dataset) == hmap.cols)
+                if (length(hmap.cols) == 0) {
+                  stop("Column name for plotting heatmap incorrect")
+                }
+                
+              }
+            }
+          }
+          
+          if (is.numeric(hmap.cols)) {
+            column_no_for_hmap = hmap.cols
+            
+            if (length(column_no_for_hmap) == 0) {
+              stop("Column name for plotting heatmap incorrect")
+            }
+            
+            ## Get row index for all clusters in the asked child level
+            row_index_clusters = hvq_k$idnodes[[current.child.level]]
+            # Remove NULL
+            row_index_clusters <- Filter(Negate(is.null),row_index_clusters)
+            
+            depth <- 2
+            
+            if(current.child.level==1){
+              depth <- 1
+            }
+            
+            gradient_data <-
+              data.frame(unlist(
+                purrr::modify_depth(row_index_clusters, depth,  ~ colMeans(dataset[as.vector(.x[, 1]), column_no_for_hmap,drop=F]))
+              ))
+            colnames(gradient_data) <-
+              colnames(dataset[, column_no_for_hmap, drop = F])
+          }
+          
+          
+          #store the column names
+          grad_scale <- gradient_data
+        
+        pdat <- polinfo[[current.child.level]]  
+          
         plot_gg <- ggplotTileHmap(plot_gg,pdat,grad_scale,ptext = tess.label, polycol = gradient_palette, 
                       close = T, showpoints = show.points,  
                       lnwid = (line.width[1] / child.level),
                       frame.plot = F, xlab = "", ylab = "", 
                       asp = asp, label.size = label.size, 
                       pointmag = (centroid.size / child.level),pch=pch)
+        }
         
         #plot the centroids for parent levels
         plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch=pch,child.level=child.level)

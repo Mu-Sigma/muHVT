@@ -25,7 +25,7 @@ tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 (default is "Hartigan-Wong")}
 
-\item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+\item{distance_metric}{character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.}
 
 \item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
 }
@@ -60,7 +60,7 @@ hierarchically arranged vector quantized data.
 
 data("USArrests",package="datasets")
 hvqOutput = hvq(USArrests, nclust = 2, depth = 3, quant.err = 0.2,
-distance_metric="L1_Norm",error_metric="mean")
+distance_metric='L1_Norm',error_metric='mean')
 
 
 }

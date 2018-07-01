@@ -6,8 +6,8 @@
 \usage{
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec = NULL,
   line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6,
-  show.points = F, asp = 1, ask = T, tess.label = NULL,
-  label.size = 0.5, ...)
+  previous_level_heatmap = T, show.points = F, asp = 1, ask = T,
+  tess.label = NULL, label.size = 0.5, ...)
 }
 \arguments{
 \item{hvt.results}{List. A list of hvt.results obtained from the HVT
@@ -37,6 +37,8 @@ level. (default = 3)}
 \item{palette.color}{Numeric. Indicating the heat map color palette. 1 -
 rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
 cm.colors, 6 - seas color. (default = 6)}
+
+\item{previous_level_heatmap}{Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted}
 
 \item{show.points}{Logical. Indicating if the size of the centroids should
 be relative to the number of data points in that cluster. (default = FALSE)}
@@ -80,20 +82,18 @@ plotted. The heat maps and hierarchical tessellations are obtained for all
 the desired variables.
 }
 \examples{
-
-data("USArrests",package="datasets")
+data(USArrests)
 hvt.results <- list()
 hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
                   projection.scale = 10, normalize = TRUE)
-hvtHmap(hvt.results, USarrests, child.level = 1,hmap.cols = "Murder", line.width = c(0.2),
-color.vec = c("#141B41"),palette.color = 6)
+hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', line.width = c(0.2),
+color.vec = c('#141B41'),palette.color = 6)
 
 hvt.results <- list()
 hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
                   projection.scale = 10, normalize = TRUE)
-hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = "quant_error", line.width = c(1.2,0.8,0.4),
-color.vec = c("#141B41","#0582CA","#8BA0B4"),palette.color = 6)
-
+hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = 'quant_error', 
+line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6)
 }
 \seealso{
 \code{\link{plotHVT}}
