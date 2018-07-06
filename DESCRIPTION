@@ -2,7 +2,7 @@ Package: muHVT
 Type: Package
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 0.2.0
+Version: 1.0.0
 Authors@R: c(
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
@@ -17,5 +17,5 @@ LazyData: true
 RoxygenNote: 6.0.1
 Suggests: knitr,
     rmarkdown,
-    testthat
+    testthat,geozoo,plotly,kableExtra
 VignetteBuilder: knitr

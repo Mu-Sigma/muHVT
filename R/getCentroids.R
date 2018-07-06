@@ -8,6 +8,9 @@
 getCentroids <-
   function (x, kout, nclust,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")){
     requireNamespace("dplyr")
+    
+    
+    
     outl <- list()
     nout <- list()
     centl <- list()
@@ -35,34 +38,45 @@ getCentroids <-
       }
     }
     
+    
+    
     if(is.function(distance_metric)){
       function_to_calculate_distance_metric <- distance_metric
     }
-    else if(distance_metric=="L1_Norm"){
-      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
-    }
-    else if(distance_metric=="L2_Norm"){
-      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
-    }
-
     else{
-      stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
+      distance_id <- switch(match.arg(distance_metric), L1_Norm = 1L, 
+                      L2_Norm = 2L)
+      if(distance_id==1L){
+        function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
+      }
+      else if(distance_id==2L){
+        function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+      }
+      
+      else{
+        stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
+      }
     }
     
     if(is.function(error_metric)){
       function_to_calculate_error_metric <- error_metric
     }
-    else if(error_metric=="mean"){
+    else{
+      error_id <- switch(match.arg(error_metric), mean = 1L, 
+                            max = 2L)
+    if(error_id==1L){
       function_to_calculate_error_metric <- "mean"
     }
     
-    else if(error_metric=="max"){
+    else if(error_id==2L){
       function_to_calculate_error_metric <- "max"
     }
 
     else{
       stop('error_metric must be max,mean or custom function')
     }
+    }
+    
     
     calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
     distance_for_each_dimension_for_each_cluster <- calculate_error$err

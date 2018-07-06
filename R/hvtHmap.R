@@ -42,8 +42,8 @@
 #' rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
 #' cm.colors, 6 - seas color. (default = 6)
 #' @param previous_level_heatmap Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted 
-#' @param show.points Logical. Indicating if the size of the centroids should
-#' be relative to the number of data points in that cluster. (default = FALSE)
+#' @param show.points Logical. Indicating if the centroids should
+#' be plotted on the tesselations. (default = FALSE)
 #' @param asp Numeric. Indicating the aspect ratio type. For flexible aspect
 #' ratio set, asp = NA. (default = 1)
 #' @param ask Logical. If TRUE (and the R session is interactive) the user is
@@ -314,21 +314,21 @@ function (hvt.results, dataset, child.level, hmap.cols, color.vec = NULL, line.w
         }
         
         #plot the centroids for parent levels
-        plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch=pch,child.level=child.level)
+        plot_gg <- ggplotTessHmap(plot_gg,hvt.results, line.width = line.width, color.vec = color.vec,pch=pch,child.level=child.level,show.points = show.points,centroid.size = centroid.size)
         
         #plot the polygons of the parent levels
-        for(lev in parlevel: 1){   
-          len <- length(polinfo[[lev]])
-          for(ind1 in 1: len){
-            for(ind2 in 1: length(polinfo[[lev]][[ind1]])){
-             # graphics::polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
-                      #lwd = line.width[lev], border = color.vec[lev])
-              df_pol <- data.frame(x=polinfo[[lev]][[ind1]][[ind2]]$x,y=polinfo[[lev]][[ind1]][[ind2]]$y)
-              plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y"),size=line.width[lev],colour = color.vec[lev],fill=NA)
-            }
-          }
-          # flog.debug("Polygons for Level %s are drawn", lev)
-        }
+        # for(lev in parlevel: 1){   
+        #   len <- length(polinfo[[lev]])
+        #   for(ind1 in 1: len){
+        #     for(ind2 in 1: length(polinfo[[lev]][[ind1]])){
+        #      # graphics::polygon(polinfo[[lev]][[ind1]][[ind2]]$x, polinfo[[lev]][[ind1]][[ind2]]$y, 
+        #               #lwd = line.width[lev], border = color.vec[lev])
+        #       df_pol <- data.frame(x=polinfo[[lev]][[ind1]][[ind2]]$x,y=polinfo[[lev]][[ind1]][[ind2]]$y)
+        #       plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y"),size=line.width[lev],colour = color.vec[lev],fill=NA)
+        #     }
+        #   }
+        #   # flog.debug("Polygons for Level %s are drawn", lev)
+        # }
   
         return(suppressMessages(plot_gg))
       }

@@ -1,7 +1,7 @@
 
 #' @importFrom magrittr %>%
 ggplotTessHmap <-
-function(plot_gg,hvt.results, line.width, color.vec,child.level, pch = 21, centroid.size = 3){
+function(plot_gg,hvt.results, line.width, color.vec,child.level, pch = 21, centroid.size = 3,show.points = show.points){
   
 
   del_results <- hvt.results[[1]][seq(1:child.level)]
@@ -25,14 +25,19 @@ function(plot_gg,hvt.results, line.width, color.vec,child.level, pch = 21, centr
                                                  size =line.width[lev],
                                                  data = seg_df,
                                                  linetype = 1
-      ) + ggplot2::scale_color_manual(values = color.vec) +
-        ggplot2::geom_point(data = df_points,
+      ) + ggplot2::scale_color_manual(values = color.vec) 
+        
+      if(show.points)
+      {
+        
+      plot_gg <- plot_gg +  ggplot2::geom_point(data = df_points,
                             ggplot2::aes_string(x="x",y="y"),
                             pch=pch,
                             size = (centroid.size/(2^(lev-1))),
                             fill = color.vec[lev],
                             color = color.vec[lev]
                             ) 
+      }
         
                             #ggplot2::theme_bw() +  
                             #ggplot2::theme(

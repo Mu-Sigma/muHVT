@@ -38,6 +38,7 @@
 #' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
 #' @importFrom magrittr %>%
+#' @importFrom stats complete.cases
 #' @examples
 #' 
 #' data("USArrests",package="datasets")
@@ -206,9 +207,11 @@ hvq <-
     }
     
     ## Calculate compress percentage
-    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(No_of_cells = sum(!is.na(Quant.Error)), No_of_Cells_below_Quantization_error = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(Percent_of_cells_below_Quantization_Error_Threshold = (No_of_Cells_below_Quantization_error/No_of_cells))
+    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(noOfCells = sum(!is.na(Quant.Error)), noOfCellsBelowQuantizationError = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(percentOfCellsBelowQuantizationErrorThreshold = (noOfCellsBelowQuantizationError/noOfCells))
     
-    if(any(is.nan(compression_summary$Percent_of_cells_below_Quantization_Error_Threshold))){
+    colnames(compression_summary)[1] <- "segmentLevel"
+    
+    if(any(is.nan(compression_summary$percentOfCellsBelowQuantizationErrorThreshold))){
       compression_summary <- compression_summary[stats::complete.cases(compression_summary),]
     }
     
