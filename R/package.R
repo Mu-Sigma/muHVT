@@ -7,7 +7,7 @@
 #' in-depth data analysis.
 #' 
 #' \tabular{ll}{ Package: \tab muHVT\cr Type: \tab Package\cr Version: \tab
-#' 1.0.0\cr Date: \tab 2018-07-06\cr License: \tab GPL-2 | GPL-3\cr }
+#' 0.2.0\cr Date: \tab 2018-07-06\cr License: \tab GPL-2 | GPL-3\cr }
 #' 
 #' @name muHVT
 #' @aliases muHVT-package muHVT

@@ -19,7 +19,7 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  out.width = "768px",
+  out.width = "672px",
   out.height = "480px",
   fig.width = 7,
   fig.height = 5,
@@ -53,7 +53,12 @@ scrolLimit <- function(noOfRows){
   return(swe)
 }
 
-Table <- function(data,scroll = F){
+Table <- function(data,scroll = F,limit=NULL){
+  
+  if(!is.null(limit)){
+    data <- head(data,limit)
+  }
+  
   kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
   
   scroll <- scroll
@@ -61,16 +66,19 @@ Table <- function(data,scroll = F){
   if(scroll == T){
   kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
   }
+  
+
+  
   return(kable_table)
   
 }
 
-summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2){
+summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limit=NULL){
   
   scroll <- scroll
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
   
-  return(Table(summaryTable,scroll = scroll))
+  return(Table(summaryTable,scroll = scroll,limit = limit))
   
 }
 
@@ -340,7 +348,6 @@ summaryTable(hvt.results[[3]][['summary']])
 ```
 
 
-
 Let's have a look at `Quant.Error` variable in the above table. It seems that none of the cells have hit the quantization threshold error.
 
 Now let's check the compression summary. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
@@ -419,10 +426,10 @@ Level 1 has 15 cells
 
 Level 2 has 225 cells .i.e. each cell in level1 is divided into 225 cells
 
-Let's analyze the summary table again for `Quant.Error` and see if any of the cells in the 2nd level have quantization error below quantization error threshold. In the table below, the values for `Quant.Error` of the cells which have hit the quantization error threshold are shown in red.
+Let's analyze the summary table again for `Quant.Error` and see if any of the cells in the 2nd level have quantization error below quantization error threshold. In the table below, the values for `Quant.Error` of the cells which have hit the quantization error threshold are shown in red. Here we are showing just top 50 rows for the sake of brevity.
 
 ```{r summary level two computers,warning=FALSE,eval = global_var}
-summaryTable(hvt.results2[[3]][['summary']])
+summaryTable(hvt.results2[[3]][['summary']],limit = 50)
 ```
 
 The users can look at the compression summary to get a quick summary on the compression as it becomes quite cumbersome to look at the summary table above as we go deeper.
@@ -471,10 +478,10 @@ plotHVT(hvt.results3,
         centroid.size = 3)
 ```
 
-Each of the 225 cells whose quantization is above threshold in level 2 will break down into 15 cells each in level 3. Hence, as it can be seen below, level 3 has 3375 rows. So it will have 3615 rows in total.
+Each of the 225 cells whose quantization is above threshold in level 2 will break down into 15 cells each in level 3. Hence, as it can be seen below, level 3 has 3375 rows. So it will have 3615 rows in total. We will only show first 500 rows here.
 
 ```{r summary level three computers,warning=FALSE,eval = global_var}
-summaryTable(hvt.results3[[3]][['summary']],scroll = T)
+summaryTable(hvt.results3[[3]][['summary']],scroll = T,limit = 500)
 ```
 
 Let's check the compression summary to check how many cells in each level have hit the quantization error threshold
@@ -600,54 +607,6 @@ hvtHmap(hvt.results3,
         centroid.size = 1.1)
 ```
 
-Now we will plot the heatmaps for `screen` variable
-
-The heatmap for `screen` variable for different cells at level 1 can be seen in the plot below.
-
-```{r hmp level one computers screen,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation with the heat map overlaid for variable ’screen’ at level 1 from ’computers’ dataset',eval = global_var}
-hvtHmap(hvt.results, 
-        trainComputers, 
-        child.level = 1,
-        hmap.cols = "screen", 
-        line.width = c(0.2),
-        color.vec = c("#141B41"),
-        palette.color = 6,
-        show.points = T,
-        centroid.size = 3)
-```
-
-
-Now we will go one level deeper and overlay heatmap for `screen` at level 2
-
-```{r hmp level two computers screen,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation with the heat map overlaid for the variable ’screen’ at level 2 from the ’computer’ dataset',eval = global_var}
-hvtHmap(hvt.results2, 
-        trainComputers, 
-        child.level = 2, 
-        hmap.cols = "screen",
-        line.width = c(0.8,0.2),
-        color.vec = c("#141B41","#0582CA"),
-        palette.color = 6,
-        show.points = T,
-        centroid.size = 2)
-```
-
-Let us go one level deeper and overlay heatmap for `screen` at level 3. 
-
-In the plot below, we have overlayed heatmap for variable `screen` on level 3. 
-
-```{r hmp level three computers screen,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi tessellation with the heat map overlaid for the variable ’screen’ at level 3 from the ’computer’ dataset',eval = global_var}
-hvtHmap(hvt.results3, 
-        trainComputers, 
-        child.level = 3, 
-        hmap.cols = "screen",
-        line.width = c(1.2,0.8,0.4),
-        color.vec = c("#141B41","#6369D1","#D8D2E1"),
-        palette.color = 6,
-        show.points = T,
-        centroid.size = 1.1)
-```
-
-
 
 ### Predict
 
@@ -689,10 +648,10 @@ The prediction algorithm recursively calculates the distance between each point 
 3. Check if the cell drills down further to form more cells.
 4. If it doesn't, return the path. Or else repeat the steps 1 to 4 till we reach to the level at which the cell doesn't drill down further.
 
-Let's see what cell and which level do each point belongs to.
+Let's see what cell and which level do each point belongs to. For the sake of brevity, we will 
 
 ```{r predictHVT pred computers,warning=FALSE,eval = global_var}
-Table(predictions$predictions,scroll = T)
+Table(predictions$predictions,scroll = T,limit = 10)
 ```
 
 
@@ -707,7 +666,7 @@ predictions <- muHVT::predictHVT(testComputers,
                                  hvt.results3,
                                  hmap.cols = NULL,
                                  child.level = 3)
-Table(predictions$predictions,scroll = T)
+Table(predictions$predictions,scroll = T,limit = 10)
 ```
 
 
@@ -753,15 +712,16 @@ summary(torus_df)
 
 Now let's try to visualize the object in 3D Space.
 
-```{r torus plot,warning=FALSE,message=FALSE,results="asis",fig.show="hold",fig.cap='Figure 17: 3D Torus',eval = global_var}
-plot_torus <- plotly::plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
-plot_torus
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 14: 3D Torus',eval = global_var}
+#plot_torus <- plotly::plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
+#plot_torus
+knitr::include_graphics('torus.png')
 ```
 
 
 Now let's try to use the package and project the above 3D geographic object in 2D Space. We will start with number of cells as 100.
 
-```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
 hvt.torus <- muHVT::HVT(torus_df,
                         nclust = 100,
@@ -783,7 +743,7 @@ As it can be seen in the table above, none of the 100 cells hit the quantization
 
 Let's overlay the heatmap for quantization error for level 1.
 
-```{r hmp level one quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi tessellation for level 1 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level one quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi tessellation for level 1 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
 hvtHmap(hvt.torus, 
         torus_df, 
         child.level = 1,
@@ -797,7 +757,7 @@ hvtHmap(hvt.torus,
 
 Now let's double the number of cells to 200 and try again.
 
-```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
 hvt.torus2 <- muHVT::HVT(torus_df,
                          nclust = 200,
@@ -818,7 +778,7 @@ It can be observed from the table above that only 24 cells out of 200 i.e. `12%`
 
 Let's check it visually by overlaying the heatmap for quantization error at level2.
 
-```{r hmp level two quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level two quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
 hvtHmap(hvt.torus2, 
         torus_df, 
         child.level = 1,
@@ -832,7 +792,7 @@ hvtHmap(hvt.torus2,
 
 Let's increase the number of cells to 500.
 
-```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
 hvt.torus3 <- muHVT::HVT(torus_df,
                          nclust = 500,
@@ -855,7 +815,7 @@ By increasing the number of cells to 500, we were successfully able to compress 
 
 Let's checkout the heatmap for quantization error.
 
-```{r hmp level three quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level three quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
 hvtHmap(hvt.torus3, 
         torus_df, 
         child.level = 1,
@@ -869,7 +829,7 @@ hvtHmap(hvt.torus3,
 
 Let's use our hierarchical vector quantization technique and go one level deeper. We will keep the number of cells as 20.
 
-```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
 hvt.torus4 <- muHVT::HVT(torus_df,
                          nclust = 20,
@@ -891,7 +851,7 @@ We can observe from the above table that we were able to compress `58%` of the d
 
 Here also we will observe the quantization error heatmap
 
-```{r hmp level forth quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level forth quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
 hvtHmap(hvt.torus4, 
         torus_df, 
         child.level = 2,
@@ -904,7 +864,6 @@ hvtHmap(hvt.torus4,
 ```
 
 The similar process can be followed for sphere. The code for the same can be found in the Appendix below.
-
 
 ## Applications 
 
