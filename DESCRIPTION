@@ -2,7 +2,7 @@ Package: muHVT
 Type: Package
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 1.0.0
+Version: 0.2.0
 Authors@R: c(
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
