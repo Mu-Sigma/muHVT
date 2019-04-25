@@ -1,6 +1,3 @@
-
-
-
 #' @importFrom magrittr %>%
 
 # The function should take dataframe having m rows and n dimension as input. It should return distance from the center for each row or should return 0 if nrow(df) < 1
@@ -19,19 +16,20 @@ getCentroids <-
     
     
     x <- data.frame(x)
-    # function to calculate centroid for each cluster
+    
+    #function to calculate centroid for each cluster
     calculate_euclidean_distance_for_each_cluster <- function(x){
       if(nrow(x) > 1){
-        sqrt(rowSums(scale(x,center = T,scale = F)^2))
+        sqrt(rowSums(scale(x,center = T,scale = F)^2))/ncol(x)
       }
       else{
         return(0)
       }
     }
-    
+
     calculate_manhattan_distance_for_each_cluster <- function(x){
       if(nrow(x) > 1){
-        rowSums(abs(scale(x,center = T,scale = F)))
+        rowSums(abs(scale(x,center = T,scale = F)))/ncol(x)
       }
       else{
         return(0)
@@ -39,42 +37,32 @@ getCentroids <-
     }
     
     
-    
+    ## for distance metrics i.e; manhattan or eucleadian
     if(is.function(distance_metric)){
       function_to_calculate_distance_metric <- distance_metric
-    }
-    else{
-      distance_id <- switch(match.arg(distance_metric), L1_Norm = 1L, 
-                      L2_Norm = 2L)
+    } else{
+      distance_id <- switch(match.arg(distance_metric), L1_Norm = 1L, L2_Norm = 2L)
       if(distance_id==1L){
         function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
-      }
-      else if(distance_id==2L){
+      } else if(distance_id==2L){
         function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
-      }
-      
-      else{
+      } else{
         stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
       }
     }
     
+    ## for error metric i.e; ,mean or max
     if(is.function(error_metric)){
       function_to_calculate_error_metric <- error_metric
-    }
-    else{
-      error_id <- switch(match.arg(error_metric), mean = 1L, 
-                            max = 2L)
-    if(error_id==1L){
-      function_to_calculate_error_metric <- "mean"
-    }
-    
-    else if(error_id==2L){
-      function_to_calculate_error_metric <- "max"
-    }
-
-    else{
-      stop('error_metric must be max,mean or custom function')
-    }
+    } else{
+      error_id <- switch(match.arg(error_metric), mean = 1L, max = 2L)
+      if(error_id==1L){
+        function_to_calculate_error_metric <- "mean"
+        } else if(error_id==2L){
+        function_to_calculate_error_metric <- "max"
+        } else{
+        stop('error_metric must be max,mean or custom function')
+      }
     }
     
     
