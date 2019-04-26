@@ -18,7 +18,7 @@
 #' @param x Data Frame. A dataframe of multivariate data. Each row corresponds to an
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
-#' @param nclust Numeric. Indicating the number of nodes per hierarchy.
+#' @param nclust Numeric. Indicating the maximum number of nodes per hierarchy.
 #' @param depth Numeric. Indicating the hierarchy depth (or) the depth of the
 #' tree (1 = no hierarchy, 2 = 2 levels, etc..)
 #' @param quant.err Numeric. The quantization error for the algorithm.

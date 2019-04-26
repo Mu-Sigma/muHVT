@@ -15,7 +15,7 @@
 #'
 #' @param dataset Data frame. A data frame with different columns is given as
 #' input.
-#' @param nclust Numeric. An integer indicating the number of clusters per
+#' @param nclust Numeric. An integer indicating the maximum number of clusters per
 #' hierarchy (level)
 #' @param depth Numeric. An integer indicating the number of levels. (1 = No
 #' hierarchy, 2 = 2 levels, etc ...)
