@@ -15,7 +15,7 @@
 #'
 #' @param dataset Data frame. A data frame with different columns is given as
 #' input.
-#' @param nclust Numeric. An integer indicating the maximum number of clusters per
+#' @param nclust Numeric. An integer indicating the number of clusters per
 #' hierarchy (level)
 #' @param depth Numeric. An integer indicating the number of levels. (1 = No
 #' hierarchy, 2 = 2 levels, etc ...)
@@ -64,7 +64,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
     requireNamespace("sp")           #point.in.polygon function
     requireNamespace("conf.design")  #factorize function
 
-    options(warn = -1)
+    #options(warn = -1)
 
     dataset <- as.data.frame(dataset)
 
@@ -114,7 +114,8 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
 
     # New columns added to the dataset by the hvq function
     newcols <-  ncol(hvqoutput) - ncol(dataset)
-
+    # Variable to store information on mapping 
+    par_map <- list()
     for (i in 1: nlevel) {
 
       #hvqdata segregated according to different levels
@@ -166,6 +167,16 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
     #polygon_info stores parent tile vertices information
     #polygon_info is the modified tile.list output except for first level.
     pol_info[[1]] <- deldir::tile.list(deldat1[[1]][[1]])
+    
+    #loop throught the polygon and  add the row name as id varible
+    # row names of info in rawdeldata is preserved from the hvqoutput and this row name ties the rawdeldata back to the hierarchy 
+    # in the hvqoutput dataset
+    pol_info[[1]] <- mapply(function(info,id){
+      info$id = as.numeric(id)
+      info <- append(info,as.list(gdata[row.names(gdata)==id,c('Segment.Level','Segment.Parent','Segment.Child')]))
+      return(info)
+    },pol_info[[1]],as.list(row.names(new_rawdeldata[[1]][[1]])),SIMPLIFY = FALSE)
+    
     polygon_info[[1]] <- pol_info
     rm(pol_info)
     par_tile_indices <- n_par_tile <- list()
@@ -181,8 +192,16 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
       fin_out[[2]] <- polinfo
       fin_out[[3]] <- hvq_k
       fin_out[[3]][['scale_summary']] <- scale_summary
-
-
+     level=1
+     level_names <- list()
+        level_names[[level]] <- fin_out[[2]][[level]] %>% map( ~ {
+          this <- .
+          element <- this[[1]]
+          return(element$Segment.Parent)
+        }) %>% unlist()
+        
+        names(fin_out[[2]][[level]]) <- level_names[[level]]
+      
       return(fin_out)
 
     } else {
@@ -191,14 +210,16 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
         new_rawdeldata[[i]] <- list()
         par_tile_indices[[i]] <- unique(tessdata[[i]][, "Segment.Parent"])
         n_par_tile[[i]] <- length(unique(tessdata[[i]][, "Segment.Parent"]))
-
+        par_map[[i-1]] <- list()
+        
         for(tileIndex in 1: n_par_tile[[(i - 1)]]){
           # print(tileIndex)
           #a chunk of hvqdata which contains the rows corresponding to a particular parent tile
-          gidata <- tessdata[[i]][which(tessdata[[i]][, "Segment.Parent"] %in%
-                                          par_tile_indices[[i]][intersect(which((par_tile_indices[[i]] / nclust ) <= par_tile_indices[[(i - 1)]][tileIndex]),
-                                                                          which((par_tile_indices[[(i - 1)]][tileIndex] - 1) < (par_tile_indices[[i]] / nclust )))]), ]
-
+          gi_par_tiles <- par_tile_indices[[i]][intersect(which((par_tile_indices[[i]] / nclust ) <= par_tile_indices[[(i - 1)]][tileIndex]),
+                                          which((par_tile_indices[[(i - 1)]][tileIndex] - 1) < (par_tile_indices[[i]] / nclust )))]
+          gidata <- tessdata[[i]][which(tessdata[[i]][, "Segment.Parent"] %in% gi_par_tiles), ]
+          par_map[[i-1]][[par_tile_indices[[(i - 1)]][tileIndex]]] <- gi_par_tiles
+          
           #datapoints corresponding to a particular parent tile
           rawdeldati <- rawdeldata[[i]][intersect(which((par_tile_indices[[i]] / nclust ) <= par_tile_indices[[(i - 1)]][tileIndex]),
                                                   which((par_tile_indices[[(i - 1)]][tileIndex] - 1) < (par_tile_indices[[i]] / nclust )))]
@@ -221,6 +242,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
 
         deldat2 <- list()
         par_tile_polygon <- list()
+        #?
         for(tileNo in 1: n_par_tile[[i]]){
           # print(tileNo)
           #modulus operation for the last index in polygon_info
@@ -229,6 +251,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
           }else{
             last_index <- nclust
           }
+          
           #divide to get the parent tile
           sec_index <- Hmisc::ceil(par_tile_indices[[i]][tileNo] / nclust)
 
@@ -236,6 +259,10 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
                                       new_rawdeldata[[i]][[tileNo]][, 2],
                                       rw = c(range(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$x) - c(0.5, -0.5),
                                              range(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$y) - c(0.5, -0.5)))
+          
+          #CORRECT ROW NAMES
+          deldat2[[tileNo]]$rownames.orig <- as.numeric(row.names(new_rawdeldata[[i]][[tileNo]]))
+          
           #constructing parent polygons
           par_tile_polygon[[tileNo]] <- matrix(c(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$x,
                                                  polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$y),
@@ -282,6 +309,12 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
         #polygon information to correct the polygons
         for(parentIndex in 1: n_par_tile[[i]]){
           polygon_info[[i]][[parentIndex]] <- suppressMessages(deldir::tile.list(deldat1[[i]][[parentIndex]]))
+          # Add id corresponding to each segment from rownames.orig information
+          polygon_info[[i]][[parentIndex]] <- mapply(function(info,id){
+            info$id = as.numeric(id)
+            info <- append(info,as.list(gdata[row.names(gdata)==id,c('Segment.Level','Segment.Parent','Segment.Child')]))
+            return(info)
+          },polygon_info[[i]][[parentIndex]],as.list(deldat1[[i]][[parentIndex]]$rownames.orig),SIMPLIFY = FALSE) 
         }
 
         #to delete the points which are outside the parent tile
@@ -315,14 +348,36 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
       }
 
       polinfo <- polygon_info
-
+      
+      # par_map <- reshape2::melt(par_map)
+      # colnames(par_map) <- c('Child','Parent','Level')
+      # par_map <- par_map %>% mutate(ChildNo = (Parent-1)*nclust+Child)
+      
       fin_out <- list()
 
       fin_out[[1]] <- deldat1
       fin_out[[2]] <- polinfo
       fin_out[[3]] <- hvq_k
       fin_out[[3]][['scale_summary']] <- scale_summary
-
+      # fin_out[[4]] <- par_map
+      level_names <- list()
+      
+      for (level in 1:nlevel) {
+        level_names[[level]] <- fin_out[[2]][[level]] %>% map( ~ {
+          this <- .
+          element <- this[[1]]
+          return(element$Segment.Parent)
+        }) %>% unlist()
+        
+        names(fin_out[[2]][[level]]) <- level_names[[level]]
+      }
+      
+      # fin_out <- correctedBoundaries(fin_out,nlevel)
+      
+      emptyParents  <- depth - length(fin_out[[2]])
+      for(i in 1:emptyParents){
+        fin_out[[2]][[length(fin_out[[2]])+1]] <- list()
+      }
       return(fin_out)
     }
   }

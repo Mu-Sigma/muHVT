@@ -80,7 +80,7 @@ ggplotTileHmap <-
         
         plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y",group="group",fill=as.name(gradient_col_name)),size=lnwid) + ggplot2::scale_fill_gradientn(colours = eval(parse(text = gradient_palette)))
         
-  
+        
         # plot_gg <- plot_gg + ggplot2::geom_polygon(data = df_pol,mapping = ggplot2::aes_string(x="x",y="y",color=gradient_values),fill=polycol[ind+k],size=lnwid,colour = ptcol[ind + k])
       }
       else{

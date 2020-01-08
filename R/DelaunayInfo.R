@@ -215,6 +215,8 @@ function(gidata, poly_info, rawdeldati, nclust){
     #using the indices obtained above and the scale and translate matrices to 
     #get the transformed coordinates for the input sammon datapoints
     int_matrix <- matrix(0, ncol = 2, nrow = length(rawdeldati[[ind1]][, 1]))
+    row.names(int_matrix) <- row.names(rawdeldati[[ind1]])
+    
     for(j in 1: length(rawdeldati[[ind1]][, 1])){
       int_matrix[j, ] <- New_Points(transformation_matrices_info[[ind1]][[rect_indices_containing_points[[ind1]][[j]]]])
     }

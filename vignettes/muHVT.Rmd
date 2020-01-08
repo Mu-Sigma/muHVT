@@ -1,7 +1,7 @@
 ---
 title: "muHVT: Collection of functions used for Vector Quantization and construction
 of hierarchical Voronoi Tessellations for data analysis in R"
-author: "Sangeet Moy Das, Meet Dave, Zubin Dowlaty, Avinash Joshi"
+author: "Sangeet Moy Das, Zubin Dowlaty, Avinash Joshi, Meet Dave"
 date: "`r Sys.Date()`"
 output: 
       rmarkdown::html_vignette:
@@ -15,7 +15,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, include = FALSE}
+```{r setup, warning = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -29,11 +29,18 @@ knitr::opts_chunk$set(
 )
 
 
-library(muHVT)
-library(dplyr)
-library(kableExtra)
-library(geozoo)
-library(plotly)
+
+# installing all required packages
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "R.utils")
+new.packages <-
+  list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages))
+  install.packages(new.packages)
+
+# Loading the required libraries
+lapply(list.of.packages, library, character.only=T)
+getwd()
+R.utils::sourceDirectory("R")
 
 options(expressions = 10000)
 
@@ -222,7 +229,7 @@ Here, we load the data and store into a variable `computers`.
 ```{r load data computer,warning=FALSE,message=FALSE,eval = T}
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/thomaspernet/data_csv_r/master/data/Computers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv")
 ```
 
 Let's have a look at some of the data
@@ -295,7 +302,7 @@ First we will perform hierarchical Vector Quantization at level 1 by setting the
 ```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- muHVT::HVT(trainComputers,
+hvt.results <- HVT(trainComputers,
                           nclust = 15,
                           depth = 1,
                           quant.err = 0.2,
@@ -409,7 +416,7 @@ Now let's go one level deeper and perform hierarchical vector quantization.
 set.seed(240)
 hvt.results2 <- list()
 # depth=2 is used for level2 in the hierarchy
-hvt.results2 <- muHVT::HVT(trainComputers,
+hvt.results2 <- HVT(trainComputers,
                            nclust = 15,
                            depth = 2,
                            quant.err = 0.2,
@@ -466,7 +473,7 @@ As the Quantization Error criteria is not met, let's perform hierarchical Vector
 set.seed(240)
 hvt.results3 <- list()
 # depth=3 is used for level3 in the hierarchy
-hvt.results3 <- muHVT::HVT(trainComputers,
+hvt.results3 <- HVT(trainComputers,
                            nclust = 15,
                            depth = 3,
                            quant.err = 0.2,
@@ -637,7 +644,7 @@ The important parameters for the function `predictHVT` are as below
 
 ```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions <- muHVT::predictHVT(testComputers,
+predictions <- predictHVT(testComputers,
                                  hvt.results3,
                                  hmap.cols = NULL,
                                  child.level = 3)
@@ -667,7 +674,7 @@ The prediction algorithm will work even if some of the variables used to perform
 ```{r predictHVT2 computers,warning=FALSE,message=FALSE,eval=global_var}
 set.seed(240)
 testComputers <- testComputers %>% dplyr::select(-c(screen,ads))
-predictions <- muHVT::predictHVT(testComputers,
+predictions <- predictHVT(testComputers,
                                  hvt.results3,
                                  hmap.cols = NULL,
                                  child.level = 3)
@@ -728,7 +735,7 @@ Now let's try to use the package and project the above 3D object in a 2D Space. 
 
 ```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus <- muHVT::HVT(torus_df,
+hvt.torus <- HVT(torus_df,
                         nclust = 100,
                         depth = 1,
                         quant.err = 0.1,
@@ -764,7 +771,7 @@ Now let's double the number of cells to 200 and try again.
 
 ```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus2 <- muHVT::HVT(torus_df,
+hvt.torus2 <- HVT(torus_df,
                          nclust = 200,
                          depth = 1,
                          quant.err = 0.1,
@@ -799,7 +806,7 @@ Let's increase the number of cells to 500.
 
 ```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus3 <- muHVT::HVT(torus_df,
+hvt.torus3 <- HVT(torus_df,
                          nclust = 500,
                          depth = 1,
                          quant.err = 0.1,
@@ -836,7 +843,7 @@ Let's use the hierarchical Vector Quantization technique and go one level deeper
 
 ```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus4 <- muHVT::HVT(torus_df,
+hvt.torus4 <- HVT(torus_df,
                          nclust = 20,
                          depth = 2,
                          quant.err = 0.1,
@@ -942,7 +949,7 @@ Now let's try to use the package and project the above 3D geographic object in 2
 
 ```{r sphere hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 27: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’sphere’',eval = F}
 set.seed(240)
-hvt.sphere <- muHVT::HVT(sphere_df,
+hvt.sphere <- HVT(sphere_df,
                          nclust = 100,
                          depth = 1,
                          quant.err = 0.1,
@@ -979,7 +986,7 @@ Let us try again by increasing the number of cells to 200.
 
 ```{r sphere hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 29: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’sphere’',eval = F}
 set.seed(240)
-hvt.sphere2 <- muHVT::HVT(sphere_df,
+hvt.sphere2 <- HVT(sphere_df,
                           nclust = 200,
                           depth = 1,
                           quant.err = 0.1,
@@ -1016,7 +1023,7 @@ Now let's increase the number of cells to 500.
 
 ```{r sphere hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 31: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’sphere’',eval = F}
 set.seed(240)
-hvt.sphere3 <- muHVT::HVT(sphere_df,
+hvt.sphere3 <- HVT(sphere_df,
                           nclust = 500,
                           depth = 1,
                           quant.err = 0.1,
@@ -1055,7 +1062,7 @@ Let's use our hierarchical vector quantization technique and go one level deeper
 
 ```{r sphere hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 33: The Voronoi tessellation for level 2 shown for the 576 cells in the dataset ’torus’',eval = F}
 set.seed(240)
-hvt.sphere4 <- muHVT::HVT(sphere_df,
+hvt.sphere4 <- HVT(sphere_df,
                           nclust = 24,
                           depth = 2,
                           quant.err = 0.1,

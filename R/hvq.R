@@ -1,7 +1,7 @@
 #' hvq
-#'
+#' 
 #' Hierarchical Vector Quantization
-#'
+#' 
 #' The raw data is first scaled and this scaled data is supplied as input to
 #' the vector quantization algorithm. Vector quantization technique uses a
 #' parameter called quantization error. This parameter acts as a threshold and
@@ -14,11 +14,11 @@
 #' continues and each group is divided into smaller clusters as long as the
 #' threshold quantization error is met. The output of this technique will be
 #' hierarchically arranged vector quantized data.
-#'
+#' 
 #' @param x Data Frame. A dataframe of multivariate data. Each row corresponds to an
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
-#' @param nclust Numeric. Indicating the maximum number of nodes per hierarchy.
+#' @param nclust Numeric. Indicating the number of nodes per hierarchy.
 #' @param depth Numeric. Indicating the hierarchy depth (or) the depth of the
 #' tree (1 = no hierarchy, 2 = 2 levels, etc..)
 #' @param quant.err Numeric. The quantization error for the algorithm.
@@ -26,7 +26,7 @@
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
 #' @param distance_metric character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
-#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
+#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @return \item{clusters}{ List. A list showing each ID assigned to a cluster.
 #' } \item{nodes.clust}{ List. A list corresponding to nodes' details. }
 #' \item{idnodes}{ List. A list of ID and segments similar to
@@ -35,23 +35,23 @@
 #' nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
 #' quantization error was met. } \item{summary}{ Summary. Output table with
 #' summary. }
-#' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
+#' @author Sangeet Moy Das <Sangeet.Das@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
 #' @importFrom magrittr %>%
 #' @importFrom stats complete.cases
 #' @examples
-#'
+#' 
 #' data("USArrests",package="datasets")
 #' hvqOutput = hvq(USArrests, nclust = 2, depth = 3, quant.err = 0.2,
 #' distance_metric='L1_Norm',error_metric='mean')
-#'
-#'
+#' 
+#' 
 #' @export hvq
 hvq <-
   function (x, nclust = 3, depth = 3, quant.err = 10, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
-
+    
     requireNamespace("dplyr")
-
+    
     rescl <- list()
     resid <- list()
     resm <- list()
@@ -61,33 +61,48 @@ hvq <-
     ztab11 <- ztab12 <- ztab13 <- NULL
     zdepth <- depth
     quantinit <- rep(F, nclust)
+    
+    set.seed(300)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
-
-    #outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, nclust,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
-     outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algorithm=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
-
+    # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, nclust,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
+    
+    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algorithm=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
     # flog.info("Level 1 cluster memberships are calculated")
     #datapoints grouped into clusters
+    # names(outkinit$val) <- seq_along(outkinit$val)
     rescl[[1]] <- outkinit$val
     tet <- lapply(outkinit$val, row.names)
-    for (k in 1:length(tet)) {
-      # print(tet)
-      if(!is.null(tet[[k]])){
-        tet[[k]] <- data.frame(tet[[k]], 1, 1, k)
-      } else {
-        tet[[k]] <- NA
-      }
+    
+    # tet <- lapply(1:length(tet),function(k){
+    #   data.frame(tet[[as.character(k)]], 1, 1, k)
+    # })
+    # tet <- lapply(1:length(tet),function(k){
+    #   k<- as.character(k)
+    #   if(length(tet[[k]])!=0)
+    #     data.frame(tet[[as.character(k)]], 1, 1, k)
+    #   else data.frame(`tet..as.character.k...`=character(0), `1`=numeric(0),'1'=numeric(0), k=integer(0))
+    # })
+    for (k in 1:length(tet)){
+      #print(k)
+      tet[[k]] <- data.frame(tet[[k]], 1, 1, k)
+      #print(head(tet[[k]]))
     }
+    names(tet) <- paste(1:length(tet))
+    # names(tet) <- seq_along(tet)
+    # for (k in 1: length(tet)) 
+    #   tet[[as.character(k)]] <- data.frame(tet[[as.character(k)]], 1, 1, k)
     #ID for each datapoint
     resid[[1]] <- tet
     #centroids of each cluster
+    # names(outkinit$cent) <- seq_along(outkinit$cent)
     resm[[1]] <- outkinit$cent
     #flag to check for quantization error
     resplt[[1]] <- unlist(outkinit$cent) > quant.err
     #initial values for next level k-means
+    # names(outkinit$values)<-seq_along(outkinit$values)
     initclust <- outkinit$values
-    if (depth > 1 & sum(resplt[[1]],na.rm = T) > 0) {
+    if (depth > 1) {
       # flog.info("HVQ calculation started")
       i <- 1
       while (i < depth) {
@@ -107,45 +122,71 @@ hvq <-
         quantok <- unlist(resplt[[i]])
         j <- 1
         while (j < (nclust^i) + 1) {
-          # print(j)
+          # print(paste("im here",j))
           #if datapoint exceeds quantization error and number of datapoints in
           #that cluster is greater than nclust
-          # if (quantok[j] & NROW(initclust[[j]]) > nclust) {
-          if (!is.na(quantok[j]) & quantok[j] & NROW(initclust[[j]]) > 3) {
+          if (quantok[j] & NROW(initclust[[j]]) > nclust) {
             #k-means on the initclust to obtain the next level clustering(sub-clusters)
-
+            
             outk <- getOptimalCentroids(initclust[[j]], iter.max = 100, algorithm = algorithm, nclust,distance_metric = distance_metric,error_metric = error_metric,quant.err = quant.err)
+            
+            # outk <- getCentroids(initclust[[j]], kout = stats::kmeans(initclust[[j]], nclust, iter.max = 100, algorithm = algorithm), nclust,distance_metric = distance_metric,error_metric = error_metric)
             #store the datapoints
+            # names(outk$val)<-seq_along(outk$val)
             ijrescl[[j]] <- outk$val
+            # tet <- lapply(outk$val, sapply, row.names)
             tet <- lapply(outk$val, row.names)
+            # names(tet) <- seq_along(tet)
             #create ID's for each datapoint
-            for (k in 1: length(tet)) {
+            # tet <- lapply(1:length(tet),function(k){
+            #   if(length(tet[[as.character(k)]])!=0)
+            #     data.frame(tet[[as.character(k)]], i+1, j, k)
+            #   else data.frame(`tet..as.character.k...`=character(0), `i...1`=numeric(0), j=numeric(0), k=integer(0))
+            # })
+            # for (k in 1: length(tet)) {
+            #   print(k)
+            #   print(nrow(data.frame(tet[[k]])))
+            # }
+            for (k in 1: length(tet)){
+              
               if(!is.null(tet[[k]])){
-                tet[[k]] <- data.frame(tet[[k]],i + 1, j, k)
-              } else {
-                tet[[k]] <- NA
+                tet[[k]] <- data.frame(tet[[k]],i + 1, j, k)  
+              }
+              else{
+                tet[[k]] <- data.frame(tet[[k]]<-numeric(0))
               }
             }
-
+            
+            # names(tet) <- paste(1:length(tet))
+            # names(tet)<-seq_along(tet)
             ijresid[[j]] <- tet
             #store the centroids
+            # names(outk$cent) <- seq_along(outk$cent)
             ijresm[[j]] <- outk$cent
             #size of a cluster
+            # names(outk$nsize) <- seq_along(outk$nsize)
             ijresnsize[[j]] <- outk$nsize
             # ijztab3up[[j]] <- sapply(outk$val, mean)
-
+            
             ijztab3up[[j]]<-matrix(0, nrow = ncol(x), nclust)
+            
+            # rownames(ijztab3up[[j]]) <- colnames(x)
+            
             for(a in 1: nclust){
-              if(!is.na(outk$val[[a]])){
-                for(b in 1: ncol(x)){
-                  ijztab3up[[j]][b, a] <- as.matrix(mean(outk$val[[a]][, b]))
-                  }
-                } else {
-                  ijztab3up[[j]][, a] <- NA
-                }
+              
+              for(b in 1: ncol(x)){
+                if(is.na(outk$values[[a]])){
+                  ijztab3up[[j]][b, a] <- NA
+                }else{  
+                ijztab3up[[j]][b, a] <- as.matrix(mean(outk$val[[a]][, b]), na.rm=T)}
+                rownames(ijztab3up[[j]]) <- colnames(x)
+                # print(paste("a",a))
+                # print(paste("b",b))
+                # print(paste("j",j))
               }
-            rownames(ijztab3up[[j]]) <- colnames(x)
-
+            }
+            # ijztab3up[[j]]<- na.omit(ijztab3up[[j]])
+            
             #flag to check if the quantization error threshold is exceeded
             ijresplt[[j]] <- unlist(outk$cent) > quant.err
             #store the datapoints
@@ -184,7 +225,7 @@ hvq <-
       # flog.info("HVQ for user-defined depth has been calculated")
       #ztab is the output which contains the datapoints and their IDs.
       #initialize ztab
-      ztab <- data.frame(matrix(0, nrow = sum(nclust^(1:zdepth)),
+      ztab <- data.frame(matrix(0, nrow = sum(nclust^(1:zdepth)), 
                                 ncol = (ncol(x) + 5)))
       #Segment Level
       ztab[1:nclust, 1] <- rep(1, nclust)
@@ -199,62 +240,49 @@ hvq <-
       # ztab3upc <- sapply(outkinit$val, mean, na.rm = T)
       ztab3upc<-matrix(0, nrow = ncol(x), nclust)
       for(a in 1: nclust){
-        if(!is.na(outkinit$val[[a]])){
-          for(b in 1: ncol(x)){
-            ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
-          }
-        } else {
-          ztab3upc[, a] <- NA
+        for(b in 1: ncol(x)){
+          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
+          rownames(ztab3upc) <- colnames(x)
         }
       }
-      rownames(ztab3upc) <- colnames(x)
-
-      for (l in 1:length(ztab3up)) ztab3upc <- cbind(ztab3upc,ztab3up[[l]])
+      for (l in 1:length(ztab3up)) ztab3upc <- cbind(ztab3upc, 
+                                                     ztab3up[[l]])
+        
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 1] <- ztab11
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 2] <- ztab12
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 3] <- ztab13
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 4] <- ztab2
       ztab[, 6: ncol(ztab)] <- t(ztab3upc)
       ztab[(nclust + 1): sum(nclust^(1: zdepth)), 5] <- ztabn
-      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child",
+      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
                        "n", "Quant.Error", colnames(x))
-    } else {
-      ztab <- data.frame(matrix(0, nrow = nclust, ncol = (ncol(x) + 5)))
+    }
+    else {
+      ztab <- data.frame(matrix(0, nrow = nclust, ncol = (ncol(x) + 
+                                                            5)))
       ztab[, 1] <- rep(1, nclust)
       ztab[, 2] <- rep(1, nclust)
       ztab[, 3] <- 1:nclust
       ztab[, 4] <- unlist(outkinit$nsize)
-
-      ztab3upc<-matrix(0, nrow = ncol(x), nclust)
-      for(a in 1: nclust){
-        if(!is.na(outkinit$val[[a]])){
-          for(b in 1: ncol(x)){
-            ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
-          }
-        } else {
-          ztab3upc[, a] <- NA
-        }
-      }
-      rownames(ztab3upc) <- colnames(x)
-      ztab[, 6: ncol(ztab)] <- t(ztab3upc)
-      # ztab[, 6:ncol(ztab)] <- t(sapply(outkinit$val, colMeans, na.rm = T))
+      ztab[, 6:ncol(ztab)] <- t(sapply(outkinit$val, colMeans, 
+                                       na.rm = T))
       ztab[, 5] <- unlist(outkinit$cent)
-      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child",
+      names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
                        "n", "Quant.Error", colnames(x))
     }
-
+    
     ## Calculate compress percentage
     compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(noOfCells = sum(!is.na(Quant.Error)), noOfCellsBelowQuantizationError = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(percentOfCellsBelowQuantizationErrorThreshold = (noOfCellsBelowQuantizationError/noOfCells))
-
+    
     colnames(compression_summary)[1] <- "segmentLevel"
-
+    
     if(any(is.nan(compression_summary$percentOfCellsBelowQuantizationErrorThreshold))){
       compression_summary <- compression_summary[stats::complete.cases(compression_summary),]
     }
-
+    
     ridnames <- resid
     rclnames <- rescl
-    return(list(clusters = initclust, nodes.clust = rescl, idnodes = resid,
+    return(list(clusters = initclust, nodes.clust = rescl, idnodes = resid, 
                 error.quant = resm, plt.clust = resplt, summary = ztab, compression_summary = compression_summary))
-
+    
   }
