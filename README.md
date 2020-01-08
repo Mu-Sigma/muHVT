@@ -43,7 +43,7 @@ In this package, we use `sammons` from the package `MASS` to project higher dime
 
 #### Code Example
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price,speed,ram,screen,cd,etc. The dataset can be downloaded from [here](https://github.com/thomaspernet/data_csv_r/blob/master/data/Computers.csv)
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price,speed,ram,screen,cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
 
 In this example, we will compress this dataset by using hierarhical VQ using k-means and visualize the Voronoi tesselation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
 
@@ -52,7 +52,7 @@ Here, we load the data and store into a variable `computers`.
 ``` r
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/thomaspernet/data_csv_r/master/data/Computers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv")
 ```
 
 Let's have a look at sample of the data
