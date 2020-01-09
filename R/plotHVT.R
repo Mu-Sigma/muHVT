@@ -10,10 +10,11 @@
 #' @param color.vec Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level.
 #' @param pch1 Numeric. Symbol type of the centroids of the tessellations
-#' (parent levels). Refer \code{\link{points}}. (default = 19)
+#' (parent levels). Refer \code{\link{points}}. (default = 21)
 #' @param centroid.size Numeric. Size of centroids of first level
 #' tessellations. (default = 3)
 #' @param title String. Set a title for the plot. (default = NULL)
+#' @param maxDepth Numeric. An integer indicating the number of levels. (default = NULL)
 #' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords hplot
@@ -26,7 +27,7 @@
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
 #'                   projection.scale = 10, normalize = TRUE)
-#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'))
+#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),maxDepth=3)
 #'
 #'
 #'
@@ -38,7 +39,7 @@ plotHVT <-
            pch1 = 21,
            centroid.size = 3,
            title = NULL,
-           maxDepth) {
+           maxDepth=NULL) {
     library(ggplot2)
     
     hvt_list <- hvt.results

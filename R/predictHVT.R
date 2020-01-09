@@ -8,6 +8,12 @@
 #' @param hvt.results A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data
 #' @param hmap.cols - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted.(Default = #' NULL). A heatmap won’t be plotted if NULL is passed
 #' @param child.level A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
+#' @param quant.error.hmap Numeric. A number indicating the quantization error threshold.
+#' @param nclust.hmap Numeric. An integer indicating the number of clusters per hierarchy
+#' @param color.vec Vector. A color vector such that length(color.vec) =
+#' (child.level - 1). (default = NULL)
+#' @param line.width Vector. A line width vector such that length(line.width) =
+#' (child.level - 1). (default = NULL)
 #' @param ...  color.vec and line.width can be passed from here
 #' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
@@ -24,7 +30,7 @@
 #' hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2,
 #'                   projection.scale = 10, normalize = TRUE)
 #'
-#' predictions <- predictHVT(test,hvt.results,hmap.cols = NULL, child.level=2)
+#' predictions <- predictHVT(test,hvt.results,hmap.cols = NULL, child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
 #' print(predictions$predictions)
 #' @export predictHVT
 predictHVT <-
@@ -32,8 +38,8 @@ predictHVT <-
            hvt.results,
            hmap.cols = NULL,
            child.level = 1,
-           quant.err_hmap = NULL,
-           nclust_hmap = NULL,
+           quant.error.hmap = NULL,
+           nclust.hmap = NULL,
            line.width = NULL,
            color.vec = NULL,
            ...) {
@@ -42,7 +48,7 @@ predictHVT <-
     options(warn = -1)
     data <-data[complete.cases(data), ]
     summary_list <- hvt.results[[3]]
-    nclust <- nclust_hmap
+    nclust <- nclust.hmap
     train_colnames <- names(summary_list$scale_summary$mean_data)
     
     if (!all(train_colnames %in% colnames(data))) {
@@ -234,8 +240,8 @@ predictHVT <-
         color.vec = color.vec,
         palette.color = 6,
         test = TRUE,
-        quant.err_hmap = quant.err_hmap,
-        nclust_hmap = nclust_hmap
+        quant.error.hmap = quant.error.hmap,
+        nclust.hmap = nclust.hmap
       ) +
       theme(
         plot.title = element_text(

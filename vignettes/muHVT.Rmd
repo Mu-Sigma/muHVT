@@ -429,8 +429,8 @@ hvtHmap(hvt.results,
         palette.color = 6,
         centroid.size = 3,
         show.points = T,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Now let's go one level deeper and perform hierarchical vector quantization.
@@ -491,8 +491,8 @@ hvtHmap(hvt.results2,
         palette.color = 6,
         centroid.size = 2,
         show.points = T,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 As the Quantization Error criteria is not met, let's perform hierarchical Vector Quantization at level 3.
@@ -547,8 +547,8 @@ hvtHmap(hvt.results3,
         palette.color = 6,
         show.points = T,
         centroid.size = 1,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 ## Overlay Heatmap
@@ -571,8 +571,8 @@ hvtHmap(hvt.results,
         palette.color = 6,
         show.points = T,
         centroid.size = 3,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -590,8 +590,8 @@ hvtHmap(hvt.results2,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let us go one level deeper and overlay heatmap for `price` at level 3. 
@@ -608,8 +608,8 @@ hvtHmap(hvt.results3,
         palette.color = 6,
         show.points = T,
         centroid.size = 1,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's repeat the steps above for the `speed` variable
@@ -626,8 +626,8 @@ hvtHmap(hvt.results,
         palette.color = 6,
         show.points = T,
         centroid.size = 3,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -643,8 +643,8 @@ hvtHmap(hvt.results2,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let us go one level deeper and overlay heatmap for `speed` at level 3. 
@@ -661,8 +661,8 @@ hvtHmap(hvt.results3,
         palette.color = 6,
         show.points = T,
         centroid.size = 1,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -695,8 +695,8 @@ predictions <- predictHVT(testComputers,
                                  child.level = 3,
                                  line.width = c(1.2,0.8,0.4),
                                  color.vec = c("#141B41","#6369D1","#D8D2E1"),
-                                 quant.err_hmap = 0.2,
-                                 nclust_hmap = 15)
+                                 quant.error.hmap = 0.2,
+                                 nclust.hmap = 15)
 
 ```
 
@@ -730,8 +730,8 @@ predictions <- predictHVT(testComputers,
                                  child.level = 3,
                                  line.width = c(1.2,0.8,0.4),
                                  color.vec = c("#141B41","#6369D1","#D8D2E1"),
-                                 quant.err_hmap = 0.2,
-                                 nclust_hmap = 15)
+                                 quant.error.hmap = 0.2,
+                                 nclust.hmap = 15)
 
 predictions[["predictPlot"]]
 
@@ -824,8 +824,8 @@ hvtHmap(hvt.torus,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Now let's double the number of cells to 200 and try again.
@@ -863,8 +863,8 @@ hvtHmap(hvt.torus2,
         palette.color = 6,
         centroid.size = 2,
         show.points = T,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's increase the number of cells to 500.
@@ -904,8 +904,8 @@ hvtHmap(hvt.torus3,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's use the hierarchical Vector Quantization technique and go one level deeper, keeping the number of cells as 20.
@@ -944,8 +944,8 @@ hvtHmap(hvt.torus4,
         palette.color = 6,
         show.points = T,
         centroid.size = 1.5,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 A similar process can be followed for sphere. The code for the same can be found in the Appendix below.
@@ -1052,8 +1052,8 @@ hvtHmap(hvt.sphere,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -1091,8 +1091,8 @@ hvtHmap(hvt.sphere2,
         palette.color = 6,
         centroid.size = 2,
         show.points = T,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -1131,8 +1131,8 @@ hvtHmap(hvt.sphere3,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 We can do better here also
@@ -1171,6 +1171,6 @@ hvtHmap(hvt.sphere4,
         palette.color = 6,
         show.points = T,
         centroid.size = 2,
-        quant.err_hmap = 0.2,
-        nclust_hmap = 15)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```

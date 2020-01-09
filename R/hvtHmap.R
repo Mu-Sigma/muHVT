@@ -52,6 +52,10 @@
 #' = NULL)
 #' @param label.size Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
+#' @param quant.error.hmap Numeric. A number indicating the quantization error
+#' treshold.
+#' @param nclust.hmap Numeric. An integer indicating the number of clusters per
+#' hierarchy (level)
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)
 #' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
@@ -63,13 +67,13 @@
 #' hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2,
 #'                   projection.scale = 10, normalize = TRUE)
 #' hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', line.width = c(0.2),
-#' color.vec = c('#141B41'),palette.color = 6)
+#' color.vec = c('#141B41'),palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 6)
 #'
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
 #'                   projection.scale = 10, normalize = TRUE)
 #' hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = 'quant_error',
-#' line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6)
+#' line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 3)
 #' @export hvtHmap
 hvtHmap <-
   function (hvt.results,
@@ -86,8 +90,8 @@ hvtHmap <-
             asp = 1,
             ask = TRUE,
             tess.label = NULL,
-            quant.err_hmap = NULL,
-            nclust_hmap = NULL,
+            quant.error.hmap = NULL,
+            nclust.hmap = NULL,
             label.size = .5,
             ...)
   {
@@ -174,7 +178,7 @@ hvtHmap <-
         }
       
       }else{
-        for (clusterNo in 1:nclust_hmap^(child.level-1)) {
+        for (clusterNo in 1:nclust.hmap^(child.level-1)) {
           for (childNo in 1:length(hvt_list[[2]][[depth]][[as.character(clusterNo)]])) {
             if (!is.null(hvt_list[[2]][[depth]][[as.character(clusterNo)]])) {
               summaryFilteredDF <-
@@ -252,7 +256,7 @@ hvtHmap <-
       data <- datapoly
           if(child.level>1){
             for(i in 1:(child.level-1)){
-            index_tess<-which(data$depth==i & data$qe>quant.err_hmap & data$n_cluster>3 )
+            index_tess<-which(data$depth==i & data$qe>quant.error.hmap & data$n_cluster>3 )
             data<-data[-index_tess,]
     
             rm(index_tess)
