@@ -301,12 +301,7 @@ hvtHmap <-
         size = (centroid.size / (2 ^ (depth - 1))),
         fill = color.vec[depth],
         color = color.vec[depth]
-      ) + ggtitle(
-        paste(
-          "Hierarchical Voronoi Tessellation with",
-          hmap.cols,
-          "heatmap overlay"
-        ))+ ggplot2::theme(plot.background = ggplot2::element_blank()
+      ) + ggplot2::theme(plot.background = ggplot2::element_blank()
                            ,plot.title = element_text(
                              size = 20,
                              hjust = 0.5,

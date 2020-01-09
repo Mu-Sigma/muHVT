@@ -166,7 +166,7 @@ plotHVT <-
         axis.title = element_blank()
         ,
         panel.background = element_blank()
-      ) + ggplot2::ggtitle("Hierarchical Voronoi Tessellation without heatmap overlay") + theme(plot.title = element_text(hjust = 0.5)) +
+      ) + theme(plot.title = element_text(hjust = 0.5)) +
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_continuous(expand = c(0, 0))
     

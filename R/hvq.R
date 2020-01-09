@@ -67,7 +67,7 @@ hvq <-
     #outkinit will have centroids and datapoints and size of the cluster
     # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, nclust,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
     
-    calculate_euclidean_distance_for_each_cluster <- function(x){
+    calculate_euclidean_distance_for_each_cluster <<- function(x){
       # if(nrow(x) > 1){
         sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
       # }
@@ -76,7 +76,7 @@ hvq <-
       # }
     }
     
-    calculate_manhattan_distance_for_each_cluster <- function(x){
+    calculate_manhattan_distance_for_each_cluster <<- function(x){
       # if(nrow(x) > 1){
         rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
       # }
@@ -88,16 +88,16 @@ hvq <-
     
     ## for distance metrics i.e; manhattan or eucleadian
     if(distance_metric == "L1_Norm"){
-      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
+      function_to_calculate_distance_metric <<- calculate_manhattan_distance_for_each_cluster
     } else if(distance_metric == "L2_Norm"){
-      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+      function_to_calculate_distance_metric <<- calculate_euclidean_distance_for_each_cluster
     } else{
       stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
     }
     
     ## for error metric i.e; ,mean or max
     if(error_metric %in% c("mean","max")){
-      function_to_calculate_error_metric <- error_metric
+      function_to_calculate_error_metric <<- error_metric
     } else{
       stop('error_metric must be max,mean or custom function')
     }

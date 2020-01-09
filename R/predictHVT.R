@@ -236,11 +236,7 @@ predictHVT <-
         test = TRUE,
         quant.err_hmap = quant.err_hmap,
         nclust_hmap = nclust_hmap
-      ) + ggtitle(paste(
-        "Hierarchical Voronoi Tessellation with",
-        hmap.cols,
-        "heatmap overlay"
-      )) +
+      ) +
       theme(
         plot.title = element_text(
           size = 20,
