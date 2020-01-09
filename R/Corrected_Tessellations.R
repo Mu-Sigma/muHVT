@@ -19,17 +19,17 @@ function(current_dirsgs, current_tile, current_polygon){
   
   #if the same index is present in both vert_outside1 and vert_outside2, it means the line 
   #joining these points has both the end-points outside the parent polygon
-  vert_outside <- intersect(vert_outside1, vert_outside2)
+  vert_outside <- rgeos::intersect(vert_outside1, vert_outside2)
   
   #if the line joining the points p1 and p2 is outside the parent polygon and
   #p1 is boundary point and p2 is not, then make p2 the boundary point or vice versa
   if (length(vert_outside) > 0 ) {
     for (j in 1: length(vert_outside)) {
       #obtain the index of the line for which the point is outside
-      x_coord_index1 <- which((current_dirsgs[vert_outside[j], "x1"] == current_dirsgs[, c("x1", "x2")]) == T)
-      y_coord_index1 <- which((current_dirsgs[vert_outside[j], "y1"] == current_dirsgs[, c("y1", "y2")]) == T)      
-      x_coord_index2 <- which((current_dirsgs[vert_outside[j], "x2"] == current_dirsgs[, c("x1", "x2")]) == T)
-      y_coord_index2 <- which((current_dirsgs[vert_outside[j], "y2"] == current_dirsgs[, c("y1", "y2")]) == T)
+      x_coord_index1 <- which((current_dirsgs[vert_outside[j], "x1"] == current_dirsgs[, c("x1", "x2")]) == TRUE)
+      y_coord_index1 <- which((current_dirsgs[vert_outside[j], "y1"] == current_dirsgs[, c("y1", "y2")]) == TRUE)      
+      x_coord_index2 <- which((current_dirsgs[vert_outside[j], "x2"] == current_dirsgs[, c("x1", "x2")]) == TRUE)
+      y_coord_index2 <- which((current_dirsgs[vert_outside[j], "y2"] == current_dirsgs[, c("y1", "y2")]) == TRUE)
       x_coord_index <- c(x_coord_index1, x_coord_index2)
       y_coord_index <- c(y_coord_index1, y_coord_index2)
       xy_index <- rgeos::intersect(x_coord_index, y_coord_index)
@@ -37,23 +37,23 @@ function(current_dirsgs, current_tile, current_polygon){
       #change the boundary points of those indices to TRUE
       for (i in 1: ind_len) {
         if (xy_index[i] > nrow(current_dirsgs)) {
-          current_dirsgs[(xy_index[i] - nrow(current_dirsgs)), "bp2"] <- T
+          current_dirsgs[(xy_index[i] - nrow(current_dirsgs)), "bp2"] <- TRUE
         } else {
-          current_dirsgs[xy_index[i], "bp1"] <- T
+          current_dirsgs[xy_index[i], "bp1"] <- TRUE
         } 
       }      
     }
   }
   
   #boundary points in the first index
-  firstpt <- current_dirsgs[which(current_dirsgs[, "bp1"] == T), ]
+  firstpt <- current_dirsgs[which(current_dirsgs[, "bp1"] == TRUE), ]
   #boundary points in the second index
-  secondpt <- current_dirsgs[which(current_dirsgs[, "bp2"] == T), ]
+  secondpt <- current_dirsgs[which(current_dirsgs[, "bp2"] == TRUE), ]
   
   #use all these points together and remove the common rows
   pts <- rbind(firstpt, secondpt)
-  if(any(duplicated(pts) == T)){
-    ptsout <- pts[-which(duplicated(pts) == T), ]
+  if(any(duplicated(pts) == TRUE)){
+    ptsout <- pts[-which(duplicated(pts) == TRUE), ]
   }else{
     ptsout <- pts
   }
@@ -78,7 +78,7 @@ function(current_dirsgs, current_tile, current_polygon){
   }
   
   #polygon is too small to calculate child level tessellations
-  if(any(is.nan(m_parent) == T)){
+  if(any(is.nan(m_parent) == TRUE)){
     #flog.warn("Projection is not scaled enough")
     return("-1")
   }
@@ -124,7 +124,7 @@ function(current_dirsgs, current_tile, current_polygon){
         # j<-2
         xy <- splancs::as.points(x[j], y[j])
         if(
-          # (nrow(splancs::pip(xy, xy.poly, out = F, bound = T)) != 0) ||  obsolete code
+          # (nrow(splancs::pip(xy, xy.poly, out = F, bound = TRUE)) != 0) ||  obsolete code
              (sp::point.in.polygon(x[j], y[j], offset_polygon[, 1], offset_polygon[, 2]) !=0) ||
              (sp::point.in.polygon(as.character(x[j]), as.character(y[j]), offset_polygon[, 1], offset_polygon[, 2]) != 0)){
           pt_intersect[j, ] <- xy
@@ -138,8 +138,8 @@ function(current_dirsgs, current_tile, current_polygon){
         }
       }
       
-      if(any(rows_del == T)){
-        pt_intersect <- pt_intersect[-which(rows_del == T), , drop = F]
+      if(any(rows_del == TRUE)){
+        pt_intersect <- pt_intersect[-which(rows_del == TRUE), , drop = FALSE]
       }
       
       #calculate the distance between the boundary point of the second level tessellation with the 
@@ -148,12 +148,12 @@ function(current_dirsgs, current_tile, current_polygon){
         distmat <- matrix(0, ncol = 2, nrow = (nrow(pt_intersect) + 1))
         distmat[2: nrow(distmat), ] <- pt_intersect
         #choose the point which is a boundary point
-        if(ptsout[i, "bp1"] == T){
+        if(ptsout[i, "bp1"] == TRUE){
           distmat[1, ] <- as.matrix(ptsout[i, c("x1", "y1")])
           desired_pt <- distmat[which(stats::dist(distmat) == min(as.matrix(stats::dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
           ptsout[i, c("x1", "y1")] <- desired_pt
         }
-        if(ptsout[i, "bp2"] == T){
+        if(ptsout[i, "bp2"] == TRUE){
           distmat[1, ] <- as.matrix(ptsout[i, c("x2", "y2")])
           desired_pt <- distmat[which(stats::dist(distmat) == min(as.matrix(stats::dist(distmat))[2: nrow(distmat),1])) + 1,]   # +1 to get the correct index from the output of dist function
           ptsout[i, c("x2", "y2")] <- desired_pt

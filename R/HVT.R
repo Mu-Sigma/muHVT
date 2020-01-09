@@ -50,26 +50,28 @@
 #' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'))
 #' @export HVT
 HVT <-
-function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
+function (dataset, nclust, depth, quant.err, projection.scale, normalize = TRUE,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
 
-    requireNamespace("MASS")         #sammon function
+    
     requireNamespace("deldir")       #deldir function
     requireNamespace("Hmisc")        #ceil function
-    #require(gtools)
-    #require(seas)
-    #require(mgcv)
-    #require(spatstat)
     requireNamespace("grDevices")    #chull function
     requireNamespace("splancs")      #csr function
     requireNamespace("sp")           #point.in.polygon function
     requireNamespace("conf.design")  #factorize function
 
-    #options(warn = -1)
 
     dataset <- as.data.frame(dataset)
-
+    dataset <-dataset[complete.cases(dataset), ]
+    dataset <- dataset[,colnames(dataset)[purrr::map_lgl(dataset,~is.numeric(.x))]]
+    nums <- unlist(lapply(dataset, function(x){ is.numeric(x) & !sd(x) == 0  }))
+    dataset<- dataset[, nums]
+    
+    
+    
+    dataset <- as.data.frame(sapply(dataset[,1:length(dataset[1,])], as.numeric))
     if(normalize){
-      scaledata <- scale(dataset, scale = T, center = T)
+      scaledata <- scale(dataset, scale = TRUE, center = TRUE)
       rownames(scaledata) <- rownames(dataset)
 
       mean_data <- attr(scaledata,"scaled:center")
@@ -116,18 +118,32 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
     newcols <-  ncol(hvqoutput) - ncol(dataset)
     # Variable to store information on mapping 
     par_map <- list()
-    for (i in 1: nlevel) {
-
+    for (i in 1: nlevel){
       #hvqdata segregated according to different levels
       tessdata[[i]] <- gdata[which(gdata[, "Segment.Level"] == i), ]
-
+      
       #data to be used as input to sammon function
-      input.tessdata[[i]] <- tessdata[[i]][, (newcols+1): ncol(hvqoutput)]
+      # input.tessdata[[i]] <- tessdata[[i]][, (newcols+1): ncol(hvqoutput)]
+      # d<-cmdscale()
+    }
+    counter<-c(1:nlevel)
 
-      #sammon function output is 2d coordinates which are saved level-wise
-      points2d[[i]] <- projection.scale * (MASS::sammon(stats::dist(unique(input.tessdata[[i]])),niter = 10^5,trace=FALSE)$points)
+    sammon_par<-function(x){10 * (MASS::sammon(d=stats::dist(unique(tessdata[[x]][, (newcols+1): ncol(hvqoutput)])),niter = 10^5,trace=FALSE)$points)}
+    points2d<-lapply(counter,sammon_par)
 
-      #sammon datapoints grouped according to the hierarchy
+    
+    for (i in 1: nlevel) {
+
+      # #hvqdata segregated according to different levels
+      # tessdata[[i]] <- gdata[which(gdata[, "Segment.Level"] == i), ]
+      # 
+      # #data to be used as input to sammon function
+      # input.tessdata[[i]] <- tessdata[[i]][, (newcols+1): ncol(hvqoutput)]
+      # 
+      # #sammon function output is 2d coordinates which are saved level-wise
+      # points2d[[i]] <- projection.scale * (MASS::sammon(stats::dist(unique(input.tessdata[[i]])),niter = 10^5,trace=FALSE)$points)
+      # 
+      # #sammon datapoints grouped according to the hierarchy
       intermediate.rawdata <- list()
       rn = row.names(points2d[[i]])
       vec = as.integer(rn) - sum(nclust^(0:(i-1))) + 1
@@ -266,7 +282,7 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
           #constructing parent polygons
           par_tile_polygon[[tileNo]] <- matrix(c(polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$x,
                                                  polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]$y),
-                                               ncol = 2, byrow = F )
+                                               ncol = 2, byrow = FALSE )
           #correct the tessellations
           cur_dirsgs <- deldat2[[tileNo]]$dirsgs
           cur_tile <- polygon_info[[(i - 1)]][[which(par_tile_indices[[(i - 1)]] == sec_index)]][[last_index]]
@@ -380,4 +396,5 @@ function (dataset, nclust, depth, quant.err, projection.scale, normalize = T,dis
       }
       return(fin_out)
     }
+
   }
