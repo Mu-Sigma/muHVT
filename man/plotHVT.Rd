@@ -45,6 +45,6 @@ plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582
 \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{hplot}

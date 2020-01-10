@@ -13,14 +13,14 @@ in-depth data analysis.
 }
 \details{
 \tabular{ll}{ Package: \tab muHVT\cr Type: \tab Package\cr Version: \tab
-1.0.0\cr Date: \tab 2018-07-06\cr License: \tab GPL-2 | GPL-3\cr }
+1.0.0\cr Date: \tab 2020-01-06\cr License: \tab GPL-2 | GPL-3\cr }
 }
 \seealso{
 \code{\link{HVT}}
 }
 \author{
-Zubin Dowlaty, Avinash Joshi, Meet Dave
+Sangeet Moy Das, Zubin Dowlaty, Avinash Joshi, Meet Dave
 
-Maintainer: Meet Dave <dave.kirankumar@mu-sigma.com>
+Maintainer: Mu Sigma Inc. <ird.experiencelab@mu-sigma.com>
 }
 \keyword{package}

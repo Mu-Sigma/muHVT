@@ -53,5 +53,5 @@ vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
 \code{\link{hvtHmap}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }

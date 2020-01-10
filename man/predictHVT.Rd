@@ -39,6 +39,6 @@ print(predictions$predictions)
 \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{predict}
