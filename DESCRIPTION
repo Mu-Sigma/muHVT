@@ -13,9 +13,9 @@ Authors@R: c(
     person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = c("cre")))
 Description: Constructing hierarchical Voronoi tessellations for a given data set and overlay
     heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.  
-License: GPL-2 | GPL-3
+License: Apache License 2.0
 Encoding: UTF-8
-Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc,ggplot2,dplyr,purrr,gtools,magrittr,plyr
+Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc,ggplot2,dplyr,purrr,gtools,magrittr,plyr,polyclip,rgeos
 Depends: R (>= 3.4.4)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
