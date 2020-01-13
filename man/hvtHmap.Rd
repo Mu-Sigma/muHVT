@@ -6,8 +6,8 @@
 \usage{
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec = NULL,
   line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6,
-  previous_level_heatmap = T, show.points = F, asp = 1, ask = T,
-  tess.label = NULL, label.size = 0.5, ...)
+  previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE,
+  tess.label = NULL, quant.error.hmap = NULL, nclust.hmap = NULL, label.size = 0.5, ...)
 }
 \arguments{
 \item{hvt.results}{List. A list of hvt.results obtained from the HVT

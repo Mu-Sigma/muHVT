@@ -40,11 +40,10 @@ function(gidata, poly_info, rawdeldati, nclust){
     
     for(i in 1: length(xseq_parent)){
       #points on line with constant 'x' and those that are inside the polygon
-      x_points_inside_polygon[[i]] <- Points_on_xlines[[i]][c(which(point.in.polygon(Points_on_xlines[[i]][, 1], 
+      x_points_inside_polygon[[i]] <- Points_on_xlines[[i]][c(which(sp::point.in.polygon(Points_on_xlines[[i]][, 1], 
                                                                                      Points_on_xlines[[i]][, 2],
                                                                                      output_polygon[, 1], 
-                                                                                     output_polygon[, 2]) != 0)), , 
-                                                            drop = FALSE]
+                                                                                     output_polygon[, 2]) != 0)), ,drop = FALSE]
       #lines(x_points_inside_polygon[[i]][, 1], x_points_inside_polygon[[i]][, 2])  
     }
     
@@ -202,7 +201,7 @@ function(gidata, poly_info, rawdeldati, nclust){
     
     for(j in 1: length(rawdeldati[[ind1]][, 1])){
       for(k in 1: length(boxes_in_sammon_space[[ind1]])){
-        if(point.in.polygon(rawdeldati[[ind1]][j, 1], 
+        if(sp::point.in.polygon(rawdeldati[[ind1]][j, 1], 
                             rawdeldati[[ind1]][j, 2],
                             boxes_in_sammon_space[[ind1]][[k]][, 1], 
                             boxes_in_sammon_space[[ind1]][[k]][, 2]) != 0){

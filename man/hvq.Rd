@@ -4,7 +4,7 @@
 \alias{hvq}
 \title{hvq}
 \usage{
-hvq(x, nclust = 3, depth = 3, quant.err = 10,
+hvq(x, nclust = 15, depth = 3, quant.err = 0.2,
   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
   distance_metric = c("L1_Norm", "L2_Norm"), error_metric = c("mean",
   "max"))

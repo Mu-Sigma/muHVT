@@ -4,6 +4,7 @@ function(current_dirsgs, current_tile, current_polygon){
   requireNamespace("splancs")      #csr function 
   requireNamespace("sp")           #point.in.polygon function
   requireNamespace("polyclip")
+  requireNamespace("rgeos")
     
   initial_dirsgs <- current_dirsgs
   #vert_outside1 and vert_outside2 check for the points which are outside the parent polygon

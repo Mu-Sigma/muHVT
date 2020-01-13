@@ -299,7 +299,7 @@ hvtHmap <-
       
       
     for (depth in 1:maxDepth) {
-      p <-  p + geom_point(
+      p <-  p + ggplot2::geom_point(
         data = centroidDataframe[centroidDataframe["lev"] == depth, ],
         aes(x = x, y = y),
         size = (centroid.size / (2 ^ (depth - 1))),

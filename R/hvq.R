@@ -48,7 +48,7 @@
 #' 
 #' @export hvq
 hvq <-
-  function (x, nclust = 15, depth = 3, quant.err = 0.2, algorithm = "Hartigan-Wong",distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
+  function (x, nclust = 15, depth = 3, quant.err = 0.2, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
     
     requireNamespace("dplyr")
     

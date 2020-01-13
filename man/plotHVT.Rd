@@ -5,7 +5,7 @@
 \title{plotHVT}
 \usage{
 plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3,
-  title = NULL)
+  title = NULL, maxDepth=NULL)
 }
 \arguments{
 \item{hvt.results}{List. A list containing the ouput of \code{HVT} function

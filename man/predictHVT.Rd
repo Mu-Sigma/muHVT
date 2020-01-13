@@ -4,7 +4,7 @@
 \alias{predictHVT}
 \title{predictHVT}
 \usage{
-predictHVT(data, hvt.results, hmap.cols = NULL, child.level = 1, ...)
+predictHVT(data, hvt.results, hmap.cols = NULL, child.level = 1, quant.error.hmap = NULL, nclust.hmap = NULL, line.width = NULL, color.vec = NULL, ...)
 }
 \arguments{
 \item{data}{List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
