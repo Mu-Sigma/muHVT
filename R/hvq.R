@@ -51,7 +51,6 @@ hvq <-
   function (x, nclust = 15, depth = 3, quant.err = 0.2, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
     
     requireNamespace("dplyr")
-    
     rescl <- list()
     resid <- list()
     resm <- list()
@@ -63,47 +62,10 @@ hvq <-
     quantinit <- rep(FALSE, nclust)
     
     set.seed(300)
-    # flog.info("Parameters are initialized")
-    #outkinit will have centroids and datapoints and size of the cluster
-    # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, nclust,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
-    
-    calculate_euclidean_distance_for_each_cluster <- function(x){
-      # if(nrow(x) > 1){
-        sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
-      # }
-      # else{
-      #   return(0)
-      # }
-    }
-    
-    calculate_manhattan_distance_for_each_cluster <- function(x){
-      # if(nrow(x) > 1){
-        rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
-      # }
-      # else{
-      #   return(0)
-      # }
-    }
     
     
-    ## for distance metrics i.e; manhattan or eucleadian
-    if(distance_metric == "L1_Norm"){
-      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
-    } else if(distance_metric == "L2_Norm"){
-      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
-    } else{
-      stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
-    }
     
-    ## for error metric i.e; ,mean or max
-    if(error_metric %in% c("mean","max")){
-      function_to_calculate_error_metric <- error_metric
-    } else{
-      stop('error_metric must be max,mean or custom function')
-    }
-    
-    
-    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=10^5, algorithm=algorithm), nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric)
+    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=10^5, algorithm=algorithm), nclust,distance_metric,error_metric)
     
     # outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algorithm=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
     # flog.info("Level 1 cluster memberships are calculated")
@@ -171,7 +133,7 @@ hvq <-
             #k-means on the initclust to obtain the next level clustering(sub-clusters)
             z =data.frame(initclust[[j]])
             # try(
-            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric,quant.err = quant.err)
+            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, nclust,distance_metric,error_metric,quant.err = quant.err)
             # )
             # outk <- getOptimalCentroids(initclust[[j]], iter.max = 100, algorithm = algorithm, nclust,distance_metric = distance_metric,error_metric = error_metric,quant.err = quant.err)
             

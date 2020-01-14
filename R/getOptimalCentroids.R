@@ -36,21 +36,50 @@
 #' quantization error was met. } \item{summary}{ Summary. Output table with
 #' summary. }
 #' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
-getCentroids_for_opti <-
-  function (x, kout, nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric){
-    calculate_error<- centl <- list()
-    calculate_error <- x %>% dplyr::group_by(kout$clust) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
-    centl <-lapply(calculate_error$err,function_to_calculate_error_metric)
-    #return centroids
-    return(centl)
-    
-  }
+# 
+ 
+
+
 
 getOptimalCentroids <-
-  function (x, iter.max,algorithm, nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric,quant.err){
+  function (x, iter.max,algorithm, nclust,distance_metric,error_metric,quant.err){
     options(warn = -1)
-    # Start with splitting data into three clusters
+    calculate_euclidean_distance_for_each_cluster <- function(x){
+      sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
+    }
     
+    calculate_manhattan_distance_for_each_cluster <- function(x){
+      rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
+    }
+    
+    ## for distance metrics i.e; manhattan or eucleadian
+    if(distance_metric == "L1_Norm"){
+      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
+    } else if(distance_metric == "L2_Norm"){
+      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+    } else{
+      stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
+    }
+    
+    ## for error metric i.e; ,mean or max
+    if(error_metric %in% c("mean","max")){
+      function_to_calculate_error_metric <- error_metric
+    } else{
+      stop('error_metric must be max,mean or custom function')
+    }
+    
+    
+    
+    # Start with splitting data into three clusters
+    getCentroids_for_opti <-
+      function (x, kout, nclust,distance_metric,error_metric){
+        calculate_error<- centl <- list()
+        calculate_error <- x %>% dplyr::group_by(kout$clust) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
+        centl <-lapply(calculate_error$err,function_to_calculate_error_metric)
+        #return centroids
+        return(centl)
+        
+      }
 
     
     nclust_iter <- 3
