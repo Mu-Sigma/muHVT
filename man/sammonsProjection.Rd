@@ -4,8 +4,15 @@
 \alias{sammonsProjection}
 \title{sammonsProjection}
 \usage{
-sammonsProjection(d, y = stats::cmdscale(d, k), k = 2, niter = 100,
-  trace = TRUE, magic = 0.2, tol = 1e-04)
+sammonsProjection(
+  d,
+  y = stats::cmdscale(d, k),
+  k = 2,
+  niter = 100,
+  trace = TRUE,
+  magic = 0.2,
+  tol = 1e-04
+)
 }
 \arguments{
 \item{d}{distance structure of the form returned by dist, or a full,

@@ -32,6 +32,8 @@
 #'
 #'
 #' @export plotHVT
+requireNamespace("ggplot2") 
+ 
 plotHVT <-
   function(hvt.results,
            line.width,

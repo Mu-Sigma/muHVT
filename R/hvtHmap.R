@@ -75,6 +75,9 @@
 #' hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = 'quant_error',
 #' line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 3)
 #' @export hvtHmap
+
+requireNamespace("ggplot2")  
+
 hvtHmap <-
   function (hvt.results,
             dataset,

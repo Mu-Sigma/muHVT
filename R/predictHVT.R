@@ -33,6 +33,9 @@
 #' predictions <- predictHVT(test,hvt.results,hmap.cols = NULL, child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
 #' print(predictions$predictions)
 #' @export predictHVT
+requireNamespace("purrr") 
+requireNamespace("ggplot2") 
+requireNamespace("dplyr")
 predictHVT <-
   function(data,
            hvt.results,
@@ -43,8 +46,7 @@ predictHVT <-
            line.width = NULL,
            color.vec = NULL,
            ...) {
-    requireNamespace("dplyr")
-    requireNamespace("purrr")
+   
     options(warn = -1)
     data <-data[complete.cases(data), ]
     summary_list <- hvt.results[[3]]

@@ -37,6 +37,8 @@
 #' @seealso \code{\link{plotHVT}} \cr \code{\link{hvtHmap}}
 #' @keywords hplot
 #' @importFrom magrittr %>%
+#' @importFrom stats sd
+#' @importFrom purrr map
 #' @examples
 #' data(USArrests)
 #' hvt.results <- list()
@@ -54,12 +56,15 @@ HVT <-
     
     
     requireNamespace("deldir")       #deldir function
+    requireNamespace("stats")        #sd function
     requireNamespace("Hmisc")        #ceil function
     requireNamespace("grDevices")    #chull function
     requireNamespace("splancs")      #csr function
     requireNamespace("sp")           #point.in.polygon function
     requireNamespace("conf.design")  #factorize function
-
+    requireNamespace("purrr")        #map function
+    requireNamespace("dplyr")        #group_by function
+    
 
     dataset <- as.data.frame(dataset)
     dataset <-dataset[complete.cases(dataset), ]
