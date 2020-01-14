@@ -19,6 +19,9 @@ getOptimalCentroids(
 observation, and each column corresponds to a variable. Missing values are
 not accepted.}
 
+\item{iter.max}{The max number of iterations the the getOptimalCentroid function will run
+to get the optimal number of centroids}
+
 \item{algorithm}{String. The type of algorithm used for quantization.
 Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 (default is "Hartigan-Wong")}
@@ -30,9 +33,6 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 \item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
 
 \item{quant.err}{Numeric. The quantization error for the algorithm.}
-
-\item{depth}{Numeric. Indicating the hierarchy depth (or) the depth of the
-tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 }
 \value{
 \item{clusters}{ List. A list showing each ID assigned to a cluster.

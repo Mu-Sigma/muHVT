@@ -19,8 +19,8 @@
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
 #' @param nclust Numeric. Indicating the number of nodes per hierarchy.
-#' @param depth Numeric. Indicating the hierarchy depth (or) the depth of the
-#' tree (1 = no hierarchy, 2 = 2 levels, etc..)
+#' @param iter.max The max number of iterations the the getOptimalCentroid function will run
+#' to get the optimal number of centroids
 #' @param quant.err Numeric. The quantization error for the algorithm.
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".

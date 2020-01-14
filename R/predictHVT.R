@@ -1,7 +1,6 @@
-#' predictHVT
-#'
 #' Predict which cell and what level each point in the test dataset belongs to
 #'
+#' Main function to predict cell path of new datapoints
 #'
 #' @param data List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 #' this dataset can also be used to overlay as heatmap
@@ -19,6 +18,7 @@
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords predict
 #' @importFrom magrittr %>%
+#' @importFrom ggplot2 ggplot
 #' @examples
 #' data(USArrests)
 #' #Split in train and test
@@ -27,10 +27,10 @@
 #' test <- USArrests[41:50,]
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2,
+#' hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
 #'                   projection.scale = 10, normalize = TRUE)
 #'
-#' predictions <- predictHVT(test,hvt.results,hmap.cols = NULL, child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
+#' predictions <- predictHVT(test,hvt.results,hmap.cols = "Quant.Error", child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
 #' print(predictions$predictions)
 #' @export predictHVT
 requireNamespace("purrr") 

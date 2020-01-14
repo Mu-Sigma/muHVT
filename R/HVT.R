@@ -42,14 +42,14 @@
 #' @examples
 #' data(USArrests)
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2,
+#' hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
 #'                   projection.scale = 10, normalize = TRUE)
-#' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'),maxDepth=1)
+#' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), maxDepth = 1)
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
+#' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
 #'                   projection.scale = 10, normalize = TRUE)
-#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),maxDepth=3)
+#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), maxDepth = 3)
 #' @export HVT
 HVT <-
   function (dataset, nclust = 15, depth=3, quant.err=0.2, projection.scale=10, normalize = TRUE,distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {

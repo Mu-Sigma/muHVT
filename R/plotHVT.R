@@ -1,7 +1,6 @@
-#' plotHVT
-#'
 #' Plot the hierarchical tesselations.
 #'
+#' Main plotting function to construct hierarchical voronoi tessellations.
 #'
 #' @param hvt.results List. A list containing the ouput of \code{HVT} function
 #' which has the details of the tessellations to be plotted.
@@ -19,15 +18,16 @@
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords hplot
 #' @importFrom magrittr %>%
+#' @importFrom ggplot2 ggplot
 #' @examples
 #'
 #'
 #' data("USArrests",package="datasets")
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
+#' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
 #'                   projection.scale = 10, normalize = TRUE)
-#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),maxDepth=3)
+#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),maxDepth = 3)
 #'
 #'
 #'
