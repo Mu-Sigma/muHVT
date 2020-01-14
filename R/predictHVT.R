@@ -18,7 +18,6 @@
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords predict
 #' @importFrom magrittr %>%
-#' @importFrom ggplot2 ggplot
 #' @examples
 #' data(USArrests)
 #' #Split in train and test
@@ -33,9 +32,8 @@
 #' predictions <- predictHVT(test,hvt.results,hmap.cols = "Quant.Error", child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
 #' print(predictions$predictions)
 #' @export predictHVT
-requireNamespace("purrr") 
-requireNamespace("ggplot2") 
-requireNamespace("dplyr")
+
+
 predictHVT <-
   function(data,
            hvt.results,
@@ -193,7 +191,7 @@ predictHVT <-
     updated_table <-
       updated_table[stats::complete.cases(updated_table), ]
     updated_table <-
-      updated_table %>% group_by(Segment.Level, Segment.Parent, Segment.Child) %>% summarise_all(funs(sum))
+      updated_table %>% dplyr::group_by(Segment.Level, Segment.Parent, Segment.Child) %>% dplyr::summarise_all(dplyr::funs(sum))
     updated_table[, train_colnames] <-
       updated_table[, train_colnames] / updated_table$n
     summary_table_with_hierarchy <-

@@ -18,9 +18,7 @@
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords hplot
 #' @importFrom magrittr %>%
-#' @importFrom ggplot2 ggplot
 #' @examples
-#'
 #'
 #' data("USArrests",package="datasets")
 #'
@@ -29,10 +27,7 @@
 #'                   projection.scale = 10, normalize = TRUE)
 #' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),maxDepth = 3)
 #'
-#'
-#'
 #' @export plotHVT
-requireNamespace("ggplot2") 
  
 plotHVT <-
   function(hvt.results,
@@ -42,7 +37,6 @@ plotHVT <-
            centroid.size = 3,
            title = NULL,
            maxDepth=NULL) {
-    library(ggplot2)
     
     hvt_list <- hvt.results
     min_x = 1e9
