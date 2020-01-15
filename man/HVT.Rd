@@ -64,14 +64,18 @@ parent polygon. This is done for all the subsequent levels.
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
-                  projection.scale = 10, normalize = TRUE)
-plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), maxDepth = 1)
+hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE)
+plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
+        maxDepth = 1)
 
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
-                  projection.scale = 10, normalize = TRUE)
-plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), maxDepth = 3)
+hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE)
+plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
+        maxDepth = 3)
 }
 \seealso{
 \code{\link{plotHVT}} \cr \code{\link{hvtHmap}}

@@ -49,10 +49,13 @@ train <- USArrests[1:40,]
 test <- USArrests[41:50,]
 
 hvt.results <- list()
-hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2, distance_metric = "L1_Norm", error_metric = "mean",
-                  projection.scale = 10, normalize = TRUE)
+hvt.results <- HVT(train, nclust = 3, depth = 2, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE)
 
-predictions <- predictHVT(test,hvt.results,hmap.cols = "Quant.Error", child.level=2,quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'))
+predictions <- predictHVT(test,hvt.results,hmap.cols = "Quant.Error", child.level=2,
+                          quant.error.hmap = 0.2,nclust.hmap = 3,line.width = c(1.2,0.8,0.4),
+                          color.vec = c('#141B41','#0582CA','#8BA0B4'))
 print(predictions$predictions)
 }
 \seealso{
