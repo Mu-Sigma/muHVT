@@ -1,4 +1,4 @@
-        Introduction
+Introduction
 ============
 
 The muHVT package is a collection of R functions for vector quantization and construction of hierarchical voronoi tessellations as a data visualization tool to visualize cells using quantization. The hierarchical cells are computed using Hierarchical K-means where a quantization threshold governs the levels in the hierarchy for a set *k* parameter (the maximum number of cells at each level). The package is particularly helpful to visualize rich mutlivariate data.
