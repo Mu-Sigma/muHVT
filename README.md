@@ -32,7 +32,7 @@ Sammon’s projection
 
 Sammon projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality by trying to preserve the structure of inter-point distances in high-dimensional space in the lower-dimension projection. It is particularly suited for use in exploratory data analysis. It is considered a non-linear approach as the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
-Denote the distance between *i*<sup>*t**h*</sup> and *j*<sup>*t**h*</sup> objects in the original space by *d*<sub>*i**j*</sub><sup>\*</sup>, and the distance between their projections by *d*<sub>*i**j*</sub>. Sammon’s mapping aims to minimize the following error function, which is often referred to as Sammon’s stress or Sammon’s error.
+Denote the distance between *i*<sup>*th*</sup> and *j*<sup>*th*</sup> objects in the original space by *d*<sub>*ij*</sub><sup>\*</sup>, and the distance between their projections by *d*<sub>*ij*</sub>. Sammon’s mapping aims to minimize the following error function, which is often referred to as Sammon’s stress or Sammon’s error.
 
 
 The minimization can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
