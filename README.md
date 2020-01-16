@@ -1,4 +1,4 @@
-Introduction
+        Introduction
 ============
 
 The muHVT package is a collection of R functions for vector quantization and construction of hierarchical voronoi tessellations as a data visualization tool to visualize cells using quantization. The hierarchical cells are computed using Hierarchical K-means where a quantization threshold governs the levels in the hierarchy for a set *k* parameter (the maximum number of cells at each level). The package is particularly helpful to visualize rich mutlivariate data.
@@ -59,7 +59,7 @@ Let's have a look at sample of the data
 
 ``` r
 # Quick peek
-Table(head(computers))
+head(computers)
 ```
 
 <table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
@@ -381,6 +381,7 @@ Let us try to understand HVT function first.
 
 ``` r
 HVT(dataset, nclust, depth, quant.err, projection.scale, normalize = T, distance_metric = c("L1_Norm","L2_Norm"), error_metric = c("mean","max"))
+
 ```
 
 Following are all the parameters explained in detail
@@ -404,20 +405,24 @@ Following are all the parameters explained in detail
 First we will perform hierarchical vector quantization at level 1 by setting the parameter depth to 1. Here level 1 signifies no hierarchy. Let's keep the no of cells as 15.
 
 ``` r
-set.seed(240)
+set.seed(300)
 hvt.results <- list()
 hvt.results <- muHVT::HVT(trainComputers,
                           nclust = 15,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
-                          normalize = T)
+                          normalize = T,
+                          distance_metric = "L1_Norm",
+                          error_metric = "mean")
+
+                          
 ```
 
 Now let's try to understand plotHVT function along with the input parameters
 
 ``` r
-plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL)
+plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL,maxDepth = 1)
 ```
 
 -   **`hvt.results`** - A list containing the ouput of HVT function which has the details of the tessellations to be plotted
@@ -432,18 +437,21 @@ plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title 
 
 -   **`title`** - Set a title for the plot. (default = NULL)
 
+-   **`maxDepth`** - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
+
 Let's plot the voronoi tesselation
 
 ``` r
 # Voronoi tesselation plot for level one
-plotHVT(hvt.results,
+muHVT::plotHVT(hvt.results,
         line.width = c(1.2), 
-        color.vec = c("#141B41"))
+        color.vec = c("#141B41"),
+        maxDepth = 1)
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/7/78/Plot_level_one_computers-1.png" alt="Figure 2: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/5/5e/Rplot_L1.png" alt="Figure 1: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’" width="672px" height="480px" />
 <p class="caption">
-Figure 2: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’
+Figure 1: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’
 </p>
 
 As per the manual, **`hvt.results[[3]]`** gives us detailed information about the hierarchical vector quantized data
@@ -464,583 +472,39 @@ Now let us understand what each column in the summary table means
 
 All the columns after this will contains centroids for each cell for all the variables. They can be also called as codebook as is the collection of centroids for all cells (codewords)
 
+
 ``` r
-summaryTable(hvt.results[[3]][['summary']])
+summary(hvt.results[[3]][['summary']])
+#>  Segment.Level Segment.Parent Segment.Child        n          Quant.Error    
+#>  Min.   :1     Min.   :1      Min.   : 1.0   Min.   : 97.0   Min.   :0.2226  
+#>  1st Qu.:1     1st Qu.:1      1st Qu.: 4.5   1st Qu.:235.0   1st Qu.:0.2665  
+#>  Median :1     Median :1      Median : 8.0   Median :288.0   Median :0.3002  
+#>  Mean   :1     Mean   :1      Mean   : 8.0   Mean   :333.8   Mean   :0.3422  
+#>  3rd Qu.:1     3rd Qu.:1      3rd Qu.:11.5   3rd Qu.:395.5   3rd Qu.:0.3985  
+#>  Max.   :1     Max.   :1      Max.   :15.0   Max.   :917.0   Max.   :0.5685  
+#>      price             speed               hd               ram          
+#>  Min.   :-1.0777   Min.   :-0.9091   Min.   :-0.8186   Min.   :-0.77231  
+#>  1st Qu.:-0.3689   1st Qu.:-0.6289   1st Qu.:-0.5916   1st Qu.:-0.59874  
+#>  Median : 0.2748   Median : 0.3274   Median : 0.1669   Median :-0.02232  
+#>  Mean   : 0.2597   Mean   : 0.2716   Mean   : 0.3537   Mean   : 0.31267  
+#>  3rd Qu.: 0.8611   3rd Qu.: 0.7256   3rd Qu.: 0.7234   3rd Qu.: 0.96682  
+#>  Max.   : 2.0097   Max.   : 2.6668   Max.   : 3.3627   Max.   : 2.45903  
+#>      screen              ads          
+#>  Min.   :-0.43713   Min.   :-2.16268  
+#>  1st Qu.:-0.38761   1st Qu.:-0.56782  
+#>  Median :-0.17335   Median : 0.09958  
+#>  Mean   : 0.02547   Mean   :-0.16868  
+#>  3rd Qu.: 0.09521   3rd Qu.: 0.48662  
+#>  Max.   : 2.87671   Max.   : 0.76484 
+
+ 
 ```
-
-<table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-Segment.Level
-</th>
-<th style="text-align:center;">
-Segment.Parent
-</th>
-<th style="text-align:center;">
-Segment.Child
-</th>
-<th style="text-align:center;">
-n
-</th>
-<th style="text-align:center;">
-Quant.Error
-</th>
-<th style="text-align:center;">
-price
-</th>
-<th style="text-align:center;">
-speed
-</th>
-<th style="text-align:center;">
-hd
-</th>
-<th style="text-align:center;">
-ram
-</th>
-<th style="text-align:center;">
-screen
-</th>
-<th style="text-align:center;">
-ads
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-557
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.58</span>
-</td>
-<td style="text-align:center;">
-0.88
-</td>
-<td style="text-align:center;">
--0.01
-</td>
-<td style="text-align:center;">
-0.83
-</td>
-<td style="text-align:center;">
-1.63
-</td>
-<td style="text-align:center;">
--0.10
-</td>
-<td style="text-align:center;">
-0.25
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-2
-</td>
-<td style="text-align:center;">
-465
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.64</span>
-</td>
-<td style="text-align:center;">
--0.17
-</td>
-<td style="text-align:center;">
--0.78
-</td>
-<td style="text-align:center;">
-0.33
-</td>
-<td style="text-align:center;">
--0.01
-</td>
-<td style="text-align:center;">
--0.35
-</td>
-<td style="text-align:center;">
-0.44
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-3
-</td>
-<td style="text-align:center;">
-562
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.4</span>
-</td>
-<td style="text-align:center;">
--1.25
-</td>
-<td style="text-align:center;">
--0.93
-</td>
-<td style="text-align:center;">
--0.84
-</td>
-<td style="text-align:center;">
--0.80
-</td>
-<td style="text-align:center;">
--0.51
-</td>
-<td style="text-align:center;">
-0.65
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-480
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.3</span>
-</td>
-<td style="text-align:center;">
-0.71
-</td>
-<td style="text-align:center;">
-0.69
-</td>
-<td style="text-align:center;">
-0.24
-</td>
-<td style="text-align:center;">
--0.02
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-<td style="text-align:center;">
-0.56
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-5
-</td>
-<td style="text-align:center;">
-384
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.33</span>
-</td>
-<td style="text-align:center;">
-0.80
-</td>
-<td style="text-align:center;">
-0.17
-</td>
-<td style="text-align:center;">
-0.03
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-<td style="text-align:center;">
-2.88
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-6
-</td>
-<td style="text-align:center;">
-139
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.38</span>
-</td>
-<td style="text-align:center;">
-0.22
-</td>
-<td style="text-align:center;">
-2.67
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-<td style="text-align:center;">
--0.21
-</td>
-<td style="text-align:center;">
--0.15
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-7
-</td>
-<td style="text-align:center;">
-302
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.09</span>
-</td>
-<td style="text-align:center;">
--0.32
-</td>
-<td style="text-align:center;">
--0.54
-</td>
-<td style="text-align:center;">
--0.80
-</td>
-<td style="text-align:center;">
--0.50
-</td>
-<td style="text-align:center;">
--0.43
-</td>
-<td style="text-align:center;">
--2.15
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-248
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.21</span>
-</td>
-<td style="text-align:center;">
--0.37
-</td>
-<td style="text-align:center;">
-0.67
-</td>
-<td style="text-align:center;">
-0.84
-</td>
-<td style="text-align:center;">
-0.04
-</td>
-<td style="text-align:center;">
--0.13
-</td>
-<td style="text-align:center;">
--0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-9
-</td>
-<td style="text-align:center;">
-397
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.05</span>
-</td>
-<td style="text-align:center;">
--0.52
-</td>
-<td style="text-align:center;">
-0.57
-</td>
-<td style="text-align:center;">
--0.62
-</td>
-<td style="text-align:center;">
--0.75
-</td>
-<td style="text-align:center;">
--0.32
-</td>
-<td style="text-align:center;">
-0.78
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-10
-</td>
-<td style="text-align:center;">
-230
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.16</span>
-</td>
-<td style="text-align:center;">
-1.10
-</td>
-<td style="text-align:center;">
-0.34
-</td>
-<td style="text-align:center;">
--0.16
-</td>
-<td style="text-align:center;">
-0.35
-</td>
-<td style="text-align:center;">
--0.14
-</td>
-<td style="text-align:center;">
--1.93
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-11
-</td>
-<td style="text-align:center;">
-423
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.5</span>
-</td>
-<td style="text-align:center;">
--0.49
-</td>
-<td style="text-align:center;">
--0.86
-</td>
-<td style="text-align:center;">
--0.74
-</td>
-<td style="text-align:center;">
--0.67
-</td>
-<td style="text-align:center;">
--0.28
-</td>
-<td style="text-align:center;">
-0.36
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-12
-</td>
-<td style="text-align:center;">
-294
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.69</span>
-</td>
-<td style="text-align:center;">
--1.14
-</td>
-<td style="text-align:center;">
--0.79
-</td>
-<td style="text-align:center;">
--0.58
-</td>
-<td style="text-align:center;">
--0.70
-</td>
-<td style="text-align:center;">
--0.39
-</td>
-<td style="text-align:center;">
--0.78
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-13
-</td>
-<td style="text-align:center;">
-169
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.82</span>
-</td>
-<td style="text-align:center;">
-1.58
-</td>
-<td style="text-align:center;">
-0.00
-</td>
-<td style="text-align:center;">
-3.29
-</td>
-<td style="text-align:center;">
-2.64
-</td>
-<td style="text-align:center;">
-0.28
-</td>
-<td style="text-align:center;">
--0.25
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-87
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.43</span>
-</td>
-<td style="text-align:center;">
-1.59
-</td>
-<td style="text-align:center;">
-2.67
-</td>
-<td style="text-align:center;">
-1.62
-</td>
-<td style="text-align:center;">
-1.70
-</td>
-<td style="text-align:center;">
-0.13
-</td>
-<td style="text-align:center;">
-0.32
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-15
-</td>
-<td style="text-align:center;">
-270
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.94</span>
-</td>
-<td style="text-align:center;">
--0.40
-</td>
-<td style="text-align:center;">
-0.66
-</td>
-<td style="text-align:center;">
--0.66
-</td>
-<td style="text-align:center;">
--0.72
-</td>
-<td style="text-align:center;">
--0.40
-</td>
-<td style="text-align:center;">
--0.38
-</td>
-</tr>
-</tbody>
-</table>
-
 Let's have a look at `Quant.Error` variable in the above table. It seems that none of the cells have hit the quantization threshold error.
 
 Now let's check the compression summary. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ``` r
-compressionSummaryTable(hvt.results[[3]]$compression_summary)
+hvt.results[[3]]$compression_summary
 ```
 
 <table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
@@ -1085,16 +549,14 @@ We will now overlay the `Quant.Error` variable as heatmap over the voronoi tesse
 Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
 
 ``` r
-hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
+hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
 ```
 
 -   **`hvt.results`** - A list of hvt.results obtained from the HVT function.
 
--   **`dataset`** - A dataframe containing the variables that you want to overlay as heatmap. The user can pass an external dataset or the dataset that was used to perform hierarchical vector quantization. The dataset should have same number of points as the dataset used to perform hierarchical vector quantization in the HVT function
-
 -   **`child.level`** - A number indicating the level for which the heat map is to be plotted.
 
--   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'quant_error'`. Similary to plot the no of points in each cell as heatmap, pass `'no_of_points'` as a parameter
+-   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similary to plot the no of points in each cell as heatmap, pass `'no_of_points'` as a parameter
 
 -   **`color.vec`** - A color vector such that length(color.vec) = child.level (default = NULL)
 
@@ -1104,23 +566,32 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 -   **`show.points`** - A boolean indicating if the centroids should be plotted on the tesselations. (default = FALSE)
 
+-   **`quant.error.hmap`** - A number indicating the quantization error threshold
+
+-   **`nclust.hmap`** - A boolean No of points in each cell.
+
 Now let's plot the quantization error for each cell at level one as heatmap.
 
 ``` r
-hvtHmap(hvt.results, 
-        trainComputers, 
+        
+muHVT::hvtHmap(hvt.results, 
+        traincomputers, 
         child.level = 1,
-        hmap.cols = "quant_error", 
-        line.width = c(0.2),
-        color.vec = c("#141B41"),
+        hmap.cols = "Quant.Error",
+        color.vec = "black",
+        line.width = 0.8,
         palette.color = 6,
-        centroid.size = 3,
-        show.points = T)
+        show.points = T,
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)        
+        
+        
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/c/c9/Hmp_level_one_quantization_computers-1.png" alt="Figure 3: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 2: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 3: The Voronoi tessellation with the heat map overlaid for variable ’quant\_error’ in the ’computers’ dataset
+Figure 2: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 Now let's go one level deeper and perform hierarchical vector quantization.
@@ -1134,21 +605,23 @@ hvt.results2 <- muHVT::HVT(trainComputers,
                            depth = 2,
                            quant.err = 0.2,
                            projection.scale = 10,
-                           normalize = T)
+                           normalize = T,
+                           distance_metric = "L1_Norm",
+                           error_metric = "mean")
 ```
 
 To plot the voronoi tesselation for both the levels.
 
 ``` r
 # Voronoi tesselation plot for level two
-plotHVT(hvt.results2, 
+muHVT::plotHVT(hvt.results2, 
         line.width = c(1.2, 0.8), 
-        color.vec = c("#141B41","#0582CA"))
+        color.vec = c("#141B41","#0582CA"),maxDepth = 2)
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/b/b2/Plot_level_two_computers-1.png" alt="Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/c/ce/HVT_PLOT_L2.png" alt="Figure 3: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
 <p class="caption">
-Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
+Figure 3: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
 </p>
 
 In the table below, Segment Level signifies the depth.
@@ -1160,405 +633,28 @@ Level 2 has 225 cells .i.e. each cell in level1 is divided into 225 cells
 Let's analyze the summary table again for `Quant.Error` and see if any of the cells in the 2nd level have quantization error below quantization error threshold. In the table below, the values for `Quant.Error` of the cells which have hit the quantization error threshold are shown in red. Here we are showing just top 50 rows for the sake of brevity.
 
 ``` r
-summaryTable(hvt.results2[[3]][['summary']],limit = 10)
-```
+head(hvt.results2[[3]][['summary']])
 
-<table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:center;">
-Segment.Level
-</th>
-<th style="text-align:center;">
-Segment.Parent
-</th>
-<th style="text-align:center;">
-Segment.Child
-</th>
-<th style="text-align:center;">
-n
-</th>
-<th style="text-align:center;">
-Quant.Error
-</th>
-<th style="text-align:center;">
-price
-</th>
-<th style="text-align:center;">
-speed
-</th>
-<th style="text-align:center;">
-hd
-</th>
-<th style="text-align:center;">
-ram
-</th>
-<th style="text-align:center;">
-screen
-</th>
-<th style="text-align:center;">
-ads
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-557
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.58</span>
-</td>
-<td style="text-align:center;">
-0.88
-</td>
-<td style="text-align:center;">
--0.01
-</td>
-<td style="text-align:center;">
-0.83
-</td>
-<td style="text-align:center;">
-1.63
-</td>
-<td style="text-align:center;">
--0.10
-</td>
-<td style="text-align:center;">
-0.25
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-2
-</td>
-<td style="text-align:center;">
-465
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.64</span>
-</td>
-<td style="text-align:center;">
--0.17
-</td>
-<td style="text-align:center;">
--0.78
-</td>
-<td style="text-align:center;">
-0.33
-</td>
-<td style="text-align:center;">
--0.01
-</td>
-<td style="text-align:center;">
--0.35
-</td>
-<td style="text-align:center;">
-0.44
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-3
-</td>
-<td style="text-align:center;">
-562
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">1.4</span>
-</td>
-<td style="text-align:center;">
--1.25
-</td>
-<td style="text-align:center;">
--0.93
-</td>
-<td style="text-align:center;">
--0.84
-</td>
-<td style="text-align:center;">
--0.80
-</td>
-<td style="text-align:center;">
--0.51
-</td>
-<td style="text-align:center;">
-0.65
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-480
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.3</span>
-</td>
-<td style="text-align:center;">
-0.71
-</td>
-<td style="text-align:center;">
-0.69
-</td>
-<td style="text-align:center;">
-0.24
-</td>
-<td style="text-align:center;">
--0.02
-</td>
-<td style="text-align:center;">
-0.06
-</td>
-<td style="text-align:center;">
-0.56
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-5
-</td>
-<td style="text-align:center;">
-384
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.33</span>
-</td>
-<td style="text-align:center;">
-0.80
-</td>
-<td style="text-align:center;">
-0.17
-</td>
-<td style="text-align:center;">
-0.03
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-<td style="text-align:center;">
-2.88
-</td>
-<td style="text-align:center;">
-0.11
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-6
-</td>
-<td style="text-align:center;">
-139
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.38</span>
-</td>
-<td style="text-align:center;">
-0.22
-</td>
-<td style="text-align:center;">
-2.67
-</td>
-<td style="text-align:center;">
-0.09
-</td>
-<td style="text-align:center;">
--0.21
-</td>
-<td style="text-align:center;">
--0.15
-</td>
-<td style="text-align:center;">
-0.76
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-7
-</td>
-<td style="text-align:center;">
-302
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.09</span>
-</td>
-<td style="text-align:center;">
--0.32
-</td>
-<td style="text-align:center;">
--0.54
-</td>
-<td style="text-align:center;">
--0.80
-</td>
-<td style="text-align:center;">
--0.50
-</td>
-<td style="text-align:center;">
--0.43
-</td>
-<td style="text-align:center;">
--2.15
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-248
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.21</span>
-</td>
-<td style="text-align:center;">
--0.37
-</td>
-<td style="text-align:center;">
-0.67
-</td>
-<td style="text-align:center;">
-0.84
-</td>
-<td style="text-align:center;">
-0.04
-</td>
-<td style="text-align:center;">
--0.13
-</td>
-<td style="text-align:center;">
--0.59
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-9
-</td>
-<td style="text-align:center;">
-397
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">2.05</span>
-</td>
-<td style="text-align:center;">
--0.52
-</td>
-<td style="text-align:center;">
-0.57
-</td>
-<td style="text-align:center;">
--0.62
-</td>
-<td style="text-align:center;">
--0.75
-</td>
-<td style="text-align:center;">
--0.32
-</td>
-<td style="text-align:center;">
-0.78
-</td>
-</tr>
-<tr>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-1
-</td>
-<td style="text-align:center;">
-10
-</td>
-<td style="text-align:center;">
-230
-</td>
-<td style="text-align:center;">
-<span style="     color: #333;">3.16</span>
-</td>
-<td style="text-align:center;">
-1.10
-</td>
-<td style="text-align:center;">
-0.34
-</td>
-<td style="text-align:center;">
--0.16
-</td>
-<td style="text-align:center;">
-0.35
-</td>
-<td style="text-align:center;">
--0.14
-</td>
-<td style="text-align:center;">
--1.93
-</td>
-</tr>
-</tbody>
-</table>
+#>   Segment.Level Segment.Parent Segment.Child   n Quant.Error      price      speed
+#> 1             1              1             1 480   0.3264675  0.6912387  0.6959344
+#> 2             1              1             2 390   0.4855699  0.8269279  0.2118000
+#> 3             1              1             3 145   0.3507855  0.2748086  2.6668336
+#> 4             1              1             4 505   0.2568036 -0.1690919 -0.7959514
+#> 5             1              1             5 241   0.2761964 -0.3430079  0.6562515
+#> 6             1              1             6 150   0.4914133  0.8951958 -0.5463372
+#>            hd         ram      screen        ads
+#> 1  0.23822832 -0.02231718  0.06167149  0.5718800
+#> 2  0.05060655  0.09714376  2.87671456  0.0995764
+#> 3  0.16693873 -0.20297608 -0.17335439  0.7080667
+#> 4  0.24229321 -0.03662846 -0.31059954  0.4191436
+#> 5 -0.73373515 -0.74735973 -0.39749682 -0.4032370
+#> 6  2.71421808  2.32200038  0.28522616 -0.5994251
+```
 
 The users can look at the compression summary to get a quick summary on the compression as it becomes quite cumbersome to look at the summary table above as we go deeper.
 
 ``` r
-compressionSummaryTable(hvt.results2[[3]]$compression_summary)
+hvt.results2[[3]]$compression_summary
 ```
 
 <table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
@@ -1598,37 +694,38 @@ percentOfCellsBelowQuantizationErrorThreshold
 2
 </td>
 <td style="text-align:center;">
-225
+134
 </td>
 <td style="text-align:center;">
-11
+118
 </td>
 <td style="text-align:center;">
-<span style="     color: #333;">0.05</span>
+<span style="     color: #333;">0.881</span>
 </td>
 </tr>
 </tbody>
 </table>
 
-As it can be seen in the table above, only `5%` cells in the 2nd level have quantization error below threshold. Therefore, we can go one more level deeper and try to compress the data further.
+As it can be seen in the table above, only `88%` cells in the 2nd level have quantization error below threshold. Therefore, we can go one more level deeper and try to compress the data further.
 
 We will look at the heatmap for quantization error for level 2.
 
 ``` r
-hvtHmap(hvt.results2, 
-        trainComputers, 
+muHVT::hvtHmap(hvt.results2, 
         child.level = 2,
-        hmap.cols = "quant_error", 
-        line.width = c(0.8,0.2),
-        color.vec = c("#141B41","#0582CA"),
+        hmap.cols = "Quant.Error",
+        color.vec = c("black","black"),
+        line.width = c(0.8,0.4),
         palette.color = 6,
+        show.points = T,
         centroid.size = 2,
-        show.points = T)
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)        
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/0/0e/Hmp_level_two_quantization_computers-1.png" alt="Figure 5: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 4: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 5: The Voronoi tessellation with the heat map overlaid for variable ’quant\_error’ in the ’computers’ dataset
+Figure 4: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 ### Predict
@@ -1651,14 +748,23 @@ Important parameters for the function `predictHVT`
 
 -   **`child.level`** -A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
 
+-   **`quant.error.hmap`** - A number indicating the quantization error threshold
+
+-   **`nclust.hmap`** - A boolean No of points in each cell.
+
 -   **`...`** - color.vec and line.width can be passed from here
 
 ``` r
 set.seed(240)
 predictions <- muHVT::predictHVT(testComputers,
-                                 hvt.results3,
-                                 hmap.cols = NULL,
-                                 child.level = 3)
+                          hvt.results2,
+                          child.level = 2,
+                          hmap.cols = "Quant.Error",
+                          color.vec = c("black","black", "black"),
+                          line.width = c(0.8,0.4,0.2),
+                          quant.error.hmap = 0.2,
+                          nclust.hmap = 15)
+
 ```
 
 #### Prediction Algorithm
@@ -1673,540 +779,30 @@ The prediction algorithm recursively calculates the distance between each point 
 Let's see what cell and which level do each point belongs to. For the sake of brevity, we will
 
 ``` r
-Table(predictions$predictions,scroll = T,limit = 10)
+head(predictions$predictions)
+
+
+#>     price speed   hd ram screen ads Cell_path Segment.Level Segment.Parent Segment.Child
+#>  1  1540    33  214   4     15 191   2->9->2             2              9             2
+#>  2  3094    50 1000  24     15 191   2->6->7             2              6             7
+#>  3  1794    50  214   4     14 191   2->5->5             2              5             5
+#>  4  2408   100  270   4     14 191   2->3->2             2              3             2
+#>  5  2454    66  720  16     15 191 2->11->13             2             11            13
+#>  6  1969    66 1000   8     14 191   2->8->5             2              8             5
 ```
 
-<table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-price
-</th>
-<th style="text-align:center;">
-speed
-</th>
-<th style="text-align:center;">
-hd
-</th>
-<th style="text-align:center;">
-ram
-</th>
-<th style="text-align:center;">
-screen
-</th>
-<th style="text-align:center;">
-ads
-</th>
-<th style="text-align:center;">
-cell\_path
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-5008
-</td>
-<td style="text-align:center;">
-1540
-</td>
-<td style="text-align:center;">
-33
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-15
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-12-&gt;15-&gt;14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5009
-</td>
-<td style="text-align:center;">
-3094
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-24
-</td>
-<td style="text-align:center;">
-15
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-13-&gt;14-&gt;4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5010
-</td>
-<td style="text-align:center;">
-1794
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-15-&gt;11-&gt;12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5011
-</td>
-<td style="text-align:center;">
-2408
-</td>
-<td style="text-align:center;">
-100
-</td>
-<td style="text-align:center;">
-270
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-6-&gt;9
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5012
-</td>
-<td style="text-align:center;">
-2454
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-720
-</td>
-<td style="text-align:center;">
-16
-</td>
-<td style="text-align:center;">
-15
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-1-&gt;9-&gt;15
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5013
-</td>
-<td style="text-align:center;">
-1969
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-8-&gt;4-&gt;9
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5014
-</td>
-<td style="text-align:center;">
-2904
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-24
-</td>
-<td style="text-align:center;">
-15
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-13-&gt;14-&gt;1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5015
-</td>
-<td style="text-align:center;">
-1545
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-340
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-8-&gt;1-&gt;7
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5016
-</td>
-<td style="text-align:center;">
-1718
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-340
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-15-&gt;12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5017
-</td>
-<td style="text-align:center;">
-1604
-</td>
-<td style="text-align:center;">
-33
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-14
-</td>
-<td style="text-align:center;">
-191
-</td>
-<td style="text-align:center;">
-12-&gt;12-&gt;11
-</td>
-</tr>
-</tbody>
-</table>
 
 We can see the predictions for some of the points in the table above. The variable `cell_path` shows us the level and the cell that each point is mapped to. The centroid of the cell that the point is mapped to is the codeword (predictor) for that cell.
 
 The prediction algorithm will work even if some of the variables used to perform quantization are missing. Let's try it out. In the test dataset, we will remove screen and ads.
 
 ``` r
-set.seed(240)
-testComputers <- testComputers %>% dplyr::select(-c(screen,ads))
-predictions <- muHVT::predictHVT(testComputers,
-                                 hvt.results3,
-                                 hmap.cols = NULL,
-                                 child.level = 3)
-Table(predictions$predictions,scroll = T,limit = 10)
+predictions[["predictPlot"]]
 ```
-
-<table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
-<thead>
-<tr>
-<th style="text-align:left;">
-</th>
-<th style="text-align:center;">
-price
-</th>
-<th style="text-align:center;">
-speed
-</th>
-<th style="text-align:center;">
-hd
-</th>
-<th style="text-align:center;">
-ram
-</th>
-<th style="text-align:center;">
-cell\_path
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-5008
-</td>
-<td style="text-align:center;">
-1540
-</td>
-<td style="text-align:center;">
-33
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-12-&gt;12-&gt;3
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5009
-</td>
-<td style="text-align:center;">
-3094
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-24
-</td>
-<td style="text-align:center;">
-13-&gt;14-&gt;5
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5010
-</td>
-<td style="text-align:center;">
-1794
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-9-&gt;13-&gt;13
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5011
-</td>
-<td style="text-align:center;">
-2408
-</td>
-<td style="text-align:center;">
-100
-</td>
-<td style="text-align:center;">
-270
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-6-&gt;12
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5012
-</td>
-<td style="text-align:center;">
-2454
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-720
-</td>
-<td style="text-align:center;">
-16
-</td>
-<td style="text-align:center;">
-1-&gt;9-&gt;9
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5013
-</td>
-<td style="text-align:center;">
-1969
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-8-&gt;4-&gt;4
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5014
-</td>
-<td style="text-align:center;">
-2904
-</td>
-<td style="text-align:center;">
-50
-</td>
-<td style="text-align:center;">
-1000
-</td>
-<td style="text-align:center;">
-24
-</td>
-<td style="text-align:center;">
-13-&gt;14-&gt;1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5015
-</td>
-<td style="text-align:center;">
-1545
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-340
-</td>
-<td style="text-align:center;">
-8
-</td>
-<td style="text-align:center;">
-9-&gt;4-&gt;14
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5016
-</td>
-<td style="text-align:center;">
-1718
-</td>
-<td style="text-align:center;">
-66
-</td>
-<td style="text-align:center;">
-340
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-9-&gt;9-&gt;2
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-5017
-</td>
-<td style="text-align:center;">
-1604
-</td>
-<td style="text-align:center;">
-33
-</td>
-<td style="text-align:center;">
-214
-</td>
-<td style="text-align:center;">
-4
-</td>
-<td style="text-align:center;">
-12-&gt;15-&gt;14
-</td>
-</tr>
-</tbody>
-</table>
+<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 5: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 5: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+</p>
 
 Applications
 ------------
