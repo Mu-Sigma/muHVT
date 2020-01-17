@@ -4,7 +4,7 @@ The muHVT package is a collection of R functions for vector quantization and
 construction of hierarchical voronoi tessellations as a data visualization
 tool to visualize cells using quantization. The hierarchical cells are computed using
 Hierarchical K-means where a quantization threshold governs the levels
-in the hierarchy for a set $k$ parameter (the maximum number of cells
+in the hierarchy for a set `k` parameter (the maximum number of cells
 at each level). The package is particularly helpful to visualize rich mutlivariate data. 
 
 
@@ -22,7 +22,7 @@ install.packages("muHVT")
 
 This package performs vector quantization using the following algorithm - 
 
-*  Hierarchical Vector Quantization using $k-means$ 
+*  Hierarchical Vector Quantization using `k-means` 
 
 
 ## Hierarchical VQ using k-means 
@@ -37,7 +37,7 @@ The second and third steps are iterated until a predefined number of iterations 
 
 ### Hierarchical VQ using k-means 
 
-The algorithm divides the dataset recursively into cells. The $k-means$ algorithm is used by setting $k$ to, say two, in order to divide the dataset into two subsets. These two subsets are further divided into two subsets by setting $k$ to two, resulting in a total of four subsets. The recursion terminates when the cells either contain a single data point or a stop criterion is reached. In this case, the stop criterion is set to when the cell error exceeds the quantization threshold.
+The algorithm divides the dataset recursively into cells. The `k-means` algorithm is used by setting `k` to, say two, in order to divide the dataset into two subsets. These two subsets are further divided into two subsets by setting `k` to two, resulting in a total of four subsets. The recursion terminates when the cells either contain a single data point or a stop criterion is reached. In this case, the stop criterion is set to when the cell error exceeds the quantization threshold.
 
 The steps for this method are as follows :
 
@@ -79,7 +79,7 @@ An example of a 2 dimensional VQ is shown above.
 
 In the above image, we can see 5 cells with each cell containing a certain number of points. The centroid for each cell is shown in blue. These centroids are also known as codewords since they represent all the points in that cell. The set of all codewords is called a codebook.
 
-Now we want to calculate quantization error for each cell. For the sake of simplicity, let's consider only one cell having centroid `A` and `m` data points **F_i** for calculating quantization error.
+Now we want to calculate quantization error for each cell. For the sake of simplicity, let's consider only one cell having centroid `A` and `m` data points `F_i` for calculating quantization error.
 
 For each point, we calculate the distance between the point and the centroid.
 
