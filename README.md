@@ -60,10 +60,10 @@ The quantization error for a cell is defined as follows :
 
 where 
 
-*  **A** is the centroid of the cell
-*  **F_i** represents a data point in the cell 
-*  **m** is the number of points in the cell
-*  **p** is the **p**-norm metric. Here **p** = 1 represents L1 Norm and **p** = 2 represents L2 Norm.
+*  `A` is the centroid of the cell
+*  `F_i` represents a data point in the cell 
+*  `m` is the number of points in the cell
+*  `p` is the `p`-norm metric. Here `p` = 1 represents L1 Norm and `p` = 2 represents L2 Norm.
 
 ### Quantization Error
 
@@ -108,7 +108,7 @@ A Voronoi diagram is a way of dividing space into a number of regions. A set of 
 Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 
-Denoting the distance between **i^{th}** and **j^{th}** objects in the original space by **d_{ij}^***, and the distance between their projections by **d_{ij}**. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
+Denoting the distance between `i^{th}` and `j^{th}` objects in the original space by `d_{ij}^`, and the distance between their projections by `d_{ij}`. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
 
 ![equation](https://latex.codecogs.com/gif.latex?$$E=\frac{1}{\sum_{i<j}&space;d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$)
 
