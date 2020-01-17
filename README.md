@@ -114,13 +114,13 @@ $$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-## Constructing Voronoi Tesselations
+## Constructing Voronoi Tessellations
 
 In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tesselations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
 ## Example Usage
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price,speed,ram,screen,cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
 
 In this example, we will compress this dataset by using hierarhical VQ using k-means and visualize the Voronoi tesselation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
 
@@ -393,6 +393,7 @@ yes
 Now let us check the structure of the data
 
 ``` r
+# The structure of the data used
 str(computers)
 #> 'data.frame':    6259 obs. of  11 variables:
 #>  $ X      : int  1 2 3 4 5 6 7 8 9 10 ...
@@ -411,6 +412,7 @@ str(computers)
 Let's get a summary of the data
 
 ``` r
+# The summary of the data used
 summary(computers)
 #>        X            price          speed              hd        
 #>  Min.   :   1   Min.   : 949   Min.   : 25.00   Min.   :  80.0  
@@ -438,6 +440,7 @@ summary(computers)
 Let us first split the data into train and test. We will use 80% of the data as train and remaining as test.
 
 ``` r
+# Making train & test split
 noOfPoints <- dim(computers)[1]
 trainLength <- as.integer(noOfPoints * 0.8)
 
@@ -450,6 +453,7 @@ K-means in not suitable for factor variables as the sample space for factor vari
 Here we keep the original `trainComputers` and `testComputers` as we will use price variable from this dataset to overlay as heatmap and generate some insights.
 
 ``` r
+# Removing unwanted columns
 trainComputers <- trainComputers %>% dplyr::select(-c(X,cd,multi,premium,trend))
 testComputers <- testComputers %>% dplyr::select(-c(X,cd,multi,premium,trend))
 ```
@@ -482,6 +486,7 @@ Following are all the parameters explained in detail
 First we will perform hierarchical vector quantization at level 1 by setting the parameter depth to 1. Here level 1 signifies no hierarchy. Let's keep the no of cells as 15.
 
 ``` r
+# Building the required model for Level 1
 set.seed(300)
 hvt.results <- list()
 hvt.results <- muHVT::HVT(trainComputers,
@@ -497,6 +502,7 @@ hvt.results <- muHVT::HVT(trainComputers,
 Now let's try to understand plotHVT function along with the input parameters
 
 ``` r
+# Plotting the output for Level 1
 plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL,maxDepth = 1)
 ```
 
@@ -545,10 +551,11 @@ Now let us understand what each column in the summary table means
 
 -   **`Quant.Error`** - Quantization error for each cell
 
-All the columns after this will contains centroids for each cell for all the variables. They can be also called as codebook as is the collection of centroids for all cells (codewords)
+All the columns after this will contains centroids for each cell built using all the variables. They can be also called as codebook as is the collection of centroids for all cells (codewords)
 
 
 ``` r
+# Model summary
 summary(hvt.results[[3]][['summary']])
 #>  Segment.Level Segment.Parent Segment.Child        n          Quant.Error    
 #>  Min.   :1     Min.   :1      Min.   : 1.0   Min.   : 97.0   Min.   :0.2226  
@@ -579,6 +586,7 @@ Let's have a look at `Quant.Error` variable in the above table. It seems that no
 Now let's check the compression summary. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ``` r
+# Compressed model summary
 hvt.results[[3]]$compression_summary
 ```
 
@@ -621,9 +629,10 @@ As it can be seen in the table above, percentage of cells in level1 having quant
 
 We will now overlay the `Quant.Error` variable as heatmap over the voronoi tesselation plot to visualize the quantization error better.
 
-Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
+Let's have a look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
 
 ``` r
+PLotting the heatmap
 hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
 ```
 
@@ -631,7 +640,7 @@ hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.colo
 
 -   **`child.level`** - A number indicating the level for which the heat map is to be plotted.
 
--   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similary to plot the no of points in each cell as heatmap, pass `'no_of_points'` as a parameter
+-   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similary to plot the number of points in each cell as heatmap, pass `'no_of_points'` as a parameter
 
 -   **`color.vec`** - A color vector such that length(color.vec) = child.level (default = NULL)
 
@@ -639,7 +648,7 @@ hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.colo
 
 -   **`palette.color`** - A number indicating the heat map color palette. 1 - rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color. (default = 6)
 
--   **`show.points`** - A boolean indicating if the centroids should be plotted on the tesselations. (default = FALSE)
+-   **`show.points`** - A boolean indicating if the centroids should be plotted on the tessellations. (default = FALSE)
 
 -   **`quant.error.hmap`** - A number indicating the quantization error threshold
 
@@ -648,7 +657,7 @@ hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.colo
 Now let's plot the quantization error for each cell at level one as heatmap.
 
 ``` r
-        
+# Plotting the heatmap for Level 1        
 muHVT::hvtHmap(hvt.results, 
         traincomputers, 
         child.level = 1,
@@ -662,14 +671,15 @@ muHVT::hvtHmap(hvt.results,
         nclust.hmap = 15)      
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 3: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 3: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 Now let's go one level deeper and perform hierarchical vector quantization.
 
 ``` r
+# Building the required model for level 2
 set.seed(240)
 hvt.results2 <- list()
 # depth=2 is used for level2 in the hierarchy
@@ -706,6 +716,7 @@ Level 2 has 225 cells .i.e. each cell in level1 is divided into 225 cells
 Let's analyze the summary table again for `Quant.Error` and see if any of the cells in the 2nd level have quantization error below quantization error threshold. In the table below, the values for `Quant.Error` of the cells which have hit the quantization error threshold are shown in red. Here we are showing just top 50 rows for the sake of brevity.
 
 ``` r
+# Model summary
 head(hvt.results2[[3]][['summary']])
 
 #>   Segment.Level Segment.Parent Segment.Child   n Quant.Error      price      speed
@@ -727,6 +738,7 @@ head(hvt.results2[[3]][['summary']])
 The users can look at the compression summary to get a quick summary on the compression as it becomes quite cumbersome to look at the summary table above as we go deeper.
 
 ``` r
+# Compressed model summary
 hvt.results2[[3]]$compression_summary
 ```
 
@@ -784,6 +796,7 @@ As it can be seen in the table above, only `88%` cells in the 2nd level have qua
 We will look at the heatmap for quantization error for level 2.
 
 ``` r
+# Heatmap plot for Level 2
 muHVT::hvtHmap(hvt.results2, 
         child.level = 2,
         hmap.cols = "Quant.Error",
@@ -796,9 +809,9 @@ muHVT::hvtHmap(hvt.results2,
         nclust.hmap = 15)        
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 5: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 5: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 ### Predict
@@ -808,6 +821,7 @@ Now once we have built the model, let us try to predict using our test dataset w
 Let us see predictHVT function.
 
 ``` r
+# Code to predict the position of new data points from test set 
 predictHVT(data,hvt.results,hmap.cols = NULL,child.level = 1,...)
 ```
 
@@ -828,6 +842,7 @@ Important parameters for the function `predictHVT`
 -   **`...`** - color.vec and line.width can be passed from here
 
 ``` r
+# Building the prediction model
 set.seed(240)
 predictions <- muHVT::predictHVT(testComputers,
                           hvt.results2,
@@ -870,38 +885,41 @@ We can see the predictions for some of the points in the table above. The variab
 The prediction algorithm will work even if some of the variables used to perform quantization are missing. Let's try it out. In the test dataset, we will remove screen and ads.
 
 ``` r
+# Heatmap plot for predicted points
 predictions[["predictPlot"]]
 ```
-<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 6: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 6: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 6: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 6: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
-## Applications
+# Applications 
 
-1.  Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers.
+1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers
 
-2.  Market Segmentation - The package can be helpful in market segmentation where we have to identify micro and macro segments. The method used in this package can do both kinds of segmentation in one go.
+2. Market Segmentation - The package can be helpful in market segmentation where we have to identify micro and macro segments. The method used in this package can do both kinds of segmentation in one go
 
-3.  Anomaly detection - This method can help us categorize system behaviour over time and help us find anomaly when there are changes in the system. For e.g. Finding fraudulent claims in healthcare insurance.
+3. Anomaly Detection - This method can help us categorize system behaviour over time and help us find anomaly when there are changes in the system. For e.g. Finding fraudulent claims in healthcare insurance
 
-4.  The package can help us understand the underlying structure of the data. Suppose we want to analyze a curved surface such as sphere or vase, we can approximate it by a lot of small low-order polygons in the form of tesselations using this package.
+4. The package can help us understand the underlying structure of the data. Suppose we want to analyze a curved surface such as sphere or vase, we can approximate it by a lot of small low-order polygons in the form of tessellations using this package
 
-5.  In biology, Voronoi diagrams are used to model a number of different biological structures, including cells and bone microarchitecture.
+5. In biology, Voronoi diagrams are used to model a number of different biological structures, including cells and bone microarchitecture
 
-## References
+6. Using the base idea of Systems Dynamics, these diagrams can also be used to depict customer state changes over a period of time
 
-1.  Vector Quantization : <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf>
+# References
 
-2.  K-means : <https://en.wikipedia.org/wiki/K-means_clustering>
+1. Vector Quantization : https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf
 
-3.  Sammon’s Projection : <http://en.wikipedia.org/wiki/Sammon_mapping>
+2. K-means : https://en.wikipedia.org/wiki/K-means_clustering
 
-4.  Voronoi Tessellations : <http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
+3. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+
+4. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
 
 # Other Examples
 
-For more detailed examples of diffrent usage to construct voronoi tesselations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
+For more detailed examples of diffrent usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
 
 # Report a bug
 
