@@ -55,15 +55,15 @@ The stop criterion is when the quantization error of a cell  satisfies one of th
 
 The quantization error for a cell is defined as follows :
 
-$$QE  = \max_i(||A-F_i||_{p})$$ 
+![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\max_i(||A-F_i||_{p})$$) 
 
 
 where 
 
-*  $A$ is the centroid of the cell
-*  $F_i$ represents a data point in the cell 
-*  $m$ is the number of points in the cell
-*  $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$ = 2 represents L2 Norm.
+*  **A** is the centroid of the cell
+*  **F_i** represents a data point in the cell 
+*  **m** is the number of points in the cell
+*  **p** is the **p**-norm metric. Here **p** = 1 represents L1 Norm and **p** = 2 represents L2 Norm.
 
 ### Quantization Error
 
@@ -79,15 +79,15 @@ An example of a 2 dimensional VQ is shown above.
 
 In the above image, we can see 5 cells with each cell containing a certain number of points. The centroid for each cell is shown in blue. These centroids are also known as codewords since they represent all the points in that cell. The set of all codewords is called a codebook.
 
-Now we want to calculate quantization error for each cell. For the sake of simplicity, let's consider only one cell having centroid `A` and `m` data points $F_i$ for calculating quantization error.
+Now we want to calculate quantization error for each cell. For the sake of simplicity, let's consider only one cell having centroid `A` and `m` data points **F_i** for calculating quantization error.
 
 For each point, we calculate the distance between the point and the centroid.
 
-$$ d = ||A - F_i||_{p} $$
+![equation](https://latex.codecogs.com/gif.latex?$$&space;d&space;=&space;||A&space;-&space;F_i||_{p}&space;$$)
 
 In the above equation, p = 1 means `L1_Norm` distance whereas p = 2 means `L2_Norm` distance. In the package, the `L1_Norm` distance is chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a custom function to calculate the distance between two points in n dimensions.
 
-$$QE  = \max_i(||A-F_i||_{p})$$ 
+![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\max_i(||A-F_i||_{p})$$)
 
 Now, we take the maximum calculated distance of all m points. This gives us the furthest distance of a point in the cell from the centroid, which we refer to as `Quantization Error`. If the Quantization Error is higher than the given threshold, the centroid/codevector is not a good representation for the points in the cell. Now we can perform further Vector Quantization on these points and repeat the above steps.
 
@@ -95,7 +95,7 @@ Please note that the user can select mean, max or any custom function to calcula
 
 If we select `mean` as the error metric, the above Quantization Error equation will look like this :  
 
-$$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$ 
+![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$)
 
 
 
@@ -108,15 +108,15 @@ A Voronoi diagram is a way of dividing space into a number of regions. A set of 
 Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 
-Denoting the distance between $i^{th}$ and $j^{th}$ objects in the original space by $d_{ij}^*$, and the distance between their projections by $d_{ij}$. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
+Denoting the distance between **i^{th}** and **j^{th}** objects in the original space by **d_{ij}^***, and the distance between their projections by **d_{ij}**. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
 
-$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
+![equation](https://latex.codecogs.com/gif.latex?$$E=\frac{1}{\sum_{i<j}&space;d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$)
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
 ## Constructing Voronoi Tessellations
 
-In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tesselations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
+In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
 ## Example Usage
 
@@ -475,7 +475,7 @@ Following are all the parameters explained in detail
 
 -   **`quant.error`** - A number indicating the quantization error threshold. A cell will only breakdown into further cells only if the quantization error of the cell is above quantization error threshold.
 
--   **`projection.scale`** - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough.
+-   **`projection.scale`** - A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations well enough.
 
 -   **`normalize`** - A logical value indicating if the columns in your dataset should be normalized. Default value is TRUE. The algorithm supports Z-score normalization.
 
