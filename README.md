@@ -1,47 +1,124 @@
-Introduction
-============
+# Introduction
 
-The muHVT package is a collection of R functions for vector quantization and construction of hierarchical voronoi tessellations as a data visualization tool to visualize cells using quantization. The hierarchical cells are computed using Hierarchical K-means where a quantization threshold governs the levels in the hierarchy for a set *k* parameter (the maximum number of cells at each level). The package is particularly helpful to visualize rich mutlivariate data.
+The muHVT package is a collection of R functions for vector quantization and
+construction of hierarchical voronoi tessellations as a data visualization
+tool to visualize cells using quantization. The hierarchical cells are computed using
+Hierarchical K-means where a quantization threshold governs the levels
+in the hierarchy for a set $k$ parameter (the maximum number of cells
+at each level). The package is particularly helpful to visualize rich mutlivariate data. 
 
-This package additionally provides functions for computing the Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
-Vector Quantization
-===================
+This package additionally provides functions for computing the
+Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
-This package performs vector quantization using the following algorithm -
-
--   Hierarchical Vector Quantization using *k* − *m**e**a**n**s*
-
-Installation
-============
+# Installation
 
 ``` r
 install.packages("muHVT")
 ```
 
-Example Usage
-=============
-
-Voronoi Tessellations
----------------------
-
-A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed there will be a corresponding region consisting of all points closer to that seed than to any other. The regions are called Voronoi cells. It is dual to the Delaunay triangulation.
-
-Sammon’s projection
--------------------
-
-Sammon projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality by trying to preserve the structure of inter-point distances in high-dimensional space in the lower-dimension projection. It is particularly suited for use in exploratory data analysis. It is considered a non-linear approach as the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
-
-Denote the distance between *i*<sup>*th*</sup> and *j*<sup>*th*</sup> objects in the original space by *d*<sub>*ij*</sub><sup>\*</sup>, and the distance between their projections by *d*<sub>*ij*</sub>. Sammon’s mapping aims to minimize the following error function, which is often referred to as Sammon’s stress or Sammon’s error.
+# Vector Quantization
 
 
-The minimization can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
+This package performs vector quantization using the following algorithm - 
 
-### Constructing Voronoi tesselations
+*  Hierarchical Vector Quantization using $k-means$ 
 
-In this package, we use `sammons` from the package `MASS` to project higher dimensional data to 2D space. The function `hvq` called inside from function `HVT` returns hierarchical quantized data which will be the input for construction tesselations. The data is then represented in 2d coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter.For subsequent levels, transformation is performed on the 2d coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
-#### Code Example
+## Hierarchical VQ using k-means 
+
+### k-means
+
+1. The k-means algorithm randomly selects *k* data points as initial means
+1. *k* clusters are formed by assigning each data point to its closest cluster mean using the Euclidean distance
+1. Virtual means for each cluster are calculated by using all datapoints contained in a cluster
+
+The second and third steps are iterated until a predefined number of iterations is reached or the clusters converge. The runtime for the algorithm is O(n).
+
+### Hierarchical VQ using k-means 
+
+The algorithm divides the dataset recursively into cells. The $k-means$ algorithm is used by setting $k$ to, say two, in order to divide the dataset into two subsets. These two subsets are further divided into two subsets by setting $k$ to two, resulting in a total of four subsets. The recursion terminates when the cells either contain a single data point or a stop criterion is reached. In this case, the stop criterion is set to when the cell error exceeds the quantization threshold.
+
+The steps for this method are as follows :
+
+1. Select k(number of cells), depth and quantization error threshold
+1. Perform k-means on the input dataset
+1. Calculate quantization error for each of the k cells
+1. Compare the quantization error for each cell to quantization error threshold
+1. Repeat steps 2 to 4 for each of the k cells whose quantization error is above threshold until stop criterion is reached.
+
+The stop criterion is when the quantization error of a cell  satisfies one of the below conditions 
+
+* reaches below quantization error threshold
+* there is a single point in the cell
+* the user specified depth has been attained
+
+The quantization error for a cell is defined as follows :
+
+$$QE  = \max_i(||A-F_i||_{p})$$ 
+
+
+where 
+
+*  $A$ is the centroid of the cell
+*  $F_i$ represents a data point in the cell 
+*  $m$ is the number of points in the cell
+*  $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$ = 2 represents L2 Norm.
+
+### Quantization Error
+
+Let us try to understand quantization error with an example.
+
+<img src="https://ird.mu-sigma.com/wiki/images/9/91/Quant_explainer.png" alt="Understanding Quantization Error" width="672px" height="480px" />
+<p class="caption">
+Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed
+</p>
+
+
+An example of a 2 dimensional VQ is shown above.
+
+In the above image, we can see 5 cells with each cell containing a certain number of points. The centroid for each cell is shown in blue. These centroids are also known as codewords since they represent all the points in that cell. The set of all codewords is called a codebook.
+
+Now we want to calculate quantization error for each cell. For the sake of simplicity, let's consider only one cell having centroid `A` and `m` data points $F_i$ for calculating quantization error.
+
+For each point, we calculate the distance between the point and the centroid.
+
+$$ d = ||A - F_i||_{p} $$
+
+In the above equation, p = 1 means `L1_Norm` distance whereas p = 2 means `L2_Norm` distance. In the package, the `L1_Norm` distance is chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a custom function to calculate the distance between two points in n dimensions.
+
+$$QE  = \max_i(||A-F_i||_{p})$$ 
+
+Now, we take the maximum calculated distance of all m points. This gives us the furthest distance of a point in the cell from the centroid, which we refer to as `Quantization Error`. If the Quantization Error is higher than the given threshold, the centroid/codevector is not a good representation for the points in the cell. Now we can perform further Vector Quantization on these points and repeat the above steps.
+
+Please note that the user can select mean, max or any custom function to calculate the Quantization Error. The custom function takes a vector of m value (where each value is a distance between point in `n` dimensions and centroids) and returns a single value which is the Quantization Error for the cell.
+
+If we select `mean` as the error metric, the above Quantization Error equation will look like this :  
+
+$$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$ 
+
+
+
+# Voronoi Tessellations
+
+A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation.
+
+## Sammon’s projection
+
+Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
+
+
+Denoting the distance between $i^{th}$ and $j^{th}$ objects in the original space by $d_{ij}^*$, and the distance between their projections by $d_{ij}$. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
+
+$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
+
+The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
+
+## Constructing Voronoi Tesselations
+
+In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tesselations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
+
+## Example Usage
 
 In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price,speed,ram,screen,cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
 
@@ -415,8 +492,6 @@ hvt.results <- muHVT::HVT(trainComputers,
                           normalize = T,
                           distance_metric = "L1_Norm",
                           error_metric = "mean")
-
-                          
 ```
 
 Now let's try to understand plotHVT function along with the input parameters
@@ -449,9 +524,9 @@ muHVT::plotHVT(hvt.results,
         maxDepth = 1)
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/5/5e/Rplot_L1.png" alt="Figure 1: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/5/5e/Rplot_L1.png" alt="Figure 2: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’" width="672px" height="480px" />
 <p class="caption">
-Figure 1: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’
+Figure 2: The Voronoi tessellation for level 1 shown for the 15 cells in the dataset ’computers’
 </p>
 
 As per the manual, **`hvt.results[[3]]`** gives us detailed information about the hierarchical vector quantized data
@@ -584,14 +659,12 @@ muHVT::hvtHmap(hvt.results,
         show.points = T,
         centroid.size = 2,
         quant.error.hmap = 0.2,
-        nclust.hmap = 15)        
-        
-        
+        nclust.hmap = 15)      
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 2: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 3: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 2: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 3: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 Now let's go one level deeper and perform hierarchical vector quantization.
@@ -619,9 +692,9 @@ muHVT::plotHVT(hvt.results2,
         color.vec = c("#141B41","#0582CA"),maxDepth = 2)
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/c/ce/HVT_PLOT_L2.png" alt="Figure 3: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/c/ce/HVT_PLOT_L2.png" alt="Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
 <p class="caption">
-Figure 3: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
+Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
 </p>
 
 In the table below, Segment Level signifies the depth.
@@ -723,9 +796,9 @@ muHVT::hvtHmap(hvt.results2,
         nclust.hmap = 15)        
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 4: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 5: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 4: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 5: The Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 ### Predict
@@ -799,13 +872,12 @@ The prediction algorithm will work even if some of the variables used to perform
 ``` r
 predictions[["predictPlot"]]
 ```
-<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 5: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 6: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 5: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
+Figure 6: The predicted Voronoi tessellation with the heat map overlayed for variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
-Applications
-------------
+## Applications
 
 1.  Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers.
 
@@ -817,8 +889,7 @@ Applications
 
 5.  In biology, Voronoi diagrams are used to model a number of different biological structures, including cells and bone microarchitecture.
 
-References
-----------
+## References
 
 1.  Vector Quantization : <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf>
 
@@ -828,12 +899,10 @@ References
 
 4.  Voronoi Tessellations : <http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
 
-Other Examples
-==============
+# Other Examples
 
 For more detailed examples of diffrent usage to construct voronoi tesselations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
 
-Report a bug
-============
+# Report a bug
 
 For any queries related to bugs or feedback, feel free to raise the issue in [github issues page](https://github.com/Mu-Sigma/muHVT/issues)
