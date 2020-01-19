@@ -3,9 +3,9 @@ Type: Package
 Date: 2020-01-09
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 1.0.0
+Version: 1.0.1
 Authors@R: c(
-    person("Sangeet", "Das", email = "dassangeet768@gmail.com", role = "aut"),
+    person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "aut"),
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "aut"),
