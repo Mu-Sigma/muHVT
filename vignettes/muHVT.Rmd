@@ -1,21 +1,20 @@
 ---
-title: "muHVT: Collection of functions used for Vector Quantization and construction
-of hierarchical Voronoi Tessellations for data analysis in R"
-author: "Sangeet Moy Das, Zubin Dowlaty, Avinash Joshi, Meet Dave"
+title: "muHVT: Collection of functions used for vector quantization and construction of hierarchical Voronoi Tessellations for data analysis in R"
+author: "Sangeet Moy Das, Meet Dave, Avinash Joshi, Zubin Dowlaty"
 date: "`r Sys.Date()`"
-output: 
-      rmarkdown::html_vignette:
-      number_sections: true
-      toc: true
-      toc_depth : 2
-        
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
+    toc: true
+    toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{muHVT Package}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r setup, warning = FALSE}
+
+```{r setup, warning = FALSE, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -31,16 +30,35 @@ knitr::opts_chunk$set(
 
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "R.utils")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "R.utils", "purrr", "sp")
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages)
+  install.packages(new.packages, repos = "http://cran.us.r-project.org")
 
 # Loading the required libraries
 lapply(list.of.packages, library, character.only=T)
-getwd()
-R.utils::sourceDirectory("R")
+
+# setwd("..")
+# R.utils::sourceDirectory("R")
+
+# Sourcing the modified files for muHVT
+source("../R/Add_boundary_points.R")
+source("../R/Corrected_Tessellations.R")
+source("../R/DelaunayInfo.R")
+source("../R/Delete_Outpoints.R")
+source("../R/getCentroids.R")
+source("../R/getOptimalCentroids.R")
+source("../R/hvq.R")
+source("../R/HVT.R")
+source("../R/hvtHmap.R")
+source("../R/plotHVT.R")
+source("../R/predictHVT.R")
+source("../R/sammonsProjection.R")
+source("../R/ScaleMat.R")
+source("../R/Transform_Coordinates.R")
+
+
 
 options(expressions = 10000)
 
@@ -118,7 +136,7 @@ This package additionally provides functions for computing the
 Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
 
-#Vector Quantization
+# Vector Quantization
 
 
 This package performs vector quantization using the following algorithm - 
@@ -126,7 +144,7 @@ This package performs vector quantization using the following algorithm -
 *  Hierarchical Vector Quantization using $k-means$ 
 
 
-##Hierarchical VQ using k-means 
+## Hierarchical VQ using k-means 
 
 ### k-means
 
@@ -199,11 +217,11 @@ $$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
 
 
 
-#Voronoi Tessellations
+# Voronoi Tessellations
 
 A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation.
 
-##Sammon’s projection
+## Sammon’s projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
@@ -214,13 +232,13 @@ $$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-### Constructing Voronoi Tesselations
+## Constructing Voronoi Tesselations
 
 In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tesselations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
-####Example Usage 1
+### Example Usage 1
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/thomaspernet/data_csv_r/blob/master/data/Computers.csv).
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/SangeetM/dataset/blob/master/Computers.csv).
 
 In this example, we will compress this dataset by using hierarhical VQ via k-means and visualize the Voronoi Tesselation plots using Sammons projection. Later on, we will overlay price, speed and screen variables as a heatmap to generate further insights.
 
@@ -307,13 +325,15 @@ hvt.results <- HVT(trainComputers,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
-                          normalize = T)
+                          normalize = T,
+                          distance_metric = "L1_Norm",
+                          error_metric = "mean")
 ```
 
 Now let's try to understand plotHVT function. The parameters have been explained in detail below
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
-plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL)
+plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL, maxDepth = 1)
 ```
 
 * __`hvt.results`__ -  A list containing the ouput of the HVT function which has the details of the tessellations to be plotted
@@ -334,7 +354,8 @@ Let's plot the voronoi tesselation
 # Voronoi tesselation plot for level one
 plotHVT(hvt.results,
         line.width = c(1.2), 
-        color.vec = c("#141B41"))
+        color.vec = c("#141B41"),
+        maxDepth = 1)
 ```
 
 As per the manual, __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
@@ -402,12 +423,14 @@ Now let's plot the quantization error for each cell at level one as a heatmap.
 hvtHmap(hvt.results, 
         trainComputers, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.2),
         color.vec = c("#141B41"),
         palette.color = 6,
         centroid.size = 3,
-        show.points = T)
+        show.points = T,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Now let's go one level deeper and perform hierarchical vector quantization.
@@ -421,7 +444,9 @@ hvt.results2 <- HVT(trainComputers,
                            depth = 2,
                            quant.err = 0.2,
                            projection.scale = 10,
-                           normalize = T)
+                           normalize = T,
+                           distance_metric = "L1_Norm",
+                           error_metric = "mean")
 ```
 
 Let's plot the voronoi tesselation for both the levels.
@@ -430,7 +455,8 @@ Let's plot the voronoi tesselation for both the levels.
 # Voronoi tesselation plot for level two
 plotHVT(hvt.results2, 
         line.width = c(1.2, 0.8), 
-        color.vec = c("#141B41","#0582CA"))
+        color.vec = c("#141B41","#0582CA"),
+        maxDepth = 2)
 ```
 
 In the table below, Segment Level signifies the depth.
@@ -459,12 +485,14 @@ We will look at the heatmap for Quantization Error for level 2.
 hvtHmap(hvt.results2, 
         trainComputers, 
         child.level = 2,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8,0.2),
         color.vec = c("#141B41","#0582CA"),
         palette.color = 6,
         centroid.size = 2,
-        show.points = T)
+        show.points = T,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 As the Quantization Error criteria is not met, let's perform hierarchical Vector Quantization at level 3.
@@ -478,7 +506,9 @@ hvt.results3 <- HVT(trainComputers,
                            depth = 3,
                            quant.err = 0.2,
                            projection.scale = 10,
-                           normalize = T)
+                           normalize = T,
+                           distance_metric = "L1_Norm",
+                           error_metric = "mean")
 ```
 
 Let's plot the Voronoi Tesselation for all 3 levels.
@@ -488,7 +518,8 @@ Let's plot the Voronoi Tesselation for all 3 levels.
 plotHVT(hvt.results3,
         line.width = c(1.2,0.8,0.4),
         color.vec = c("#141B41","#0582CA","#8BA0B4"),
-        centroid.size = 3)
+        centroid.size = 3,
+        maxDepth = 3)
 ```
 
 Each of the 225 cells whose quantization is above the defined threshold in level 2 will break down into 15 cells each in level 3. Hence, as it can be seen below, level 3 has 3375 rows. So it will have 3615 rows in total. We will only show first 500 rows here.
@@ -510,15 +541,17 @@ As it can be seen from the compression summary table above, the Quantization Err
 hvtHmap(hvt.results3, 
         trainComputers, 
         child.level = 3,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(1.2,0.8,0.4),
         color.vec = c("#141B41","#6369D1","#D8D2E1"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 1.1)
+        centroid.size = 1,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
-###  Heatmap
+## Overlay Heatmap
 
 Now we will try to get more insights from the cells by overlaying heatmap for variable `price` at different levels.
 
@@ -533,11 +566,13 @@ hvtHmap(hvt.results,
         trainComputers, 
         child.level = 1,
         hmap.cols = "price", 
-        line.width = c(0.2),
+        line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 3,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -554,7 +589,9 @@ hvtHmap(hvt.results2,
         color.vec = c("#141B41","#0582CA"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 2)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let us go one level deeper and overlay heatmap for `price` at level 3. 
@@ -570,7 +607,9 @@ hvtHmap(hvt.results3,
         color.vec = c("#141B41","#6369D1","#D8D2E1"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 1.1)
+        centroid.size = 1,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's repeat the steps above for the `speed` variable
@@ -582,11 +621,13 @@ hvtHmap(hvt.results,
         trainComputers, 
         child.level = 1,
         hmap.cols = "speed", 
-        line.width = c(0.2),
+        line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 3,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -601,7 +642,9 @@ hvtHmap(hvt.results2,
         color.vec = c("#141B41","#0582CA"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 2)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let us go one level deeper and overlay heatmap for `speed` at level 3. 
@@ -617,11 +660,13 @@ hvtHmap(hvt.results3,
         color.vec = c("#141B41","#6369D1","#D8D2E1"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 1.1)
+        centroid.size = 1,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
-### Predict
+## Predict
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which level each point belongs to.
 
@@ -646,12 +691,17 @@ The important parameters for the function `predictHVT` are as below
 set.seed(240)
 predictions <- predictHVT(testComputers,
                                  hvt.results3,
-                                 hmap.cols = NULL,
-                                 child.level = 3)
+                                 hmap.cols = "Quant.Error",
+                                 child.level = 3,
+                                 line.width = c(1.2,0.8,0.4),
+                                 color.vec = c("#141B41","#6369D1","#D8D2E1"),
+                                 quant.error.hmap = 0.2,
+                                 nclust.hmap = 15)
+
 ```
 
 
-#### Prediction Algorithm
+### Prediction Algorithm
 
 The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in the test dataset : 
 
@@ -669,15 +719,22 @@ Table(predictions$predictions,scroll = T,limit = 10)
 
 We can see the predictions for some of the points in the table above. The variable `cell_path` shows us the level and the cell that each point is mapped to. The centroid of the cell that the point is mapped to is the codeword (predictor) for that cell. 
 
-The prediction algorithm will work even if some of the variables used to perform quantization are missing. Let's try it out. In the test dataset, we will remove screen and ads.
+The prediction algorithm will not work if some of the variables used to perform quantization are missing. Let's try it out. In the test dataset, we should not remove any features.
 
 ```{r predictHVT2 computers,warning=FALSE,message=FALSE,eval=global_var}
 set.seed(240)
-testComputers <- testComputers %>% dplyr::select(-c(screen,ads))
+# testComputers <- testComputers %>% dplyr::select(-c(screen,ads))
 predictions <- predictHVT(testComputers,
                                  hvt.results3,
-                                 hmap.cols = NULL,
-                                 child.level = 3)
+                                 hmap.cols = "Quant.Error",
+                                 child.level = 3,
+                                 line.width = c(1.2,0.8,0.4),
+                                 color.vec = c("#141B41","#6369D1","#D8D2E1"),
+                                 quant.error.hmap = 0.2,
+                                 nclust.hmap = 15)
+
+predictions[["predictPlot"]]
+
 Table(predictions$predictions,scroll = T,limit = 10)
 ```
 
@@ -740,9 +797,11 @@ hvt.torus <- HVT(torus_df,
                         depth = 1,
                         quant.err = 0.1,
                         projection.scale = 10,
-                        normalize = T)
+                        normalize = T,
+                        distance_metric = "L1_Norm",
+                        error_metric = "mean")
 
-plotHVT(hvt.torus,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1)
+plotHVT(hvt.torus,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1, maxDepth = 1)
 ```
 
 Let's checkout the compression summary for torus.
@@ -759,12 +818,14 @@ Let's overlay the heatmap for quantization error for level 1.
 hvtHmap(hvt.torus, 
         torus_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Now let's double the number of cells to 200 and try again.
@@ -776,8 +837,10 @@ hvt.torus2 <- HVT(torus_df,
                          depth = 1,
                          quant.err = 0.1,
                          projection.scale = 10,
-                         normalize = T)
-plotHVT(hvt.torus2,line.width = c(0.8),color.vec=c("#141B41"),centroid.size = 1)
+                         normalize = T,
+                         distance_metric = "L1_Norm",
+                         error_metric = "mean")
+plotHVT(hvt.torus2,line.width = c(0.8),color.vec=c("#141B41"),centroid.size = 1, maxDepth = 1)
 ```
 
 Let's checkout the compression summary for torus.
@@ -794,12 +857,14 @@ Let's understand this visually by overlaying the heatmap for Quantization Error 
 hvtHmap(hvt.torus2, 
         torus_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
-        centroid.size = 3,
-        show.points = T)
+        centroid.size = 2,
+        show.points = T,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's increase the number of cells to 500.
@@ -811,9 +876,11 @@ hvt.torus3 <- HVT(torus_df,
                          depth = 1,
                          quant.err = 0.1,
                          projection.scale = 10,
-                         normalize = T)
+                         normalize = T,
+                         distance_metric = "L1_Norm",
+                         error_metric = "mean")
 
-plotHVT(hvt.torus3,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1)
+plotHVT(hvt.torus3,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1, maxDepth = 1)
 ```
 
 
@@ -831,12 +898,14 @@ Let's checkout the heatmap for quantization error.
 hvtHmap(hvt.torus3, 
         torus_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
-        line.width = c(0.8),
+        hmap.cols = "Quant.Error", 
+        line.width = c(0.4),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 Let's use the hierarchical Vector Quantization technique and go one level deeper, keeping the number of cells as 20.
@@ -844,13 +913,15 @@ Let's use the hierarchical Vector Quantization technique and go one level deeper
 ```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
 hvt.torus4 <- HVT(torus_df,
-                         nclust = 20,
+                         nclust = 200,
                          depth = 2,
                          quant.err = 0.1,
                          projection.scale = 10,
-                         normalize = T)
+                         normalize = T,
+                         distance_metric = "L1_Norm",
+                         error_metric = "mean")
 
-plotHVT(hvt.torus4,line.width = c(0.8,0.3),color.vec = c("#141B41","#0582CA"),centroid.size = 2)
+plotHVT(hvt.torus4,line.width = c(0.8,0.3),color.vec = c("#141B41","#0582CA"),centroid.size = 2, maxDepth = 2)
 ```
 
 Let's check the compression summary for torus.
@@ -867,17 +938,19 @@ Let's also observe the Quantization Error heatmap.
 hvtHmap(hvt.torus4, 
         torus_df, 
         child.level = 2,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8,0.4),
         color.vec = c("#141B41","#6369D1"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 2)
+        centroid.size = 1.5,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 A similar process can be followed for sphere. The code for the same can be found in the Appendix below.
 
-## Applications 
+# Applications 
 
 1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers
 
@@ -891,7 +964,7 @@ A similar process can be followed for sphere. The code for the same can be found
 
 6. Using the base idea of Systems Dynamics, these diagrams can also be used to depict customer state changes over a period of time
 
-## References
+# References
 
 1. Vector Quantization : https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf
 
@@ -901,11 +974,11 @@ A similar process can be followed for sphere. The code for the same can be found
 
 4. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
 
-## Appendix
+# Appendix
 
 The code for constructing voronoi tesselations for 3D sphere can be found here.
 
-#### Sphere
+## Constructing 3D Sphere
 
 Here also, we will generate 1000 points in 3D space to form a sphere.
 
@@ -973,12 +1046,14 @@ Let's overlay the heatmap for quantization error for level 1.
 hvtHmap(hvt.sphere, 
         sphere_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -993,7 +1068,7 @@ hvt.sphere2 <- HVT(sphere_df,
                           projection.scale = 10,
                           normalize = T)
 
-plotHVT(hvt.sphere2,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1)
+plotHVT(hvt.sphere2,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1, maxDepth = 1)
 ```
 
 Let's checkout the compression summary for sphere
@@ -1010,12 +1085,14 @@ Let's check the heatmap for quantization error
 hvtHmap(hvt.sphere2, 
         sphere_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
-        centroid.size = 3,
-        show.points = T)
+        centroid.size = 2,
+        show.points = T,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 
@@ -1030,7 +1107,7 @@ hvt.sphere3 <- HVT(sphere_df,
                           projection.scale = 10,
                           normalize = T)
 
-plotHVT(hvt.sphere3,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1)
+plotHVT(hvt.sphere3,line.width = c(0.8),color.vec = c("#141B41"),centroid.size = 1, maxDepth = 1)
 ```
 
 Let's checkout the compression summary for sphere
@@ -1048,12 +1125,14 @@ Let's plot the heatmap for quantization error
 hvtHmap(hvt.sphere3, 
         sphere_df, 
         child.level = 1,
-        hmap.cols = "quant_error", 
+        hmap.cols = "Quant.Error", 
         line.width = c(0.8),
         color.vec = c("#141B41"),
         palette.color = 6,
         show.points = T,
-        centroid.size = 3)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```
 
 We can do better here also
@@ -1069,7 +1148,7 @@ hvt.sphere4 <- HVT(sphere_df,
                           projection.scale = 10,
                           normalize = T)
 
-plotHVT(hvt.sphere4,line.width = c(0.8,0.3),color.vec = c("#141B41","#0582CA"),centroid.size = 2)
+plotHVT(hvt.sphere4,line.width = c(0.8,0.3),color.vec = c("#141B41","#0582CA"),centroid.size = 2, maxDepth = 2)
 ```
 
 Let's checkout the compression summary for torus
@@ -1086,10 +1165,12 @@ We will overlay the heatmap for quantization error.
 hvtHmap(hvt.sphere4, 
         sphere_df, 
         child.level = 2,
-        hmap.cols = "quant_error",
+        hmap.cols = "Quant.Error",
         color.vec = c("#141B41","#6369D1"),
         line.width = c(0.8,0.4),
         palette.color = 6,
         show.points = T,
-        centroid.size = 2)
+        centroid.size = 2,
+        quant.error.hmap = 0.2,
+        nclust.hmap = 15)
 ```

@@ -343,7 +343,7 @@ trilaterate <- function(d){
 #' nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
 #' quantization error was met. } \item{summary}{ Summary. Output table with
 #' summary. }
-#' @author Meet K. Dave <dave.kirankumar@@mu-sigma.com>
+#' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
 #' @examples
 #' 

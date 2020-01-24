@@ -4,10 +4,15 @@
 \alias{hvq}
 \title{hvq}
 \usage{
-hvq(x, nclust = 3, depth = 3, quant.err = 10,
+hvq(
+  x,
+  nclust = 15,
+  depth = 3,
+  quant.err = 0.2,
   algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
-  distance_metric = c("L1_Norm", "L2_Norm"), error_metric = c("mean",
-  "max"))
+  distance_metric = c("L1_Norm", "L2_Norm"),
+  error_metric = c("mean", "max")
+)
 }
 \arguments{
 \item{x}{Data Frame. A dataframe of multivariate data. Each row corresponds to an
@@ -59,8 +64,8 @@ hierarchically arranged vector quantized data.
 \examples{
 
 data("USArrests",package="datasets")
-hvqOutput = hvq(USArrests, nclust = 2, depth = 3, quant.err = 0.2,
-distance_metric='L1_Norm',error_metric='mean')
+hvqOutput = hvq(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
+distance_metric = 'L1_Norm', error_metric = 'mean')
 
 
 }
@@ -68,5 +73,5 @@ distance_metric='L1_Norm',error_metric='mean')
 \code{\link{hvtHmap}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <Sangeet.Das@mu-sigma.com>
 }

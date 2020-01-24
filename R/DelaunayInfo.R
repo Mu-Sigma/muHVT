@@ -32,10 +32,10 @@ function(gidata, poly_info, rawdeldati, nclust){
       #points on line with constant 'y'
       Points_on_ylines[[i]] <- matrix(c(xseq_parent, 
                                         rep(yseq_parent[i], length(xseq_parent))),
-                                      ncol = 2, byrow = F)
+                                      ncol = 2, byrow = FALSE)
       #points on line with constant 'x'
       Points_on_xlines[[i]] <- matrix(c(rep(xseq_parent[i], length(yseq_parent)), 
-                                        yseq_parent), ncol = 2, byrow = F)
+                                        yseq_parent), ncol = 2, byrow = FALSE)
     }
     
     for(i in 1: length(xseq_parent)){
@@ -43,8 +43,7 @@ function(gidata, poly_info, rawdeldati, nclust){
       x_points_inside_polygon[[i]] <- Points_on_xlines[[i]][c(which(sp::point.in.polygon(Points_on_xlines[[i]][, 1], 
                                                                                      Points_on_xlines[[i]][, 2],
                                                                                      output_polygon[, 1], 
-                                                                                     output_polygon[, 2]) != 0)), , 
-                                                            drop = F]
+                                                                                     output_polygon[, 2]) != 0)), ,drop = FALSE]
       #lines(x_points_inside_polygon[[i]][, 1], x_points_inside_polygon[[i]][, 2])  
     }
     
@@ -70,7 +69,7 @@ function(gidata, poly_info, rawdeldati, nclust){
                                                                            x_points_inside_polygon[[i]][(j + 1), 2],
                                                                            x_points_inside_polygon[[i]][j, 1],
                                                                            x_points_inside_polygon[[i]][(j + 1), 2]), 
-                                                                         ncol = 2, byrow = T)
+                                                                         ncol = 2, byrow = TRUE)
             no_of_small_poly <- no_of_small_poly + 1
           }
         }  
@@ -90,10 +89,10 @@ function(gidata, poly_info, rawdeldati, nclust){
     xrange_sammon_poly <- range(input_polygon[, 1])
     yrange_sammon_poly <- range(input_polygon[, 2])
     #create same number of boxes as that in parent polygon
-    nbox_factors <- conf.design:: factorize(nbox)
+    nbox_factors <- conf.design::factorize(nbox)
     if(length(nbox_factors) == 1){
       nbox <- nbox - 1
-      nbox_factors <- conf.design:: factorize(nbox)
+      nbox_factors <- conf.design::factorize(nbox)
     }
     xseq_sammon <- seq(xrange_sammon_poly[1], 
                        xrange_sammon_poly[2],
@@ -108,7 +107,7 @@ function(gidata, poly_info, rawdeldati, nclust){
       #points on line with constant 'x'
       samPoints_on_xlines[[i]] <- matrix(c(rep(xseq_sammon[i], length(yseq_sammon)), 
                                            yseq_sammon), 
-                                         ncol = 2, byrow = F)
+                                         ncol = 2, byrow = FALSE)
     }
     
     #constructing polygons inside sammon polygon
@@ -130,7 +129,7 @@ function(gidata, poly_info, rawdeldati, nclust){
                                                                               samPoints_on_xlines[[l]][(m + 1), 2],
                                                                               samPoints_on_xlines[[l]][m, 1],
                                                                               samPoints_on_xlines[[l]][(m + 1), 2]),
-                                                                            ncol = 2, byrow = T)
+                                                                            ncol = 2, byrow = TRUE)
             no_of_small_samPoly <- no_of_small_samPoly + 1
           }
         }  
@@ -163,7 +162,7 @@ function(gidata, poly_info, rawdeldati, nclust){
     }
     par_tile_polygon[[ind1]] <- matrix(c(poly_info[[lindex[ind1]]]$x,
                                          poly_info[[lindex[ind1]]]$y),
-                                       ncol = 2, byrow = F)
+                                       ncol = 2, byrow = FALSE)
     
     #construct the sammon space polygon using xrange and yrange of sammon
     xrange[[ind1]] <- range(rawdeldati[[ind1]][, 1])
@@ -172,7 +171,7 @@ function(gidata, poly_info, rawdeldati, nclust){
                                              xrange[[ind1]][2], yrange[[ind1]][1],
                                              xrange[[ind1]][2], yrange[[ind1]][2], 
                                              xrange[[ind1]][1], yrange[[ind1]][2]), 
-                                           ncol = 2, byrow = T)
+                                           ncol = 2, byrow = TRUE)
     
     #represent each small box in the bigger polygon as a polygon
     

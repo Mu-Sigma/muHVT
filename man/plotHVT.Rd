@@ -2,10 +2,17 @@
 % Please edit documentation in R/plotHVT.R
 \name{plotHVT}
 \alias{plotHVT}
-\title{plotHVT}
+\title{Plot the hierarchical tesselations.}
 \usage{
-plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3,
-  title = NULL)
+plotHVT(
+  hvt.results,
+  line.width,
+  color.vec,
+  pch1 = 21,
+  centroid.size = 3,
+  title = NULL,
+  maxDepth = NULL
+)
 }
 \arguments{
 \item{hvt.results}{List. A list containing the ouput of \code{HVT} function
@@ -18,33 +25,34 @@ tessellation boundaries for each level.}
 the tessellations at each level.}
 
 \item{pch1}{Numeric. Symbol type of the centroids of the tessellations
-(parent levels). Refer \code{\link{points}}. (default = 19)}
+(parent levels). Refer \code{\link{points}}. (default = 21)}
 
 \item{centroid.size}{Numeric. Size of centroids of first level
 tessellations. (default = 3)}
 
 \item{title}{String. Set a title for the plot. (default = NULL)}
+
+\item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
 \description{
-Plot the hierarchical tesselations.
+Main plotting function to construct hierarchical voronoi tessellations.
 }
 \examples{
-
 
 data("USArrests",package="datasets")
 
 hvt.results <- list()
 hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
-                  projection.scale = 10, normalize = TRUE)
-plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'))
-
-
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE)
+plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),
+        maxDepth = 3)
 
 }
 \seealso{
 \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{hplot}

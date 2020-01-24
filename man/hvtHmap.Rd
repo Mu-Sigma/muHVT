@@ -2,12 +2,28 @@
 % Please edit documentation in R/hvtHmap.R
 \name{hvtHmap}
 \alias{hvtHmap}
-\title{hvtHmap}
+\title{Heat Map over Hierarchical Voronoi Tessellations}
 \usage{
-hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec = NULL,
-  line.width = NULL, centroid.size = 3, pch = 21, palette.color = 6,
-  previous_level_heatmap = T, show.points = F, asp = 1, ask = T,
-  tess.label = NULL, label.size = 0.5, ...)
+hvtHmap(
+  hvt.results,
+  dataset,
+  child.level,
+  hmap.cols,
+  color.vec = NULL,
+  line.width = NULL,
+  centroid.size = 3,
+  pch = 21,
+  palette.color = 6,
+  previous_level_heatmap = TRUE,
+  show.points = FALSE,
+  asp = 1,
+  ask = TRUE,
+  tess.label = NULL,
+  quant.error.hmap = NULL,
+  nclust.hmap = NULL,
+  label.size = 0.5,
+  ...
+)
 }
 \arguments{
 \item{hvt.results}{List. A list of hvt.results obtained from the HVT
@@ -52,13 +68,19 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 \item{tess.label}{Vector. A vector for labelling the tessellations. (default
 = NULL)}
 
+\item{quant.error.hmap}{Numeric. A number indicating the quantization error
+treshold.}
+
+\item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
+hierarchy (level)}
+
 \item{label.size}{Numeric. The size by which the tessellation labels should
 be scaled. (default = 0.5)}
 
 \item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
 }
 \description{
-Heat Map over Hierarchical Voronoi Tessellations
+Main function to construct heatmap overlay for hierarchical voronoi tessellations.
 }
 \details{
 The output of the \code{HVT} function has all the required information about
@@ -85,20 +107,24 @@ the desired variables.
 data(USArrests)
 hvt.results <- list()
 hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
-                  projection.scale = 10, normalize = TRUE)
-hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', line.width = c(0.2),
-color.vec = c('#141B41'),palette.color = 6)
+                   distance_metric = "L1_Norm", error_metric = "mean", 
+                   projection.scale = 10, normalize = TRUE)
+hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
+        line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
+        quant.error.hmap = 0.2,nclust.hmap = 6)
 
 hvt.results <- list()
 hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
-                  projection.scale = 10, normalize = TRUE)
-hvtHmap(hvt.results, train_computers, child.level = 3,hmap.cols = 'quant_error', 
-line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),palette.color = 6)
+                   distance_metric = "L1_Norm", error_metric = "mean", 
+                   projection.scale = 10, normalize = TRUE)
+hvtHmap(hvt.results, USArrests, child.level = 3,hmap.cols = 'Quant.Error',
+        line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),
+        palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 3)
 }
 \seealso{
 \code{\link{plotHVT}}
 }
 \author{
-Meet K. Dave <dave.kirankumar@mu-sigma.com>
+Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{hplot}
