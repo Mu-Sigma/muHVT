@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
