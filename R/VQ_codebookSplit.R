@@ -1,3 +1,5 @@
+
+
 requireNamespace("deldir")   
 
 #======================================================================================
@@ -353,8 +355,8 @@ trilaterate <- function(d){
 #' 
 #' vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
 #' 
-#' 
 #' @export VQ_codebookSplit
+#' @keywords internal
 VQ_codebookSplit <- function(dataset,quant.err=0.5,epsilon=NULL){
   
   model <- list()

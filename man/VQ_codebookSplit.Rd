@@ -47,7 +47,6 @@ iris <- iris[,1:2]
 
 vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
 
-
 }
 \seealso{
 \code{\link{hvtHmap}}
@@ -55,3 +54,4 @@ vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
 \author{
 Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
+\keyword{internal}

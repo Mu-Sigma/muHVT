@@ -57,7 +57,7 @@
 #' @param nclust.hmap Numeric. An integer indicating the number of clusters per
 #' hierarchy (level)
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)
-#' @author Sangeet Moy Das <sangeet.das@@mu-sigma.com>
+#' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords hplot
 #' @importFrom magrittr %>%
@@ -65,20 +65,13 @@
 #' @examples
 #' data(USArrests)
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean", 
-#'                    projection.scale = 10, normalize = TRUE)
+#' hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+#'                    distance_metric = "L1_Norm", error_metric = "mean",
+#'                    projection.scale = 10, normalize = TRUE,
+#'                    quant_method="kmeans",diagnose=TRUE)
 #' hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
 #'         line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
 #'         quant.error.hmap = 0.2,nclust.hmap = 6)
-#'
-#' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean", 
-#'                    projection.scale = 10, normalize = TRUE)
-#' hvtHmap(hvt.results, USArrests, child.level = 3,hmap.cols = 'Quant.Error',
-#'         line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),
-#'         palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 3)
 #' @export hvtHmap
 
 
@@ -92,18 +85,20 @@ hvtHmap <-
             centroid.size = 3,
             pch = 21,
             palette.color = 6,
-            previous_level_heatmap = TRUE,
-            show.points = FALSE,
+            previous_level_heatmap = T,
+            show.points = F,
             asp = 1,
-            ask = TRUE,
+            ask = T,
             tess.label = NULL,
             quant.error.hmap = NULL,
             nclust.hmap = NULL,
             label.size = .5,
-            ...)
-  {
+            ...){
+    # browser()
+    
     hvt_list <- hvt.results
-    maxDepth <- child.level
+    # maxDepth <- child.level
+    maxDepth <- min(child.level,max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
     summaryDF = hvt_list[[3]][["summary"]]
     valuesDataframe <- data.frame(
       depth = 0,
@@ -111,7 +106,8 @@ hvtHmap <-
       child = 0,
       qe=0,
       n_cluster=0,
-      value = 0
+      value = 0,
+      cellID = 0
     )
     positionsDataframe <- data.frame(
       depth = 0,
@@ -144,7 +140,11 @@ hvtHmap <-
               ncluster = summaryFilteredDF[, "n"]
               x = as.numeric(current_cluster[["x"]])
               y = as.numeric(current_cluster[["y"]])
-              
+              if("Cell.ID" %in% colnames(summaryFilteredDF)){
+                cell_ID = summaryFilteredDF[, "Cell.ID"]
+              } else{
+                cell_ID = 0
+              }
               valuesDataframe <-
                 rbind(
                   valuesDataframe,
@@ -154,7 +154,8 @@ hvtHmap <-
                     child = childNo,
                     qe=qe,
                     n_cluster=ncluster,
-                    value = val
+                    value = val,
+                    cellID = cell_ID
                   )
                 )
               positionsDataframe <-
@@ -183,7 +184,7 @@ hvtHmap <-
             
           }
         }
-      
+        
       }else{
         for (clusterNo in 1:nclust.hmap^(child.level-1)) {
           for (childNo in 1:length(hvt_list[[2]][[depth]][[as.character(clusterNo)]])) {
@@ -197,13 +198,17 @@ hvtHmap <-
               
               current_cluster = hvt_list[[2]][[depth]][[as.character(clusterNo)]][[childNo]]
               
-             
+              
               val = summaryFilteredDF[, hmap.cols]
               qe = summaryFilteredDF[, "Quant.Error"]
               
               x = as.numeric(current_cluster[["x"]])
               y = as.numeric(current_cluster[["y"]])
-              
+              if("Cell.ID" %in% colnames(summaryFilteredDF)){
+                cell_ID = summaryFilteredDF[, "Cell.ID"]
+              } else{
+                cell_ID = 0
+              }
               valuesDataframe <-
                 rbind(
                   valuesDataframe,
@@ -213,7 +218,8 @@ hvtHmap <-
                     child = childNo,
                     qe=qe,
                     n_cluster=ncluster,
-                    value = val
+                    value = val,
+                    cellID = cell_ID
                   )
                 )
               positionsDataframe <-
@@ -260,34 +266,57 @@ hvtHmap <-
     colour_scheme <- c("#6E40AA", "#6B44B2", "#6849BA", "#644FC1", "#6054C8", "#5C5ACE" ,"#5761D3" ,"#5268D8", "#4C6EDB", "#4776DE", "#417DE0", "#3C84E1" ,"#368CE1",
                        "#3194E0", "#2C9CDF", "#27A3DC", "#23ABD8","#20B2D4", "#1DBACE", "#1BC1C9", "#1AC7C2" ,"#19CEBB", "#1AD4B3" ,"#1BD9AB", "#1DDFA3", "#21E39B",
                        "#25E892", "#2AEB8A" ,"#30EF82", "#38F17B" ,"#40F373", "#49F56D", "#52F667", "#5DF662", "#67F75E", "#73F65A", "#7FF658", "#8BF457", "#97F357", "#A3F258")
-      data <- datapoly
-          if(child.level>1){
-            for(i in 1:(child.level-1)){
-            index_tess<-which(data$depth==i & data$qe>quant.error.hmap & data$n_cluster>3 )
-            data<-data[-index_tess,]
     
-            rm(index_tess)
-            }
-          }
+    data <- datapoly
+    if(maxDepth>1){
+      for(i in 1:(maxDepth-1)){
+        index_tess<-which(data$depth==i & data$qe>quant.error.hmap & data$n_cluster>3 )
+        data<-data[-index_tess,]
+        
+        rm(index_tess)
+      }
+    }
+    
+    # changing hoverText for torus demo
+    if ("Cell.ID" %in% colnames(summaryFilteredDF)) {
       p <-
         p +  ggplot2::geom_polygon(
           data = data,
-          aes(
+          ggplot2::aes(
             x = x,
             y = y,
             group = interaction(depth, cluster, child),
-            fill = value
+            fill = value,
+            text = paste(" Cell.ID:", cellID,
+                         "<br>", "Segment.Level:", depth,
+                         "<br>", "Segment.Parent:", cluster,
+                         "<br>", "Segment.Child:", child
+            )
           )
           
         ) + 
-        scale_fill_gradientn(colours = colour_scheme ) +
-        labs(fill = hmap.cols)
+        ggplot2::scale_fill_gradientn(colours = colour_scheme ) +
+        ggplot2::labs(fill = hmap.cols)
       
-      for (i in child.level:1 ) {
+    } else { p <-
+      p +   ggplot2::geom_polygon(
+        data = data,
+        ggplot2::aes(
+          x = x,
+          y = y,
+          group = interaction(depth, cluster, child),
+          fill = value,
+        )
+      ) + 
+      ggplot2::scale_fill_gradientn(colours = colour_scheme ) +
+      ggplot2::labs(fill = hmap.cols)}
+    
+    
+    for (i in child.level:1 ) {
       p <-
         p +  ggplot2::geom_polygon(
           data = datapoly[which(datapoly$depth==i),],
-          aes(
+          ggplot2::aes(
             x = x,
             y = y,
             color = factor(depth),
@@ -297,36 +326,36 @@ hvtHmap <-
           ),
           fill = NA
         ) +
-        scale_colour_manual(values = color.vec)+
-        scale_size_manual(values=line.width,guide=FALSE) +
-        labs(color = "Level")}
-      
+        ggplot2::scale_colour_manual(values = color.vec)+
+        ggplot2::scale_size_manual(values=line.width,guide=FALSE) +
+        ggplot2::labs(color = "Level")}
     
-      
-      
-      
+    
+    
+    
+    
     for (depth in 1:maxDepth) {
       p <-  p + ggplot2::geom_point(
         data = centroidDataframe[centroidDataframe["lev"] == depth, ],
-        aes(x = x, y = y),
+        ggplot2::aes(x = x, y = y),
         size = (centroid.size / (2 ^ (depth - 1))),
         fill = color.vec[depth],
         color = color.vec[depth]
       ) + ggplot2::theme(plot.background = ggplot2::element_blank()
-                           ,plot.title = element_text(
-                             size = 20,
-                             hjust = 0.5,
-                             margin = margin(0, 0, 20, 0)
-                           )
-                           ,panel.grid = ggplot2::element_blank()
-                           ,panel.border = ggplot2::element_blank()
-                           ,axis.ticks = element_blank()
-                           ,axis.text = element_blank()
-                           ,axis.title = element_blank()
-                           ,panel.background = element_blank())+
-      scale_x_continuous(expand = c(0, 0)) +
-        scale_y_continuous(expand = c(0, 0))
+                         ,plot.title = element_text(
+                           size = 20,
+                           hjust = 0.5,
+                           margin = margin(0, 0, 20, 0)
+                         )
+                         ,panel.grid = ggplot2::element_blank()
+                         ,panel.border = ggplot2::element_blank()
+                         ,axis.ticks = element_blank()
+                         ,axis.text = element_blank()
+                         ,axis.title = element_blank()
+                         ,panel.background = element_blank())+
+        ggplot2::scale_x_continuous(expand = c(0, 0)) +
+        ggplot2::scale_y_continuous(expand = c(0, 0))
     }
-     
+    
     return(suppressMessages(p))
   }

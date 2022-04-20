@@ -27,6 +27,7 @@
 #' (default is "Hartigan-Wong")
 #' @param distance_metric character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
+#' @param quant_method character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default
 #' @return \item{clusters}{ List. A list showing each ID assigned to a cluster.
 #' } \item{nodes.clust}{ List. A list corresponding to nodes' details. }
 #' \item{idnodes}{ List. A list of ID and segments similar to
@@ -35,37 +36,87 @@
 #' nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
 #' quantization error was met. } \item{summary}{ Summary. Output table with
 #' summary. }
-#' @author Sangeet Moy Das <Sangeet.Das@@mu-sigma.com>
+#' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{hvtHmap}}
 #' @importFrom magrittr %>%
 #' @importFrom stats complete.cases
 #' @examples
 #' 
 #' data("USArrests",package="datasets")
-#' hvqOutput = hvq(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
-#' distance_metric = 'L1_Norm', error_metric = 'mean')
-#' 
+#' hvqOutput = hvq(USArrests, nclust = 5, depth = 2, quant.err = 0.2,
+#' distance_metric='L1_Norm',error_metric='mean')
 #' 
 #' @export hvq
+#' @keywords internal
 hvq <-
-  function (x, nclust = 15, depth = 3, quant.err = 0.2, algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),distance_metric = c("L1_Norm","L2_Norm"),error_metric = c("mean","max")) {
+  function (x,
+            nclust = 3,
+            depth = 3,
+            quant.err = 10,
+            algorithm = "Hartigan-Wong",
+            distance_metric = c("L1_Norm", "L2_Norm"),
+            error_metric = c("mean", "max"),
+            quant_method=c("kmeans","kmedoids")
+  ) {
+    
     
     requireNamespace("dplyr")
+    # browser()
+    
     rescl <- list()
     resid <- list()
     resm <- list()
+    maxqe <- list()
+    meanqe <- list()
     resplt <- list()
     ztab3up <- list()
     ztab1 <- ztab2 <- ztabn <- NULL
     ztab11 <- ztab12 <- ztab13 <- NULL
     zdepth <- depth
-    quantinit <- rep(FALSE, nclust)
+    quantinit <- rep(F, nclust)
+    ztab3upc<-matrix(0, nrow = ncol(x), nclust)
+    std<-matrix(0, nrow = ncol(x), nclust)
     
     set.seed(300)
+    # flog.info("Parameters are initialized")
+    #outkinit will have centroids and datapoints and size of the cluster
+    # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, nclust,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
+    
+    colSd <- function (x, na.rm=FALSE) apply(X=x, MARGIN=2, FUN=stats::sd, na.rm=na.rm)
+    
+    calculate_euclidean_distance_for_each_cluster <- function(x){
+      sqrt(rowSums(scale(x,center = T,scale = F)^2))/ncol(x)
+    }
+    
+    calculate_manhattan_distance_for_each_cluster <- function(x){
+      rowSums(abs(scale(x,center = T,scale = F)))/ncol(x)
+    }
     
     
+    ## for distance metrics i.e; manhattan or eucleadian
+    if(distance_metric == "L1_Norm"){
+      function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
+    } else if(distance_metric == "L2_Norm"){
+      function_to_calculate_distance_metric <- calculate_euclidean_distance_for_each_cluster
+    } else{
+      stop('distance_metric must be L1_Norm (Manhattan), L2_Norm(Euclidean) or custom distance function')
+    }
     
-    outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=10^5, algorithm=algorithm), nclust,distance_metric,error_metric)
+    ## for error metric i.e; ,mean or max
+    if(error_metric %in% c("mean","max")){
+      function_to_calculate_error_metric <- error_metric
+    } else{
+      stop('error_metric must be max,mean or custom function')
+    }
+    
+    
+    outkinit <- getCentroids(x=x, 
+                             kout = stats::kmeans(x, nclust, iter.max=10^5, algorithm=algorithm), 
+                             nclust=nclust,
+                             function_to_calculate_distance_metric=function_to_calculate_distance_metric,
+                             function_to_calculate_error_metric=function_to_calculate_error_metric,
+                             distance_metric=distance_metric,
+                             quant_method = quant_method)
     
     # outkinit <- getCentroids(x, kout = stats::kmeans(x, nclust, iter.max=100, algorithm=algorithm), nclust,distance_metric=distance_metric,error_metric=error_metric)
     # flog.info("Level 1 cluster memberships are calculated")
@@ -97,12 +148,14 @@ hvq <-
     #centroids of each cluster
     # names(outkinit$cent) <- seq_along(outkinit$cent)
     resm[[1]] <- outkinit$cent
+    maxqe[[1]] <- outkinit$maxQE
+    meanqe[[1]] <- outkinit$meanQE
     #flag to check for quantization error
     resplt[[1]] <- unlist(outkinit$cent) > quant.err
     #initial values for next level k-means
     # names(outkinit$values)<-seq_along(outkinit$values)
     initclust <- outkinit$values
-
+    
     if (depth > 1) {
       # flog.info("HVQ calculation started")
       i <- 1
@@ -114,6 +167,9 @@ hvq <-
         ijresid <- list()
         #to store the centroids
         ijresm <- list()
+        # to store max qe as radius for anomalies
+        ijmaxqe <- list()
+        ijmeanqe <- list()
         #flag to check the quantization error
         ijresplt <- list()
         #number of datapoints in a cluster
@@ -124,17 +180,17 @@ hvq <-
         j <- 1
         while (j < (nclust^i) + 1) {
           
-          # print(paste("im hererrrrrrrrrrrr",j))
           #if datapoint exceeds quantization error and number of datapoints in
           #that cluster is greater than nclust
           if (quantok[j] & 
               NROW(initclust[[j]]) > 3
-              ) {
+          ) {
             #k-means on the initclust to obtain the next level clustering(sub-clusters)
             z =data.frame(initclust[[j]])
             # try(
-            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, nclust,distance_metric,error_metric,quant.err = quant.err)
+            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric,quant.err = quant.err, distance_metric = distance_metric, quant_method=quant_method)
             # )
+            # browser()
             # outk <- getOptimalCentroids(initclust[[j]], iter.max = 100, algorithm = algorithm, nclust,distance_metric = distance_metric,error_metric = error_metric,quant.err = quant.err)
             
             # outk <- getCentroids(initclust[[j]], kout = stats::kmeans(initclust[[j]], nclust, iter.max = 100, algorithm = algorithm), nclust,distance_metric = distance_metric,error_metric = error_metric)
@@ -170,6 +226,8 @@ hvq <-
             #store the centroids
             # names(outk$cent) <- seq_along(outk$cent)
             ijresm[[j]] <- outk$centers
+            ijmaxqe[[j]] <- outk$maxQE
+            ijmeanqe[[j]] <- outk$meanQE
             #size of a cluster
             # names(outk$nsize) <- seq_along(outk$nsize)
             ijresnsize[[j]] <- outk$nsize
@@ -189,9 +247,11 @@ hvq <-
             ijrescl[[j]] <- rep(NA, nclust)
             ijresid[[j]] <- NULL
             ijresm[[j]] <- rep(NA, nclust)
+            ijmaxqe[[j]] <- rep(NA, nclust)
+            ijmeanqe[[j]] <- rep(NA, nclust)
             ijresnsize[[j]] <- rep(0, nclust)
             ijztab3up[[j]] <- matrix(NA, ncol(x), nclust)
-            ijresplt[[j]] <- rep(FALSE, nclust)
+            ijresplt[[j]] <- rep(F, nclust)
             ijclust <- c(ijclust, rep(NA, nclust))
           }
           ztab1 <- c(ztab1, paste(i + 1, j, 1:nclust, sep = ","))
@@ -203,6 +263,8 @@ hvq <-
         rescl[[i + 1]] <- ijrescl
         resid[[i + 1]] <- ijresid
         resm[[i + 1]] <- ijresm
+        maxqe[[i + 1]] <- ijmaxqe
+        meanqe[[i + 1]] <- ijmeanqe
         resplt[[i + 1]] <- ijresplt
         ztab2 <- c(ztab2, unlist(ijresnsize))
         ztab3up[[i + 1]] <- data.frame(ijztab3up)
@@ -211,7 +273,7 @@ hvq <-
         # flog.info("Output for Level %s is ready", i)
         i <- i + 1
         #check if the desired depth is reached
-        if (!is.element(TRUE, unlist(ijresplt))) {
+        if (!is.element(T, unlist(ijresplt))) {
           zdepth <- i
           i <- depth
         }
@@ -231,17 +293,23 @@ hvq <-
       ztab[1:nclust, 4] <- unlist(outkinit$nsize)
       #Centroid/Quantization error of the cluster
       ztab[1:nclust, 5] <- unlist(outkinit$cent)
-      # ztab3upc <- sapply(outkinit$val, mean, na.rm = TRUE)
-      ztab3upc<-matrix(0, nrow = ncol(x), nclust)
+      # ztab3upc <- sapply(outkinit$val, mean, na.rm = T)
+      # ztab3upc<-matrix(0, nrow = ncol(x), nclust)
+      # std<-matrix(0, nrow = ncol(x), nclust)
       for(a in 1: nclust){
         for(b in 1: ncol(x)){
-          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = TRUE))
+          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
           rownames(ztab3upc) <- colnames(x)
+          # Calculating sd
+          std[b, a] <- as.matrix(stats::sd(outkinit$val[[a]][, b], na.rm = T))
+          rownames(std) <- colnames(x)
         }
       }
-      for (l in 1:length(ztab3up)) ztab3upc <- cbind(ztab3upc, 
-                                                     ztab3up[[l]])
-        
+      for (l in 1:length(ztab3up)){
+        ztab3upc <- cbind(ztab3upc,ztab3up[[l]])
+        std <- cbind(std, ztab3up[[l]])
+      }
+      
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 1] <- ztab11
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 2] <- ztab12
       ztab[(nclust + 1):sum(nclust^(1:zdepth)), 3] <- ztab13
@@ -257,30 +325,51 @@ hvq <-
       ztab[, 2] <- rep(1, nclust)
       ztab[, 3] <- 1:nclust
       ztab[, 4] <- unlist(outkinit$nsize)
-      ztab[, 6:ncol(ztab)] <- t(sapply(outkinit$val, colMeans, 
-                                       na.rm = TRUE))
       ztab[, 5] <- unlist(outkinit$cent)
+      ztab_mean <- t(sapply(outkinit$val, colMeans, 
+                            na.rm = T))
+      std <- t(sapply(outkinit$val, colSd, 
+                      na.rm = T))
+      if(quant_method == "kmeans"){
+        ztab[, 6:ncol(ztab)] <- ztab_mean # mean values
+      } else {
+        ztab[, 6:ncol(ztab)] <- outkinit[["sum_val"]] # Medoid/median values
+      }
+      
       names(ztab) <- c("Segment.Level", "Segment.Parent", "Segment.Child", 
                        "n", "Quant.Error", colnames(x))
     }
     
     
-    
+    if(depth > 1){
+      meanCol = t(ztab3upc)
+      std = t(std)
+    }else{
+      meanCol =  ztab_mean
+      std = data.frame(std)
+    }
     
     
     
     ## Calculate compress percentage
-    compression_summary <- ztab %>% dplyr::group_by(Segment.Level) %>% dplyr::summarise(noOfCells = sum(!is.na(Quant.Error)), noOfCellsBelowQuantizationError = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(percentOfCellsBelowQuantizationErrorThreshold = (noOfCellsBelowQuantizationError/noOfCells))
+    compression_summary <- ztab %>% 
+      dplyr::group_by(Segment.Level) %>% 
+      dplyr::summarise(noOfCells = sum(!is.na(Quant.Error)), noOfCellsBelowQuantizationError = sum(Quant.Error < quant.err,na.rm = TRUE)) %>% dplyr::mutate(percentOfCellsBelowQuantizationErrorThreshold = (noOfCellsBelowQuantizationError/noOfCells))
     
     colnames(compression_summary)[1] <- "segmentLevel"
     
     if(any(is.nan(compression_summary$percentOfCellsBelowQuantizationErrorThreshold))){
       compression_summary <- compression_summary[stats::complete.cases(compression_summary),]
     }
+ 
+
+    compression_summary$parameters=paste("nclust:",nclust,"quant.err:",quant.err,"distance_metric:",distance_metric[1],"error_metric:",error_metric[1],"quant_method:",quant_method[1])
+
     
     ridnames <- resid
     rclnames <- rescl
     return(list(clusters = initclust, nodes.clust = rescl, idnodes = resid, 
-                error.quant = resm, plt.clust = resplt, summary = ztab, compression_summary = compression_summary))
+                error.quant = resm, max_QE = maxqe, plt.clust = resplt, summary = ztab, compression_summary = compression_summary,
+                meanClust = meanCol, sdClust = std,mean_QE = meanqe ))
     
   }

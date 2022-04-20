@@ -37,10 +37,9 @@
 #' swiss.x <- as.matrix(swiss[, -1])
 #' swiss.sam <- sammonsProjection(dist(swiss.x))
 #' 
-#' 
-#' 
-#' 
 #' @export sammonsProjection
+#' @keywords internal
+#' 
 sammonsProjection <- function(d, y = stats::cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
        magic = 0.2, tol = 1e-4){
 	   

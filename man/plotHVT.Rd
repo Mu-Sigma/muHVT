@@ -2,18 +2,9 @@
 % Please edit documentation in R/plotHVT.R
 \name{plotHVT}
 \alias{plotHVT}
-\title{Plot the hierarchical tesselations.}
-\usage{
-plotHVT(
-  hvt.results,
-  line.width,
-  color.vec,
-  pch1 = 21,
-  centroid.size = 3,
-  title = NULL,
-  maxDepth = NULL
-)
-}
+\title{Plot the hierarchical tesselations.
+
+Main plotting function to construct hierarchical voronoi tessellations.}
 \arguments{
 \item{hvt.results}{List. A list containing the ouput of \code{HVT} function
 which has the details of the tessellations to be plotted.}
@@ -35,6 +26,8 @@ tessellations. (default = 3)}
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
 \description{
+Plot the hierarchical tesselations.
+
 Main plotting function to construct hierarchical voronoi tessellations.
 }
 \examples{
@@ -42,17 +35,18 @@ Main plotting function to construct hierarchical voronoi tessellations.
 data("USArrests",package="datasets")
 
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
+hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE)
-plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'),
-        maxDepth = 3)
+                   projection.scale = 10, normalize = TRUE,
+                   quant_method="kmeans",diagnose=TRUE)
+plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
+        maxDepth = 1)
 
 }
 \seealso{
 \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Sangeet Moy Das <sangeet.das@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{hplot}
