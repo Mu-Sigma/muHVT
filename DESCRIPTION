@@ -1,26 +1,24 @@
 Package: muHVT
 Type: Package
-Date: 2020-01-09
+Date: 2020-08-03
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 1.0.1
+Version: 1.0.2
 Authors@R: c(
     person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "aut"),
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
-    person("Meet", "Dave", email = "meetdave06@gmail.com", role = c("ctb")),
-    person("Shubhra", "Prakash", email = "Shubhra.Prakash@mu-sigma.com", role = c("ctb")),
-    person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = c("cre")))
+    person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
+    person("Shubhra", "Prakash", email = "Shubhra.Prakash@mu-sigma.com", role = "ctb"),
+    person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
 Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.  
-License: Apache License 2.0
+License: MIT
 Encoding: UTF-8
-Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos, ggplot2
-Depends: R (>= 3.5.0)
+Imports: MASS,deldir,grDevices,splancs,sp,conf.design,Hmisc,ggplot2,dplyr,purrr,gtools,magrittr,plyr
+Depends: R (>= 3.4.4)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
 LazyData: true
 RoxygenNote: 7.0.2
-Suggests: knitr,
-    rmarkdown,
-    testthat,geozoo,plotly,kableExtra
+Suggests: knitr, rmarkdown, testthat, geozoo, plotly, kableExtra
 VignetteBuilder: knitr

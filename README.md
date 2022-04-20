@@ -53,12 +53,11 @@ The stop criterion is when the quantization error of a cell  satisfies one of th
 * there is a single point in the cell
 * the user specified depth has been attained
 
-The quantization error for a cell is defined as follows :
+The quantization error for a cell is defined as follows:
 
-![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\max_i(||A-F_i||_{p})$$) 
+![$QE  = \max_i(||A-F_i||_{p})$](https://render.githubusercontent.com/render/math?math=%24QE%20%20%3D%20%5Cmax_i(%7C%7CA-F_i%7C%7C_%7Bp%7D))
 
-
-where 
+where;
 
 *  `A` is the centroid of the cell
 *  `F_i` represents a data point in the cell 
@@ -83,11 +82,11 @@ Now we want to calculate quantization error for each cell. For the sake of simpl
 
 For each point, we calculate the distance between the point and the centroid.
 
-![equation](https://latex.codecogs.com/gif.latex?$$&space;d&space;=&space;||A&space;-&space;F_i||_{p}&space;$$)
+![$ d = ||A - F_i||_{p} $](https://render.githubusercontent.com/render/math?math=%24%20d%20%3D%20%7C%7CA%20-%20F_i%7C%7C_%7Bp%7D%20%24)
 
 In the above equation, p = 1 means `L1_Norm` distance whereas p = 2 means `L2_Norm` distance. In the package, the `L1_Norm` distance is chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a custom function to calculate the distance between two points in n dimensions.
 
-![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\max_i(||A-F_i||_{p})$$)
+![$QE  = \max_i(||A-F_i||_{p})$](https://render.githubusercontent.com/render/math?math=%24QE%20%20%3D%20%5Cmax_i(%7C%7CA-F_i%7C%7C_%7Bp%7D))
 
 Now, we take the maximum calculated distance of all m points. This gives us the furthest distance of a point in the cell from the centroid, which we refer to as `Quantization Error`. If the Quantization Error is higher than the given threshold, the centroid/codevector is not a good representation for the points in the cell. Now we can perform further Vector Quantization on these points and repeat the above steps.
 
@@ -95,26 +94,27 @@ Please note that the user can select mean, max or any custom function to calcula
 
 If we select `mean` as the error metric, the above Quantization Error equation will look like this :  
 
-![equation](https://latex.codecogs.com/gif.latex?$$QE&space;=&space;\frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$)
+![$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$](https://render.githubusercontent.com/render/math?math=%24QE%20%20%3D%20%5Cfrac%7B1%7D%7Bm%7D%5Csum_%7Bi%3D1%7D%5Em%7C%7CA-F_i%7C%7C_%7Bp%7D%24)
 
 
 
-# Voronoi Tessellations
+## Voronoi Tessellations
 
 A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation.
 
-## Sammon’s projection
+### Sammon’s projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 
 Denoting the distance between `i^{th}` and `j^{th}` objects in the original space by `d_{ij}^`, and the distance between their projections by `d_{ij}`. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
 
-![equation](https://latex.codecogs.com/gif.latex?$$E=\frac{1}{\sum_{i<j}&space;d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$)
+
+<img align="center" src="https://i.upmath.me/svg/E%3D%5Cfrac%7B1%7D%7B%5Csum_%7Bi%3Cj%7D%20d_%7Bij%7D%5E*%7D%5Csum_%7Bi%3Cj%7D%5Cfrac%7B(d_%7Bij%7D%5E*-d_%7Bij%7D)%5E2%7D%7Bd_%7Bij%7D%5E*%7D" alt="E=\frac{1}{\sum_{i&lt;j} d_{ij}^*}\sum_{i&lt;j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}" />
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-## Constructing Voronoi Tessellations
+### Constructing Voronoi Tessellations
 
 In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
@@ -390,23 +390,15 @@ yes
 </tr>
 </tbody>
 </table>
+
+
 Now let us check the structure of the data
+
+
 
 ``` r
 # The structure of the data used
 str(computers)
-#> 'data.frame':    6259 obs. of  11 variables:
-#>  $ X      : int  1 2 3 4 5 6 7 8 9 10 ...
-#>  $ price  : int  1499 1795 1595 1849 3295 3695 1720 1995 2225 2575 ...
-#>  $ speed  : int  25 33 25 25 33 66 25 50 50 50 ...
-#>  $ hd     : int  80 85 170 170 340 340 170 85 210 210 ...
-#>  $ ram    : int  4 2 4 8 16 16 4 2 8 4 ...
-#>  $ screen : int  14 14 15 14 14 14 14 14 14 15 ...
-#>  $ cd     : Factor w/ 2 levels "no","yes": 1 1 1 1 1 1 2 1 1 1 ...
-#>  $ multi  : Factor w/ 2 levels "no","yes": 1 1 1 1 1 1 1 1 1 1 ...
-#>  $ premium: Factor w/ 2 levels "no","yes": 2 2 2 1 2 2 2 2 2 2 ...
-#>  $ ads    : int  94 94 94 94 94 94 94 94 94 94 ...
-#>  $ trend  : int  1 1 1 1 1 1 1 1 1 1 ...
 ```
 
 Let's get a summary of the data
@@ -414,27 +406,6 @@ Let's get a summary of the data
 ``` r
 # The summary of the data used
 summary(computers)
-#>        X            price          speed              hd        
-#>  Min.   :   1   Min.   : 949   Min.   : 25.00   Min.   :  80.0  
-#>  1st Qu.:1566   1st Qu.:1794   1st Qu.: 33.00   1st Qu.: 214.0  
-#>  Median :3130   Median :2144   Median : 50.00   Median : 340.0  
-#>  Mean   :3130   Mean   :2220   Mean   : 52.01   Mean   : 416.6  
-#>  3rd Qu.:4694   3rd Qu.:2595   3rd Qu.: 66.00   3rd Qu.: 528.0  
-#>  Max.   :6259   Max.   :5399   Max.   :100.00   Max.   :2100.0  
-#>       ram             screen        cd       multi      premium   
-#>  Min.   : 2.000   Min.   :14.00   no :3351   no :5386   no : 612  
-#>  1st Qu.: 4.000   1st Qu.:14.00   yes:2908   yes: 873   yes:5647  
-#>  Median : 8.000   Median :14.00                                   
-#>  Mean   : 8.287   Mean   :14.61                                   
-#>  3rd Qu.: 8.000   3rd Qu.:15.00                                   
-#>  Max.   :32.000   Max.   :17.00                                   
-#>       ads            trend      
-#>  Min.   : 39.0   Min.   : 1.00  
-#>  1st Qu.:162.5   1st Qu.:10.00  
-#>  Median :246.0   Median :16.00  
-#>  Mean   :221.3   Mean   :15.93  
-#>  3rd Qu.:275.0   3rd Qu.:21.50  
-#>  Max.   :339.0   Max.   :35.00
 ```
 
 Let us first split the data into train and test. We will use 80% of the data as train and remaining as test.
@@ -505,7 +476,7 @@ Now let's try to understand plotHVT function along with the input parameters
 # Plotting the output for Level 1
 plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL,maxDepth = 1)
 ```
-
+HVT_arch_diagram.png
 -   **`hvt.results`** - A list containing the ouput of HVT function which has the details of the tessellations to be plotted
 
 -   **`line.width`** - A vector indicating the line widths of the tessellation boundaries for each level
@@ -855,7 +826,7 @@ predictions <- muHVT::predictHVT(testComputers,
 
 ```
 
-#### Prediction Algorithm
+### Prediction Algorithm
 
 The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in test dataset :-
 
@@ -893,7 +864,7 @@ predictions[["predictPlot"]]
 Figure 6: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
-# Applications 
+## Applications 
 
 1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers
 
