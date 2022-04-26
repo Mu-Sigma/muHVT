@@ -11,7 +11,7 @@
 #' plotted.
 #' @param nclust.hmap Numeric. An integer indicating the number of clusters per
 #' hierarchy (level)
-#' @param sepration_width Numeric. An integer indicating the width between two Levels
+#' @param separation_width Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity Numeric. A vector indicating the opacity of each layer/ level
 #' @param dim_size Numeric. An integer indicating the dimension size used to create the matrix for the plot
 #' @param ... color.vec and line.width can be passed from here
@@ -24,7 +24,7 @@ exploded_hmap <-
             child.level=NULL, # Numeric
             hmap.cols= NULL, # Character
             nclust.hmap = NULL, # Numeric
-            sepration_width=7,
+            separation_width=7,
             layer_opacity=c(0.5,0.75,0.99),
             dim_size=1000,
             ...){
@@ -270,7 +270,7 @@ exploded_hmap <-
     p = plotly::plot_ly(showscale=F)
     
     temp=lapply(1: number_of_layers, function(i){
-      hvtVolcanoMatrix=temp_hvtVolcanoMatrix[[i]] - ((i-1) * sepration_width)
+      hvtVolcanoMatrix=temp_hvtVolcanoMatrix[[i]] - ((i-1) * separation_width)
       p <<- p %>%
         plotly::add_surface(z = ~ hvtVolcanoMatrix,opacity = layer_opacity[i] ,name=paste("Layer_",i), showlegend = T) 
     })

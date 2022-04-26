@@ -9,7 +9,7 @@ exploded_hmap(
   child.level = NULL,
   hmap.cols = NULL,
   nclust.hmap = NULL,
-  sepration_width = 7,
+  separation_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
   ...
@@ -29,7 +29,7 @@ plotted.}
 \item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
 hierarchy (level)}
 
-\item{sepration_width}{Numeric. An integer indicating the width between two Levels}
+\item{separation_width}{Numeric. An integer indicating the width between two Levels}
 
 \item{layer_opacity}{Numeric. A vector indicating the opacity of each layer/ level}
 
