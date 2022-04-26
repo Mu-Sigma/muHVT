@@ -1,0 +1,57 @@
+---
+title: "muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"
+author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Praditi Shah"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
+    toc: true
+    toc_depth : 2
+vignette: >
+  %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r setup, warning = FALSE, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "672px",
+  out.height = "480px",
+  fig.width = 7,
+  fig.height = 5,
+  fig.align = "center",
+  fig.retina = 1,
+  dpi = 150
+)
+```
+
+# Abstract
+
+
+The muHVT package is a collection of R functions for vector quantization and
+construction of hierarchical Voronoi tessellations as a data visualization
+tool to visualize cells using quantization. The hierarchical cells are computed using
+Hierarchical K-means where a quantization threshold governs the levels
+in the hierarchy for a set $k$ parameter (the maximum number of cells
+at each level). The package is particularly helpful to visualize rich multivariate data. 
+
+
+This package additionally provides functions for computing the
+Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
+
+The muHVT process involves three steps:
+
+1. **Compress:** Using a quantization threshold
+2. **Project:** Using a dimension projection algorithm
+3. **Tessellate:** Using a Voronoi Tessellation
+
+# Vignettes
+
+Following are the links to the vignettes for the muHVT package:
+
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+
+2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model

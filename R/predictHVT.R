@@ -28,7 +28,7 @@
 #' test <- USArrests[41:50,]
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(train, nclust = 15, depth = 1, quant.err = 0.2, 
+#' hvt.results <- HVT(train, nclust = 15, depth = 1, quant.err = 0.2,
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
@@ -359,14 +359,14 @@ predictHVT <- function(data,
   )
   model_mad_plots=NA
   # browser()
-  if(!is.na(hvt.results.model[[4]])){
+  if(!all(is.na(hvt.results.model[[4]]))){
     mtrain=hvt.results.model[[4]]$mad_plot_train+ggtitle("Mean Absolute Deviation Plot: Calibration on Train Data")
   }
-  if(!is.na(hvt.results.model[[5]])){
+  if(!all(is.na(hvt.results.model[[5]]))){
     mtest=hvt.results.model[[5]][["mad_plot"]]+ggtitle("Mean Absolute Deviation Plot:Validation")
   }
   
-  if(!is.na(hvt.results.model[[4]]) &!is.na(hvt.results.model[[5]]) ) {  model_mad_plots=list(mtrain=mtrain,mtest=mtest)}
+  if(!all(is.na(hvt.results.model[[4]])) &!all(is.na(hvt.results.model[[5]]) )) {  model_mad_plots=list(mtrain=mtrain,mtest=mtest)}
   
   
   prediction_list$model_mad_plots=model_mad_plots

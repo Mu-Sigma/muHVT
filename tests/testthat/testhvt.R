@@ -11,7 +11,7 @@ test_that("getCentroids give correct results for L1_Norm and mean",{
   skip_on_cran()
   
   set.seed(420)
-  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L1_Norm",error_metric = "mean")
+  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L1_Norm",error_metric = "mean", quant_method = "kmeans")
   
   expect_equal(length(hvt.results),6)
   
@@ -26,7 +26,7 @@ test_that("getCentroids give correct results for L2_Norm and mean",{
   
   set.seed(420)
   
-  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L2_Norm",error_metric = "mean")
+  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L2_Norm",error_metric = "mean", quant_method = "kmeans")
   
   expect_equal(length(hvt.results),6)
   
@@ -40,7 +40,7 @@ test_that("getCentroids give correct results for L1_Norm and max",{
   
   set.seed(420)
   
-  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L1_Norm",error_metric = "max")
+  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L1_Norm",error_metric = "max", quant_method = "kmeans")
   
   expect_equal(length(hvt.results),6)
   
@@ -53,7 +53,7 @@ test_that("getCentroids give correct results for L2_Norm and max",{
   skip_on_cran()
   
   set.seed(420)
-  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L2_Norm",error_metric = "max")
+  hvt.results <- muHVT::HVT(USArrests,nclust = 3,depth = 1,quant.err = 0.2,distance_metric = "L2_Norm",error_metric = "max", quant_method = "kmeans")
   
   expect_equal(length(hvt.results),6)
   

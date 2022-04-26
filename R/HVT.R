@@ -71,7 +71,7 @@ HVT <-
             normalize = TRUE,
             distance_metric = c("L1_Norm", "L2_Norm"),
             error_metric = c("mean", "max"),
-            quant_method=c("kmeans","kmedoids"),
+            quant_method="kmeans",
             diagnose=TRUE,
             hvt_validation=FALSE,
             train_validation_split_ratio=0.8

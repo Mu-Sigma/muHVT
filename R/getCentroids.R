@@ -10,7 +10,7 @@ getCentroids <-
             function_to_calculate_distance_metric,
             function_to_calculate_error_metric,
             distance_metric = "L1_Norm",
-            quant_method=c("kmeans","kmedoids"),
+            quant_method="kmeans",
             ...) {
     # browser()
     if (quant_method == "kmeans") {

@@ -56,7 +56,7 @@ hvq <-
             algorithm = "Hartigan-Wong",
             distance_metric = c("L1_Norm", "L2_Norm"),
             error_metric = c("mean", "max"),
-            quant_method=c("kmeans","kmedoids")
+            quant_method="kmeans"
   ) {
     
     
