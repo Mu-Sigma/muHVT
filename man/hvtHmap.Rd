@@ -57,7 +57,7 @@ cm.colors, 6 - seas color. (default = 6)}
 \item{previous_level_heatmap}{Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted}
 
 \item{show.points}{Logical. Indicating if the centroids should
-be plotted on the tesselations. (default = FALSE)}
+be plotted on the tessellations. (default = FALSE)}
 
 \item{asp}{Numeric. Indicating the aspect ratio type. For flexible aspect
 ratio set, asp = NA. (default = 1)}
@@ -69,7 +69,7 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 = NULL)}
 
 \item{quant.error.hmap}{Numeric. A number indicating the quantization error
-treshold.}
+threshold.}
 
 \item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
 hierarchy (level)}

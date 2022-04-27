@@ -12,7 +12,7 @@ function.}
 }
 \description{
 To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
-and the cell id is being assigned by ordering these values and finding the corresponding indexes. The ouput CellID gets
+and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output CellID gets
 appended to the HVT model.
 }
 \details{

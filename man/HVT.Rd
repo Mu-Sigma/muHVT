@@ -30,10 +30,10 @@ hierarchy (level)}
 hierarchy, 2 = 2 levels, etc ...)}
 
 \item{quant.err}{Numeric. A number indicating the quantization error
-treshold.}
+threshold.}
 
 \item{projection.scale}{Numeric. A number indicating the scale factor for
-the tesselations so as to visualize the sub-tesselations well enough.}
+the tessellations so as to visualize the sub-tessellations well enough.}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
@@ -51,9 +51,9 @@ dataset should be normalized. Default value is TRUE.}
 \item{train_validation_split_ratio}{Numeric. A numeric value indicating the train and validation split ratio.}
 }
 \value{
-A list that contains the hierarchical tesselation information. This
+A list that contains the hierarchical tessellation information. This
 list has to be given as input argument to plot the tessellations.
-\item{[[1]] }{List. Information about the tesselation co-ordinates - level
+\item{[[1]] }{List. Information about the tessellation co-ordinates - level
 wise} \item{[[2]] }{List. Information about the polygon co-ordinates - level
 wise} 
 \item{[[3]] }{List. Information about the hierarchical vector quantized data - level wise}

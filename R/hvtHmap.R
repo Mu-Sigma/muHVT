@@ -43,7 +43,7 @@
 #' cm.colors, 6 - seas color. (default = 6)
 #' @param previous_level_heatmap Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted
 #' @param show.points Logical. Indicating if the centroids should
-#' be plotted on the tesselations. (default = FALSE)
+#' be plotted on the tessellations. (default = FALSE)
 #' @param asp Numeric. Indicating the aspect ratio type. For flexible aspect
 #' ratio set, asp = NA. (default = 1)
 #' @param ask Logical. If TRUE (and the R session is interactive) the user is
@@ -53,7 +53,7 @@
 #' @param label.size Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
 #' @param quant.error.hmap Numeric. A number indicating the quantization error
-#' treshold.
+#' threshold.
 #' @param nclust.hmap Numeric. An integer indicating the number of clusters per
 #' hierarchy (level)
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)

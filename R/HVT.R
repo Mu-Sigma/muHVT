@@ -20,9 +20,9 @@
 #' @param depth Numeric. An integer indicating the number of levels. (1 = No
 #' hierarchy, 2 = 2 levels, etc ...)
 #' @param quant.err Numeric. A number indicating the quantization error
-#' treshold.
+#' threshold.
 #' @param projection.scale Numeric. A number indicating the scale factor for
-#' the tesselations so as to visualize the sub-tesselations well enough.
+#' the tessellations so as to visualize the sub-tessellations well enough.
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
 #' @param distance_metric character. The distance metric can be 'L1_Norm" or "Manhattan". L1_Norm is selected by default.
@@ -31,9 +31,9 @@
 #' @param diagnose Logical. A logical value indicating if the diagnose is required. Default value is TRUE.
 #' @param hvt_validation Logical. A logical value indicating if the MAD values are to tested for validation set. Default value is FALSE.
 #' @param train_validation_split_ratio Numeric. A numeric value indicating the train and validation split ratio.
-#' @return A list that contains the hierarchical tesselation information. This
+#' @return A list that contains the hierarchical tessellation information. This
 #' list has to be given as input argument to plot the tessellations.
-#' \item{[[1]] }{List. Information about the tesselation co-ordinates - level
+#' \item{[[1]] }{List. Information about the tessellation co-ordinates - level
 #' wise} \item{[[2]] }{List. Information about the polygon co-ordinates - level
 #' wise} 
 #' \item{[[3]] }{List. Information about the hierarchical vector quantized data - level wise}

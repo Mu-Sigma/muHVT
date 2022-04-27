@@ -1,9 +1,9 @@
 #' @name plotHVT
-#' @title Plot the hierarchical tesselations.
+#' @title Plot the hierarchical tessellations.
 #' 
 #' Main plotting function to construct hierarchical voronoi tessellations.
 #'
-#' @param hvt.results List. A list containing the ouput of \code{HVT} function
+#' @param hvt.results List. A list containing the output of \code{HVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param line.width Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.

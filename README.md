@@ -55,7 +55,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(k \* (n-k)\^2) .
 
-### Hierarchical Vector Qunatization 
+### Hierarchical Vector Quantization 
 
 The algorithm divides the dataset recursively into cells using $k-means$
 or $k-medoids$ algorithm. The maximum number of subsets are decided by
@@ -146,13 +146,13 @@ The minimization  of this can be performed either by gradient descent, as propos
 
 ### Constructing Voronoi Tessellations
 
-In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
+In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
 ## Example Usage
 
 In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
 
-In this example, we will compress this dataset by using hierarhical VQ using k-means and visualize the Voronoi tesselation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
+In this example, we will compress this dataset by using hierarchical VQ using k-means and visualize the Voronoi tessellation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
 
 Here, we load the data and store into a variable `computers`.
 
@@ -538,7 +538,7 @@ Now let's try to understand plotHVT function along with the input parameters
 plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL,maxDepth = 1)
 ```
 
--   **`hvt.results`** - A list containing the ouput of HVT function which has the details of the tessellations to be plotted
+-   **`hvt.results`** - A list containing the output of HVT function which has the details of the tessellations to be plotted
 
 -   **`line.width`** - A vector indicating the line widths of the tessellation boundaries for each level
 
@@ -552,10 +552,10 @@ plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title 
 
 -   **`maxDepth`** - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
-Let's plot the voronoi tesselation
+Let's plot the voronoi tessellation
 
 ``` r
-# Voronoi tesselation plot for level one
+# Voronoi tessellation plot for level one
 muHVT::plotHVT(hvt.results,
         line.width = c(1.2), 
         color.vec = c("#141B41"),
@@ -659,7 +659,7 @@ percentOfCellsBelowQuantizationErrorThreshold
 
 As it can be seen in the table above, percentage of cells in level1 having quantization error below threshold is `0%`. Hence we can go one level deeper and try to compress it further.
 
-We will now overlay the `Quant.Error` variable as heatmap over the voronoi tesselation plot to visualize the quantization error better.
+We will now overlay the `Quant.Error` variable as heatmap over the voronoi tessellation plot to visualize the quantization error better.
 
 Let's have a look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
 
@@ -672,7 +672,7 @@ hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.colo
 
 -   **`child.level`** - A number indicating the level for which the heat map is to be plotted.
 
--   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similary to plot the number of points in each cell as heatmap, pass `'no_of_points'` as a parameter
+-   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similarly to plot the number of points in each cell as heatmap, pass `'no_of_points'` as a parameter
 
 -   **`color.vec`** - A color vector such that length(color.vec) = child.level (default = NULL)
 
@@ -725,10 +725,10 @@ hvt.results2 <- muHVT::HVT(trainComputers,
                            error_metric = "mean")
 ```
 
-To plot the voronoi tesselation for both the levels.
+To plot the voronoi tessellation for both the levels.
 
 ``` r
-# Voronoi tesselation plot for level two
+# Voronoi tessellation plot for level two
 muHVT::plotHVT(hvt.results2, 
         line.width = c(1.2, 0.8), 
         color.vec = c("#141B41","#0582CA"),maxDepth = 2)
@@ -951,7 +951,7 @@ Figure 6: The predicted Voronoi tessellation with the heat map overlayed with va
 
 # Other Examples
 
-For more detailed examples of diffrent usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
+For more detailed examples of different usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
 
 # Report a bug
 

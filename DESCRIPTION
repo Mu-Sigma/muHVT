@@ -16,9 +16,9 @@ Authors@R: c(
 Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
-Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc, stats,
-        dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos, ggplot2,
-        tidyr, scales, patchwork, cluster, reshape2, tidyverse
+Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
+        stats, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos,
+        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
@@ -26,7 +26,7 @@ RoxygenNote: 7.1.2
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-03-24 10:03:59 UTC; praditi
+Packaged: 2022-04-26 15:04:50 UTC; praditi
 Author: Zubin Dowlaty [aut],
   Shubhra Prakash [ctb],
   Sangeet Moy Das [ctb],
