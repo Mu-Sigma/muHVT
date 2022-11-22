@@ -14,10 +14,10 @@ hvtHmap(
   centroid.size = 3,
   pch = 21,
   palette.color = 6,
-  previous_level_heatmap = TRUE,
-  show.points = FALSE,
+  previous_level_heatmap = T,
+  show.points = F,
   asp = 1,
-  ask = TRUE,
+  ask = T,
   tess.label = NULL,
   quant.error.hmap = NULL,
   nclust.hmap = NULL,
@@ -57,7 +57,7 @@ cm.colors, 6 - seas color. (default = 6)}
 \item{previous_level_heatmap}{Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted}
 
 \item{show.points}{Logical. Indicating if the centroids should
-be plotted on the tesselations. (default = FALSE)}
+be plotted on the tessellations. (default = FALSE)}
 
 \item{asp}{Numeric. Indicating the aspect ratio type. For flexible aspect
 ratio set, asp = NA. (default = 1)}
@@ -69,7 +69,7 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 = NULL)}
 
 \item{quant.error.hmap}{Numeric. A number indicating the quantization error
-treshold.}
+threshold.}
 
 \item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
 hierarchy (level)}
@@ -106,25 +106,18 @@ the desired variables.
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 6, depth = 1, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean", 
-                   projection.scale = 10, normalize = TRUE)
+hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE,
+                   quant_method="kmeans",diagnose=TRUE)
 hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
         line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
         quant.error.hmap = 0.2,nclust.hmap = 6)
-
-hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 3, depth = 3, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean", 
-                   projection.scale = 10, normalize = TRUE)
-hvtHmap(hvt.results, USArrests, child.level = 3,hmap.cols = 'Quant.Error',
-        line.width = c(1.2,0.8,0.4),color.vec = c('#141B41','#0582CA','#8BA0B4'),
-        palette.color = 6,quant.error.hmap = 0.2,nclust.hmap = 3)
 }
 \seealso{
 \code{\link{plotHVT}}
 }
 \author{
-Sangeet Moy Das <sangeet.das@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
 \keyword{hplot}

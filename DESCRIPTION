@@ -1,24 +1,40 @@
 Package: muHVT
 Type: Package
-Date: 2020-08-03
+Date: 2022-04-20
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 1.0.2
+Version: 2.0.0
 Authors@R: c(
-    person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "aut"),
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
-    person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "aut"),
+    person("Shubhra", "Prakash", email = "shubhraprakash@live.com", role = "ctb"),
+    person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "ctb"),
+    person("Sunuganty Achyut", "Raj", email = "achyut.raj92@gmail.com", role = "ctb"),
+    person("Praditi", "Shah", email = "shahpraditi@gmail.com", role = "ctb"),
+    person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
-    person("Shubhra", "Prakash", email = "Shubhra.Prakash@mu-sigma.com", role = "ctb"),
     person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.  
-License: MIT
+Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
+License: Apache License 2.0
 Encoding: UTF-8
-Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos, ggplot2
-Depends: R (>= 3.5.0)
+Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
+        stats, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos,
+        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse
+Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
-LazyData: true
-RoxygenNote: 7.0.2
-Suggests: knitr, rmarkdown, testthat, geozoo, plotly, kableExtra
+RoxygenNote: 7.1.2
+Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly
 VignetteBuilder: knitr
+NeedsCompilation: no
+Packaged: 2022-04-26 15:04:50 UTC; praditi
+Author: Zubin Dowlaty [aut],
+  Shubhra Prakash [ctb],
+  Sangeet Moy Das [ctb],
+  Sunuganty Achyut Raj [ctb],
+  Praditi Shah [ctb],
+  Avinash Joshi [ctb],
+  Meet Dave [ctb], 
+  Mu Sigma, Inc. [cre]
+Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
+Repository: CRAN
+Date/Publication: 2020-08-03 20:10:03 UTC

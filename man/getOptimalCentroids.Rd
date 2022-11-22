@@ -9,9 +9,12 @@ getOptimalCentroids(
   iter.max,
   algorithm,
   nclust,
-  distance_metric,
-  error_metric,
-  quant.err
+  function_to_calculate_distance_metric,
+  function_to_calculate_error_metric = c("mean", "max"),
+  quant.err,
+  distance_metric = "L1_Norm",
+  quant_method = c("kmeans", "kmedoids"),
+  ...
 )
 }
 \arguments{
@@ -19,30 +22,31 @@ getOptimalCentroids(
 observation, and each column corresponds to a variable. Missing values are
 not accepted.}
 
-\item{iter.max}{The max number of iterations the the getOptimalCentroid function will run
-to get the optimal number of centroids}
-
 \item{algorithm}{String. The type of algorithm used for quantization.
 Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 (default is "Hartigan-Wong")}
 
 \item{nclust}{Numeric. Indicating the number of nodes per hierarchy.}
 
-\item{distance_metric}{character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.}
+\item{function_to_calculate_distance_metric}{Function. The function is to find 'L1_Norm" or "L2_Norm" distances. L1_Norm is selected by default.}
 
-\item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
+\item{function_to_calculate_error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
 \item{quant.err}{Numeric. The quantization error for the algorithm.}
+
+\item{distance_metric}{Character. The distance metric to calculate inter point distance. It can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.}
+
+\item{quant_method}{Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
+
+\item{depth}{Numeric. Indicating the hierarchy depth (or) the depth of the
+tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 }
 \value{
-\item{clusters}{ List. A list showing each ID assigned to a cluster.
-} \item{nodes.clust}{ List. A list corresponding to nodes' details. }
-\item{idnodes}{ List. A list of ID and segments similar to
-\code{nodes.clust} with additional columns for nodes ID. }
-\item{error.quant}{ List. A list of quantization error for all levels and
-nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
-quantization error was met. } \item{summary}{ Summary. Output table with
-summary. }
+\item{values}{ List. A list showing observations assigned to a cluster.}
+\item{maxQE}{ List. A list corresponding to maximum QE values for each cell. }
+\item{meanQE}{ List. A list corresponding to mean QE values for each cell. }
+\item{centers}{ List. A list of quantization error for all levels and nodes. } 
+\item{nsize}{ List. A list corresponding to number of observations in respective groups. }
 }
 \description{
 Get Optimal Centroids
@@ -62,5 +66,6 @@ threshold quantization error is met. The output of this technique will be
 hierarchically arranged vector quantized data.
 }
 \author{
-Sangeet Moy Das <sangeet.das@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
+\keyword{internal}

@@ -6,12 +6,13 @@
 \usage{
 hvq(
   x,
-  nclust = 15,
+  nclust = 3,
   depth = 3,
-  quant.err = 0.2,
-  algorithm = c("Hartigan-Wong", "Lloyd", "Forgy", "MacQueen"),
+  quant.err = 10,
+  algorithm = "Hartigan-Wong",
   distance_metric = c("L1_Norm", "L2_Norm"),
-  error_metric = c("mean", "max")
+  error_metric = c("mean", "max"),
+  quant_method = "kmeans"
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 \item{distance_metric}{character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.}
 
 \item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
+
+\item{quant_method}{character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
 }
 \value{
 \item{clusters}{ List. A list showing each ID assigned to a cluster.
@@ -64,14 +67,14 @@ hierarchically arranged vector quantized data.
 \examples{
 
 data("USArrests",package="datasets")
-hvqOutput = hvq(USArrests, nclust = 3, depth = 3, quant.err = 0.2,
-distance_metric = 'L1_Norm', error_metric = 'mean')
-
+hvqOutput = hvq(USArrests, nclust = 5, depth = 2, quant.err = 0.2,
+distance_metric='L1_Norm',error_metric='mean')
 
 }
 \seealso{
 \code{\link{hvtHmap}}
 }
 \author{
-Sangeet Moy Das <Sangeet.Das@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
+\keyword{internal}

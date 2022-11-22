@@ -1,15 +1,21 @@
 # Introduction
 
 The muHVT package is a collection of R functions for vector quantization and
-construction of hierarchical voronoi tessellations as a data visualization
+construction of hierarchical Voronoi tessellations as a data visualization
 tool to visualize cells using quantization. The hierarchical cells are computed using
 Hierarchical K-means where a quantization threshold governs the levels
-in the hierarchy for a set `k` parameter (the maximum number of cells
-at each level). The package is particularly helpful to visualize rich mutlivariate data. 
+in the hierarchy for a set $k$ parameter (the maximum number of cells
+at each level). The package is particularly helpful to visualize rich multivariate data. 
 
 
 This package additionally provides functions for computing the
 Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
+
+The muHVT process involves three steps:
+
+1. **Compress:** Using a quantization threshold
+2. **Project:** Using a dimension projection algorithm
+3. **Tessellate:** Using a Voronoi Tessellation
 
 # Installation
 
@@ -20,14 +26,15 @@ install.packages("muHVT")
 # Vector Quantization
 
 
-This package performs vector quantization using the following algorithm - 
+This package can perform vector quantization using the following algorithms - 
 
-*  Hierarchical Vector Quantization using `k-means` 
+*  Hierarchical Vector Quantization using $k-means$ 
+*  Hierarchical Vector Quantization using $k-medoids$
 
 
-## Hierarchical VQ using k-means 
+## Hierarchical VQ 
 
-### k-means
+### Using k-means
 
 1. The k-means algorithm randomly selects *k* data points as initial means
 1. *k* clusters are formed by assigning each data point to its closest cluster mean using the Euclidean distance
@@ -35,14 +42,35 @@ This package performs vector quantization using the following algorithm -
 
 The second and third steps are iterated until a predefined number of iterations is reached or the clusters converge. The runtime for the algorithm is O(n).
 
-### Hierarchical VQ using k-means 
+### Using k-medoids
 
-The algorithm divides the dataset recursively into cells. The `k-means` algorithm is used by setting `k` to, say two, in order to divide the dataset into two subsets. These two subsets are further divided into two subsets by setting `k` to two, resulting in a total of four subsets. The recursion terminates when the cells either contain a single data point or a stop criterion is reached. In this case, the stop criterion is set to when the cell error exceeds the quantization threshold.
+1.  The k-medoids algorithm randomly selects *k* data points as initial
+    means out of the n data points as the medoids.
+2.  *k* clusters are formed by assigning each data point to its closest
+    medoid by using any common distance metric methods.
+3.  Virtual means for each cluster are calculated by using all
+    datapoints contained in a cluster
+
+The second and third steps are iterated until a predefined number of
+iterations is reached or the clusters converge. The runtime for the
+algorithm is O(k \* (n-k)\^2) .
+
+### Hierarchical Vector Quantization 
+
+The algorithm divides the dataset recursively into cells using $k-means$
+or $k-medoids$ algorithm. The maximum number of subsets are decided by
+setting $nclust$ to, say five, in order to divide the dataset into
+maximum of five subsets. These five subsets are further divided into
+five subsets(or less), resulting in a total of twenty five (5\*5)
+subsets. The recursion terminates when the cells either contain less
+than three data point or a stop criterion is reached. In this case, the
+stop criterion is set to when the cell error exceeds the quantization
+threshold.
 
 The steps for this method are as follows :
 
 1. Select k(number of cells), depth and quantization error threshold
-1. Perform k-means on the input dataset
+1. Perform quantization (using $k-means$ or $k-medoids$) on the input dataset
 1. Calculate quantization error for each of the k cells
 1. Compare the quantization error for each cell to quantization error threshold
 1. Repeat steps 2 to 4 for each of the k cells whose quantization error is above threshold until stop criterion is reached.
@@ -50,19 +78,21 @@ The steps for this method are as follows :
 The stop criterion is when the quantization error of a cell  satisfies one of the below conditions 
 
 * reaches below quantization error threshold
-* there is a single point in the cell
+* there are less than three data points in the cell
 * the user specified depth has been attained
 
-The quantization error for a cell is defined as follows:
+The quantization error for a cell is defined as follows :
 
-![$QE  = \max_i(||A-F_i||_{p})$](https://render.githubusercontent.com/render/math?math=%24QE%20%20%3D%20%5Cmax_i(%7C%7CA-F_i%7C%7C_%7Bp%7D))
+$$QE  = \max_i(||A-F_i||_{p})$$ 
 
-where;
 
-*  `A` is the centroid of the cell
-*  `F_i` represents a data point in the cell 
-*  `m` is the number of points in the cell
-*  `p` is the `p`-norm metric. Here `p` = 1 represents L1 Norm and `p` = 2 represents L2 Norm.
+where 
+
+*  $A$ is the centroid of the cell
+*  $F_i$ represents a data point in the cell 
+*  $m$ is the number of points in the cell
+*  $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$ = 2 represents L2 Norm.
+
 
 ### Quantization Error
 
@@ -116,13 +146,13 @@ The minimization  of this can be performed either by gradient descent, as propos
 
 ### Constructing Voronoi Tessellations
 
-In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tesselation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
+In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `HVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
 ## Example Usage
 
 In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd,etc. The dataset can be downloaded from [here](https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv)
 
-In this example, we will compress this dataset by using hierarhical VQ using k-means and visualize the Voronoi tesselation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
+In this example, we will compress this dataset by using hierarchical VQ using k-means and visualize the Voronoi tessellation plots using Sammons projection. Later on, we will overlay price,speed and screen variable as heatmap to generate further insights.
 
 Here, we load the data and store into a variable `computers`.
 
@@ -431,43 +461,74 @@ testComputers <- testComputers %>% dplyr::select(-c(X,cd,multi,premium,trend))
 
 Let us try to understand HVT function first.
 
-``` r
-HVT(dataset, nclust, depth, quant.err, projection.scale, normalize = T, distance_metric = c("L1_Norm","L2_Norm"), error_metric = c("mean","max"))
 
+``` r 
+HVT(
+  dataset,
+  nclust,
+  depth,
+  quant.err,
+  projection.scale,
+  normalize = T,
+  distance_metric = c("L1_Norm", "L2_Norm"),
+  error_metric = c("mean", "max"),
+  quant_method = c("kmeans", "kmedoids"),
+  diagnose = TRUE,
+  hvt_validation = FALSE,
+  train_validation_split_ratio = 0.8
+)
 ```
 
-Following are all the parameters explained in detail
+Each of the parameters have been explained below
 
--   **`dataset`** - Dataframe. A dataframe with numeric columns
+* __`dataset`__ - A dataframe with numeric columns 
 
--   **`nlcust`** - Numeric. An integer indicating the number of cells per hierarchy (level)
+* __`nlcust`__  - An integer indicating the number of cells per hierarchy (level)
 
--   **`depth`** - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
+* __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
--   **`quant.error`** - A number indicating the quantization error threshold. A cell will only breakdown into further cells only if the quantization error of the cell is above quantization error threshold.
+* __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown
+into further cells if the quantization error of the cell is above the defined quantization error threshold
 
--   **`projection.scale`** - A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations well enough.
+* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations efficiently
 
--   **`normalize`** - A logical value indicating if the columns in your dataset should be normalized. Default value is TRUE. The algorithm supports Z-score normalization.
+* __`normalize`__	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
 
--   **`distance_metric`** - The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between a `n` dimensional point and centroid. The user can also pass a custom function to calculate the distance.
+* __`distance_metric`__	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance
 
--   **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default.The `max` will return the max of `m` values. The `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric.
+* __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric
+
+* __`quant_method`__ - The quantization method can be `kmeans` or
+    `kmedoids`. `kmeans` is selected by default.
+
+* __`diagnose`__ - A logical value indicating whether user wants to
+    perform diagnostics on the model. Default value is TRUE.
+
+* __`hvt_validation`__ - A logical value indicating whether user wants
+    to holdout a validation set and find mean absolute deviation of the
+    validation points from the centroid. Default value is FALSE.
+
+* __`train_validation_split_ratio`__ - A numeric value indicating
+    train validation split ratio. This argument is only used when
+    hvt_validation has been set to TRUE. Default value for the argument
+    is 0.8
+   
 
 First we will perform hierarchical vector quantization at level 1 by setting the parameter depth to 1. Here level 1 signifies no hierarchy. Let's keep the no of cells as 15.
 
 ``` r
 # Building the required model for Level 1
-set.seed(300)
+set.seed(240)
 hvt.results <- list()
-hvt.results <- muHVT::HVT(trainComputers,
+hvt.results <- HVT(trainComputers,
                           nclust = 15,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
                           normalize = T,
                           distance_metric = "L1_Norm",
-                          error_metric = "mean")
+                          error_metric = "mean",
+                          quant_method = "kmeans")
 ```
 
 Now let's try to understand plotHVT function along with the input parameters
@@ -476,8 +537,8 @@ Now let's try to understand plotHVT function along with the input parameters
 # Plotting the output for Level 1
 plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title = NULL,maxDepth = 1)
 ```
-HVT_arch_diagram.png
--   **`hvt.results`** - A list containing the ouput of HVT function which has the details of the tessellations to be plotted
+
+-   **`hvt.results`** - A list containing the output of HVT function which has the details of the tessellations to be plotted
 
 -   **`line.width`** - A vector indicating the line widths of the tessellation boundaries for each level
 
@@ -491,10 +552,10 @@ HVT_arch_diagram.png
 
 -   **`maxDepth`** - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
-Let's plot the voronoi tesselation
+Let's plot the voronoi tessellation
 
 ``` r
-# Voronoi tesselation plot for level one
+# Voronoi tessellation plot for level one
 muHVT::plotHVT(hvt.results,
         line.width = c(1.2), 
         color.vec = c("#141B41"),
@@ -598,7 +659,7 @@ percentOfCellsBelowQuantizationErrorThreshold
 
 As it can be seen in the table above, percentage of cells in level1 having quantization error below threshold is `0%`. Hence we can go one level deeper and try to compress it further.
 
-We will now overlay the `Quant.Error` variable as heatmap over the voronoi tesselation plot to visualize the quantization error better.
+We will now overlay the `Quant.Error` variable as heatmap over the voronoi tessellation plot to visualize the quantization error better.
 
 Let's have a look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
 
@@ -611,7 +672,7 @@ hvtHmap(hvt.results, child.level, hmap.cols, color.vec ,line.width, palette.colo
 
 -   **`child.level`** - A number indicating the level for which the heat map is to be plotted.
 
--   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similary to plot the number of points in each cell as heatmap, pass `'no_of_points'` as a parameter
+-   **`hmap.cols`** - The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'Quant.Error'`. Similarly to plot the number of points in each cell as heatmap, pass `'no_of_points'` as a parameter
 
 -   **`color.vec`** - A color vector such that length(color.vec) = child.level (default = NULL)
 
@@ -664,10 +725,10 @@ hvt.results2 <- muHVT::HVT(trainComputers,
                            error_metric = "mean")
 ```
 
-To plot the voronoi tesselation for both the levels.
+To plot the voronoi tessellation for both the levels.
 
 ``` r
-# Voronoi tesselation plot for level two
+# Voronoi tessellation plot for level two
 muHVT::plotHVT(hvt.results2, 
         line.width = c(1.2, 0.8), 
         color.vec = c("#141B41","#0582CA"),maxDepth = 2)
@@ -890,7 +951,7 @@ Figure 6: The predicted Voronoi tessellation with the heat map overlayed with va
 
 # Other Examples
 
-For more detailed examples of diffrent usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
+For more detailed examples of different usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
 
 # Report a bug
 
