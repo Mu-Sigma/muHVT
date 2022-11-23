@@ -2,11 +2,11 @@
 % Please edit documentation in R/plotHVT.R
 \name{plotHVT}
 \alias{plotHVT}
-\title{Plot the hierarchical tessellations.
+\title{Plot the hierarchical tesselations.
 
 Main plotting function to construct hierarchical voronoi tessellations.}
 \arguments{
-\item{hvt.results}{List. A list containing the output of \code{HVT} function
+\item{hvt.results}{List. A list containing the ouput of \code{HVT} function
 which has the details of the tessellations to be plotted.}
 
 \item{line.width}{Numeric Vector. A vector indicating the line widths of the
@@ -26,7 +26,7 @@ tessellations. (default = 3)}
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
 \description{
-Plot the hierarchical tessellations.
+Plot the hierarchical tesselations.
 
 Main plotting function to construct hierarchical voronoi tessellations.
 }
@@ -35,7 +35,7 @@ Main plotting function to construct hierarchical voronoi tessellations.
 data("USArrests",package="datasets")
 
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
                    quant_method="kmeans",diagnose=TRUE)

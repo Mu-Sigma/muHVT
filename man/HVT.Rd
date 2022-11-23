@@ -6,15 +6,17 @@
 \usage{
 HVT(
   dataset,
-  nclust = 15,
-  depth = 3,
+  min_compression_perc = NA,
+  n_cells = NA,
+  depth = 1,
   quant.err = 0.2,
   projection.scale = 10,
-  normalize = TRUE,
+  normalize = FALSE,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
-  quant_method = "kmeans",
-  diagnose = TRUE,
+  quant_method = c("kmeans", "kmedoids"),
+  scale_summary = NA,
+  diagnose = FALSE,
   hvt_validation = FALSE,
   train_validation_split_ratio = 0.8
 )
@@ -23,26 +25,32 @@ HVT(
 \item{dataset}{Data frame. A data frame with different columns is given as
 input.}
 
-\item{nclust}{Numeric. An integer indicating the number of clusters per
+\item{min_compression_perc}{Numeric. An integer indicating the minimum percent compression rate to
+be achieved for the dataset}
+
+\item{n_cells}{Numeric. An integer indicating the number of cells per
 hierarchy (level)}
 
 \item{depth}{Numeric. An integer indicating the number of levels. (1 = No
 hierarchy, 2 = 2 levels, etc ...)}
 
 \item{quant.err}{Numeric. A number indicating the quantization error
-threshold.}
+treshold.}
 
 \item{projection.scale}{Numeric. A number indicating the scale factor for
-the tessellations so as to visualize the sub-tessellations well enough.}
+the tesselations so as to visualize the sub-tesselations well enough.}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
 
-\item{distance_metric}{character. The distance metric can be 'L1_Norm" or "Manhattan". L1_Norm is selected by default.}
+\item{distance_metric}{character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.}
 
 \item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
 
 \item{quant_method}{character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
+
+\item{scale_summary}{List. A list with mean and standard deviation values for all the features in the dataset. 
+Pass the scale summary when the input dataset is already scaled or normalize is set to False.}
 
 \item{diagnose}{Logical. A logical value indicating if the diagnose is required. Default value is TRUE.}
 
@@ -51,9 +59,9 @@ dataset should be normalized. Default value is TRUE.}
 \item{train_validation_split_ratio}{Numeric. A numeric value indicating the train and validation split ratio.}
 }
 \value{
-A list that contains the hierarchical tessellation information. This
+A list that contains the hierarchical tesselation information. This
 list has to be given as input argument to plot the tessellations.
-\item{[[1]] }{List. Information about the tessellation co-ordinates - level
+\item{[[1]] }{List. Information about the tesselation co-ordinates - level
 wise} \item{[[2]] }{List. Information about the polygon co-ordinates - level
 wise} 
 \item{[[3]] }{List. Information about the hierarchical vector quantized data - level wise}
@@ -78,18 +86,18 @@ parent polygon. This is done for all the subsequent levels.
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+hvt.results <- HVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
+                   quant_method="kmeans")
 plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
         maxDepth = 1)
 
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 15, depth = 3, quant.err = 0.2, 
+hvt.results <- HVT(USArrests, n_cells = 15, depth = 3, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
+                   quant_method="kmeans")
 plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
         maxDepth = 3)
 }
@@ -97,6 +105,6 @@ plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582
 \code{\link{plotHVT}} \cr \code{\link{hvtHmap}}
 }
 \author{
-Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
 }
 \keyword{hplot}
