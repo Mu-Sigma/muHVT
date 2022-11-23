@@ -18,7 +18,7 @@ The muHVT process involves three steps:
 3. **Tessellate:** Using a Voronoi Tessellation
 
 
-# muHVT_3.0.0 | Whats New?
+# muHVT 3.0.0 | Whats New?
 
 23rd November, 2022
 
