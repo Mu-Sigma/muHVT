@@ -1288,7 +1288,8 @@ Let us try to understand the HVT function first.
 
     muHVT::HVT(
       dataset,
-      nclust,
+      min_compression_perc,
+      n_cells,
       depth,
       quant.err,
       projection.scale,
@@ -1304,53 +1305,30 @@ Let us try to understand the HVT function first.
 
 Each of the parameters have been explained below
 
--   **`dataset`** - A dataframe with numeric columns
+-   **`dataset`** - A dataframe with numeric columns 
 
--   **`nlcust`** - An integer indicating the number of cells per
-    hierarchy (level)
+-   **`min_compression_perc`**  -  An integer indicating the minimum percent compression rate to be achieved for the dataset
 
--   **`depth`** - An integer indicating the number of levels. (1 = No
-    hierarchy, 2 = 2 levels, etc ...)
+-   **`n_cells`**  - An integer indicating the number of cells per hierarchy (level)
 
--   **`quant.error`** - A number indicating the quantization error
-    threshold. A cell will only breakdown into further cells if the
-    quantization error of the cell is above the defined quantization
-    error threshold
+-   **`depth`**   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
--   **`projection.scale`** - A number indicating the scale factor for
-    the tessellations so as to visualize the sub-tessellations efficiently
+-   **`quant.error`** - A number indicating the quantization error threshold. A cell will only breakdown
+into further cells if the quantization error of the cell is above the defined quantization error threshold
 
--   **`normalize`** - A logical value indicating whether the columns in
-    your dataset need to be normalized. Default value is TRUE. The
-    algorithm supports Z-score normalization
+-   **`distance_metric`**	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance
 
--   **`distance_metric`** - The distance metric can be `L1_Norm` or
-    `L2_Norm`. `L1_Norm` is selected by default. The distance metric is
-    used to calculate the distance between an `n` dimensional point and
-    centroid. The user can also pass a custom function to calculate this
-    distance
+-   **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric
 
--   **`error_metric`** - The error metric can be `mean` or `max`. `max`
-    is selected by default. `max` will return the max of `m` values and
-    `mean` will take mean of `m` values where each value is a distance
-    between a point and centroid of the cell. Moreover, the user can
-    also pass a custom function to calculate the error metric
+-   **`quant_method`** - The quantization method can be `kmeans` or `kmedoids`. `kmeans` is selected by default
+    
+-   **`normalize`**	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
 
--   **`quant_method`** - The quantization method can be `kmeans` or
-    `kmedoids`. `kmeans` is selected by default.
+-   **`diagnose`** - A logical value indicating whether user wants to perform diagnostics on the model. Default value is TRUE.
 
--   **`diagnose`** - A logical value indicating whether user wants to
-    perform diagnostics on the model. Default value is TRUE.
+-   **`hvt_validation`** - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
--   **`hvt_validation`** - A logical value indicating whether user wants
-    to holdout a validation set and find mean absolute deviation of the
-    validation points from the centroid. Default value is FALSE.
-
--   **`train_validation_split_ratio`** - A numeric value indicating
-    train validation split ratio. This argument is only used when
-    hvt_validation has been set to TRUE. Default value for the argument
-    is 0.8
-
+-   **`train_validation_split_ratio`** - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
 
 
 More information on building an HVT model at different levels and visualizing the
@@ -1363,13 +1341,14 @@ In the section below, we build a Level 1 HVT model. The number of clusters
 set.seed(240)
 hvt.results <- list()
 hvt.results <- HVT(dataset_updated_train,
-                          nclust = 1035,
+                          n_cells = 1035,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
                           normalize = T,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
+                          quant_method = "kmeans",
                           diagnose = TRUE,
                           hvt_validation = TRUE,
                           train_validation_split_ratio=0.8)

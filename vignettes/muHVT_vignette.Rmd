@@ -50,10 +50,13 @@ source("../R/Delete_Outpoints.R")
 source("../R/getCentroids.R")
 source("../R/getOptimalCentroids.R")
 source("../R/hvq.R")
+source("../R/removeOutliers.R")
 source("../R/HVT.R")
 source("../R/hvtHmap.R")
+source("../R/plotCells.R")
 source("../R/plotHVT.R")
 source("../R/predictHVT.R")
+source("../R/mlayerHVT.R")
 source("../R/ScaleMat.R")
 source("../R/Transform_Coordinates.R")
 source("../R/madPlot.R")
@@ -180,7 +183,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(k \* (n-k)\^2) .
 
-### Hierarchical Vector Qunatization 
+### Hierarchical Vector Quantization 
 
 The algorithm divides the dataset recursively into cells using $k-means$
 or $k-medoids$ algorithm. The maximum number of subsets are decided by
@@ -330,68 +333,72 @@ Let us try to understand the HVT function first.
 ```{r HVT function, echo = TRUE, eval= FALSE}
 HVT(
   dataset,
-  nclust,
+  min_compression_perc,
+  n_cells,
   depth,
   quant.err,
-  projection.scale,
-  normalize = T,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
-  diagnose = TRUE,
+  normalize = TRUE,
+  diagnose = FALSE,
   hvt_validation = FALSE,
   train_validation_split_ratio = 0.8
 )
 ```
 
-Each of the parameters have been explained below
+Each of the parameters have been explained below :
 
 * __`dataset`__ - A dataframe with numeric columns 
 
-* __`nlcust`__  - An integer indicating the number of cells per hierarchy (level)
+* __`min_compression_perc`__  -  An integer indicating the minimum percent compression rate to be achieved for the dataset
+
+* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level)
 
 * __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
 * __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown
 into further cells if the quantization error of the cell is above the defined quantization error threshold
 
-* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations efficiently
-
-* __`normalize`__	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
-
 * __`distance_metric`__	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric
 
-* __`quant_method`__ - The quantization method can be `kmeans` or
-    `kmedoids`. `kmeans` is selected by default.
+* __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. `kmeans` is selected by default
+    
+* __`normalize`__	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
 
-* __`diagnose`__ - A logical value indicating whether user wants to
-    perform diagnostics on the model. Default value is TRUE.
+* __`diagnose`__ - A logical value indicating whether user wants to perform diagnostics on the model. Default value is TRUE.
 
-* __`hvt_validation`__ - A logical value indicating whether user wants
-    to holdout a validation set and find mean absolute deviation of the
-    validation points from the centroid. Default value is FALSE.
+* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
-* __`train_validation_split_ratio`__ - A numeric value indicating
-    train validation split ratio. This argument is only used when
-    hvt_validation has been set to TRUE. Default value for the argument
-    is 0.8
+* __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
     
 First we will perform hierarchical Vector Quantization at level 1 by setting the parameter depth to 1 and the number of cells to 15. Here, level 1 signifies no hierarchy.
 
 ```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
 set.seed(240)
 hvt.results <- list()
+# hvt.results <- HVT(trainComputers,
+#                           nclust = 15,
+#                           depth = 1,
+#                           quant.err = 0.2,
+#                           projection.scale = 10,
+#                           normalize = T,
+#                           distance_metric = "L1_Norm",
+#                           error_metric = "mean",
+#                           quant_method = "kmeans")
+
+
 hvt.results <- HVT(trainComputers,
-                          nclust = 15,
-                          depth = 1,
-                          quant.err = 0.2,
-                          projection.scale = 10,
-                          normalize = T,
-                          distance_metric = "L1_Norm",
-                          error_metric = "mean",
-                          quant_method = "kmeans")
+                        n_cells = 15,
+                        depth = 1,
+                        quant.err = 0.2,
+                        distance_metric = "L1_Norm",
+                        error_metric = "mean",
+                        quant_method = "kmeans",
+                        projection.scale = 10,
+                        normalize = T)
 ```
 
 Now let's try to understand plotHVT function. The parameters have been explained in detail below
@@ -427,15 +434,17 @@ As per the manual, __`hvt.results[[3]]`__ gives us detailed information about th
 
 __`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-Now let us understand what each column in the summary table means
+Now let us understand what each column in the above table means:
 
-* __`Segment Level`__ - Level of the cell. In this case, we have performed Vector Quantization for depth 1. Hence Segment Level is 1
+* __`Segment.Level`__ - Level of the cell. In this case, we have performed Vector Quantization for depth 1. Hence Segment Level is 1
 
-* __`Segment Parent`__ - Parent segment of the cell
+* __`Segment.Parent`__ - Parent segment of the cell
 
-* __`Segment Child`__ - The children of a particular cell. In this case, first level has 15 cells hence we can see Segment Child 1,2,3,4,5 ,..,15.
+* __`Segment.Child (Cell.Number)`__ - The children of a particular cell. In this case, it is the total number of cells at which we achieved the defined compression percentage 
 
 * __`n`__ - No of points in each cell
+
+* __`Cell.ID`__ - Cell_ID’s are generated for the multivariate data using 1-D Sammon’s Projection algorithm
 
 * __`Quant.Error`__ - Quantization Error for each cell
 
@@ -497,7 +506,7 @@ hvtHmap(
   centroid.size = 1.5,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -507,17 +516,30 @@ Now let's go one level deeper and perform hierarchical vector quantization.
 set.seed(240)
 hvt.results2 <- list()
 # depth=2 is used for level2 in the hierarchy
-hvt.results2 <- HVT(
-  trainComputers,
-  nclust = 15,
-  depth = 2,
-  quant.err = 0.2,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean",
-  quant_method = "kmeans"
-)
+# hvt.results2 <- HVT(
+#   trainComputers,
+#   nclust = 15,
+#   depth = 2,
+#   quant.err = 0.2,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean",
+#   quant_method = "kmeans"
+# )
+
+
+hvt.results2 <- HVT(trainComputers,
+                        n_cells = 15,
+                        depth = 2,
+                        quant.err = 0.2,
+                        distance_metric = "L1_Norm",
+                        error_metric = "mean",
+                        quant_method = "kmeans",
+                        projection.scale = 10,
+                        normalize = T)
+
+
 ```
 
 Let's plot the Voronoi tessellation for both the levels.
@@ -567,7 +589,7 @@ hvtHmap(
   centroid.size = 2,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -577,16 +599,27 @@ As the Quantization Error criteria is not met, let's perform hierarchical Vector
 set.seed(240)
 hvt.results3 <- list()
 # depth=3 is used for level3 in the hierarchy
-hvt.results3 <- HVT(
-  trainComputers,
-  nclust = 15,
-  depth = 3,
-  quant.err = 0.2,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean"
-)
+# hvt.results3 <- HVT(
+#   trainComputers,
+#   nclust = 15,
+#   depth = 3,
+#   quant.err = 0.2,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean"
+# )
+
+
+hvt.results3 <- HVT(trainComputers,
+                        n_cells = 15,
+                        depth = 3,
+                        quant.err = 0.2,
+                        distance_metric = "L1_Norm",
+                        error_metric = "mean",
+                        quant_method = "kmeans",
+                        projection.scale = 10,
+                        normalize = T)
 ```
 
 Let's plot the Voronoi Tessellation for all 3 levels.
@@ -629,7 +662,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -655,7 +688,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -676,7 +709,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 2,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -696,7 +729,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -732,7 +765,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -755,7 +788,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -779,7 +812,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -860,7 +893,7 @@ predictions <- predictHVT(
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
   centroid_size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -931,16 +964,28 @@ Now let's try to use the package and project the above 3D object in a 2D Space. 
 
 ```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus <- HVT(
-  torus_df,
-  nclust = 100,
-  depth = 1,
-  quant.err = 0.06,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean"
-)
+# hvt.torus <- HVT(
+#   torus_df,
+#   nclust = 100,
+#   depth = 1,
+#   quant.err = 0.06,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean"
+# )
+
+
+hvt.torus <- HVT(torus_df,
+                    n_cells = 100,
+                    depth = 1,
+                    quant.err = 0.06,
+                    distance_metric = "L1_Norm",
+                    error_metric = "mean",
+                    quant_method = "kmeans",
+                    projection.scale = 10,
+                    normalize = T)
+
 
 plotHVT(
   hvt.torus,
@@ -973,7 +1018,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -992,7 +1037,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1010,7 +1055,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1028,7 +1073,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1042,16 +1087,27 @@ Now let's try again with the number of cells as 300.
 
 ```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus2 <- HVT(
-  torus_df,
-  nclust = 300,
-  depth = 1,
-  quant.err = 0.06,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean"
-)
+# hvt.torus2 <- HVT(
+#   torus_df,
+#   nclust = 300,
+#   depth = 1,
+#   quant.err = 0.06,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean"
+# )
+
+hvt.torus2 <- HVT(torus_df,
+                    n_cells = 300,
+                    depth = 1,
+                    quant.err = 0.06,
+                    distance_metric = "L1_Norm",
+                    error_metric = "mean",
+                    quant_method = "kmeans",
+                    projection.scale = 10,
+                    normalize = T)
+
 plotHVT(
   hvt.torus2,
   line.width = c(0.4),
@@ -1083,7 +1139,7 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1101,7 +1157,7 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1117,7 +1173,7 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1134,7 +1190,7 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1147,16 +1203,26 @@ Let's increase the number of cells to 900.
 
 ```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus3 <- HVT(
-  torus_df,
-  nclust = 900,
-  depth = 1,
-  quant.err = 0.06,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean"
-)
+# hvt.torus3 <- HVT(
+#   torus_df,
+#   nclust = 900,
+#   depth = 1,
+#   quant.err = 0.06,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean"
+# )
+
+hvt.torus3 <- HVT(torus_df,
+                    n_cells = 900,
+                    depth = 1,
+                    quant.err = 0.06,
+                    distance_metric = "L1_Norm",
+                    error_metric = "mean",
+                    quant_method = "kmeans",
+                    projection.scale = 10,
+                    normalize = T)
 
 plotHVT(
   hvt.torus3,
@@ -1190,7 +1256,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 Now let's checkout the heatmap for the x, y and z variables
@@ -1207,7 +1273,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1223,7 +1289,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1239,7 +1305,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1252,16 +1318,26 @@ Let's use the hierarchical Vector Quantization technique and go one level deeper
 
 ```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 29: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus4 <- HVT(
-  torus_df,
-  nclust = 500,
-  depth = 2,
-  quant.err = 0.06,
-  projection.scale = 10,
-  normalize = T,
-  distance_metric = "L1_Norm",
-  error_metric = "mean"
-)
+# hvt.torus4 <- HVT(
+#   torus_df,
+#   nclust = 500,
+#   depth = 2,
+#   quant.err = 0.06,
+#   projection.scale = 10,
+#   normalize = T,
+#   distance_metric = "L1_Norm",
+#   error_metric = "mean"
+# )
+
+hvt.torus4 <- HVT(torus_df,
+                    n_cells = 500,
+                    depth = 2,
+                    quant.err = 0.06,
+                    distance_metric = "L1_Norm",
+                    error_metric = "mean",
+                    quant_method = "kmeans",
+                    projection.scale = 10,
+                    normalize = T)
 
 plotHVT(
   hvt.torus4,
@@ -1294,7 +1370,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1312,7 +1388,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1328,7 +1404,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1344,7 +1420,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
