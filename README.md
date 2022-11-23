@@ -48,9 +48,9 @@ The dataset without outlier(s) gotten as an output from the removeOutliers funct
 Finally, all the constructed maps are passed to the __`mlayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
 
-For detailed information on the above functions, refer the vignette [here](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html)
+For detailed information on the above functions, refer the vignette [here](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html).
 
-## Installation of muHVT_3.0.0
+## Installation of muHVT 3.0.0
 
 ``` r
 library(devtools)
