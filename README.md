@@ -18,9 +18,9 @@ The muHVT process involves three steps:
 3. **Tessellate:** Using a Voronoi Tessellation
 
 
-# Whats New?
+# muHVT_3.0.0 | Whats New?
 
-muHVT_3.0.0 | 23rd November, 2022
+23rd November, 2022
 
 This package now additionally provides functionality to create a predictive set of maps for monitoring entities over time.
 
