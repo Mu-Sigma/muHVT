@@ -23,7 +23,7 @@
 #' test <- USArrests[41:50,]
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(train, nclust = 15, depth = 1, quant.err = 0.2,
+#' hvt.results <- HVT(train, n_cells = 15, depth = 1, quant.err = 0.2,
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
@@ -122,7 +122,6 @@ madPlot = function(hvt.prediction,
       x = qe,
       y = 0.01 + (0.1),
       label = "1%",
-      ,
       fontface = "bold"
     ) +
     
@@ -140,7 +139,7 @@ madPlot = function(hvt.prediction,
   
   
   # labs(title = ,
-  #      subtitle = "95% Compression, QE=varying, nclust=1033,L1Norm,Max",
+  #      subtitle = "95% Compression, QE=varying, n_cells=1033,L1Norm,Max",
   #      caption = "Mean Absolute Deviation is non dynamic i.e constant for each(earlier version was based on max QE of cells)")
   return(mad_plot)
 }

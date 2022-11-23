@@ -1,5 +1,5 @@
 DelaunayInfo <-
-function(gidata, poly_info, rawdeldati, nclust){
+function(gidata, poly_info, rawdeldati, n_cells){
   
   requireNamespace("deldir")       #deldir function 
   requireNamespace("grDevices")    #chull function
@@ -155,10 +155,10 @@ function(gidata, poly_info, rawdeldati, nclust){
   parentTiles <- unique(gidata[, "Segment.Parent"])
   
   for(ind1 in 1: length(parentTiles)){
-    if(((parentTiles[ind1]) %% nclust)){
-      lindex[ind1] <- (parentTiles[ind1] %% nclust)
+    if(((parentTiles[ind1]) %% n_cells)){
+      lindex[ind1] <- (parentTiles[ind1] %% n_cells)
     }else{
-      lindex[ind1] <- nclust
+      lindex[ind1] <- n_cells
     }
     par_tile_polygon[[ind1]] <- matrix(c(poly_info[[lindex[ind1]]]$x,
                                          poly_info[[lindex[ind1]]]$y),

@@ -13,7 +13,7 @@
 #' @examples
 #' data(USArrests)
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+#' hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
@@ -28,7 +28,7 @@ get_cell_id <-  function (hvt.results){
   generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")
   temp_summary=hvt.results[[3]][["summary"]] %>% dplyr::select(!generic_col) %>% dplyr::mutate(id=row_number())
   cent_val= temp_summary %>% subset(.,complete.cases(.)) 
-  sammon_1d_cord <-MASS::sammon(
+  sammon_1d_cord <- MASS::sammon(
     d = stats::dist(cent_val %>% dplyr::select(!id),method = "manhattan"),
     niter = 10 ^ 5,
     trace = FALSE,

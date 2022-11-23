@@ -2,7 +2,7 @@
 #' @import dplyr
 #' @import tidyr
 
-getCentroids_for_opti <- function (x, kout, nclust,function_to_calculate_distance_metric,function_to_calculate_error_metric){
+getCentroids_for_opti <- function (x, kout, n_cells,function_to_calculate_distance_metric,function_to_calculate_error_metric){
   requireNamespace("dplyr")   
   requireNamespace("tidyr")   
   requireNamespace("magrittr")   
@@ -16,6 +16,7 @@ getCentroids_for_opti <- function (x, kout, nclust,function_to_calculate_distanc
     dplyr::mutate(data = purrr::map(.x = data, .f = function_to_calculate_distance_metric)) %>%
     dplyr::arrange(`kout$cluster`) %>%
     dplyr::rename(err = data)
+  
   centl <-lapply(calculate_error$err,function_to_calculate_error_metric)
   maxQE<- lapply(calculate_error$err, "max")
   meanQE<- lapply(calculate_error$err, "mean")

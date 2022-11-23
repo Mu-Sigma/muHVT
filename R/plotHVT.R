@@ -1,9 +1,9 @@
 #' @name plotHVT
-#' @title Plot the hierarchical tessellations.
+#' @title Plot the hierarchical tesselations.
 #' 
 #' Main plotting function to construct hierarchical voronoi tessellations.
 #'
-#' @param hvt.results List. A list containing the output of \code{HVT} function
+#' @param hvt.results List. A list containing the ouput of \code{HVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param line.width Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
@@ -25,7 +25,7 @@
 #' data("USArrests",package="datasets")
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+#' hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
@@ -47,7 +47,7 @@ plotHVT <-
     
     hvt_list <- hvt.results
     
-    maxDepth= min(maxDepth,max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
+    maxDepth = min(maxDepth,max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
     
     
     min_x = 1e9
@@ -83,8 +83,6 @@ plotHVT <-
     }
     
     
-    
-    
     for (depth in 1:maxDepth) {
       for (clusterNo in 1:length(hvt_list[[2]][[depth]])) {
         for (childNo in 1:length(hvt_list[[2]][[depth]][[clusterNo]])) {
@@ -106,9 +104,11 @@ plotHVT <-
         }
       }
     }
+    
     valuesDataframe <- data.frame(depth = depthVal,
                                   cluster = clusterVal,
                                   child = childVal)
+    
     
     positionsDataframe <- data.frame(
       depth = depthPos,
@@ -118,6 +118,7 @@ plotHVT <-
       y = y_pos
     )
     
+    
     centroidDataframe <-
       data.frame(x = x_cor, y = y_cor, lev = levelCluster)
     
@@ -125,6 +126,7 @@ plotHVT <-
       merge(valuesDataframe,
             positionsDataframe,
             by = c("depth", "cluster", "child"))
+    
     
     p <- ggplot2::ggplot()
     
@@ -137,15 +139,17 @@ plotHVT <-
             y = y,
             color = factor(depth),
             size = factor(depth),
-            group = interaction(depth, cluster, child)
-            
+            group = interaction(depth, cluster, child),
+
           ),
           fill = NA
         ) +
         ggplot2::scale_colour_manual(values = color.vec) +
-        ggplot2::scale_size_manual(values = line.width, guide = FALSE) +
+        ggplot2::scale_size_manual(values = line.width, guide = "none") +
         ggplot2::labs(color = "Level")
     }
+  
+    
     for (depth in 1:maxDepth) {
       p <-  p + ggplot2::geom_point(
         data = centroidDataframe[centroidDataframe["lev"] == depth, ],
@@ -153,8 +157,14 @@ plotHVT <-
         size = (centroid.size / (2 ^ (depth - 1))),
         pch = 21,
         fill = color.vec[depth],
-        color = color.vec[depth]
-      )
+        color = color.vec[depth] ) +
+        ggplot2::geom_point(
+          data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+          ggplot2::aes(x = x, y = y),
+          size = (centroid.size / (2 ^ (depth - 1))),
+          pch = 21,
+          fill = color.vec[depth],
+          color = color.vec[depth] ) 
     }
     
     p <- p +
@@ -182,10 +192,17 @@ plotHVT <-
         panel.background = element_blank()
       ) + ggplot2::theme(plot.title = element_text(hjust = 0.5)) +
       ggplot2::scale_x_continuous(expand = c(0, 0)) +
-      ggplot2::scale_y_continuous(expand = c(0, 0))
+      ggplot2::scale_y_continuous(expand = c(0, 0)) +
+      ggplot2::geom_label(label = centroidDataframe$outlier_cell,
+                 nudge_x=0.45, nudge_y=0.1,
+                 check_overlap=T,
+                 label.padding=unit(0.55, "lines"),
+                 label.size=0.4,
+                 color="white",
+                 fill="#038225" )
+
     
     return(suppressMessages(p))
-    
     
     
   }
