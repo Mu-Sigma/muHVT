@@ -26,9 +26,9 @@ This package now additionally provides functionality to create a predictive set 
 
 The creation of a predictive set of maps involves three steps -
 
-1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold
-2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers function
-3. **Predict based on a predictive set of maps:** Using the mlayerHVT function
+1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT()
+2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers()
+3. **Predict based on a predictive set of maps:** Using the mlayerHVT()
 
 Let us try to understand the steps with the help of the diagram below -
 
