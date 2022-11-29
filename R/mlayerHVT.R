@@ -3,11 +3,11 @@
 #' @title Predict which cell and what level each point in the test dataset belongs to
 #'
 #'
-#' @param data List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
+#' @param data Data Frame. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 #' this dataset can also be used to overlay as heatmap
 #' @param hvt_mapA A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data
 #' @param hvt_mapB A list of removed outlier rows using removedOutliers function
-#' @param hvt_mapC A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data
+#' @param hvt_mapC A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data without outlier(s)
 #' @param child.level A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
 #' @param mad.threshold A numeric values indicating the permissible Mean Absolute Deviation
 #' @param line.width Vector. A line width vector

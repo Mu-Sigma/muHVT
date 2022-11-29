@@ -120,19 +120,21 @@ set.seed(240)
 
 The muHVT package is a collection of R functions for vector quantization and construction of Hierarchical Voronoi Tessellations as a data visualization tool to visualize cells using quantization. The hierarchical cells are computed using Hierarchical K-means where a quantization threshold governs the levels in the hierarchy for a set k parameter (the maximum number of cells at each level). The package is particularly helpful to visualize rich multivariate data.
 
-This package additionally provides functionality to create a predictive set of maps for monitoring entities over time.
+This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
 
-The creation of a predictive set involves three steps -
+The creation of a predictive set involves four steps -
 
-1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold
-2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers function
-3. **Predict based on a predictive set of maps:** Using the mlayerHVT function
+1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
+2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers() function (Map B)
+3. **Compress the dataset without outliers:** Again compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
+4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
 
 Let us try to understand the steps with the help of the diagram below.
 
-```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for creating a predictive set of maps using mlayerHVT()'}
+```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
 knitr::include_graphics('./mlayerHVT.png')
 ```
+
 Initially, the raw data is passed, and a highly compressed Map A is constructed using the HVT function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
 
 The identified outlier cell(s) is then passed to the removeOutliers function along with Map A. This function removes the identified outlier cell(s) from the dataset and stores them in Map B as shown in the diagram. The final output of this function is a list of two items - a newly constructed map (Map B), and a subset of the dataset without outlier cell(s).
@@ -153,8 +155,8 @@ Here, we load the data and store into a variables.
 ```{r load data computer,warning=FALSE,message=FALSE,eval = T}
 set.seed(240)
 # Load data from csv files
-trainComputers <- read.csv("./sample_dataset/trainComputers.csv")
-testComputers <- read.csv("./sample_dataset/testComputers.csv")
+trainComputers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/trainComputers.csv")
+testComputers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/testComputers.csv")
 ```
 
 Let's have a look at some of the training data
@@ -252,7 +254,7 @@ hvt_mapA <- HVT(trainComputers,
 Now, let's check the compression summary for HVT Map A. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapA compression summary,warning=FALSE,eval = global_var}
-DT::datatable(hvt_mapA[[3]]$compression_summary, class = 'cell-border stripe')
+DT::datatable(hvt_mapA[[3]]$compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 As per the manual, __`hvt_mapA[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
@@ -276,7 +278,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 cell_mapping_df <- arrange(hvt_mapA[[3]]$summary, n) %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(cell_mapping_df, filter = 'top', options = list(pageLength = 10), class = 'cell-border stripe')
+DT::datatable(cell_mapping_df, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
@@ -354,7 +356,7 @@ Let's have a look at the removed outlier rows data
 
 ```{r hvt_mapB results, warning=FALSE, echo=FALSE}
 hvt_mapB <- hvt_mapB %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(hvt_mapB, filter = 'top', options = list(pageLength = 10), class = 'cell-border stripe')
+DT::datatable(hvt_mapB, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 ## Voronoi tessellation to highlight outlier cell in the map
@@ -387,7 +389,7 @@ hvt_mapC <- HVT(dataset_without_outliers,
                     error_metric = "max",
                     quant_method = "kmeans",
                     projection.scale = 10,
-                    normalize = F,
+                    normalize = FALSE,
                     scale_summary = mapA_scale_summary)
 
 ```
@@ -395,14 +397,14 @@ hvt_mapC <- HVT(dataset_without_outliers,
 Now let's check the compression summary for HVT Map C. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
-DT::datatable(hvt_mapC[[3]]$compression_summary, class = 'cell-border stripe')
+DT::datatable(hvt_mapC[[3]]$compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 __`hvt_mapC[[3]]`__ gives us detailed information about the hierarchical vector quantized data. __`hvt_mapC[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
 ```{r display_mapC_table, warning=FALSE, echo=FALSE}
 cell_mapping_mapC <- arrange(hvt_mapC[[3]]$summary, Cell.ID) %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(cell_mapping_mapC, filter = 'top', options = list(pageLength = 10, autoWidth = TRUE), class = 'cell-border stripe')
+DT::datatable(cell_mapping_mapC, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 Now let's plot the __`price`__ feature for each cell at level one as a heatmap.
@@ -467,13 +469,13 @@ predictions <- mlayerHVT(testComputers,
                           ...)
 ```
 
-The important parameters for the function `mlayerHVT` are as below
+The parameters for the function `mlayerHVT` are as below
 
 * __`data`__ - A dataframe containing the test dataset. The dataframe should have atleast one variable used for training. The variables from this dataset can also be used to overlay as heatmap
 
 * __`hvt_mapA`__ - A list of hvt.results obtained from the HVT function : Map A
 
-* __`hvt_mapB`__ - A list of hvt.results obtained from the HVT function : Map B
+* __`hvt_mapB`__ - A list of outlier(s) cells obtained from the removeOutliers function : Map B
 
 * __`hvt_mapC`__ - A list of hvt.results obtained from the HVT function : Map C
 
@@ -497,7 +499,6 @@ predictions <- mlayerHVT(testComputers,
                           hvt_mapB,
                           hvt_mapC
                           )
-
 ```
 
 Below are the predicted results on the test data based on the predictive set of maps : Map A, Map B and Map C -
@@ -512,13 +513,13 @@ DT::datatable(as.data.frame(predictions),class = 'cell-border stripe',
 
 Hence, from the table above, we can clearly see that the predictions are exactly matching with the ground truth. 
 
-The 493rd and 753rd test record is predicted as outlier record and is mapped to the 3rd outlier cell of the HVT Map B.
+*  The 493rd and 753rd test record is predicted as outlier record and is mapped to the 3rd outlier cell of the HVT Map B.
 
-Similarly, the 550th and 1253rd test record is correctly predicted as the outlier record and gets mapped to the 1st and 2nd cell of the HVT Map B respectively.
+*  Similarly, the 550th and 1253rd test record is correctly predicted as the outlier record and gets mapped to the 1st and 2nd cell of the HVT Map B respectively.
 
-Also, 889th record is identified as a outlier and gets mapped to the 3rd cell of the HVT Map B.
+*  Also, 889th record is identified as a outlier and gets mapped to the 3rd cell of the HVT Map B.
 
-The remaining non-outlier records get mapped to the HVT Map C.
+*  The remaining non-outlier records get mapped to the HVT Map C.
 
 
 # Executive Summary
@@ -537,6 +538,6 @@ The remaining non-outlier records get mapped to the HVT Map C.
 
 *  Finally, the set of maps - Map A, Map B, and Map C are passed to the mlayerHVT() along with the test dataset to predict which map and what cell each test record is assigned to. The outlier cell(s) present in the test dataset gets mapped to Map A and Map B whereas the non-outlier cell(s) gets mapped to Map A and Map C. 
 
-In the test data, the 493rd, 753rd and 889th test record is predicted as outlier record and is mapped to the 3rd outlier cell of the HVT Map B. Similarly, the 550th and 1253rd test record is correctly predicted as the outlier record and gets mapped to the 1st and 2nd cell of the HVT Map B respectively.
+*  In the test data, the 493rd, 753rd and 889th test record is predicted as outlier record and is mapped to the 3rd outlier cell of the HVT Map B. Similarly, the 550th and 1253rd test record is correctly predicted as the outlier record and gets mapped to the 1st and 2nd cell of the HVT Map B respectively.
 
 

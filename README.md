@@ -22,13 +22,14 @@ The muHVT process involves three steps:
 
 23rd November, 2022
 
-This package now additionally provides functionality to create a predictive set of maps for monitoring entities over time.
+This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
 
-The creation of a predictive set of maps involves three steps -
+The creation of a predictive set of maps involves four steps -
 
-1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT()
-2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers()
-3. **Predict based on a predictive set of maps:** Using the mlayerHVT()
+1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
+2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers() function (Map B)
+3. **Compress the dataset without outliers:** Again, compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
+4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
 
 Let us try to understand the steps with the help of the diagram below -
 

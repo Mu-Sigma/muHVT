@@ -21,14 +21,14 @@ mlayerHVT(
 )
 }
 \arguments{
-\item{data}{List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
+\item{data}{Data Frame. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 this dataset can also be used to overlay as heatmap}
 
 \item{hvt_mapA}{A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data}
 
 \item{hvt_mapB}{A list of removed outlier rows using removedOutliers function}
 
-\item{hvt_mapC}{A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data}
+\item{hvt_mapC}{A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data without outlier(s)}
 
 \item{mad.threshold}{A numeric values indicating the permissible Mean Absolute Deviation}
 
