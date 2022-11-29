@@ -254,7 +254,8 @@ hvt_mapA <- HVT(trainComputers,
 Now, let's check the compression summary for HVT Map A. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapA compression summary,warning=FALSE,eval = global_var}
-DT::datatable(hvt_mapA[[3]]$compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+mapA_compression_summary <- hvt_mapA[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
+DT::datatable(mapA_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 As per the manual, __`hvt_mapA[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
@@ -397,7 +398,8 @@ hvt_mapC <- HVT(dataset_without_outliers,
 Now let's check the compression summary for HVT Map C. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
-DT::datatable(hvt_mapC[[3]]$compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+mapC_compression_summary <- hvt_mapC[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
+DT::datatable(mapC_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 __`hvt_mapC[[3]]`__ gives us detailed information about the hierarchical vector quantized data. __`hvt_mapC[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
