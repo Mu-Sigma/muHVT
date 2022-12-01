@@ -1,6 +1,6 @@
 ---
 title: "muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"
-author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Praditi Shah"
+author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:

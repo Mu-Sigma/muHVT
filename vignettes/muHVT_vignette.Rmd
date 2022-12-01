@@ -284,7 +284,7 @@ Here, we load the data and store into a variable `computers`.
 ```{r load data computer,warning=FALSE,message=FALSE,eval = T}
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/trainComputers.csv")
 ```
 
 Let's have a look at some of the data
