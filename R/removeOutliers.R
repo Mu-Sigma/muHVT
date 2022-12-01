@@ -19,6 +19,7 @@
 #' @author Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
 #' @seealso \code{\link{HVT}} \cr \code{\link{mlayerHVT}}
 #' @importFrom magrittr %>%
+#' @importFrom plyr rbind.fill
 #' @examples
 #' data(USArrests)
 #' hvt_mapA <- list()
@@ -53,7 +54,7 @@ removeOutliers <-
       for(i in 1:length(hvt_results_cells)){
         temp_df <-  as.data.frame(hvt_results_cells[[i]])
         temp_df$Row.Number <- row.names(hvt_results_cells[[i]])
-        scaled_data <- rbind(scaled_data, temp_df)
+        scaled_data <- rbind.fill(scaled_data, temp_df)
       }
       row.names(scaled_data) <- scaled_data$Row.Number
       scaled_data <- select(scaled_data, -c(Row.Number))
@@ -73,7 +74,7 @@ removeOutliers <-
       temp_df <-  as.data.frame(hvt_results_cells[[i]])
       temp_df$Cell.Number <- i
       temp_df$Row.Number <- row.names(hvt_results_cells[[i]])
-      scaled_data <- rbind(scaled_data, temp_df)
+      scaled_data <- rbind.fill(scaled_data, temp_df)
     }
     row.names(scaled_data) <- scaled_data$Row.Number
     
@@ -88,6 +89,7 @@ removeOutliers <-
   
     `%notin%` <- Negate(`%in%`)
     dataset_without_outliers_scaled <- scaled_data %>% dplyr::filter(Cell.Number %notin% remove_outlier_cells)
+    row.names(dataset_without_outliers_scaled) <- dataset_without_outliers_scaled$Row.Number
     dataset_without_outliers_scaled <- select(dataset_without_outliers_scaled, -c(Row.Number, Cell.Number, Cell.ID))
     dataset_without_outliers_scaled <- dataset_without_outliers_scaled[ order(as.numeric(row.names(dataset_without_outliers_scaled))), ]
     

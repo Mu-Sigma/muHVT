@@ -19,7 +19,7 @@ License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
         stats, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos,
-        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse
+        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse, plyr
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
