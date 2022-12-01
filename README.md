@@ -3,7 +3,7 @@
 The muHVT package is a collection of R functions for vector quantization and
 construction of hierarchical Voronoi tessellations as a data visualization
 tool to visualize cells using quantization. The hierarchical cells are computed using
-Hierarchical K-means where a quantization threshold governs the levels
+Hierarchical K-means or K-medoids where a quantization threshold governs the levels
 in the hierarchy for a set $k$ parameter (the maximum number of cells
 at each level). The package is particularly helpful to visualize rich multivariate data. 
 
@@ -201,7 +201,7 @@ Here, we load the data and store into a variable `computers`.
 ``` r
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/trainComputers.csv")
 ```
 
 Let's have a look at sample of the data
