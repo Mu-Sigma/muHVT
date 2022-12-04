@@ -1288,8 +1288,7 @@ Let us try to understand the HVT function first.
 
     muHVT::HVT(
       dataset,
-      min_compression_perc,
-      n_cells,
+      nclust,
       depth,
       quant.err,
       projection.scale,
@@ -1307,9 +1306,7 @@ Each of the parameters have been explained below
 
 -   **`dataset`** - A dataframe with numeric columns 
 
--   **`min_compression_perc`**  -  An integer indicating the minimum percent compression rate to be achieved for the dataset
-
--   **`n_cells`**  - An integer indicating the number of cells per hierarchy (level)
+-   **`nclust`**  - An integer indicating the number of cells per hierarchy (level)
 
 -   **`depth`**   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
@@ -1332,7 +1329,7 @@ into further cells if the quantization error of the cell is above the defined qu
 
 
 More information on building an HVT model at different levels and visualizing the
-output can be found [here]() 
+output can be found [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) 
 
 In the section below, we build a Level 1 HVT model. The number of clusters 
 `n_clust` is set to 1035 to achieve 95% compression.
@@ -1340,8 +1337,8 @@ In the section below, we build a Level 1 HVT model. The number of clusters
 ```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- HVT(dataset_updated_train,
-                          n_cells = 1035,
+hvt.results <- muHVT::HVT(dataset_updated_train,
+                          nclust = 1035,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
@@ -1356,7 +1353,7 @@ hvt.results <- HVT(dataset_updated_train,
 
 ```{r fig.height=4, fig.width=6}
 # Voronoi tessellation plot for level one
-plotHVT(hvt.results,
+muHVT::plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
@@ -1667,7 +1664,7 @@ Here the mad_threshold has been selected as 0.6 which is based on Mean of Minimu
 ```{r,class.source = 'fold-show'}
 hvt.prediction = list()
 mad_threshold= 0.6 #Mean of Minimum Intra-Centroid Distance
-hvt.prediction <- predictHVT(
+hvt.prediction <- muHVT::predictHVT(
   data = dataset_updated_test,
   hvt.results.model=hvt.results,
   child.level = 1,
