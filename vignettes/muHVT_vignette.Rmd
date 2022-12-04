@@ -151,7 +151,7 @@ The muHVT process involves three steps:
 2. **Project:** Using a dimension projection algorithm
 3. **Tessellate:** Using a Voronoi Tessellation
 
-# muHVT 3.0.0 | Whats New?
+# muHVT 3.0.0 | What's New?
 
 01st December, 2022
 
