@@ -1,3 +1,25 @@
+# Table of contents
+
+1. [Introduction](#introduction)
+2. [muHVT 3.0.0 | Whats New?](#)
+3. [Installation](#installation)
+    1. [Installation of muHVT 3.0.0](#installation-of-muhvt-300)
+4. [Vector Quantization](#vector-quantization)
+    1. [Hierarchical VQ](#hierarchical-vq)
+        1. [Using k-means](#using-k-means)
+        2. [Using k-medoids](#using-k-medoids)
+    2. [Voronoi Tessellations](#voronoi-tessellations)
+        1. [Sammon's Projection](#sammons-projection)
+        2. [Constructing Voronoi Tessellations](#constructing-voronoi-tessellations)
+    3. [Example Usage](#example-usage)
+    4. [Predict](#predict)
+        1. [Prediction Algorithm](#prediction-algorithm)
+5. [Applications](#applications)
+6. [References](#references)
+7. [Other Examples](#other-examples)
+8. [Report a bug](#report-a-bug)
+
+
 # Introduction
 
 The muHVT package is a collection of R functions for vector quantization and
@@ -26,7 +48,7 @@ This package now additionally provides functionality to predict based on a set o
 
 The creation of a predictive set of maps involves four steps -
 
-1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
+1. **Compress:** Compress the datasetInstallation of muHVT 3.0.0 using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
 2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers() function (Map B)
 3. **Compress the dataset without outliers:** Again, compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
 4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
@@ -35,7 +57,7 @@ Let us try to understand the steps with the help of the diagram below -
 
 <img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/mlayerHVT.png" width="672px" height="480px" />
 <p class="caption">
-Figure 1: Flow diagram for creating a predictive set of maps using mlayerHVT()
+Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()
 </p>
 
 Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
@@ -201,7 +223,7 @@ Here, we load the data and store into a variable `computers`.
 ``` r
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/trainComputers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/Computers.csv")
 ```
 
 Let's have a look at sample of the data
@@ -750,6 +772,39 @@ muHVT::hvtHmap(hvt.results,
 Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
+Similarly, let's plot the other features for each cell at level one as heatmap.
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/price.png" alt="Figure 4: The Voronoi tessellation with the heat map overlayed with variable ’price’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 4: The Voronoi tessellation with the heat map overlayed with variable ’price’ in the ’computers’ dataset
+</p>
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/speed.png" alt="Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’speed’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’speed’ in the ’computers’ dataset
+</p>
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/ram.png" alt="Figure 6: The Voronoi tessellation with the heat map overlayed with variable ’ram’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 6: The Voronoi tessellation with the heat map overlayed with variable ’ram’ in the ’computers’ dataset
+</p>
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/screen.png" alt="Figure 7: The Voronoi tessellation with the heat map overlayed with variable ’screen’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 7: The Voronoi tessellation with the heat map overlayed with variable ’screen’ in the ’computers’ dataset
+</p>
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/hd.png" alt="Figure 8: The Voronoi tessellation with the heat map overlayed with variable ’hd’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 8: The Voronoi tessellation with the heat map overlayed with variable ’hd’ in the ’computers’ dataset
+</p>
+
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/ads.png" alt="Figure 9: The Voronoi tessellation with the heat map overlayed with variable ’ads’ in the ’computers’ dataset" width="672px" height="480px" />
+<p class="caption">
+Figure 9: The Voronoi tessellation with the heat map overlayed with variable ’ads’ in the ’computers’ dataset
+</p>
+
+
 Now let's go one level deeper and perform hierarchical vector quantization.
 
 ``` r
@@ -776,9 +831,9 @@ muHVT::plotHVT(hvt.results2,
         color.vec = c("#141B41","#0582CA"),maxDepth = 2)
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/c/ce/HVT_PLOT_L2.png" alt="Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/c/ce/HVT_PLOT_L2.png" alt="Figure 10: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’" width="672px" height="480px" />
 <p class="caption">
-Figure 4: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
+Figure 10: The Voronoi tessellation for level 2 shown for the 225 cells in the dataset ’computers’
 </p>
 
 In the table below, Segment Level signifies the depth.
@@ -883,9 +938,9 @@ muHVT::hvtHmap(hvt.results2,
         nclust.hmap = 15)        
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/8/88/HVTHMAP_L2.png" alt="Figure 11: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 5: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
+Figure 11: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
 ### Predict
@@ -929,7 +984,7 @@ predictions <- muHVT::predictHVT(testComputers,
 
 ```
 
-### Prediction Algorithm
+#### Prediction Algorithm
 
 The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in test dataset :-
 
@@ -962,12 +1017,12 @@ The prediction algorithm will work even if some of the variables used to perform
 # Heatmap plot for predicted points
 predictions[["predictPlot"]]
 ```
-<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 6: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://ird.mu-sigma.com/wiki/images/3/30/Prediction_l2.png" alt="Figure 12: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
-Figure 6: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
+Figure 12: The predicted Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
 
-## Applications 
+# Applications 
 
 1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers
 

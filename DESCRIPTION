@@ -24,7 +24,7 @@ Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
 RoxygenNote: 7.1.2
-Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly
+Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, data.table
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2022-11-22 15:04:50 UTC; Shantanu
