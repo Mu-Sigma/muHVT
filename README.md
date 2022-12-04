@@ -767,7 +767,7 @@ muHVT::hvtHmap(hvt.results,
         nclust.hmap = 15)      
 ```
 
-<img src="https://ird.mu-sigma.com/wiki/images/2/21/HVTHMAP_L1.png" alt="Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
+<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/heatmaps/quant_error.png" alt="Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset" width="672px" height="480px" />
 <p class="caption">
 Figure 3: The Voronoi tessellation with the heat map overlayed with variable ’Quant.Error’ in the ’computers’ dataset
 </p>
