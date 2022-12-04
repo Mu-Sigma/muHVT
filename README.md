@@ -40,9 +40,9 @@ The muHVT process involves three steps:
 3. **Tessellate:** Using a Voronoi Tessellation
 
 
-# muHVT 3.0.0 | Whats New?
+# muHVT 3.0.0 | Whats New? <a name="muhvt_3.0.0>
 
-23rd November, 2022
+01st December, 2022
 
 This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
 
@@ -73,7 +73,7 @@ Finally, all the constructed maps are passed to the __`mlayerHVT`__ function alo
 
 __For detailed information on the above functions, refer the vignette [here](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html).__
 
-## Installation of muHVT 3.0.0
+## Installation of muHVT 3.0.0 <a name="installation_muhvt_3.0.0>
 
 ``` r
 library(devtools)
