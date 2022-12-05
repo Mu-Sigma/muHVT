@@ -1,7 +1,7 @@
 # Table of contents
 
 1. [Introduction](#introduction)
-2. [muHVT 3.0.0 | Whats New?](#muhvt-3-0-0)
+2. [muHVT 3.0.0 | What's New?](#muhvt-3-0-0)
     1. [Installation of muHVT 3.0.0](#installation-muhvt-3-0-0)
 3. [Installation](#installation)
 4. [Vector Quantization](#vector-quantization)
@@ -40,7 +40,7 @@ The muHVT process involves three steps:
 3. **Tessellate:** Using a Voronoi Tessellation
 
 
-# muHVT 3.0.0 | Whats New? <a name="muhvt-3-0-0">
+# muHVT 3.0.0 | What's New? <a name="muhvt-3-0-0">
 
 01st December, 2022
 
@@ -1048,7 +1048,7 @@ Figure 12: The predicted Voronoi tessellation with the heat map overlayed with v
 
 # Other Examples
 
-For more detailed examples of different usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/muHVT.Rmd) at the vignettes directory inside the project repo
+For more detailed examples of different usage to construct voronoi tessellations for 3D sphere and torus can be found [here](https://cran.r-project.org/web/packages/muHVT/vignettes/muHVT.html) at the vignettes directory inside the project repo
 
 # Report a bug
 
