@@ -18,7 +18,7 @@
 #' @param x Data Frame. A dataframe of multivariate data. Each row corresponds to an
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
-#' @param nclust Numeric. Indicating the number of nodes per hierarchy.
+#' @param n_cells Numeric. Indicating the number of nodes per hierarchy.
 #' @param depth Numeric. Indicating the hierarchy depth (or) the depth of the
 #' tree (1 = no hierarchy, 2 = 2 levels, etc..)
 #' @param quant.err Numeric. The quantization error for the algorithm.
@@ -41,7 +41,7 @@ getOptimalCentroids <-
   function (x, 
             iter.max, 
             algorithm, 
-            nclust, 
+            n_cells, 
             function_to_calculate_distance_metric, 
             function_to_calculate_error_metric=c("mean","max"), 
             quant.err,
@@ -55,17 +55,19 @@ getOptimalCentroids <-
       # Start with splitting data into three clusters
       nclust_iter <- 3
       outkinit <- list(centers = numeric(),maxQE = numeric(),meanQE = numeric(), values = logical() , nsize = numeric())
-      quantok <- rep(T, nclust)
-      while (nclust_iter <= nclust & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      quantok <- rep(T, n_cells)
+      
+      # Check if 3 <= No of clusters AND No of cells in a cluster > 3 AND flag to check QE for all clusters
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
         set.seed(100)
         kout<-stats::kmeans(x, nclust_iter, iter.max=10^5, algorithm=algorithm)
         result <- getCentroids_for_opti(x,kout, nclust_iter,function_to_calculate_distance_metric,function_to_calculate_error_metric)
         
-        outkinit[[1]] <-result[[1]]
-        outkinit[[2]]<- result[[2]]
-        outkinit[[3]]<- result[[3]]
+        outkinit[[1]] <- result[[1]]
+        outkinit[[2]] <- result[[2]]
+        outkinit[[3]] <- result[[3]]
         #flag to check for quantization error
         resplt <- unlist(outkinit$centers) > quant.err
         quantok <- unlist(resplt)
@@ -76,17 +78,16 @@ getOptimalCentroids <-
       outkinit[[5]] <- as.list(kout$size)
       outkinit[["centroid_val"]] <- kout$centers
       
-      dummy_iter = nclust - nclust_iter + 1
+      dummy_iter = n_cells - nclust_iter + 1
       
-      if (dummy_iter !=0){
+      if(dummy_iter !=0){
         outkinit[["centers"]] <- c(outkinit[["centers"]],as.list(rep(NA,dummy_iter)))
         outkinit[["maxQE"]] <- c(outkinit[["maxQE"]],as.list(rep(NA,dummy_iter)))
         outkinit[["meanQE"]] <- c(outkinit[["meanQE"]],as.list(rep(NA,dummy_iter)))
         outkinit[["values"]] <- c(outkinit[["values"]],as.list(rep(NA,dummy_iter)))
         outkinit[["nsize"]] <- c(outkinit[["nsize"]],as.list(rep(0,dummy_iter)))
-        temprow <- matrix(c(rep.int(NA,length(outkinit[["centroid_val"]][1,]))),nrow=length(nclust_iter:nclust),ncol=length(outkinit[["centroid_val"]][1,]))
+        temprow <- matrix(c(rep.int(NA,length(outkinit[["centroid_val"]][1,]))),nrow=length(nclust_iter:n_cells),ncol=length(outkinit[["centroid_val"]][1,]))
         outkinit[["centroid_val"]] <- rbind(outkinit[["centroid_val"]],temprow)
-        
       }
       # return centroids, datapoints and size of each cluster
       return(outkinit)
@@ -96,14 +97,14 @@ getOptimalCentroids <-
       # browser()
       nclust_iter <- 3
       outkinit <- list(centers = numeric(),maxQE = numeric(),meanQE = numeric(), values = logical() , nsize = numeric())
-      quantok <- rep(T, nclust)
-      if (distance_metric == "L1_Norm") {
+      quantok <- rep(T, n_cells)
+      if(distance_metric == "L1_Norm") {
         distance_metric = "manhattan"
-      } else if (distance_metric == "L2_Norm") {
+      }else if(distance_metric == "L2_Norm") {
         distance_metric = "euclidean"
       }
       kout=list()
-      while (nclust_iter <= nclust & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
         set.seed(100)
@@ -134,15 +135,15 @@ getOptimalCentroids <-
       outkinit[[5]] <- as.list(kout$size)
       outkinit[["centroid_val"]] <- kout$centers
       
-      dummy_iter = nclust - nclust_iter + 1
+      dummy_iter = n_cells - nclust_iter + 1
       
-      if (dummy_iter !=0){
+      if(dummy_iter !=0){
         outkinit[["centers"]] <- c(outkinit[["centers"]],as.list(rep(NA,dummy_iter)))
         outkinit[["maxQE"]] <- c(outkinit[["maxQE"]],as.list(rep(NA,dummy_iter)))
         outkinit[["meanQE"]] <- c(outkinit[["meanQE"]],as.list(rep(NA,dummy_iter)))
         outkinit[["values"]] <- c(outkinit[["values"]],as.list(rep(NA,dummy_iter)))
         outkinit[["nsize"]] <- c(outkinit[["nsize"]],as.list(rep(0,dummy_iter)))
-        temprow <- matrix(c(rep.int(NA,length(outkinit[["centroid_val"]][1,]))),nrow=length(nclust_iter:nclust),ncol=length(outkinit[["centroid_val"]][1,]))
+        temprow <- matrix(c(rep.int(NA,length(outkinit[["centroid_val"]][1,]))),nrow=length(nclust_iter:n_cells),ncol=length(outkinit[["centroid_val"]][1,]))
         outkinit[["centroid_val"]] <- rbind(outkinit[["centroid_val"]],temprow)
         
       }

@@ -1,14 +1,15 @@
 Package: muHVT
 Type: Package
-Date: 2022-04-20
+Date: 2022-11-22
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 2.0.0
+Version: 3.0.0
 Authors@R: c(
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Shubhra", "Prakash", email = "shubhraprakash@live.com", role = "ctb"),
     person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "ctb"),
     person("Sunuganty Achyut", "Raj", email = "achyut.raj92@gmail.com", role = "ctb"),
+    person("Shantanu", "Vaidya", email = "snv.shantanu@gmail.com", role = "ctb"),
     person("Praditi", "Shah", email = "shahpraditi@gmail.com", role = "ctb"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
@@ -18,19 +19,20 @@ License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
         stats, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos,
-        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse
+        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse, plyr
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
 RoxygenNote: 7.1.2
-Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly
+Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, data.table
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-04-26 15:04:50 UTC; praditi
+Packaged: 2022-11-22 15:04:50 UTC; Shantanu
 Author: Zubin Dowlaty [aut],
   Shubhra Prakash [ctb],
   Sangeet Moy Das [ctb],
   Sunuganty Achyut Raj [ctb],
+  Shantanu Vaidya [ctb],
   Praditi Shah [ctb],
   Avinash Joshi [ctb],
   Meet Dave [ctb], 

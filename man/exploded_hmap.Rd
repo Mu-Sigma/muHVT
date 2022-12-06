@@ -8,8 +8,8 @@ exploded_hmap(
   hvt.results,
   child.level = NULL,
   hmap.cols = NULL,
-  nclust.hmap = NULL,
-  separation_width = 7,
+  n_cells.hmap = NULL,
+  sepration_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
   ...
@@ -26,10 +26,10 @@ to be plotted.}
 the dataset indicating the variables for which the heat map is to be
 plotted.}
 
-\item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
+\item{n_cells.hmap}{Numeric. An integer indicating the number of clusters per
 hierarchy (level)}
 
-\item{separation_width}{Numeric. An integer indicating the width between two Levels}
+\item{sepration_width}{Numeric. An integer indicating the width between two Levels}
 
 \item{layer_opacity}{Numeric. A vector indicating the opacity of each layer/ level}
 

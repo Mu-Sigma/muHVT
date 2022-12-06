@@ -20,7 +20,7 @@ hvtHmap(
   ask = T,
   tess.label = NULL,
   quant.error.hmap = NULL,
-  nclust.hmap = NULL,
+  n_cells.hmap = NULL,
   label.size = 0.5,
   ...
 )
@@ -71,7 +71,7 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 \item{quant.error.hmap}{Numeric. A number indicating the quantization error
 threshold.}
 
-\item{nclust.hmap}{Numeric. An integer indicating the number of clusters per
+\item{n_cells.hmap}{Numeric. An integer indicating the number of cells/clusters per
 hierarchy (level)}
 
 \item{label.size}{Numeric. The size by which the tessellation labels should
@@ -106,13 +106,13 @@ the desired variables.
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
                    quant_method="kmeans",diagnose=TRUE)
 hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
         line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
-        quant.error.hmap = 0.2,nclust.hmap = 6)
+        quant.error.hmap = 0.2, n_cells.hmap = 6)
 }
 \seealso{
 \code{\link{plotHVT}}

@@ -28,7 +28,7 @@
 #' test <- USArrests[41:50,]
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(train, nclust = 15, depth = 1, quant.err = 0.2,
+#' hvt.results <- HVT(train, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
@@ -58,16 +58,10 @@ predictHVT <- function(data,
   # requireNamespace("rjson")
   
   # browser()
-  hvt.results.model[[3]]$summary <- get_cell_id(hvt.results=hvt.results.model)
-  
-  hvt.results.model[[3]]$summary =cbind(hvt.results.model[[3]]$summary,centroidRadius=unlist( hvt.results.model[[3]]$max_QE))
-  
-  
-  
-  
-  
-  
-  
+  if(!('Cell.ID' %in% colnames(hvt.results.model[[3]]$summary))){
+    hvt.results.model[[3]]$summary <- get_cell_id(hvt.results=hvt.results.model)
+  }
+  hvt.results.model[[3]]$summary = cbind(hvt.results.model[[3]]$summary,centroidRadius=unlist( hvt.results.model[[3]]$max_QE))
   
   options(warn = -1)
   
@@ -75,7 +69,7 @@ predictHVT <- function(data,
   #   ifelse(distance_metric == "L1_Norm", "manhattan", "euclidean")
   
   summary_list <- hvt.results.model[[3]]
-  # nclust <- nclust.hmap
+  # n_cells <- n_cells.hmap
   
   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
   
@@ -83,7 +77,7 @@ predictHVT <- function(data,
     stop('Not all training columns are part of test dataset')
   }
   
-  if (!is.null(summary_list$scale_summary) && normalize == T) {
+  if (!all(is.na(summary_list$scale_summary)) && normalize == T) {
     scaled_test_data <- scale(
       data[, train_colnames],
       center = summary_list$scale_summary$mean_data[train_colnames],
@@ -123,7 +117,6 @@ predictHVT <- function(data,
   ## Get a df with Segment level, parent, child info joined with max QE value
   # centroidRadius <- unlist(summary_list$max_QE) 
   newdfMapping <- summary_list$summary
-  
   
   innermostCells2 <- newdfMapping %>% 
     dplyr::filter((n > 0 & Segment.Level == level) | (Segment.Level < level & (Quant.Error < mad.threshold | n <= 3)))
@@ -223,7 +216,7 @@ predictHVT <- function(data,
   QECompareDf2 <- df_temp %>% mutate(
     Quant.Error.Diff = abs(Scored.Quant.Error - Quant.Error.y),
     `Quant.Error.Diff (%)` = abs(Scored.Quant.Error - Quant.Error.y) / Quant.Error.y * 100) %>%
-    rename(Fitted.Quant.Error = Quant.Error.y, n = n.x) %>% 
+    dplyr::rename(Fitted.Quant.Error = Quant.Error.y, n = n.x) %>% 
     select(-c("Quant.Error.x", "sumOriginal" ,"n.y"))
   
   plotList <- hvt.results.model[[2]] %>% 
@@ -345,10 +338,11 @@ predictHVT <- function(data,
     plotly::style(plotlyPredict, hoverinfo = "none", traces = trace_vec) %>%
     plotly::config(displayModeBar = F)
   
+  predict_test_data3 <- predict_test_data3 %>% mutate_if(is.numeric, round, digits = 4) # Rounding decimal columns using dplyr function
   predict_test_dataRaw <- predict_test_data3
   predict_test_dataRaw[, train_colnames] <- data[, train_colnames]
   
-  prediction_list=    list(
+  prediction_list = list(
     scoredPredictedData = predict_test_data3,
     QECompareDf = QECompareDf2,
     predictPlot = plotlyPredict,

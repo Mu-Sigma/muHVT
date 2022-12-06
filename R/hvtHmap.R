@@ -54,7 +54,7 @@
 #' be scaled. (default = 0.5)
 #' @param quant.error.hmap Numeric. A number indicating the quantization error
 #' threshold.
-#' @param nclust.hmap Numeric. An integer indicating the number of clusters per
+#' @param n_cells.hmap Numeric. An integer indicating the number of cells/clusters per
 #' hierarchy (level)
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
@@ -65,13 +65,13 @@
 #' @examples
 #' data(USArrests)
 #' hvt.results <- list()
-#' hvt.results <- HVT(USArrests, nclust = 15, depth = 1, quant.err = 0.2, 
+#' hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
 #' hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
 #'         line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
-#'         quant.error.hmap = 0.2,nclust.hmap = 6)
+#'         quant.error.hmap = 0.2, n_cells.hmap = 6)
 #' @export hvtHmap
 
 
@@ -91,7 +91,7 @@ hvtHmap <-
             ask = T,
             tess.label = NULL,
             quant.error.hmap = NULL,
-            nclust.hmap = NULL,
+            n_cells.hmap = NULL,
             label.size = .5,
             ...){
     # browser()
@@ -186,7 +186,7 @@ hvtHmap <-
         }
         
       }else{
-        for (clusterNo in 1:nclust.hmap^(child.level-1)) {
+        for (clusterNo in 1:n_cells.hmap^(child.level-1)) {
           for (childNo in 1:length(hvt_list[[2]][[depth]][[as.character(clusterNo)]])) {
             if (!is.null(hvt_list[[2]][[depth]][[as.character(clusterNo)]])) {
               summaryFilteredDF <-

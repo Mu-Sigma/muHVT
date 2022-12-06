@@ -1,6 +1,6 @@
 ---
 title: "muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"
-author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Praditi Shah"
+author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Praditi Shah, Shantanu Vaidya"
 date: "`r Sys.Date()`"
 output:
   rmarkdown::html_vignette:
@@ -30,7 +30,7 @@ knitr::opts_chunk$set(
 
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT", "data.table")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
@@ -50,10 +50,13 @@ source("../R/Delete_Outpoints.R")
 source("../R/getCentroids.R")
 source("../R/getOptimalCentroids.R")
 source("../R/hvq.R")
+source("../R/removeOutliers.R")
 source("../R/HVT.R")
 source("../R/hvtHmap.R")
+source("../R/plotCells.R")
 source("../R/plotHVT.R")
 source("../R/predictHVT.R")
+source("../R/mlayerHVT.R")
 source("../R/ScaleMat.R")
 source("../R/Transform_Coordinates.R")
 source("../R/madPlot.R")
@@ -130,23 +133,55 @@ set.seed(240)
 
 # Abstract
 
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
 
-The muHVT package is a collection of R functions for vector quantization and
-construction of hierarchical Voronoi tessellations as a data visualization
-tool to visualize cells using quantization. The hierarchical cells are computed using
-Hierarchical K-means where a quantization threshold governs the levels
-in the hierarchy for a set $k$ parameter (the maximum number of cells
-at each level). The package is particularly helpful to visualize rich multivariate data. 
+1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
+
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map coordinates into the desired output dimension
+
+3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
+
+4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
+
+# muHVT 3.0.0 | What's New?
+
+06th December, 2022
+
+This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
+
+The creation of a predictive set of maps involves four steps -
+
+1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
+2. **Remove outlier cells:** Manually identify and remove the outlier cells from the dataset using the removeOutliers() function (Map B)
+3. **Compress the dataset without outliers:** Again, compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
+4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
+
+Let us try to understand the steps with the help of the diagram below -
+
+```{r mlayerHVT Flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
+knitr::include_graphics('mlayerHVT.png')
+```
+
+Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
+
+The identified outlier cell(s) is then passed to the __`removeOutliers`__ function along with Map A. This function removes the identified outlier cell(s) from the dataset and stores them in Map B as shown in the diagram. The final output of this function is a list of two items - a newly constructed map (Map B), and a subset of the dataset without outlier cell(s).
+
+The __`plotCells`__ function plots the Voronoi tessellations for the compressed map (Map A) and highlights the identified outlier cell(s) in red on the plot. The function requires the identified outlier cell(s) number and the compressed map (Map A) as input in order to plot the tessellations map and highlight those outlier cells on it.
+
+The dataset without outlier(s) gotten as an output from the removeOutliers function is then passed as an argument to the __`HVT`__ function with other parameters such as n_cells, quant.error, depth, etc. to construct another map (Map C).
+
+Finally, all the constructed maps are passed to the __`mlayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
 
-This package additionally provides functions for computing the
-Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
+__For detailed information on the above functions, refer the vignette [here](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html).__
 
-The muHVT process involves three steps:
+## Installation of muHVT 3.0.0
 
-1. **Compress:** Using a quantization threshold
-2. **Project:** Using a dimension projection algorithm
-3. **Tessellate:** Using a Voronoi Tessellation
+``` r
+library(devtools)
+devtools::install_github(repo = "Mu-Sigma/muHVT")
+```
+
 
 # Compress: Vector Quantization
 
@@ -180,7 +215,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(k \* (n-k)\^2) .
 
-### Hierarchical Vector Qunatization 
+### Hierarchical Vector Quantization 
 
 The algorithm divides the dataset recursively into cells using $k-means$
 or $k-medoids$ algorithm. The maximum number of subsets are decided by
@@ -222,7 +257,7 @@ where
 
 Let us try to understand quantization error with an example.
 
-```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
+```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 2: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
 knitr::include_graphics('quant_explainer.png')
 ```
 
@@ -281,7 +316,7 @@ Here, we load the data and store into a variable `computers`.
 ```{r load data computer,warning=FALSE,message=FALSE,eval = T}
 set.seed(240)
 # Load data from csv files
-computers <- read.csv("https://raw.githubusercontent.com/SangeetM/dataset/master/Computers.csv")
+computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/Computers.csv")
 ```
 
 Let's have a look at some of the data
@@ -344,46 +379,37 @@ HVT(
 )
 ```
 
-Each of the parameters have been explained below
+Each of the parameters have been explained below :
 
 * __`dataset`__ - A dataframe with numeric columns 
 
-* __`nlcust`__  - An integer indicating the number of cells per hierarchy (level)
+* __`nclust`__  - An integer indicating the number of cells per hierarchy (level)
 
 * __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
 * __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown
 into further cells if the quantization error of the cell is above the defined quantization error threshold
 
-* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations efficiently
-
-* __`normalize`__	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
-
 * __`distance_metric`__	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric
 
-* __`quant_method`__ - The quantization method can be `kmeans` or
-    `kmedoids`. `kmeans` is selected by default.
+* __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. `kmeans` is selected by default
+    
+* __`normalize`__	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
 
-* __`diagnose`__ - A logical value indicating whether user wants to
-    perform diagnostics on the model. Default value is TRUE.
+* __`diagnose`__ - A logical value indicating whether user wants to perform diagnostics on the model. Default value is TRUE.
 
-* __`hvt_validation`__ - A logical value indicating whether user wants
-    to holdout a validation set and find mean absolute deviation of the
-    validation points from the centroid. Default value is FALSE.
+* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
-* __`train_validation_split_ratio`__ - A numeric value indicating
-    train validation split ratio. This argument is only used when
-    hvt_validation has been set to TRUE. Default value for the argument
-    is 0.8
+* __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
     
 First we will perform hierarchical Vector Quantization at level 1 by setting the parameter depth to 1 and the number of cells to 15. Here, level 1 signifies no hierarchy.
 
 ```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- HVT(trainComputers,
+hvt.results <- muHVT::HVT(trainComputers,
                           nclust = 15,
                           depth = 1,
                           quant.err = 0.2,
@@ -392,6 +418,7 @@ hvt.results <- HVT(trainComputers,
                           distance_metric = "L1_Norm",
                           error_metric = "mean",
                           quant_method = "kmeans")
+
 ```
 
 Now let's try to understand plotHVT function. The parameters have been explained in detail below
@@ -414,9 +441,9 @@ plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title 
 
 Let's plot the Voronoi tessellation
 
-```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi Tessellation for level 1 shown for the 15 cells in the dataset ’computers’',eval = global_var}
+```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi Tessellation for level 1 shown for the 15 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level one
-plotHVT(hvt.results,
+muHVT::plotHVT(hvt.results,
         line.width = c(0.6), 
         color.vec = c("#141B41"),
         centroid.size = 1.5,
@@ -427,15 +454,17 @@ As per the manual, __`hvt.results[[3]]`__ gives us detailed information about th
 
 __`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-Now let us understand what each column in the summary table means
+Now let us understand what each column in the above table means:
 
-* __`Segment Level`__ - Level of the cell. In this case, we have performed Vector Quantization for depth 1. Hence Segment Level is 1
+* __`Segment.Level`__ - Level of the cell. In this case, we have performed Vector Quantization for depth 1. Hence Segment Level is 1
 
-* __`Segment Parent`__ - Parent segment of the cell
+* __`Segment.Parent`__ - Parent segment of the cell
 
-* __`Segment Child`__ - The children of a particular cell. In this case, first level has 15 cells hence we can see Segment Child 1,2,3,4,5 ,..,15.
+* __`Segment.Child (Cell.Number)`__ - The children of a particular cell. In this case, it is the total number of cells at which we achieved the defined compression percentage 
 
 * __`n`__ - No of points in each cell
+
+* __`Cell.ID`__ - Cell_ID’s are generated for the multivariate data using 1-D Sammon’s Projection algorithm
 
 * __`Quant.Error`__ - Quantization Error for each cell
 
@@ -485,8 +514,8 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 Now let's plot the quantization error for each cell at level one as a heatmap.
 
-```{r hmp level one quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi Tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level one quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi Tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -507,7 +536,7 @@ Now let's go one level deeper and perform hierarchical vector quantization.
 set.seed(240)
 hvt.results2 <- list()
 # depth=2 is used for level2 in the hierarchy
-hvt.results2 <- HVT(
+hvt.results2 <- muHVT::HVT(
   trainComputers,
   nclust = 15,
   depth = 2,
@@ -518,13 +547,14 @@ hvt.results2 <- HVT(
   error_metric = "mean",
   quant_method = "kmeans"
 )
+
 ```
 
 Let's plot the Voronoi tessellation for both the levels.
 
-```{r plot level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi Tessellation for level 2 shown for the 225 cells in the dataset ’computers’',eval = global_var}
+```{r plot level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi Tessellation for level 2 shown for the 225 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level two
-plotHVT(
+muHVT::plotHVT(
   hvt.results2,
   line.width = c(0.6, 0.4),
   color.vec = c("#141B41", "#0582CA"),
@@ -555,8 +585,8 @@ As it can be seen in the table above, only `85%` cells in the 2nd level have Qua
 
 We will look at the heatmap for Quantization Error for level 2.
 
-```{r hmp level two quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi Tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 6: The Voronoi Tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results2,
   trainComputers,
   child.level = 2,
@@ -577,7 +607,7 @@ As the Quantization Error criteria is not met, let's perform hierarchical Vector
 set.seed(240)
 hvt.results3 <- list()
 # depth=3 is used for level3 in the hierarchy
-hvt.results3 <- HVT(
+hvt.results3 <- muHVT::HVT(
   trainComputers,
   nclust = 15,
   depth = 3,
@@ -587,13 +617,14 @@ hvt.results3 <- HVT(
   distance_metric = "L1_Norm",
   error_metric = "mean"
 )
+
 ```
 
 Let's plot the Voronoi Tessellation for all 3 levels.
 
-```{r plot level three computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 6: The Voronoi Tessellation for level 3 shown for the 1905 cells in the dataset ’computers’',eval = global_var}
+```{r plot level three computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 7: The Voronoi Tessellation for level 3 shown for the 1905 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level three
-plotHVT(
+muHVT::plotHVT(
   hvt.results3,
   line.width = c(0.6, 0.4, 0.2),
   color.vec = c("#141B41", "#0582CA", "#8BA0B4"),
@@ -617,8 +648,8 @@ compressionSummaryTable(hvt.results3[[3]]$compression_summary)
 
 As it can be seen from the compression summary table above, the Quantization Error for most of the cells in level 3 fall below the defined quantization threshold. Hence, we were successfully able to compress `100%` of the data.
 
-```{r hmp level three quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 7: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three quantization computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 8: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’computers’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results3,
   trainComputers,
   child.level = 3,
@@ -643,8 +674,8 @@ In the plot below, a heatmap for the variable `price` is overlayed on a level on
 
 The heatmap for the `price` variable for different cells at level 1 can be seen in the plot below.
 
-```{r hmp level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 8: The Voronoi Tessellation with the heat map overlaid for variable ’price’ at level 1 from ’computers’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi Tessellation with the heat map overlaid for variable ’price’ at level 1 from ’computers’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -664,8 +695,8 @@ Now we will go one level deeper and overlay heatmap for `price` at level 2. This
 
 In the plot below, we have overlayed heatmap for the variable `price` at level 2. 
 
-```{r hmp level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi tessellation with the heat map overlaid for the variable ’price’ at level 2 from the ’computer’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi tessellation with the heat map overlaid for the variable ’price’ at level 2 from the ’computer’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results2,
   trainComputers,
   child.level = 2,
@@ -684,8 +715,8 @@ Let us go one level deeper and overlay heatmap for `price` at level 3.
 
 In the plot below, we have overlayed heatmap for variable `price` on level 3. 
 
-```{r hmp level three computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi tessellation with the heat map overlaid for the variable ’price’ at level 3 from the ’computer’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi tessellation with the heat map overlaid for the variable ’price’ at level 3 from the ’computer’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results3,
   trainComputers,
   child.level = 3,
@@ -720,8 +751,8 @@ Let's repeat the steps above for the `speed` variable
 
 The heatmap for `speed` variable for different cells at level 1 can be seen in the plot below.
 
-```{r hmp level one computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi Tessellation with the heat map overlaid for variable ’speed’ at level 1 from ’computers’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level one computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation with the heat map overlaid for variable ’speed’ at level 1 from ’computers’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -743,8 +774,8 @@ rm(hvt.results)
 
 Now we will go one level deeper and overlay heatmap for `speed` at level 2
 
-```{r hmp level two computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation with the heat map overlaid for the variable ’speed’ at level 2 from the ’computer’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation with the heat map overlaid for the variable ’speed’ at level 2 from the ’computer’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results2,
   trainComputers,
   child.level = 2,
@@ -767,8 +798,8 @@ Let us go one level deeper and overlay heatmap for `speed` at level 3.
 
 In the plot below, we have overlayed heatmap for variable `speed` on level 3. 
 
-```{r hmp level three computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation with the heat map overlaid for the variable ’speed’ at level 3 from the ’computer’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three computers speed,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi Tessellation with the heat map overlaid for the variable ’speed’ at level 3 from the ’computer’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.results3,
   trainComputers,
   child.level = 3,
@@ -811,7 +842,7 @@ The important parameters for the function `predictHVT` are as below
 
 ```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions <- predictHVT(
+predictions <- muHVT::predictHVT(
   testComputers,
   hvt.results3,
   hmap.cols = "Quant.Error",
@@ -851,7 +882,7 @@ The prediction algorithm will not work if some of the variables used to perform 
 ```{r predictHVT2 computers,warning=FALSE,message=FALSE,eval=global_var}
 set.seed(240)
 # testComputers <- testComputers %>% dplyr::select(-c(screen,ads))
-predictions <- predictHVT(
+predictions <- muHVT::predictHVT(
   testComputers,
   hvt.results3,
   hmap.cols = "Quant.Error",
@@ -920,7 +951,7 @@ summary(torus_df)
 
 Now let's try to visualize the object in a 3D Space.
 
-```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 14: 3D Torus',eval = global_var}
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 15: 3D Torus',eval = global_var}
 #plot_torus <- plotly::plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
 #plot_torus
 knitr::include_graphics('torus.png')
@@ -929,9 +960,9 @@ knitr::include_graphics('torus.png')
 
 Now let's try to use the package and project the above 3D object in a 2D Space. We will start with number of cells as 100.
 
-```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi tessellation for level 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus <- HVT(
+hvt.torus <- muHVT::HVT(
   torus_df,
   nclust = 100,
   depth = 1,
@@ -942,7 +973,7 @@ hvt.torus <- HVT(
   error_metric = "mean"
 )
 
-plotHVT(
+muHVT::plotHVT(
   hvt.torus,
   line.width = c(0.4),
   color.vec = c("#141B41"),
@@ -961,8 +992,8 @@ As it can be seen in the table above, none of the 100 cells hit the quantization
 
 Let's overlay the heatmap for quantization error for level 1.
 
-```{r hmp level one quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level one quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus,
   torus_df,
   child.level = 1,
@@ -979,9 +1010,9 @@ hvtHmap(
 
 Now let's overlay the heatmap for x, y and z variables
 
-```{r hmp level one quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level one quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
 
-hvtHmap(
+muHVT::hvtHmap(
   hvt.torus,
   torus_df,
   child.level = 1,
@@ -997,9 +1028,9 @@ hvtHmap(
 
 ```
 
-```{r hmp level one quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level one quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
 
-hvtHmap(
+muHVT::hvtHmap(
   hvt.torus,
   torus_df,
   child.level = 1,
@@ -1010,14 +1041,14 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 
 ```
 
-```{r hmp level one quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
+```{r hmp level one quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation for level 1 with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
 
-hvtHmap(
+muHVT::hvtHmap(
   hvt.torus,
   torus_df,
   child.level = 1,
@@ -1028,7 +1059,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 
 ```
@@ -1040,9 +1071,9 @@ rm(hvt.torus)
 
 Now let's try again with the number of cells as 300.
 
-```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 1 shown for the 200 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus2 <- HVT(
+hvt.torus2 <- muHVT::HVT(
   torus_df,
   nclust = 300,
   depth = 1,
@@ -1052,7 +1083,8 @@ hvt.torus2 <- HVT(
   distance_metric = "L1_Norm",
   error_metric = "mean"
 )
-plotHVT(
+
+muHVT::plotHVT(
   hvt.torus2,
   line.width = c(0.4),
   color.vec = c("#141B41"),
@@ -1071,8 +1103,8 @@ It can be observed from the table above that only 62 cells out of 300 i.e. `21%`
 
 Let's understand this visually by overlaying the heatmap for Quantization Error at level 1.
 
-```{r hmp level two quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus2,
   torus_df,
   child.level = 1,
@@ -1083,14 +1115,14 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
 Now lets overlay the heatmap for the x, y and z variables at level 1 
 
-```{r hmp level two quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus2,
   torus_df,
   child.level = 1,
@@ -1101,12 +1133,12 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
-```{r hmp level two quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus2,
   torus_df,
   child.level = 1,
@@ -1117,13 +1149,13 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
 
-```{r hmp level two quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level two quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi tessellation for level 2 with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus2,
   torus_df,
   child.level = 1,
@@ -1134,7 +1166,7 @@ hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
@@ -1145,9 +1177,9 @@ rm(hvt.torus2)
 
 Let's increase the number of cells to 900.
 
-```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt third,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 26: The Voronoi tessellation for level 1 shown for the 500 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus3 <- HVT(
+hvt.torus3 <- muHVT::HVT(
   torus_df,
   nclust = 900,
   depth = 1,
@@ -1158,7 +1190,7 @@ hvt.torus3 <- HVT(
   error_metric = "mean"
 )
 
-plotHVT(
+muHVT::plotHVT(
   hvt.torus3,
   line.width = c(0.4),
   color.vec = c("#141B41"),
@@ -1178,8 +1210,8 @@ By increasing the number of cells to 900, we were successfully able to compress 
 
 Let's checkout the heatmap for quantization error.
 
-```{r hmp level three quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 27: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -1190,13 +1222,13 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 Now let's checkout the heatmap for the x, y and z variables
 
-```{r hmp level three quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 26: The Voronoi tessellation with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 28: The Voronoi tessellation with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -1207,12 +1239,12 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
-```{r hmp level three quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 27: The Voronoi tessellation with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 29: The Voronoi tessellation with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -1223,12 +1255,12 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
-```{r hmp level three quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 28: The Voronoi tessellation with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level three quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 30: The Voronoi tessellation with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -1239,7 +1271,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
@@ -1250,9 +1282,9 @@ rm(hvt.torus3)
 
 Let's use the hierarchical Vector Quantization technique and go one level deeper, keeping the number of cells as 500.
 
-```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 29: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt forth,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 31: The Voronoi tessellation for level 2 shown for the 400 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus4 <- HVT(
+hvt.torus4 <- muHVT::HVT(
   torus_df,
   nclust = 500,
   depth = 2,
@@ -1263,7 +1295,7 @@ hvt.torus4 <- HVT(
   error_metric = "mean"
 )
 
-plotHVT(
+muHVT::plotHVT(
   hvt.torus4,
   line.width = c(0.5, 0.3),
   color.vec = c("#141B41", "#0582CA"),
@@ -1282,8 +1314,8 @@ From the above table, we can observe that we were able to compress `100%` of the
 
 Let's also observe the Quantization Error heatmap.
 
-```{r hmp level forth quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 30: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level forth quantization torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 32: The Voronoi tessellation with the heat map overlaid for variable ’quant_error’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus4,
   torus_df,
   child.level = 2,
@@ -1294,14 +1326,14 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
 Now lets observe the heatmaps for x, y and z variables at Level 2
 
-```{r hmp level forth quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 31: The Voronoi tessellation with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level forth quantization torus x,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 33: The Voronoi tessellation with the heat map overlaid for variable ’x’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus4,
   torus_df,
   child.level = 2,
@@ -1312,12 +1344,12 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
-```{r hmp level forth quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 32: The Voronoi tessellation with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level forth quantization torus y,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 34: The Voronoi tessellation with the heat map overlaid for variable ’y’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus4,
   torus_df,
   child.level = 2,
@@ -1328,12 +1360,12 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
-```{r hmp level forth quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 33: The Voronoi tessellation with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
-hvtHmap(
+```{r hmp level forth quantization torus z,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 35: The Voronoi tessellation with the heat map overlaid for variable ’z’ in the ’torus’ dataset',eval = global_var}
+muHVT::hvtHmap(
   hvt.torus4,
   torus_df,
   child.level = 2,
@@ -1344,7 +1376,7 @@ hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  nlcust.hmap = 15
 )
 ```
 
@@ -1364,10 +1396,12 @@ hvtHmap(
 
 # References
 
-1. Vector Quantization : https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf
+1. Topology Preserving Maps : https://link.springer.com/chapter/10.1007/1-84628-118-0_7
 
-2. K-means : https://en.wikipedia.org/wiki/K-means_clustering
+2. Vector Quantization : https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf
 
-3. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+3. K-means : https://en.wikipedia.org/wiki/K-means_clustering
 
-4. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
+4. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+
+5. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation

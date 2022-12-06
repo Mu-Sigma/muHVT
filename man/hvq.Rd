@@ -6,13 +6,14 @@
 \usage{
 hvq(
   x,
-  nclust = 3,
+  min_compression_perc = NA,
+  n_cells = NA,
   depth = 3,
   quant.err = 10,
   algorithm = "Hartigan-Wong",
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
-  quant_method = "kmeans"
+  quant_method = c("kmeans", "kmedoids")
 )
 }
 \arguments{
@@ -20,7 +21,10 @@ hvq(
 observation, and each column corresponds to a variable. Missing values are
 not accepted.}
 
-\item{nclust}{Numeric. Indicating the number of nodes per hierarchy.}
+\item{min_compression_perc}{Numeric. An integer indicating the minimum percent compression rate to
+be achieved for the dataset}
+
+\item{n_cells}{Numeric. Indicating the number of nodes per hierarchy.}
 
 \item{depth}{Numeric. Indicating the hierarchy depth (or) the depth of the
 tree (1 = no hierarchy, 2 = 2 levels, etc..)}
@@ -67,8 +71,8 @@ hierarchically arranged vector quantized data.
 \examples{
 
 data("USArrests",package="datasets")
-hvqOutput = hvq(USArrests, nclust = 5, depth = 2, quant.err = 0.2,
-distance_metric='L1_Norm',error_metric='mean')
+hvqOutput = hvq(USArrests, n_cells = 5, depth = 2, quant.err = 0.2,
+distance_metric='L1_Norm',error_metric='mean',quant_method="kmeans")
 
 }
 \seealso{

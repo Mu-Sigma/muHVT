@@ -31,7 +31,7 @@ train <- USArrests[1:40,]
 test <- USArrests[41:50,]
 
 hvt.results <- list()
-hvt.results <- HVT(train, nclust = 15, depth = 1, quant.err = 0.2,
+hvt.results <- HVT(train, n_cells = 15, depth = 1, quant.err = 0.2,
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
                    quant_method="kmeans",diagnose=TRUE)
