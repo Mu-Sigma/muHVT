@@ -2,8 +2,6 @@
 
 #### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah
 
-#### 2022-12-06
-
 <div id="TOC">
 
 *   [<span class="toc-section-number">1</span> Abstract](#abstract)

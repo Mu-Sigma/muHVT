@@ -210,7 +210,8 @@ plotCells <-
                  label.padding=unit(0.55, "lines"),
                  label.size=0.4,
                  color="white",
-                 fill="#038225" )
+                 fill="#038225" ) +
+      theme(legend.position = "none")
 
     
     return(suppressMessages(p))

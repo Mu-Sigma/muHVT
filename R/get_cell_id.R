@@ -28,6 +28,7 @@ get_cell_id <-  function (hvt.results){
   generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")
   temp_summary=hvt.results[[3]][["summary"]] %>% dplyr::select(!generic_col) %>% dplyr::mutate(id=row_number())
   cent_val= temp_summary %>% subset(.,complete.cases(.)) 
+  set.seed(123)
   sammon_1d_cord <- MASS::sammon(
     d = stats::dist(cent_val %>% dplyr::select(!id),method = "manhattan"),
     niter = 10 ^ 5,

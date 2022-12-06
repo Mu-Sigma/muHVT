@@ -118,15 +118,15 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, large number of rows. A collection of R functions for this typical workflow is organized below:
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
 
-Data Compression: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
+1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
 
-Data Projection: Dimension projection of the compressed cells to 1D,2D,3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension.
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map coordinates into the desired output dimension
 
-Tessellation: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
+3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
 
-Prediction: Scoring new data sets and recording its assignment using the map objects from the above steps, in a sequence of maps if required. 
+4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 This package also provides functions for computing the Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
@@ -265,7 +265,7 @@ Now, let's check the compression summary for HVT Map A. The table below shows no
 
 ```{r hvt_mapA compression summary,warning=FALSE,eval = global_var}
 mapA_compression_summary <- hvt_mapA[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-DT::datatable(mapA_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+compressionSummaryTable(mapA_compression_summary)
 ```
 
 As per the manual, __`hvt_mapA[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
@@ -289,7 +289,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 cell_mapping_df <- arrange(hvt_mapA[[3]]$summary, n) %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(cell_mapping_df, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+summaryTable(cell_mapping_df)
 ```
 
 Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
@@ -367,7 +367,7 @@ Let's have a look at the removed outlier rows data
 
 ```{r hvt_mapB results, warning=FALSE, echo=FALSE}
 hvt_mapB <- hvt_mapB %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(hvt_mapB, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+Table(hvt_mapB, scroll = T, limit = 10)
 ```
 
 ## Voronoi tessellation to highlight outlier cell in the map
@@ -409,14 +409,14 @@ Now let's check the compression summary for HVT Map C. The table below shows no 
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
 mapC_compression_summary <- hvt_mapC[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-DT::datatable(mapC_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+compressionSummaryTable(mapC_compression_summary)
 ```
 
 __`hvt_mapC[[3]]`__ gives us detailed information about the hierarchical vector quantized data. __`hvt_mapC[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
 ```{r display_mapC_table, warning=FALSE, echo=FALSE}
 cell_mapping_mapC <- arrange(hvt_mapC[[3]]$summary, Cell.ID) %>% mutate_if(is.numeric, round, digits = 4)
-DT::datatable(cell_mapping_mapC, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+summaryTable(cell_mapping_mapC)
 ```
 
 Now let's plot the __`price`__ feature for each cell at level one as a heatmap.
@@ -463,12 +463,10 @@ summary(testComputers)
 For validating the predictions, the row numbers : 493, 550, 753, and 1253 were manually added in the test dataset to see if those are getting mapped to the correct outlier cell in the HVT Map B as per below table (ground truth).
 
 ```{r ground truth, echo=FALSE}
-
 ground_truth_df <- data.frame(Row.Number = c(493, 550, 753, 1253),
                               Ground.Truth_Cell.ID = c(3, 1, 3, 2))
 
-DT::datatable(ground_truth_df,class = 'cell-border stripe', 
-             filter = 'top', options = list(pageLength = 10, autoWidth = TRUE), rownames = FALSE)
+Table(ground_truth_df, scroll = T, limit = 10)
 ```
 
 Now, Let us understand the mlayerHVT function -
@@ -516,10 +514,8 @@ predictions <- mlayerHVT(testComputers,
 Below are the predicted results on the test data based on the predictive set of maps : Map A, Map B and Map C -
 
 ```{r predictions_table, echo=FALSE}
-DT::datatable(as.data.frame(predictions),class = 'cell-border stripe', 
-             filter = 'top', options = list(
-                pageLength = 10, autoWidth = TRUE
-              ), rownames = FALSE)
+predictions <- predictions[order(predictions$MapB.Cell.ID,decreasing=TRUE),]
+Table(predictions, scroll = T, limit = 10)
 ```
 
 
@@ -552,4 +548,14 @@ Hence, from the table above, we can clearly see that the predictions are exactly
 
 *  In the test data, the 493rd, 753rd and 889th test record is predicted as outlier record and is mapped to the 3rd outlier cell of the HVT Map B. Similarly, the 550th and 1253rd test record is correctly predicted as the outlier record and gets mapped to the 1st and 2nd cell of the HVT Map B respectively.
 
+# References
 
+1. Topology Preserving Maps : https://link.springer.com/chapter/10.1007/1-84628-118-0_7
+
+2. Vector Quantization : https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf
+
+3. K-means : https://en.wikipedia.org/wiki/K-means_clustering
+
+4. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+
+5. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
