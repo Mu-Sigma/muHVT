@@ -128,8 +128,6 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
-This package also provides functions for computing the Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
-
 This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
 
 The creation of a predictive set involves four steps -

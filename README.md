@@ -25,14 +25,6 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
-This package additionally provides functions for computing Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
-
-The muHVT process involves three steps:
-
-1.  **Compress:** Using a quantization threshold
-2.  **Project:** Using a dimension projection algorithm
-3.  **Tessellate:** Using a Voronoi Tessellation
-
 </div>
 
 <div id="muhvt-3.0.0-whats-new" class="section level1" number="2">
