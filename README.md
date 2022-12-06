@@ -81,7 +81,7 @@ Finally, all the constructed maps are passed to the **`mlayerHVT`** function alo
 <div class="sourceCode" id="cb1">
 
     library(devtools)
-    devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev")
+    devtools::install_github(repo = "Mu-Sigma/muHVT")
 
 </div>
 

@@ -179,7 +179,7 @@ __For detailed information on the above functions, refer the vignette [here](htt
 
 ``` r
 library(devtools)
-devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev")
+devtools::install_github(repo = "Mu-Sigma/muHVT")
 ```
 
 
