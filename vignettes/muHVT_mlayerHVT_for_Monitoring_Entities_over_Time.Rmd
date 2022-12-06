@@ -118,7 +118,17 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions for vector quantization and construction of Hierarchical Voronoi Tessellations as a data visualization tool to visualize cells using quantization. The hierarchical cells are computed using Hierarchical K-means or K-medoids where a quantization threshold governs the levels in the hierarchy for a set k parameter (the maximum number of cells at each level). The package is particularly helpful to visualize rich multivariate data.
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, large number of rows. A collection of R functions for this typical workflow is organized below:
+
+Data Compression: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
+
+Data Projection: Dimension projection of the compressed cells to 1D,2D,3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension.
+
+Tessellation: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
+
+Prediction: Scoring new data sets and recording its assignment using the map objects from the above steps, in a sequence of maps if required. 
+
+This package also provides functions for computing the Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
 This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
 
@@ -135,15 +145,15 @@ Let us try to understand the steps with the help of the diagram below.
 knitr::include_graphics('./mlayerHVT.png')
 ```
 
-Initially, the raw data is passed, and a highly compressed Map A is constructed using the HVT function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
+Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
 
-The identified outlier cell(s) is then passed to the removeOutliers function along with Map A. This function removes the identified outlier cell(s) from the dataset and stores them in Map B as shown in the diagram. The final output of this function is a list of two items - a newly constructed map (Map B), and a subset of the dataset without outlier cell(s).
+The identified outlier cell(s) is then passed to the __`removeOutliers`__ function along with Map A. This function removes the identified outlier cell(s) from the dataset and stores them in Map B as shown in the diagram. The final output of this function is a list of two items - a newly constructed map (Map B), and a subset of the dataset without outlier cell(s).
 
-The plotCells function plots the Voronoi tessellations for the compressed map (Map A) and highlights the identified outlier cell(s) in red on the plot. The function requires the identified outlier cell(s) number and the compressed map (Map A) as input in order to plot the tessellations map and highlight those outlier cells on it.
+The __`plotCells`__ function plots the Voronoi tessellations for the compressed map (Map A) and highlights the identified outlier cell(s) in red on the plot. The function requires the identified outlier cell(s) number and the compressed map (Map A) as input in order to plot the tessellations map and highlight those outlier cells on it.
 
-The dataset without outlier(s) gotten as an output from the removeOutliers function is then passed as an argument to the HVT function with other parameters such as n_cells, quant.error, depth, etc. to construct another map (Map C).
+The dataset without outlier(s) gotten as an output from the removeOutliers function is then passed as an argument to the __`HVT`__ function with other parameters such as n_cells, quant.error, depth, etc. to construct another map (Map C).
 
-Finally, all the constructed maps are passed to the mlayerHVT function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
+Finally, all the constructed maps are passed to the __`mlayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
 
 # Data Understanding
