@@ -609,25 +609,6 @@ preserving map. Useful for semi-supervised tasks</p></li>
 their assignment using the map objects from the above steps, in a
 sequence of maps if required</p></li>
 </ol>
-<p>This package also provides functions for computing the Sammon’s
-projection and plotting the heat map of the variables on the tiles of
-the tessellations.</p>
-<p>This package now additionally provides functionality to predict based
-on a set of maps to monitor entities over time.</p>
-<p>The creation of a predictive set involves four steps -</p>
-<ol style="list-style-type: decimal">
-<li><strong>Compress:</strong> Compress the dataset using a percentage
-compression rate and a quantization threshold using the HVT() function
-(Map A)</li>
-<li><strong>Remove outlier cells:</strong> Manually identify and remove
-the outlier cells from the dataset using the removeOutliers() function
-(Map B)</li>
-<li><strong>Compress the dataset without outliers:</strong> Again
-compress the dataset without outlier(s) using n_cells, depth and a
-quantization threshold using the HVT() function (Map C)</li>
-<li><strong>Predict based on a predictive set of maps:</strong> Using
-the mlayerHVT() function</li>
-</ol>
 <p>Let us try to understand the steps with the help of the diagram
 below.</p>
 <div class="figure" style="text-align: center">
