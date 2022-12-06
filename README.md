@@ -99,7 +99,7 @@ Following are the links to the vignettes for the muHVT package:
 
 ## <span class="header-section-number">3.1</span> muHVT Vignette
 
-[**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+[**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
@@ -107,7 +107,7 @@ Following are the links to the vignettes for the muHVT package:
 
 ## <span class="header-section-number">3.2</span> muHVT Model Diagnostics Vignette
 
-[**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
+[**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model.
 
 </div>
 
@@ -115,10 +115,4 @@ Following are the links to the vignettes for the muHVT package:
 
 ## <span class="header-section-number">3.3</span> muHVT - Using mlayerHVT() for Monitoring Entities over Time
 
-[**muHVT - Using mlayerHVT() for Monitoring Entities over Time:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps
-
-</div>
-
-</div>
-
-<script>(function () { var script = document.createElement("script"); script.type = "text/javascript"; script.src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"; document.getElementsByTagName("head")[0].appendChild(script); })();</script>
+[**muHVT - Using mlayerHVT() for Monitoring Entities over Time:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps.
