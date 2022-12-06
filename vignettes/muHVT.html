@@ -359,26 +359,29 @@ Vignettes</a></li>
 <p>The muHVT package is a collection of R functions to facilitate
 building <a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7">topology
 preserving maps</a> for rich multivariate data. Tending towards a big
-data preponderance, large number of rows. A collection of R functions
-for this typical workflow is organized below:</p>
-<p>Data Compression: Vector quantization (VQ), HVQ (hierarchical vector
-quantization) using means or medians. This step compresses the rows
-(long data frame) using a compression objective.</p>
-<p>Data Projection: Dimension projection of the compressed cells to
-1D,2D,3D with the Sammons Nonlinear Algorithm. This step creates
-topology preserving map coordinates into the desired output
-dimension.</p>
-<p>Tessellation: Create cells required for object visualization using
-the Voronoi Tessellation method, package includes heatmap plots for
-hierarchical Voronoi tessellations (HVT). This step enables data
-insights, visualization, and interaction with the topology preserving
-map. Useful for semi-supervised tasks.</p>
-<p>Prediction: Scoring new data sets and recording its assignment using
-the map objects from the above steps, in a sequence of maps if
-required.</p>
-<p>This package additionally provides functions for computing the
-Sammon’s projection and plotting the heat map of the variables on the
-tiles of the tessellations.</p>
+data preponderance, a large number of rows. A collection of R functions
+for this typical workflow is organized below :</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Data Compression</strong>: Vector quantization (VQ), HVQ
+(hierarchical vector quantization) using means or medians. This step
+compresses the rows (long data frame) using a compression
+objective.</p></li>
+<li><p><strong>Data Projection</strong>: Dimension projection of the
+compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm.
+This step creates topology preserving map coordinates into the desired
+output dimension.</p></li>
+<li><p><strong>Tessellation</strong>: Create cells required for object
+visualization using the Voronoi Tessellation method, package includes
+heatmap plots for hierarchical Voronoi tessellations (HVT). This step
+enables data insights, visualization, and interaction with the topology
+preserving map. Useful for semi-supervised tasks.</p></li>
+<li><p><strong>Prediction</strong>: Scoring new data sets and recording
+their assignment using the map objects from the above steps, in a
+sequence of maps if required.</p></li>
+</ol>
+<p>This package additionally provides functions for computing Sammon’s
+projection and plotting the heat map of the variables on the tiles of
+the tessellations.</p>
 <p>The muHVT process involves three steps:</p>
 <ol style="list-style-type: decimal">
 <li><strong>Compress:</strong> Using a quantization threshold</li>
