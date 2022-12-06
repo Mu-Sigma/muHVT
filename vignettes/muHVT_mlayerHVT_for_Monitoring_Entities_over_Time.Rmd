@@ -265,7 +265,7 @@ Now, let's check the compression summary for HVT Map A. The table below shows no
 
 ```{r hvt_mapA compression summary,warning=FALSE,eval = global_var}
 mapA_compression_summary <- hvt_mapA[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-compressionSummaryTable(mapA_compression_summary)
+DT::datatable(mapA_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 As per the manual, __`hvt_mapA[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
@@ -289,7 +289,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 cell_mapping_df <- arrange(hvt_mapA[[3]]$summary, n) %>% mutate_if(is.numeric, round, digits = 4)
-summaryTable(cell_mapping_df)
+DT::datatable(cell_mapping_df, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 Let's have look at the function `hvtHmap` which we will use to overlay a variable as heatmap.
@@ -367,7 +367,7 @@ Let's have a look at the removed outlier rows data
 
 ```{r hvt_mapB results, warning=FALSE, echo=FALSE}
 hvt_mapB <- hvt_mapB %>% mutate_if(is.numeric, round, digits = 4)
-Table(hvt_mapB, scroll = T, limit = 10)
+DT::datatable(hvt_mapB, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 ## Voronoi tessellation to highlight outlier cell in the map
@@ -409,14 +409,14 @@ Now let's check the compression summary for HVT Map C. The table below shows no 
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
 mapC_compression_summary <- hvt_mapC[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-compressionSummaryTable(mapC_compression_summary)
+DT::datatable(mapC_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
 ```
 
 __`hvt_mapC[[3]]`__ gives us detailed information about the hierarchical vector quantized data. __`hvt_mapC[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
 ```{r display_mapC_table, warning=FALSE, echo=FALSE}
 cell_mapping_mapC <- arrange(hvt_mapC[[3]]$summary, Cell.ID) %>% mutate_if(is.numeric, round, digits = 4)
-summaryTable(cell_mapping_mapC)
+DT::datatable(cell_mapping_mapC, filter = 'top', options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
 ```
 
 Now let's plot the __`price`__ feature for each cell at level one as a heatmap.
@@ -463,10 +463,9 @@ summary(testComputers)
 For validating the predictions, the row numbers : 493, 550, 753, and 1253 were manually added in the test dataset to see if those are getting mapped to the correct outlier cell in the HVT Map B as per below table (ground truth).
 
 ```{r ground truth, echo=FALSE}
+
 ground_truth_df <- data.frame(Row.Number = c(493, 550, 753, 1253),
                               Ground.Truth_Cell.ID = c(3, 1, 3, 2))
-
-Table(ground_truth_df, scroll = T, limit = 10)
 ```
 
 Now, Let us understand the mlayerHVT function -
@@ -514,8 +513,10 @@ predictions <- mlayerHVT(testComputers,
 Below are the predicted results on the test data based on the predictive set of maps : Map A, Map B and Map C -
 
 ```{r predictions_table, echo=FALSE}
-predictions <- predictions[order(predictions$MapB.Cell.ID,decreasing=TRUE),]
-Table(predictions, scroll = T, limit = 10)
+DT::datatable(as.data.frame(predictions),class = 'cell-border stripe',
+             filter = 'top', options = list(
+                pageLength = 10, autoWidth = TRUE
+              ), rownames = FALSE)
 ```
 
 
