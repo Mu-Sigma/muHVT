@@ -179,7 +179,7 @@ __For detailed information on the above functions, refer the vignette [here](htt
 
 ``` r
 library(devtools)
-devtools::install_github(repo = "Mu-Sigma/muHVT")
+devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev")
 ```
 
 
@@ -219,7 +219,7 @@ algorithm is O(k \* (n-k)\^2) .
 
 The algorithm divides the dataset recursively into cells using $k-means$
 or $k-medoids$ algorithm. The maximum number of subsets are decided by
-setting $nclust$ to, say five, in order to divide the dataset into
+setting $n_cells$ to, say five, in order to divide the dataset into
 maximum of five subsets. These five subsets are further divided into
 five subsets(or less), resulting in a total of twenty five (5\*5)
 subsets. The recursion terminates when the cells either contain less
@@ -365,7 +365,7 @@ Let us try to understand the HVT function first.
 ```{r HVT function, echo = TRUE, eval= FALSE}
 HVT(
   dataset,
-  nclust,
+  n_cells,
   depth,
   quant.err,
   projection.scale,
@@ -383,7 +383,7 @@ Each of the parameters have been explained below :
 
 * __`dataset`__ - A dataframe with numeric columns 
 
-* __`nclust`__  - An integer indicating the number of cells per hierarchy (level)
+* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level)
 
 * __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
@@ -410,7 +410,7 @@ First we will perform hierarchical Vector Quantization at level 1 by setting the
 set.seed(240)
 hvt.results <- list()
 hvt.results <- muHVT::HVT(trainComputers,
-                          nclust = 15,
+                          n_cells = 15,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
@@ -526,7 +526,7 @@ muHVT::hvtHmap(
   centroid.size = 1.5,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -538,7 +538,7 @@ hvt.results2 <- list()
 # depth=2 is used for level2 in the hierarchy
 hvt.results2 <- muHVT::HVT(
   trainComputers,
-  nclust = 15,
+  n_cells = 15,
   depth = 2,
   quant.err = 0.2,
   projection.scale = 10,
@@ -597,7 +597,7 @@ muHVT::hvtHmap(
   centroid.size = 2,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -609,13 +609,14 @@ hvt.results3 <- list()
 # depth=3 is used for level3 in the hierarchy
 hvt.results3 <- muHVT::HVT(
   trainComputers,
-  nclust = 15,
+  n_cells = 15,
   depth = 3,
   quant.err = 0.2,
   projection.scale = 10,
   normalize = T,
   distance_metric = "L1_Norm",
-  error_metric = "mean"
+  error_metric = "mean",
+  quant_method = "kmeans"
 )
 
 ```
@@ -660,7 +661,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -686,7 +687,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -707,7 +708,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 2,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -727,7 +728,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -738,7 +739,7 @@ Using the `exploded_hmap()` function, we can also generate an interactive 3D hea
 The image below shows what the 3D heatmap for the `price` variable would look like for Levels 1 and 2.  
 
 ```{r eval=FALSE}
-exploded_hmap(hvt.results3, child.level = 2, hmap.cols = "price", nclust.hmap = 15, dim_size = 1000)
+exploded_hmap(hvt.results3, child.level = 2, hmap.cols = "price", n_cells.hmap = 15, dim_size = 1000)
 ```
 
 ```{r echo=FALSE, out.width = "672px", out.height = "700px",}
@@ -763,7 +764,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -786,7 +787,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1.5,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -810,7 +811,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -850,7 +851,7 @@ predictions <- muHVT::predictHVT(
   line.width = c(1.2, 0.8, 0.4),
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -891,7 +892,7 @@ predictions <- muHVT::predictHVT(
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
   centroid_size = 1,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -964,13 +965,14 @@ Now let's try to use the package and project the above 3D object in a 2D Space. 
 set.seed(240)
 hvt.torus <- muHVT::HVT(
   torus_df,
-  nclust = 100,
+  n_cells = 100,
   depth = 1,
   quant.err = 0.06,
   projection.scale = 10,
   normalize = T,
   distance_metric = "L1_Norm",
-  error_metric = "mean"
+  error_metric = "mean",
+  quant_method = "kmeans"
 )
 
 muHVT::plotHVT(
@@ -1004,7 +1006,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1023,7 +1025,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1041,7 +1043,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1059,7 +1061,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 
 ```
@@ -1075,13 +1077,14 @@ Now let's try again with the number of cells as 300.
 set.seed(240)
 hvt.torus2 <- muHVT::HVT(
   torus_df,
-  nclust = 300,
+  n_cells = 300,
   depth = 1,
   quant.err = 0.06,
   projection.scale = 10,
   normalize = T,
   distance_metric = "L1_Norm",
-  error_metric = "mean"
+  error_metric = "mean",
+  quant_method = "kmeans"
 )
 
 muHVT::plotHVT(
@@ -1115,7 +1118,7 @@ muHVT::hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1133,7 +1136,7 @@ muHVT::hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1149,7 +1152,7 @@ muHVT::hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1166,7 +1169,7 @@ muHVT::hvtHmap(
   centroid.size = 1,
   show.points = T,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1181,13 +1184,14 @@ Let's increase the number of cells to 900.
 set.seed(240)
 hvt.torus3 <- muHVT::HVT(
   torus_df,
-  nclust = 900,
+  n_cells = 900,
   depth = 1,
   quant.err = 0.06,
   projection.scale = 10,
   normalize = T,
   distance_metric = "L1_Norm",
-  error_metric = "mean"
+  error_metric = "mean",
+  quant_method = "kmeans"
 )
 
 muHVT::plotHVT(
@@ -1222,7 +1226,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 Now let's checkout the heatmap for the x, y and z variables
@@ -1239,7 +1243,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1255,7 +1259,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1271,7 +1275,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 0.8,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1286,13 +1290,14 @@ Let's use the hierarchical Vector Quantization technique and go one level deeper
 set.seed(240)
 hvt.torus4 <- muHVT::HVT(
   torus_df,
-  nclust = 500,
+  n_cells = 500,
   depth = 2,
   quant.err = 0.06,
   projection.scale = 10,
   normalize = T,
   distance_metric = "L1_Norm",
-  error_metric = "mean"
+  error_metric = "mean",
+  quant_method = "kmeans"
 )
 
 muHVT::plotHVT(
@@ -1326,7 +1331,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1344,7 +1349,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1360,7 +1365,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 
@@ -1376,7 +1381,7 @@ muHVT::hvtHmap(
   show.points = T,
   centroid.size = 1,
   quant.error.hmap = 0.06,
-  nlcust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 

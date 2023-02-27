@@ -255,7 +255,7 @@ First, we will construct Map A by performing Hierarchical Vector Quantization by
 ```{r hvt_mapA HVT,warning=FALSE,message=FALSE,results='asis'}
 hvt_mapA <- list()
 
-hvt_mapA <- HVT(trainComputers,
+hvt_mapA <-muHVT::HVT(trainComputers,
                 min_compression_perc = 70,
                 quant.err = 0.2,
                 distance_metric = "L1_Norm",
@@ -337,7 +337,7 @@ hmap <- lapply(1:length(col_list), function(x){
   centroid.size = 1.0,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15,
+  n_cells.hmap = 15,
 ) #%>% ggplotly() # for plotly
 })
 ```
@@ -437,7 +437,7 @@ hvtHmap(
   centroid.size = 1.0,
   show.points = T,
   quant.error.hmap = 0.2,
-  nclust.hmap = 15
+  n_cells.hmap = 15
 )
 ```
 

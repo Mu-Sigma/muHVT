@@ -85,22 +85,16 @@ __For detailed information on the above functions, refer the vignette.__
 
 ``` r
 library(devtools)
-devtools::install_github(repo = "Mu-Sigma/muHVT")
+devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev")
 ```
 
 # Vignettes
 
 Following are the links to the vignettes for the muHVT package:
 
-## muHVT Vignette
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
-[**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
 
-## muHVT Model Diagnostics Vignette
-
-[**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model.
-
-## muHVT - Using mlayerHVT() for Monitoring Entities over Time
-
-[**muHVT - Using mlayerHVT() for Monitoring Entities over Time:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps.
+3. [**muHVT : Using mlayerHVT() for Monitoring Entities over Time**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps
 

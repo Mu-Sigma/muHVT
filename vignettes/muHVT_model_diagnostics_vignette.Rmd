@@ -353,7 +353,7 @@ algorithm is O(k \* (n-k)\^2).
 
 The algorithm divides the dataset recursively into cells using $k-means$
 or $k-medoids$ algorithm. The maximum number of subsets are decided by
-setting $nclust$ to, say five, in order to divide the dataset into
+setting $n_cells$ to, say five, in order to divide the dataset into
 maximum of five subsets. These five subsets are further divided into
 five subsets(or less), resulting in a total of twenty five (5\*5)
 subsets. The recursion terminates when the cells either contain less
@@ -1280,7 +1280,7 @@ Let us try to understand the HVT function first.
 
     muHVT::HVT(
       dataset,
-      nclust,
+      n_cells,
       depth,
       quant.err,
       projection.scale,
@@ -1298,7 +1298,7 @@ Each of the parameters have been explained below
 
 -   **`dataset`** - A dataframe with numeric columns 
 
--   **`nclust`**  - An integer indicating the number of cells per hierarchy (level)
+-   **`n_cells`**  - An integer indicating the number of cells per hierarchy (level)
 
 -   **`depth`**   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
 
@@ -1330,7 +1330,7 @@ In the section below, we build a Level 1 HVT model. The number of clusters
 set.seed(240)
 hvt.results <- list()
 hvt.results <- muHVT::HVT(dataset_updated_train,
-                          nclust = 1035,
+                          n_cells = 1035,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
