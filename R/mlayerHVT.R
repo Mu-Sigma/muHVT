@@ -102,15 +102,29 @@ mlayerHVT <- function(data,
   mapC_scoredPredictedData$row_number <- row.names(mapC_scoredPredictedData)
   mapC_scoredPredictedData$mapC_cell_path <- paste0(mapC_scoredPredictedData$Segment.Level,"-",mapC_scoredPredictedData$Segment.Parent,"-",mapC_scoredPredictedData$Segment.Child)
   
-  predictions_set <- merge(x = mapA_scoredPredictedData, y = mapC_scoredPredictedData, by = c("row_number"))
+  ##############################
   
-  predictions_table <- predictions_set %>% select(row_number, Segment.Level.x, Segment.Parent.x, Segment.Child.x,Cell.ID.x,
+  colnames(mapA_scoredPredictedData) <- c("MapA.Segment.Level","MapA.Segment.Parent","MapA.Segment.Child","n","MapA.Cell.ID","Quant.Error","Murder","Assault","UrbanPop","Rape","centroidRadius","diff","anomalyFlag","Row.Number") 
+  colnames(mapC_scoredPredictedData) <- c("MapC.Segment.Level","MapC.Segment.Parent","MapC.Segment.Child","n","MapC.Cell.ID","Quant.Error","Murder","Assault","UrbanPop","Rape","centroidRadius","diff","anomalyFlag","Row.Number","MapC.Cell.Path")
+  
+  predictions_set <- merge(x = mapA_scoredPredictedData, y = mapC_scoredPredictedData, by = c("Row.Number"))
+  
+  predictions_table <- predictions_set %>% select(Row.Number,MapA.Segment.Level,MapA.Segment.Parent, MapA.Segment.Child,MapA.Cell.ID,
                                                   # Segment.Level.y, Segment.Parent.y, Segment.Child.y, mapB_cell_path,Cell.ID.y,
-                                                  Segment.Level.y, Segment.Parent.y, Segment.Child.y, mapC_cell_path,Cell.ID.y
+                                                  MapC.Segment.Level, MapC.Segment.Parent, MapC.Segment.Child, MapC.Cell.Path,MapC.Cell.ID
   )
-  colnames(predictions_table) <- c('Row.Number','MapA.Segment.Level','MapA.Segment.Parent','MapA.Segment.Child','MapA.Cell.ID',
-                                   'MapC.Segment.Level','MapC.Segment.Parent','MapC.Segment.Child','MapC.Cell.Path','MapC.Cell.ID')
   
+  
+  ##############################
+  # predictions_set <- merge(x = mapA_scoredPredictedData, y = mapC_scoredPredictedData, by = c("row_number"))
+  # 
+  # predictions_table <- predictions_set %>% select(row_number, Segment.Level.x, Segment.Parent.x, Segment.Child.x,Cell.ID.x,
+  #                                                 # Segment.Level.y, Segment.Parent.y, Segment.Child.y, mapB_cell_path,Cell.ID.y,
+  #                                                 Segment.Level.y, Segment.Parent.y, Segment.Child.y, mapC_cell_path,Cell.ID.y
+  # )
+  # colnames(predictions_table) <- c('Row.Number','MapA.Segment.Level','MapA.Segment.Parent','MapA.Segment.Child','MapA.Cell.ID',
+  #                                  'MapC.Segment.Level','MapC.Segment.Parent','MapC.Segment.Child','MapC.Cell.Path','MapC.Cell.ID')
+  # 
   removed_outlier_cells <- as.vector(unique(hvt_mapB$Cell.Number))
   
   predictions_table$MapB.Cell.ID <- ifelse(

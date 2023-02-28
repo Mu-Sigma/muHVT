@@ -262,11 +262,18 @@ vectorQuantize <- function(dataset,quant.err,epsilon){
 # Output : a set of trilaterated points
 #==================================================================
 
+# trilaterate <- function(d){
+#   if(class(d)=='dist'){
+#     d <- as.matrix(d)
+#   }
+
 trilaterate <- function(d){
-  if(class(d)=='dist'){
+  # if(is(d, "dist")){
+  if(inherits(d, "dist")){
     d <- as.matrix(d)
   }
   
+
   # p1, p2, p3 are the initial triangulation points
   p1 <- c(0,0)
   p2 <- c(0, d[1,2])
