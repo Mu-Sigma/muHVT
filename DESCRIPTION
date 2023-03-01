@@ -14,7 +14,7 @@ Authors@R: c(
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
     person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
+Description: The muHVT package is a collection of R functions to facilitate building topology preserving maps for rich multivariate data.See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
