@@ -65,7 +65,7 @@ The creation of a predictive set of maps involves four steps -
 Let us try to understand the steps with the help of the diagram below -
 
 ```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
-knitr::include_graphics('./mlayerHVT.png')
+knitr::include_graphics('./mlayer1.png')
 ```
 
 Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
