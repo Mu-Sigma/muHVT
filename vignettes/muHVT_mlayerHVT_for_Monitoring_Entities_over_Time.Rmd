@@ -153,12 +153,12 @@ The dataset without outlier(s) gotten as an output from the removeOutliers funct
 
 Finally, all the constructed maps are passed to the __`mlayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
-# Installation of muHVT 3.0.0
+<!-- # Installation of muHVT 3.0.0 -->
 
-``` r
-library(devtools)
-devtools::install_github(repo = "Mu-Sigma/muHVT")
-```
+<!-- ``` r -->
+<!-- library(devtools) -->
+<!-- devtools::install_github(repo = "Mu-Sigma/muHVT") -->
+<!-- ``` -->
 
 # Data Understanding
 
