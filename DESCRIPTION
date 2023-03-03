@@ -1,6 +1,6 @@
 Package: muHVT
 Type: Package
-Date: 2022-11-22
+Date: 2023-03-03
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
 Version: 3.0.0
@@ -14,20 +14,21 @@ Authors@R: c(
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
     person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: Constructing hierarchical voronoi tessellations for a given data set and overlay heatmap for variables at various levels of the tessellations for in-depth data analysis. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
+Description: The muHVT package is a collection of R functions to facilitate building topology preserving maps for rich multivariate data.See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, gtools, magrittr, plyr, polyclip, rgeos,
-        ggplot2, tidyr, scales, patchwork, cluster, reshape2, tidyverse, plyr
+        stats, dplyr, purrr, magrittr, polyclip, rgeos,
+        ggplot2, tidyr, scales, cluster, reshape2, plyr
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
 RoxygenNote: 7.1.2
-Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, data.table
+Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly,
+        data.table
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2022-11-22 15:04:50 UTC; Shantanu
+Packaged: 2023-03-03 17:45:51 UTC; somya
 Author: Zubin Dowlaty [aut],
   Shubhra Prakash [ctb],
   Sangeet Moy Das [ctb],
@@ -39,4 +40,4 @@ Author: Zubin Dowlaty [aut],
   Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2020-08-03 20:10:03 UTC
+Date/Publication: 2023-03-03 20:10:03 UTC

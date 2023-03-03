@@ -65,7 +65,7 @@ The creation of a predictive set of maps involves four steps -
 Let us try to understand the steps with the help of the diagram below -
 
 ```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
-knitr::include_graphics('./mlayerHVT.png')
+knitr::include_graphics('./mlayer1.png')
 ```
 
 Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
@@ -81,26 +81,20 @@ Finally, all the constructed maps are passed to the __`mlayerHVT`__ function alo
 
 __For detailed information on the above functions, refer the vignette.__
 
-## Installation of muHVT 3.0.0
+<!-- ## Installation of muHVT 3.0.0 -->
 
-``` r
-library(devtools)
-devtools::install_github(repo = "Mu-Sigma/muHVT")
-```
+<!-- ``` r -->
+<!-- library(devtools) -->
+<!-- devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev") -->
+<!-- ``` -->
 
 # Vignettes
 
 Following are the links to the vignettes for the muHVT package:
 
-## muHVT Vignette
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
-[**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
 
-## muHVT Model Diagnostics Vignette
-
-[**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model.
-
-## muHVT - Using mlayerHVT() for Monitoring Entities over Time
-
-[**muHVT - Using mlayerHVT() for Monitoring Entities over Time:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps.
+3. [**muHVT : Using mlayerHVT() for Monitoring Entities over Time**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps
 
