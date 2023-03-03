@@ -1807,14 +1807,18 @@ DT::datatable(
 The interactive plot below shows anomalous cell(s) with color indicating
 change in Quantization Error after scoring.
 
+```{r, echo=FALSE}
+knitr::include_graphics('./interactive.png')
+```
+
 ```{r,class.source = 'fold-show', fig.height=4, fig.width=6}
 hvt.prediction[["predictPlot"]]
 
 ```
 
-```{r, echo=FALSE}
-knitr::include_graphics('./interactive.png')
-```
+<!-- ```{r, echo=FALSE} -->
+<!-- knitr::include_graphics('./interactive.png') -->
+<!-- ``` -->
 
 
 # Download Predictions
