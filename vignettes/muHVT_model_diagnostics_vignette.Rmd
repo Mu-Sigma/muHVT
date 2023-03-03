@@ -1809,6 +1809,11 @@ change in Quantization Error after scoring.
 
 ```{r,class.source = 'fold-show', fig.height=4, fig.width=6}
 hvt.prediction[["predictPlot"]]
+
+```
+
+```{r, echo=FALSE}
+knitr::include_graphics('./interactive.png')
 ```
 
 
