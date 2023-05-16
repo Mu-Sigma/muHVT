@@ -105,11 +105,11 @@ __For more detailed information on the functions mentioned above and their usage
 Following are the links to the vignettes for the muHVT package:
 
 
-1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
-2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
+2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
 
-3. [**muHVT : Predicting Cells and Layers using predictLayerHVT to monitor entities over time**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/muHVT_mlayerHVT_for_Monitoring_Entities_over_Time.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps
+3. [**muHVT : Predicting Cells and Layers using predictLayerHVT to monitor entities over time**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/Predicting_Cells_and_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps
 
 
 
