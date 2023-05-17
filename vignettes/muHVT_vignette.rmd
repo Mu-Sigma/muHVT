@@ -302,15 +302,17 @@ summary(torus_df)
 
 Now let's try to visualize the object in a 3D Space.
 
-```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval = global_var}
-#knitr::include_graphics('torus.png')
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval = F}
 scaling_factor <- 0.5
 library(rgl)
 plotids <- with(torus_df, plot3d(torus_df$x, torus_df$y, torus_df$z, 
                   type="s", col=c("white","red"),xlab = "X", ylab = "Y", zlab = "Z",zlim = c(0, 15*scaling_factor)))
 rglwidget(elementId = "plot3drgl")
-          
 
+```
+
+```{r, echo =FALSE,eval=TRUE}
+knitr::include_graphics('torus_donut_3d.png')
 ```
 
 Now let's try to use the package and project the above 3D object in a 2D Space. However, let's try to comprehend the **HVT function** first before moving on. 
