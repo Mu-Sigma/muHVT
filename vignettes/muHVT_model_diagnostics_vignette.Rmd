@@ -329,8 +329,8 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 This package can perform vector quantization using the following algorithms -
 
--   Hierarchical Vector Quantization using $k-means$
--   Hierarchical Vector Quantization using $k-medoids$
+-   Hierarchical Vector Quantization using \(k-means\)
+-   Hierarchical Vector Quantization using \(k-medoids\)
 
 ### 2.1 Hierarchical VQ
 
@@ -362,9 +362,9 @@ algorithm is O(k \* (n-k)\^2).
 
 ### 2.1.3 Hierarchical Vector Quantization
 
-The algorithm divides the dataset recursively into cells using $k-means$
-or $k-medoids$ algorithm. The maximum number of subsets are decided by
-setting $n_cells$ to, say five, in order to divide the dataset into
+The algorithm divides the dataset recursively into cells using \(k-means\)
+or \(k-medoids\) algorithm. The maximum number of subsets are decided by
+setting \(n-cells\) to, say five, in order to divide the dataset into
 maximum of five subsets. These five subsets are further divided into
 five subsets(or less), resulting in a total of twenty five (5\*5)
 subsets. The recursion terminates when the cells either contain less
@@ -375,7 +375,7 @@ threshold.
 The steps for this method are as follows :
 
 1.  Select k(number of cells), depth and quantization error threshold
-2.  Perform quantization (using $k-means$ or $k-medoids$) on the input
+2.  Perform quantization (using \(k-means\) or \(k-medoids\)) on the input
     dataset
 3.  Calculate quantization error for each of the k cells
 4.  Compare the quantization error for each cell to quantization error
@@ -407,12 +407,12 @@ points in that cell. The set of all codewords is called a codebook.
 
 Now we want to calculate quantization error for each cell. For the sake
 of simplicity, let's consider only one cell having centroid `A` and `m`
-data points $F_i$ for calculating quantization error.
+data points \(F_i\) for calculating quantization error.
 
 For each point, we calculate the distance between the point and the
 centroid.
 
-$$ d = ||A - F_i||_{p} $$
+\[ d = ||A - F_i||_{p} \]
 
 In the above equation, p = 1 means `L1_Norm` distance whereas p = 2
 means `L2_Norm` distance. In the package, the `L1_Norm` distance is
@@ -420,13 +420,13 @@ chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a
 custom function to calculate the distance between two points in n
 dimensions.
 
-$$QE  = \max(||A-F_i||_{p})$$
+\[QE  = \max(||A-F_i||_{p})\]
 
 where
 
--   $A$ is the centroid of the cell
--   $F_i$ represents a data point in the cell
--   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
+-   \(A\) is the centroid of the cell
+-   \(F_i\) represents a data point in the cell
+-   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
     = 2 represents L2 Norm.
 
 Now, we take the maximum calculated distance of all m points. This gives
@@ -444,14 +444,14 @@ and returns a single value which is the Quantization Error for the cell.
 If we select `mean` as the error metric, the above Quantization Error
 equation will look like this :
 
-$$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
+\[QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}\]
 
 where
 
--   $A$ is the centroid of the cell
--   $F_i$ represents a data point in the cell
--   $m$ is the number of points in the cell
--   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
+-   \(A\) is the centroid of the cell
+-   \(F_i\) represents a data point in the cell
+-   \(m\) is the number of points in the cell
+-   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
     = 2 represents L2 Norm.
 
 
@@ -465,12 +465,12 @@ non-linear approach since the mapping cannot be represented as a linear
 combination of the original variables. The centroids are plotted in 2D
 after performing Sammon's projection at every level of the tessellation.
 
-Denoting the distance between $i^{th}$ and $j^{th}$ objects in the
-original space by $d_{ij}^*$, and the distance between their projections
-by $d_{ij}$. Sammon's mapping aims to minimize the below error function,
+Denoting the distance between \(i^{th}\) and \(j^{th}\) objects in the
+original space by \(d_{ij}^*\), and the distance between their projections
+by \(d_{ij}\). Sammon's mapping aims to minimize the below error function,
 which is often referred to as Sammon's stress or Sammon's error
 
-$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
+\[E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}\]
 
 The minimization of this can be performed either by gradient descent, as
 proposed initially, or by other means, usually involving iterative
