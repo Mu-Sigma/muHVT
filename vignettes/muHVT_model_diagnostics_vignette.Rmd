@@ -18,7 +18,7 @@ output:
     math: "katex"
     section_divs: true
 vignette: >
-  %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
+  %\VignetteIndexEntry{Model diagnostics and validation for muHVT model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
