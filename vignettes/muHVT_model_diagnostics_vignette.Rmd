@@ -420,11 +420,11 @@ chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a
 custom function to calculate the distance between two points in n
 dimensions.
 
-\[QE  = \max(||A-F_i||_{p})\]
+$QE  = \max(||A-F_i||_{p})$
 
 where
 
--   \(A\) is the centroid of the cell
+-   $A$ is the centroid of the cell
 -   \(F_i\) represents a data point in the cell
 -   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
     = 2 represents L2 Norm.
