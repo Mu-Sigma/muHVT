@@ -1083,7 +1083,7 @@ dataset_updated %>% head(10) %>%
 
 ## 8 Data distribution {.tabset}
 
-###  Variable Histograms {.unlisted .unnumbered}
+###  Variable Histograms {.active}
 
 Shown below is the distribution of all the variables in the dataset.
 
@@ -1155,7 +1155,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-### Box Plots {.tabset .unlisted .unnumbered}
+### Box Plots {.active}
 
 In this section, we plot box plots for each numeric column in the
 dataset across panels. These plots will display the median and Inter
@@ -1197,7 +1197,7 @@ gridExtra::grid.arrange(grobs = box_plots, ncol = 3)
 
 ```
 
-### Correlation Matrix {.unlisted .unnumbered}
+### Correlation Matrix {.active}
 
 In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
