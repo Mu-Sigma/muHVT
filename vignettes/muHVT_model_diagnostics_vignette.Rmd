@@ -1082,9 +1082,9 @@ dataset_updated %>% head(10) %>%
       )
 ```
 
-## 8 Data distribution {.tabset}
+## 8 Data distribution 
 
-###  Variable Histograms 
+**Variable Histograms** 
 
 Shown below is the distribution of all the variables in the dataset.
 
@@ -1156,7 +1156,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-### Box Plots 
+**Box Plots** 
 
 In this section, we plot box plots for each numeric column in the
 dataset across panels. These plots will display the median and Inter
@@ -1198,7 +1198,7 @@ gridExtra::grid.arrange(grobs = box_plots, ncol = 3)
 
 ```
 
-### Correlation Matrix 
+**Correlation Matrix** 
 
 In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
@@ -1228,7 +1228,7 @@ corrplot::corrplot(cor(dataset_updated),
 
 ```
 
-## 9 Train - Test Split {.tabset}
+## 9 Train - Test Split 
 
 Let us first split the data into train and test. We will use 80% of the
 data as train and remaining as test.
@@ -1250,7 +1250,7 @@ The train data contains `r nrow(dataset_updated_train)` rows and
 `r nrow(dataset_updated_test)` rows and `r ncol(dataset_updated_test)`
 columns.
 
-### Train Distribution {.unlisted .unnumbered}
+### Train Distribution 
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_train)
@@ -1261,7 +1261,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-### Test Distribution {.unlisted .unnumbered}
+### Test Distribution 
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_test)
