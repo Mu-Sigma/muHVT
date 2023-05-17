@@ -15,7 +15,7 @@ output:
     results_folding: "none"
     tabset: true
     code_download: true
-    math: "katex"
+    math: "katex_serverside"
     section_divs: true
 vignette: >
   %\VignetteIndexEntry{Model diagnostics and validation for muHVT model}
@@ -421,7 +421,7 @@ chosen by default. The user can pass either `L1_Norm`, `L2_Norm` or a
 custom function to calculate the distance between two points in n
 dimensions.
 
-$\QE  = \max(||A-F_i||_{p})$
+$$QE  = \max(||A-F_i||_{p})$$
 
 where
 
