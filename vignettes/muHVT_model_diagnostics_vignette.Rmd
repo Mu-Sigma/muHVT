@@ -145,7 +145,7 @@ list.of.packages <<- c(
   "kableExtra",
   "gganimate",
       "gdata",
-  # "muHVT",
+   "muHVT",
   "data.table",
   "jmuOutlier",
   "viridis",
@@ -575,9 +575,9 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
     
     paste0("Code chunk executed successfully. The table below is showing first 10 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
-    dataset_updated %>% head(10) %>% 
+    dataset_updated %>% head(100) %>% 
       as.data.frame() %>%
-      DT::datatable(options = options, rownames = TRUE)
+      Table(scroll = T, limit = 20)
   }
 
 ```
@@ -598,11 +598,14 @@ df <- do.call(cbind, lapply(dataset_updated, summary)) %>%
   data.frame() %>%
   tibble::rownames_to_column("Metrics")
 
-DT::datatable(df %>% 
-                mutate_if(is.numeric, round,4) %>% 
-                head(),
-    options  = options,
-    rownames = FALSE)
+df %>% head(100) %>% as.data.frame() %>%
+Table(scroll = T, limit = 20)
+
+# DT::datatable(df %>% 
+#                 mutate_if(is.numeric, round,4) %>% 
+#                 head(),
+#     options  = options,
+#     rownames = FALSE)
 
 rm(df)
 ```
@@ -1015,7 +1018,12 @@ if(nrow(singular_cols) != 0) {
 }
 # Display variance of columns
 dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>% 
-  data.frame() %>%  round(3) %>% DT::datatable(colnames = "Variance")
+  data.frame() %>% round(3) %>% DT::datatable(colnames = "Variance")
+
+
+#Table(dataset_updated)
+# colnames(dataset_updated) <- c("Variance")
+# head(dataset_updated,5) %>% Table(scroll = T, limit = 20 )
 ```
 
 ### 7.11 Selecting only Numeric Cols after Dummification
@@ -1039,7 +1047,7 @@ dataset_updated <-  dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
 
 dataset_updated %>% head(10) %>%
   as.data.frame() %>%
-  DT::datatable(options = options, rownames = TRUE)
+  Table(scroll = T, limit = 20)
 
 ```
 
@@ -1368,6 +1376,7 @@ muHVT::plotHVT(hvt.results,
 The table below shows number of cells having quantization error below threshold and percentage of cells having quantization error below threshold.
 
 ```{r}
+
 compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
@@ -1844,7 +1853,7 @@ folder.
 predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
-      DT::datatable(options = options, rownames = TRUE)
+      Table(scroll = T, limit = 20)
 ```
 
 
