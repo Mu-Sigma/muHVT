@@ -160,9 +160,7 @@ metric_list <- colnames(trainComputers)
 scale_attr <- attributes(trainComputers)
 
 trainComputers <- trainComputers %>% as.data.frame()
-DT::datatable(trainComputers, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+Table(head(trainComputers))
 ```
 
 Now let us check the structure of the training data and analyse its summary.
@@ -263,10 +261,8 @@ __`map_A[[3]][['summary']]`__ gives a nice tabular data containing no of points,
 The datatable displayed below is the summary from map A
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
- 
-DT::datatable(map_A[[3]]$summary, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+summaryTable(map_A[[3]]$summary,scroll = T,limit = 500)
+
 ```
 
 
@@ -290,7 +286,7 @@ Now, let's check the compression summary for HVT (map A). The table below shows 
 
 ```{r hvt_mapA compression summary,warning=FALSE,eval = global_var}
 mapA_compression_summary <- map_A[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-DT::datatable(mapA_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+compressionSummaryTable(mapA_compression_summary)
 ```
 
 **As it can be seen from the table above, __`82%`__ of the cells have hit the quantization threshold error**
@@ -395,13 +391,13 @@ dataset_without_novelty <- output_list[[2]]
 
 __Note__ - In the dataset with novelty, the total number of cells would be equal to the total number of novelty cell(s) removed from the HVT map A. Let's say, as in the above case where three cells (22nd, 32nd, and 33rd) are identified as the novelty and are removed. Then the 22th cell would be the first cell in the HVT map B, 32th as the second cell, and 33th as the third cell.
 
-Let's have a look at the data with novelties.
+Let's have a look at the data with novelties.For the sake of brevity, we will only show the first 10 rows
 
 ```{r hvt_mapB results, warning=FALSE, echo=TRUE}
 colnames(data_with_novelty) <- c("Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
-DT::datatable(data_with_novelty, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+data_with_novelty %>% head(100) %>% 
+  as.data.frame() %>%
+  Table(scroll = T, limit = 20)
 ```
 
 ### 4.1 Voronoi tessellation to highlight novelty cell in the map
@@ -444,9 +440,8 @@ map_B <- muHVT::HVT(dataset_with_novelty,
 The datatable displayed below is the summary from map B (layer 2)
 
 ```{r, message=FALSE,warning=FALSE}
-DT::datatable(map_B[[3]]$summary, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
+
 ```
 
 
@@ -481,16 +476,15 @@ map_C <- muHVT::HVT(dataset_without_novelty,
 The datatable displayed below is the summary from map C (layer 2)
 
 ```{r,message=FALSE,warning=FALSE}
-DT::datatable(map_C[[3]]$summary, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+summaryTable(map_C[[3]]$summary,scroll = T,limit = 500)
+
 ```
 
 Now let's check the compression summary for HVT (map C). The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
 mapC_compression_summary <- map_C[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-DT::datatable(mapC_compression_summary, class = 'cell-border stripe', options = list(scrollX = TRUE))
+compressionSummaryTable(mapC_compression_summary)
 ```
 
 **As it can be seen from the table above, __`85%`__ of the cells have hit the quantization threshold error in level 1 and __`100%`__ of the cells have hit the quantization threshold error in level 2**
@@ -537,9 +531,7 @@ Let's have a look at our scaled test dataset.
 ```{r sample test data computer,warning=FALSE,message=FALSE,eval = T}
 # Quick peek
 testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) %>% as.data.frame()
-DT::datatable(head(testComputers), rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+Table(head(testComputers))
 ```
 
 Now let us check the structure of the test data and analyse its summary
@@ -601,7 +593,7 @@ For each test record, the function will assign that record to Layer1 or Layer2. 
 
 **Note : The prediction algorithm will not work if some of the variables used to perform quantization are missing. In the test dataset, we should not remove any features**
 
-Let’s see which cell and layer each point belongs to. 
+Let’s see which cell and layer each point belongs to.For the sake of brevity, we will only show the first 20 rows
 
 ```{r, message=FALSE,warning=FALSE}
 validation_data <- testComputers
@@ -612,9 +604,9 @@ new_predict <- predictLayerHVT(
     map_C,
     normalize = F
   )
-DT::datatable(new_predict, rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+new_predict%>% head(100) %>% 
+  as.data.frame() %>%
+  Table(scroll = T, limit = 20)
 
 ```
 
