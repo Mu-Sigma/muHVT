@@ -285,9 +285,10 @@ colnames(torus_df) <- c("x","y","z")
 Now let's do some EDA on the data. First of all, we will see how the data looks like
 
 ```{r torus head, warning=FALSE, eval = global_var}
+Table(head(torus_df))
 DT::datatable(head(torus_df), rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
+              class = 'cell-border stripe'
+              )
 ```
 
 Now let's have a look at structure and summary of the data.
