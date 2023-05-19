@@ -573,7 +573,7 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
     # Round only the numeric columns in dataset
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
     
-    paste0("Code chunk executed successfully. The table below is showing first 10 row(s) of the dataset.") %>% cat("\n")
+    paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
     dataset_updated %>% head(100) %>% 
       as.data.frame() %>%
@@ -974,6 +974,7 @@ dum_cols <- c("location.type","class")
 ```
 
 ```{r dummify1, purl=FALSE,echo=dummify_cat}
+
 # Below we dummify the columns mentioned by the user in the above code chunk
 if(dummify_cat){
 dummified_cols <- dataset_updated %>% dplyr::select(dum_cols) %>%       
@@ -1017,13 +1018,12 @@ if(nrow(singular_cols) != 0) {
   paste("There are no singular columns in the dataset") %>% htmltools::HTML()
 }
 # Display variance of columns
-dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>% 
-  data.frame() %>% round(3) %>% DT::datatable(colnames = "Variance")
+data <- dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>% 
+  data.frame() %>% round(3) #%>% DT::datatable(colnames = "Variance")
 
+colnames(data) <- c("Variance")
+Table(data,scroll = T, limit = 20)
 
-#Table(dataset_updated)
-# colnames(dataset_updated) <- c("Variance")
-# head(dataset_updated,5) %>% Table(scroll = T, limit = 20 )
 ```
 
 ### 7.11 Selecting only Numeric Cols after Dummification
@@ -1051,7 +1051,7 @@ dataset_updated %>% head(10) %>%
 
 ```
 
-```{r}
+```{r,echo=TRUE,eval=FALSE}
       DT::datatable(
         dataset_updated %>%
           select_if(., is.numeric) %>%
@@ -1088,6 +1088,23 @@ dataset_updated %>% head(10) %>%
                         }"
         )
       )
+```
+
+```{r}
+#print(
+ aa <-  dataset_updated %>%
+    select_if(., is.numeric) %>%
+    skimr::skim() %>%
+    mutate_if(is.numeric, round, digits = 4) %>%
+    rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
+    rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
+    select(-c(type, n_missing, complete_rate)) %>%
+    mutate(n_row = nrow(dataset_updated),
+           n_missing = rowSums(is.na(.))
+           # ,n_non_missing = n_row - n_missing
+           )
+Table(aa,scroll = T, limit = 20)
+#)
 ```
 
 ## 8 Data distribution 
@@ -1376,8 +1393,8 @@ muHVT::plotHVT(hvt.results,
 The table below shows number of cells having quantization error below threshold and percentage of cells having quantization error below threshold.
 
 ```{r}
-
-compressionSummaryTable(hvt.results[[3]]$compression_summary)
+Table(hvt.results[[3]]$compression_summary,scroll = T, limit = 10)
+#compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
 As seen in the above table, 98% of the cells have a quantization error below the 
@@ -1751,7 +1768,7 @@ qeHistPlot(hvt.results,hvt.prediction)
 
 The anomalous observations are shown below in the datatable.
 
-```{r}
+```{r,echo=TRUE,eval=TRUE}
 
 QECompareDf <- hvt.prediction$QECompareDf %>% filter(anomalyFlag == 1)
 # adding cell ID to table
@@ -1820,13 +1837,36 @@ DT::datatable(
               backgroundColor = styleEqual(c(1), c('#ff7f7f')))
 
 ```
+```{r, echo=FALSE}
+# library(knitr)
+# library(kableExtra)
+# 
+# kable(
+#   QECompareDf1 %>%
+#     mutate_if(is.numeric, ~ round(., 4)) %>%
+#     select(-c(`Quant.Error.Diff (%)`)) %>%
+#     rename(No.Of.Points = n),
+#   format = "html",
+#   table.attr = 'class="cell-border stripe"',
+#   row.names = FALSE
+# ) %>%
+#   kable_styling(bootstrap_options = c("striped"))
+
+#print(
+df1 <-  QECompareDf1 %>%
+    mutate_if(is.numeric, ~ round(., 4)) %>%
+    select(-c(`Quant.Error.Diff (%)`)) %>%
+    rename(No.Of.Points = n)
+Table(df1,scroll = T, limit = 10)
+#)
+```
 
 
 
 
 ### 13.3 Anomalous Test Cells (highlighted) in Fitted HVT Map
 
-The interactive plot below shows anomalous cell(s) with color indicating
+The plot below shows anomalous cell(s) with color indicating
 change in Quantization Error after scoring.
 
 <!-- ```{r, echo=FALSE} -->
