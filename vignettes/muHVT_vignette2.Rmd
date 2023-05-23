@@ -302,9 +302,7 @@ colnames(torus_df) <- c("x","y","z")
 Now let's do some EDA on the data. First of all, we will see how the data looks like
 
 ```{r torus head, warning=FALSE, eval = global_var}
-# DT::datatable(head(torus_df1), rownames = FALSE,
-#               class = 'cell-border stripe',
-#               options = list(scrollX = TRUE))
+
 Table(head(torus_df))
 
 ```
@@ -322,10 +320,7 @@ summary(torus_df)
 Now let's try to visualize the torus (donut) in  3D Space.
 
 ```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =FALSE,echo=TRUE}
-#knitr::include_graphics('torus_donut_3d.png')
-scaling_factor <- 15
 library(rgl)
-
 plotids <- plot3d(torus_df$x, torus_df$y, torus_df$z,
                   type = "s", col = c("white", "red"),
                   xlab = "X", ylab = "Y", zlab = "Z",
@@ -340,15 +335,15 @@ knitr::include_graphics('torus_donut.png')
 ```
 
 
-In order to project a 3D object onto a 2D space using the workflow described in the abstract section of this vignette, we can follow these steps:
+To achieve the projection of a 3D object onto a 2D space, we will follow the outlined steps provided in the abstract section of this vignette
 
-### 6.1 SECTION-A
+### 6.1 Level 1 Execution of Workflow Steps
 
-In this section all the workflow steps (Compression, Projection and Tessellation) are performed at level 1.
+In this section all the outlined workflow steps provided in the abstract section (Compression, Projection and Tessellation) are executed at level 1.
 
 **Step 1: Data Compression**
 
-`HVQ` is the main function for performing compression which is called within `HVT function`. we have a parameter called quantization error. This parameter acts as a threshold and determines the number of levels in the hierarchy. It means that, if there are 'n' number of levels in the hierarchy, then all the clusters formed till this level will have quantization error equal or greater than the threshold quantization error. The user can define the number of clusters in the first level of hierarchy and then each cluster in first level is sub-divided into the same number of clusters as there are in the first level. This process continues and each group is divided into smaller clusters as long as thethreshold quantization error is met. The output of this technique will be hierarchically arranged vector quantized data.
+The core function for compression in the workflow is `HVQ`, which is called within the `HVT` function. we have a parameter called quantization error. This parameter acts as a threshold and determines the number of levels in the hierarchy. It means that, if there are 'n' number of levels in the hierarchy, then all the clusters formed till this level will have quantization error equal or greater than the threshold quantization error. The user can define the number of clusters in the first level of hierarchy and then each cluster in first level is sub-divided into the same number of clusters as there are in the first level. This process continues and each group is divided into smaller clusters as long as thethreshold quantization error is met. The output of this technique will be hierarchically arranged vector quantized data.
 
 However, let's try to comprehend the **HVT function** first before moving on. 
 
@@ -399,7 +394,10 @@ into further cells if the quantization error of the cell is above the defined qu
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
 
 
-First we will perform Hierarchical Vector Quantization using the below mentioned model parameters to achieve a compression of atleast 80%.
+
+We will use the `HVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the HVT function again.**In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce reduces the level of detail captured in the data representation**
+
+We will pass the below mentioned model parameters along with torus dataset to `HVT` function.
 
 **Model Parameters**
 
@@ -431,7 +429,7 @@ Let's checkout the compression summary .
 compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 ```
 
-**As it can be seen from the table above, none of the 100 cells have hit the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached**
+**As it can be seen from the table above, none of the 100 cells have hit the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
 
 Since, we are yet to achive atleast 80% compression. Let's try to compress again using the below mentioned set of model parameters.
@@ -462,7 +460,7 @@ hvt.torus2 <- muHVT::HVT(
 ```
 
 
-Let's checkout the compression summary for torus.
+Let's checkout the compression summary again.
 
 ```{r compression summary torus second,warning=FALSE,eval = global_var}
 compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
@@ -512,7 +510,7 @@ compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 
 **Step 2: Data Projection**
 
-`sammonsProjection()` calls `sammons` function from the MASS package. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
+The function `sammonsProjection()` utilizes the `sammons` function from the MASS package.. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 lets view the projected 2D centroids after performing sammon's projection
 
@@ -625,9 +623,11 @@ grid.arrange(hmap[[2]] ,nrow = 1, ncol=1)
 grid.arrange(hmap[[3]], nrow = 1, ncol=1)
 ```
 
-### 6.2 SECTION-B
+### 6.2 Level 2 Refining Torus Projection
 
-In this section we will explore a little more and try to project the torus(3D) object to 2D Space with different set of model parameters at level 2
+In this section we will explore a little more and try to project the torus(3D) object to 2D Space with different set of model parameters at level 2 inorder to achieve more refined and detailed tessellation
+
+Through this exploration, we can gain a deeper understanding of the transformation of the torus object into a 2D projection. By adjusting the model parameters specifically for the second level of tessellation, we expect to achieve a higher level of refinement and granularity in the resulting projection, enabling us to analyze the torus in greater detail and extract meaningful insights from the transformed data.
 
 **Step 1: Data Compression**
 
@@ -845,7 +845,7 @@ testComputers1 <- testComputers %>% as.data.frame() %>% round(4)
 Table(head(testComputers1))
 ```
 
-### 7.1 Creating Map A
+### 7.1 Map A : Base Compressed Map
 
 As we are familiar with the structure of the computers data, we will now follow the following steps to get the predictions using the Computers dataset.
 
@@ -901,7 +901,7 @@ into further cells if the quantization error of the cell is above the defined qu
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
 
 
-First we will perform Hierarchical Vector Quantization using the computers dataset along with below mentioned model parameters to generate map A and try to achieve model compression of atleast 80%.
+First we will perform Hierarchical Vector Quantization using the computers dataset along with below mentioned model parameters to generate map A and try to achieve data compression of atleast `80%`.  In situations where the compression ratio does not meet the desired target we will iteratively increase the number of cells until the desired compression percentage is reached.
 
 **Model Parameters**
 
@@ -935,77 +935,6 @@ Now let's check the compression summary. The table below shows no of cells, no o
 compressionSummaryTable(map_A[[3]]$compression_summary)
 ```
 
-<!-- **As it can be seen from the table above, 83% of the cells have hit the quantization threshold error** -->
-
-<!-- Now lets try again using the training computers data along with below mentioned model parameters and see if 80% compression is achieved. -->
-
-<!-- **Model Parameters** -->
-
-<!-- * Number of Cells at each Level = 15 -->
-<!-- * Maximum Depth = 2 -->
-<!-- * Quantization Error Threshold = 0.1 -->
-<!-- * Error Metric = Max -->
-<!-- * Distance Metric = Manhattan -->
-
-
-<!-- ```{r level two computers,warning=FALSE,message=FALSE,results='asis',eval = global_var} -->
-<!-- set.seed(240) -->
-<!-- hvt.results <- list() -->
-<!-- map_A <- muHVT::HVT(trainComputers,    -->
-<!--                           n_cells = 15, -->
-<!--                           depth = 2, -->
-<!--                           quant.err = 0.1, -->
-<!--                           projection.scale = 10, -->
-<!--                           normalize = F, -->
-<!--                           distance_metric = "L1_Norm", -->
-<!--                           error_metric = "max", -->
-<!--                           quant_method = "kmeans", -->
-<!--                           diagnose = F) -->
-
-<!-- ``` -->
-
-<!-- Now let's check the compression summary. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level. -->
-
-<!-- ```{r compression summary level two computers,warning=FALSE,eval = global_var} -->
-<!-- compressionSummaryTable(map_A[[3]]$compression_summary) -->
-<!-- ``` -->
-
-<!-- **As it can be seen from the table above, __`11%`__ of the cells have hit the quantization threshold error, we will further try increasing n_cell value** -->
-
-<!-- Now lets try again using the training computers data along with below mentioned model parameters. -->
-
-<!-- **Model Parameters** -->
-
-<!-- * Number of Cells at each Level = 32 -->
-<!-- * Maximum Depth = 2 -->
-<!-- * Quantization Error Threshold = 0.1 -->
-<!-- * Error Metric = Max -->
-<!-- * Distance Metric = Manhattan -->
-
-
-
-<!-- ```{r level three computers,warning=FALSE,message=FALSE,results='asis',eval = global_var} -->
-<!-- set.seed(240) -->
-<!-- hvt.results <- list() -->
-<!-- map_A <- muHVT::HVT(trainComputers,    -->
-<!--                           n_cells = 32, -->
-<!--                           depth = 2, -->
-<!--                           quant.err = 0.1, -->
-<!--                           projection.scale = 10, -->
-<!--                           normalize = F, -->
-<!--                           distance_metric = "L1_Norm", -->
-<!--                           error_metric = "max", -->
-<!--                           quant_method = "kmeans", -->
-<!--                           diagnose = F) -->
-
-<!-- ``` -->
-
-
-<!-- Now let's check the compression summary. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level. -->
-
-<!-- ```{r compression summary level three computers,warning=FALSE,eval = global_var} -->
-<!-- compressionSummaryTable(map_A[[3]]$compression_summary) -->
-<!-- ``` -->
 
 **As it can be seen from the table above, __`83%`__ of the cells have hit the quantization threshold error. Since we are successfully able to compress `83%` of the data, so we will not further subdivide the cells **
 
@@ -1108,7 +1037,7 @@ grid.arrange(hmap[[6]], nrow = 1, ncol=1)
 ```
 
 
-### 7.2 Creating Map B
+### 7.2 Map B : Compressed Novelty Map
 
 In this section, we will manually figure out the novelty cells from the plotted map A and store it in **identified_Novelty_cells** variable.
 
@@ -1188,7 +1117,7 @@ compressionSummaryTable(map_B[[3]]$compression_summary)
 
 **It can be observed from the table above that  3 cells out of 3 i.e. __`100%`__ of the cells has hit the Quantization Error threshold**
 
-### 7.3 Creating Map C
+### 7.3 Map C : Compressed Map without Novelty
 
 With the Novelties removed, we construct another hierarchical Voronoi tessellation  **map C** layer 2 on the dataset without Novelty and below mentioned model parameters.
 
@@ -1274,11 +1203,9 @@ Table(head(testComputers1))
 
 
 
-**Predict**
+### 7.4 Prediction : predictLayerHVT
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which layer each point belongs to.
-
-
 
 ```{r predictLayerHVT function,echo = TRUE, eval= FALSE}
 predictLayerHVT(data,
@@ -1368,7 +1295,7 @@ new_predict %>% head(100) %>%
 
 * Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 93% of the 100 cells hit the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
-* **Example Usage2: Hierarchical VQ with Sammons Projection and Tessellation on Personal Computers Dataset**
+* **Example Usage2: Example Usage of Predictions using the predictLayerHVT on Personal Computers Dataset**
 
 *  We have considered computers dataset for creating a predictive set of maps to monitor entities over time using                predictLayerHVT() in this  notebook
 
