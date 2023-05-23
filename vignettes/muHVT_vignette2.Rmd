@@ -1245,9 +1245,9 @@ muHVT::hvtHmap(
   line.width = c(0.2),
   color.vec = c("#141B41"),
   palette.color = 6,
-  centroid.size = 1.5,
+  centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.01,
+  quant.error.hmap = 0.1,
   n_cells.hmap = 1001
 )
 })
