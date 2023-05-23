@@ -16,7 +16,7 @@ output:
     results_folding: "none"
     tabset: true
     code_download: true
-    math: "katex"
+    math: "katex_serverside"
 vignette: >
   %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
   %\VignetteEngine{knitr::rmarkdown}
@@ -1069,7 +1069,7 @@ For better visualisation, let's plot the Voronoi tessellation for Map A using th
         line.width = c(0.6), 
         color.vec = c("#141B41","#0582CA"),
         centroid.size = 0.01,  #1.5
-        maxDepth = 1) %>% ggplotly()
+        maxDepth = 1) 
 
 
 ```    
@@ -1247,7 +1247,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 1.5,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.01,
   n_cells.hmap = 1001
 )
 })
@@ -1264,7 +1264,7 @@ grid.arrange(hmap[[6]],  nrow = 1, ncol=1)
 
 **We now have the set of maps (map A, map B & map C) which will be used to predict which map and cell each test record is assigned to.**
 
- Predict
+**Predict**
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which layer each point belongs to.
 
@@ -1309,7 +1309,7 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 
 * __`...`__ -  color.vec and line.width can be passed from here
 
- Prediction Algorithm
+ **Prediction Algorithm**
 
 The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in the test dataset :
 
