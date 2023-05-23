@@ -1262,11 +1262,23 @@ grid.arrange(hmap[[5]],  nrow = 1, ncol=1)
 grid.arrange(hmap[[6]],  nrow = 1, ncol=1)
 ```
 
-**We now have the set of maps (map A, map B & map C) which will be used to predict which map and cell each test record is assigned to.**
+**We now have the set of maps (map A, map B & map C) which will be used to predict which map and cell each test record is assigned to, but before that lets view our test dataset**
+
+Now, lets have a look at the scaled testing dataset containing (1252 data points).
+
+```{r}
+testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
+testComputers1 <- testComputers %>% as.data.frame() %>% round(4)
+Table(head(testComputers1))
+```
+
+
 
 **Predict**
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which layer each point belongs to.
+
+
 
 ```{r predictLayerHVT function,echo = TRUE, eval= FALSE}
 predictLayerHVT(data,
