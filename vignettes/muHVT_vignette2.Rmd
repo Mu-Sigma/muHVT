@@ -337,7 +337,7 @@ knitr::include_graphics('torus_donut.png')
 
 To achieve the projection of a 3D object onto a 2D space, we will follow the outlined steps provided in the abstract section of this vignette
 
-### 6.1 Level 1 Execution of Workflow Steps
+### 6.1 Execution of Workflow Steps at Level 1
 
 In this section all the outlined workflow steps provided in the abstract section (Compression, Projection and Tessellation) are executed at level 1.
 
@@ -623,7 +623,7 @@ grid.arrange(hmap[[2]] ,nrow = 1, ncol=1)
 grid.arrange(hmap[[3]], nrow = 1, ncol=1)
 ```
 
-### 6.2 Level 2 Refining Torus Projection
+### 6.2  Refining Torus Projection at Level 2
 
 In this section we will explore a little more and try to project the torus(3D) object to 2D Space with different set of model parameters at level 2 inorder to achieve more refined and detailed tessellation
 
