@@ -1267,7 +1267,7 @@ grid.arrange(hmap[[6]],  nrow = 1, ncol=1)
 Now, lets have a look at the scaled testing dataset containing (1252 data points).
 
 ```{r}
-testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
+#testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
 testComputers1 <- testComputers %>% as.data.frame() %>% round(4)
 Table(head(testComputers1))
 ```
