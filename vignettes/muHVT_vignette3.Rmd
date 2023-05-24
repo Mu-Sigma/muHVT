@@ -166,6 +166,8 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 # Compress: Vector Quantization
 
+This package offers several advantages for performing data compression as it is designed to handle high-dimensional data more efficiently.It provides a hierarchical compression approach, allowing  multi-resolution representation of the data. The hierarchical structure enables efficient compression and storage of the data while preserving different levels of detail.HVT aims to preserve the topological structure of the data during compression. Irregular shapes and complex structures in high-dimensional data can contain valuable information about relationships and patterns. HVT seeks to capture and retain these topological characteristics, enabling meaningful analysis and visualization.This package employs tessellation to divide the compressed data space into distinct cells or regions while preserving the topology of the original data. This means that the relationships and connectivity between data points are maintained in the compressed representation.
+
 
 This package can perform vector quantization using the following algorithms - 
 
@@ -266,7 +268,10 @@ $$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
 
 # Projection
 
-Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
+HVT performs projection as part of its workflow to visualize and explore high-dimensional data. The projection step in HVT involves mapping the compressed data, represented by the hierarchical structure of cells, onto a lower-dimensional space for visualization purposes, as human perception is more suited to interpreting information in lower-dimensional spaces.Users can zoom in/out, rotate, and explore different regions of the projected space to gain insights and understand the data from different perspectives.
+
+
+Sammon's projection is an algorithm used in this package to map a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection. It is particularly suited for use in exploratory data analysis and is usually considered a non-linear approach since the mapping cannot be represented as a linear combination of the original variables. The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 
 Denoting the distance between $i^{th}$ and $j^{th}$ objects in the original space by $d_{ij}^*$, and the distance between their projections by $d_{ij}$. Sammon’s mapping aims to minimize the below error function, which is often referred to as Sammon’s stress or Sammon’s error
@@ -277,7 +282,10 @@ The minimization  of this can be performed either by gradient descent, as propos
 
 # Voronoi Tessellations
 
-A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation.
+A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation which has the property that no data point lies within the circumcircle of any triangle in the triangulation. This property guarantees that the resulting cells in the tessellation do not overlap with each other. By using Delaunay triangulation, HVT can achieve a partitioning of the data space into distinct and non-overlapping regions, which is crucial for accurately representing and analyzing the compressed data.Additionally, the use of Delaunay triangulation for tessellation ensures that the resulting cells have well-defined shapes, typically triangles in two dimensions or tetrahedra in three dimensions. 
+
+The hierarchical structure resulting from tessellation preserves the inherent structure and relationships within the data. It captures clusters, subclusters, and other patterns in the data, allowing for a more organized and interpretable representation.
+The hierarchical structure reduces redundancy and enables more compact representations
 
 **Tessellate: Constructing Voronoi Tesselations**
 
@@ -451,7 +459,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 ```
 
 
-**As it can be seen from the table above, none of the 100 cells have hit the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
+**As it can be seen from the table above, none of the 100 cells have reached the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
 
 Since, we are yet to achive atleast 80% compression. Let's try to compress again using the below mentioned set of model parameters.
@@ -488,7 +496,7 @@ Let's checkout the compression summary again.
 compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 ```
 
-**It can be observed from the table above that only 43 cells out of 300 i.e. `14%` of the cells hit the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
+**It can be observed from the table above that only 43 cells out of 300 i.e. `14%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
 
 
 ```{r echo=FALSE}
@@ -692,7 +700,7 @@ Let's checkout the compression summary for torus and see whether the model has a
 compressionSummaryTable(hvt.torus4[[3]]$compression_summary)
 ```
 
-**It can be observed from the table above that none of the cells has  hit the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells inorder to achieve a compression of 80%**
+**It can be observed from the table above that none of the cells has reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells inorder to achieve a compression of 80%**
 
 Since we are not able to achieve our compression objective. Let's try again with the below mentioned set of model parameters.
 
@@ -727,7 +735,7 @@ Now,let's checkout the compression summary for torus by.
 compressionSummaryTable(hvt.torus5[[3]]$compression_summary)
 ```
 
-**It can be observed from the table above that only 535 cells out of 666 i.e. `80%` of the cells hit the Quantization Error threshold. Since we have attained 80% compression we will not further subdivide the cells**
+**It can be observed from the table above that only 535 cells out of 666 i.e. `80%` of the cells have reached the Quantization Error threshold. Since we have attained 80% compression we will not further subdivide the cells**
 
 **Step 2: Data Projection**
 
@@ -988,7 +996,7 @@ compressionSummaryTable(map_A[[3]]$compression_summary)
 ```
 
 
-**As it can be seen from the table above, __`83%`__ of the cells have hit the quantization threshold error. Since we are successfully able to compress `83%` of the data, so we will not further subdivide the cells **
+**As it can be seen from the table above, __`83%`__ of the cells have reached the quantization threshold error. Since we are successfully able to compress `83%` of the data, so we will not further subdivide the cells **
 
 __`map_A[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 
@@ -1171,7 +1179,7 @@ Now let's check the compression summary. The table below shows no of cells, no o
 compressionSummaryTable(map_B[[3]]$compression_summary)
 ```
 
-**It can be observed from the table above that  3 cells out of 3 i.e. __`100%`__ of the cells has hit the Quantization Error threshold**
+**It can be observed from the table above that  3 cells out of 3 i.e. __`100%`__ of the cells has reached the Quantization Error threshold**
 
 ## Map C : Compressed Map without Novelty
 
@@ -1213,7 +1221,7 @@ Now let's check the compression summary. The table below shows no of cells, no o
 compressionSummaryTable(map_C[[3]]$compression_summary)
 ```
 
-**It can be observed from the table above that 829 cells out of 1001 i.e. __`83%`__ of the cells has hit the Quantization Error threshold**
+**It can be observed from the table above that 829 cells out of 1001 i.e. __`83%`__ of the cells has reached the Quantization Error threshold**
 
 
 Now let's plot the Voronoi Tessellation with the heatmap overlaid for all the features in the computers dataset for better visualization.
@@ -1345,9 +1353,9 @@ new_predict %>% head(100) %>%
 
 * We constructed a compressed HVT map (hvt.torus) by applying the HVT() on the torus dataset. We set the parameters as          follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
 
-* We created another compressed HVT map (hvt.torus2) using the HVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 14% of the cells hit the quantization threshold error.
+* We created another compressed HVT map (hvt.torus2) using the HVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 14% of the cells have reached the quantization threshold error.
 
-* Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 93% of the 100 cells hit the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
+* Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 93% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
 * **Example Usage2: Example Usage of Predictions using the predictLayerHVT on Personal Computers Dataset**
 
