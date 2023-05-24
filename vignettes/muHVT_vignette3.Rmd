@@ -322,6 +322,9 @@ Now let's do some EDA on the data. First of all, we will see how the data looks 
 ```{r torus head, warning=FALSE, eval = global_var}
 
 Table(head(torus_df))
+DT::datatable(head(torus_df), rownames = FALSE,
+              class = 'cell-border stripe',
+              options = list(scrollX = TRUE))
 
 ```
 
@@ -337,7 +340,7 @@ summary(torus_df)
 
 Now let's try to visualize the torus (donut) in  3D Space.
 
-```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =FALSE,echo=TRUE}
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =TRUE,echo=TRUE}
 library(rgl)
 plotids <- plot3d(torus_df$x, torus_df$y, torus_df$z,
                   type = "s", col = c("white", "red"),
@@ -415,7 +418,7 @@ into further cells if the quantization error of the cell is above the defined qu
 
 We will use the `HVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the HVT function again.
 
-**In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce reduces the level of detail captured in the data representation**
+**In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce the level of detail captured in the data representation**
 
 
 We will pass the below mentioned model parameters along with torus dataset to `HVT` function.
@@ -592,7 +595,7 @@ muHVT::plotHVT(
 
 We will now overlay all the features as heatmap over the Voronoi Tessellation plot for better visualization and identification of patterns, trends, and variations in the data. .
 
-Let's have look at the function `hvtHmap` function which we will use to overlay a variable as heatmap.
+Let's have look at the `hvtHmap` function which we will use to overlay a variable as heatmap.
 
 ```{r hvtHmap function demo,echo = TRUE, eval= FALSE}
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
@@ -616,7 +619,9 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 
 
-Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization and interpretation of data patterns and distributions
+Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization and interpretation of data patterns and distributions.
+
+
 
 ```{r hmp level two quantization torus3 demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for all the variable in the ’torus’ dataset',eval = global_var}
 metric_list <- colnames(hvt.torus3[[3]]$summary)
@@ -638,6 +643,8 @@ muHVT::hvtHmap(
 )
 })
 ```
+
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The `sheer green` shades highlight regions with higher coordinate values in each of the heatmaps, while the `indigo` shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure**
 
 ```{r, warning=FALSE, message=FALSE,eval=TRUE,fig.height=4,fig.width=8}
 grid.arrange(hmap[[1]], nrow = 1, ncol=1)
@@ -728,7 +735,7 @@ compressionSummaryTable(hvt.torus5[[3]]$compression_summary)
 
 lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization.
 
-For detailed information on Data Projection one can refer to section 3 of this vignette.
+For detailed information on Data Projection please refer to section 3 of this vignette.
 
 ```{r, warning=FALSE,message=FALSE}
 
@@ -1032,10 +1039,10 @@ For better visualisation, let's plot the Voronoi tessellation for Map A using th
 # Voronoi tessellation plot for level one
 
  muHVT::plotHVT(map_A,
-        line.width = c(0.2),  #
+        line.width = c(0.2), 
         color.vec = c("#141B41"),
         centroid.size = 0.01,  #1.5
-        maxDepth = 1) 
+        maxDepth = 1)
 
 
 ```    
