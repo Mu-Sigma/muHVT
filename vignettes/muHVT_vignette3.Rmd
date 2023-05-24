@@ -317,7 +317,7 @@ torus_df1 <- torus_df %>% round(4)
 colnames(torus_df) <- c("x","y","z")
 ```
 
-Now let's do some EDA on the data. First of all, we will see how the data looks like
+Now let's do some EDA on the data. First of all, we will see how the data looks like. For the shake of brevity we are displaying first six rows.
 
 ```{r torus head, warning=FALSE, eval = global_var}
 
@@ -534,7 +534,8 @@ compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 
 The function `sammonsProjection()` utilizes the `sammons` function from the MASS package being called in `HVT`. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
-lets view the projected 2D centroids after performing sammon's projection
+lets view the projected 2D centroids after performing sammon's projection. For the shake of brevity we are displaying first six rows.
+
 
 ```{r, warning=FALSE,message=FALSE}
 
@@ -641,7 +642,7 @@ muHVT::hvtHmap(
 })
 ```
 
-**The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The `sheer green` shades highlight regions with higher coordinate values in each of the heatmaps, while the `indigo` shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure**
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher coordinate values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure**
 
 ```{r, warning=FALSE, message=FALSE,eval=TRUE,fig.height=4,fig.width=8}
 grid.arrange(hmap[[1]], nrow = 1, ncol=1)
@@ -659,7 +660,7 @@ Through this exploration, we can gain a deeper understanding of the transformati
 
 First we will perform Hierarchical Vector Quantization using the torus data along with below mentioned model parameters to achieve a compression summary of atleast 80%. 
 
-for detailed information on data Compression please refer to section 2 of this vignette.
+for detailed information on data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html#compress-vector-quantization) of this vignette.
 
 **Model Parameters**
 
@@ -732,7 +733,12 @@ compressionSummaryTable(hvt.torus5[[3]]$compression_summary)
 
 lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization.
 
-For detailed information on Data Projection please refer to section 3 of this vignette.
+For detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html#projection) of this vignette.
+
+For the shake of brevity we are displaying first six rows.
+
+
+
 
 ```{r, warning=FALSE,message=FALSE}
 
@@ -800,6 +806,8 @@ muHVT::hvtHmap(
 })
 ```
 
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher coordinate values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure**
+
 ```{r, warning=FALSE, message=FALSE,eval=TRUE,fig.height=4,fig.width=8}
 grid.arrange(hmap[[1]], nrow = 1, ncol=1)
 grid.arrange(hmap[[2]] ,nrow = 1, ncol=1)
@@ -824,7 +832,8 @@ set.seed(240)
 computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/master/vignettes/sample_dataset/Computers.csv")
 ```
 
-Let's explore the Personal Computers Dataset.
+Let's explore the Personal Computers Dataset. For the shake of brevity we are displaying first six rows.
+
 
 ```{r sample data computer,warning=FALSE,message=FALSE,eval = T}
 # Quick peek
@@ -863,7 +872,8 @@ testComputers <-
   testComputers %>% dplyr::select(-c(X, cd, multi, premium, trend))
 ```
 
-Now, lets have a look at the scaled training dataset containing (5007 data points)
+Now, lets have a look at the scaled training dataset containing (5007 data points). For the shake of brevity we are displaying first six rows.
+
 
 
 ```{r}
@@ -876,7 +886,8 @@ trainComputers1 <- trainComputers %>% as.data.frame() %>% round(4)
 Table(head(trainComputers1))
 ```
 
-Now, lets have a look at the scaled testing dataset containing (1252 data points).
+Now, lets have a look at the scaled testing dataset containing (1252 data points). For the shake of brevity we are displaying first six rows.
+
 
 ```{r}
 testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
@@ -890,7 +901,7 @@ As we are familiar with the structure of the computers data, we will now follow 
 
 **Step 1: Data Compression**
 
-For more detailed information on Data Compression please refer to section 2 of this vignette.
+For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html#compress-vector-quantization) of this vignette.
 
 Let us try to understand the HVT function first. 
 
@@ -940,7 +951,7 @@ into further cells if the quantization error of the cell is above the defined qu
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
 
 
-First we will perform Hierarchical Vector Quantization using the computers dataset along with below mentioned model parameters to generate map A and try to achieve data compression of atleast `80%`.  In situations where the compression ratio does not meet the desired target we will iteratively increase the number of cells until the desired compression percentage is reached.
+First we will perform HVT using the computers dataset along with below mentioned model parameters to generate map A and try to achieve data compression of atleast `80%`.  In situations where the compression ratio does not meet the desired target we will iteratively increase the number of cells until the desired compression percentage is reached.
 
 **In this example usage we will compress the data at depth 1 as it provides a simplified overview of the data by calculating the overall variance and potentially reducing the dimensionality of the data**
 
@@ -1008,7 +1019,8 @@ All the columns after this will contain centroids for each cell. They can also b
 
 **Step 2: Data Projection**
 
-lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization.
+lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization. For the shake of brevity we are displaying first six rows.
+
 
 
 ```{r, warning=FALSE,message=FALSE}
@@ -1068,6 +1080,8 @@ muHVT::hvtHmap(
 })
 ```
 
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data**
+
 ```{r, warning=FALSE, message=FALSE,eval=TRUE,fig.height=4,fig.width=8}
 grid.arrange(hmap[[1]], nrow = 1, ncol=1)
 grid.arrange(hmap[[2]], nrow = 1, ncol=1)
@@ -1096,7 +1110,8 @@ dataset_without_novelty <- output_list[[2]]
 
 ```
 
-The datatable displayed below are the data with novelties.
+The datatable displayed below are the data with novelties. For the shake of brevity we are displaying first nine rows.
+
 
 ```{r,message=FALSE,warning=FALSE}
 colnames(dataset_with_novelty) <- c("Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
@@ -1144,7 +1159,7 @@ map_B <- muHVT::HVT(dataset_with_novelty,
 
 ```
 
-The datatable displayed below is the summary from map B
+The datatable displayed below is the summary from map B.
 
 ```{r, message=FALSE,warning=FALSE}
 summaryTable(map_B[[3]]$summary)
@@ -1223,6 +1238,9 @@ muHVT::hvtHmap(
 })
 ```
 
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data**
+
+
 ```{r, warning=FALSE, message=FALSE,eval=TRUE,fig.height=4,fig.width=8}
 grid.arrange(hmap[[1]],  nrow = 1, ncol=1)
 grid.arrange(hmap[[2]],  nrow = 1, ncol=1)
@@ -1234,7 +1252,8 @@ grid.arrange(hmap[[6]],  nrow = 1, ncol=1)
 
 **We now have the set of maps (map A, map B & map C) which will be used to predict which map and cell each test record is assigned to, but before that lets view our test dataset**
 
-Now, lets have a look at the scaled testing dataset containing (1252 data points).
+Now, lets have a look at the scaled testing dataset containing (1252 data points). For the shake of brevity we are displaying first six rows.
+
 
 ```{r}
 #testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
@@ -1245,6 +1264,8 @@ Table(head(testComputers1))
 
 
 ## Prediction : predictLayerHVT
+
+For deatiled information about the prediction please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html#prediction) of this vignette.
 
 Now once we have built the model, let us try to predict using `predictLayerHVT` function and our test dataset which cell and which layer each point belongs to.
 
@@ -1290,7 +1311,8 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 * __`...`__ -  color.vec and line.width can be passed from here
 
 
-Let’s see which cell and layer each point belongs to.
+Let’s see which cell and layer each point belongs to. For the shake of brevity we are displaying first twenty rows.
+
 
 ```{r, message=FALSE,warning=FALSE}
 validation_data <- testComputers
