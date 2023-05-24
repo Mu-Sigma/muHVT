@@ -337,7 +337,7 @@ knitr::include_graphics('torus_donut.png')
 
 To achieve the projection of a 3D object onto a 2D space, we will follow the outlined steps provided in the abstract section of this vignette
 
-### 6.1 Execution of Workflow Steps at Level 1
+### 6.1 Execution of Workflow Steps at Level1
 
 In this section all the outlined workflow steps provided in the abstract section (Compression, Projection and Tessellation) are executed at level 1.
 
@@ -510,7 +510,7 @@ compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 
 **Step 2: Data Projection**
 
-The function `sammonsProjection()` utilizes the `sammons` function from the MASS package.. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
+The function `sammonsProjection()` utilizes the `sammons` function from the MASS package being called in `HVT`. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
 lets view the projected 2D centroids after performing sammon's projection
 
@@ -533,7 +533,7 @@ Table(head(centroid_coordinates), scroll = T, limit = 20)
 
 The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids.
 
-`plotHVT` is the main function to construct hierarchical voronoi tessellations.
+`plotHVT` is the main function to plot hierarchical voronoi tessellations.
 
 
 Now let's try to understand **plotHVT** function. The parameters have been explained in detail below
@@ -568,7 +568,7 @@ muHVT::plotHVT(
 
 **From the presented plot, the inherent structure of the donut can be easily observed in the two-dimensional space**
 
-We will now overlay all the features as heatmap over the Voronoi Tessellation plot for better visualization.
+We will now overlay all the features as heatmap over the Voronoi Tessellation plot for better visualization and identification of patterns, trends, and variations in the data. .
 
 Let's have look at the function `hvtHmap` function which we will use to overlay a variable as heatmap.
 
@@ -594,7 +594,7 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 
 
-Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization.
+Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization and interpretation of data patterns and distributions
 
 ```{r hmp level two quantization torus3 demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for all the variable in the ’torus’ dataset',eval = global_var}
 metric_list <- colnames(hvt.torus3[[3]]$summary)
@@ -623,7 +623,7 @@ grid.arrange(hmap[[2]] ,nrow = 1, ncol=1)
 grid.arrange(hmap[[3]], nrow = 1, ncol=1)
 ```
 
-### 6.2  Refining Torus Projection at Level 2
+### 6.2 Refining Torus Projection at Level 2
 
 In this section we will explore a little more and try to project the torus(3D) object to 2D Space with different set of model parameters at level 2 inorder to achieve more refined and detailed tessellation
 
@@ -632,6 +632,8 @@ Through this exploration, we can gain a deeper understanding of the transformati
 **Step 1: Data Compression**
 
 First we will perform Hierarchical Vector Quantization using the torus data along with below mentioned model parameters to achieve a compression summary of atleast 80%. 
+
+for detailed information on data Compression please refer to section 2 of this vignette.
 
 **Model Parameters**
 
@@ -665,7 +667,7 @@ compressionSummaryTable(hvt.torus4[[3]]$compression_summary)
 
 **It can be observed from the table above that none of the cells has  hit the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells inorder to achieve a compression of 80%**
 
-Now let's try again with the below mentioned set of model parameters.
+Since we are not able to achieve our compression objective. Let's try again with the below mentioned set of model parameters.
 
 **Model Parameters**
 
@@ -704,6 +706,8 @@ compressionSummaryTable(hvt.torus5[[3]]$compression_summary)
 
 lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization.
 
+For detailed information on Data Projection one can refer to section 3 of this vignette.
+
 ```{r, warning=FALSE,message=FALSE}
 
 hvt_torus_coordinates <-hvt.torus5[[2]][[1]][["1"]]
@@ -737,6 +741,15 @@ muHVT::plotHVT(
 ```
 
 **From the presented plot, the inherent structure of the donut can no longer be observed in the two-dimensional space**
+
+
+`NOTE`
+
+When we pass the 3D torus data to the HVT function with depth 1, it performs a variance decomposition at a single level. This means that the algorithm calculates the overall variance of the data and provides a 2D visualization that represents the variance structure in a simplified manner, allowing us to visualize the data (donut structure).
+
+However, when we increase the depth to 2, the HVT function performs a more detailed variance decomposition by breaking down the overall variance into subcomponents at two levels. This increased level of analysis introduces additional dimensions or factors that are not easily represented in a 2D visualization.
+
+
 
 Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data at level 2 for better visualization.
 
@@ -903,6 +916,8 @@ into further cells if the quantization error of the cell is above the defined qu
 
 First we will perform Hierarchical Vector Quantization using the computers dataset along with below mentioned model parameters to generate map A and try to achieve data compression of atleast `80%`.  In situations where the compression ratio does not meet the desired target we will iteratively increase the number of cells until the desired compression percentage is reached.
 
+**In this example usage we will compress the data at depth 1 as it provides a simplified overview of the data by calculating the overall variance and potentially reducing the dimensionality of the data**
+
 **Model Parameters**
 
 * Number of Cells at each Level = 1001
@@ -995,8 +1010,8 @@ For better visualisation, let's plot the Voronoi tessellation for Map A using th
 # Voronoi tessellation plot for level one
 
  muHVT::plotHVT(map_A,
-        line.width = c(0.6), 
-        color.vec = c("#141B41","#0582CA"),
+        line.width = c(0.2),  #
+        color.vec = c("#141B41"),
         centroid.size = 0.01,  #1.5
         maxDepth = 1) 
 
@@ -1070,7 +1085,7 @@ The **plotCells** function is used to plot the Voronoi tessellation using the co
 Let's look at the Voronoi tessellation with the novelty cell(s) in the map highlighted in red.
 
 ```{r, message=FALSE,warning=FALSE,fig.cap='Figure 4: The Voronoi Tessellation with the novelty cells in the map highlighted in red'}
-plotCells(identified_Novelty_cells, map_A)
+plotCells(identified_Novelty_cells, map_A, line.width = c(0.2),centroid.size = 0.01 )
 
 ```
 
@@ -1205,7 +1220,7 @@ Table(head(testComputers1))
 
 ### 7.4 Prediction : predictLayerHVT
 
-Now once we have built the model, let us try to predict using our test dataset which cell and which layer each point belongs to.
+Now once we have built the model, let us try to predict using `predictLayerHVT` function and our test dataset which cell and which layer each point belongs to.
 
 ```{r predictLayerHVT function,echo = TRUE, eval= FALSE}
 predictLayerHVT(data,
@@ -1247,15 +1262,6 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 * __`yVar`__ -  Name of the dependent variable(s)
 
 * __`...`__ -  color.vec and line.width can be passed from here
-
- **Prediction Algorithm**
-
-The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in the test dataset :
-
-1. Calculate the distance between the point and the centroid of all the cells in the first level
-2. Find the cell whose centroid has minimum distance to the point
-3. Check if the cell drills down further to form more cells
-4. If it doesn't, return the path. Or else repeat steps 1 to 4 till we reach a level at which the cell doesn't drill down further
 
 
 Let’s see which cell and layer each point belongs to.
