@@ -322,9 +322,6 @@ Now let's do some EDA on the data. First of all, we will see how the data looks 
 ```{r torus head, warning=FALSE, eval = global_var}
 
 Table(head(torus_df))
-DT::datatable(head(torus_df), rownames = FALSE,
-              class = 'cell-border stripe',
-              options = list(scrollX = TRUE))
 
 ```
 
@@ -351,7 +348,7 @@ rglwidget(elementId = "plot3drgl")
 
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, eval=FALSE}
 knitr::include_graphics('torus_donut.png')
 ```
 
