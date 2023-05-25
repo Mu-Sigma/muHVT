@@ -5,24 +5,42 @@ date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
 output:
-  minidown::mini_document:
-    framework: spcss
-    theme: default
+  rmarkdown::html_vignette:
+    number_sections: true
     toc: true
-    toc_float: true
-    toc_highlight: true
-    code_folding: "none"
-    results_folding: "none"
-    tabset: true
-    code_download: true
-    math: "katex"
+    toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-params:
-  eval_render: true
 ---
+
+
+```{css, echo=FALSE}
+/* CSS for floating TOC on the left side */
+#TOC {
+    /* float: left; */
+    position: fixed;
+    margin-left: -22vw;
+    width: 18vw;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -18em;
+}
+
+.main-container {
+  margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
+}
+
+li {
+  padding-bottom: 5px;
+}
+  
+```
 
 ```{r setup, warning = FALSE, include = FALSE}
 knitr::opts_chunk$set(
@@ -38,13 +56,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-## 1 Abstract
+# Abstract
 
 The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
 
 1. **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. The goal is to compress the rows of a long data frame by applying a compression objective. This compression reduces the dimensionality of the data while preserving important information.
 
-2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension. Additionally, [embedding](https://en.wikipedia.org/wiki/Word_embedding) can be learned from the compressed data to further enhance the representation of the multivariate data. Embedding provide a lower-dimensional space where high-dimensional vectors, such as word vectors, can be translated, making it easier to perform machine learning tasks on large inputs.
+2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension. Additionally, [embedding](https://en.wikipedia.org/wiki/embedding) can be learned from the compressed data to further enhance the representation of the multivariate data. Embedding provide a lower-dimensional space where high-dimensional vectors, such as word vectors, can be translated, making it easier to perform machine learning tasks on large inputs.
 
 3. **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks where incorporating the structure of the data is essential.
 
@@ -61,9 +79,9 @@ This package additionally provides functions for computing Sammon’s projection
 <!-- devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev") -->
 <!-- ``` -->
 
-## 2 Vignettes
+# Vignettes
 
-### 2.1 muHVT 4.0.0 | What's New?
+## muHVT 4.0.0 | What's New?
 
 08th May, 2023
 
@@ -105,7 +123,7 @@ __For more detailed information on the functions mentioned above and their usage
 Following are the links to the vignettes for the muHVT package:
 
 
-1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
 2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
 

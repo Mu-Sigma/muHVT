@@ -166,7 +166,10 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 # Compress: Vector Quantization
 
-This package offers several advantages for performing data compression as it is designed to handle high-dimensional data more efficiently.It provides a hierarchical compression approach, allowing  multi-resolution representation of the data. The hierarchical structure enables efficient compression and storage of the data while preserving different levels of detail.HVT aims to preserve the topological structure of the data during compression. Irregular shapes and complex structures in high-dimensional data can contain valuable information about relationships and patterns. HVT seeks to capture and retain these topological characteristics, enabling meaningful analysis and visualization.This package employs tessellation to divide the compressed data space into distinct cells or regions while preserving the topology of the original data. This means that the relationships and connectivity between data points are maintained in the compressed representation.
+Compression is a technique used to reduce the data size while preserving its essential information, allowing for efficient storage and decompression to reconstruct the original data. While Vector quantization (VQ) is a technique used in data compression to represent a set of data points with a smaller number of representative vectors. It achieves compression by exploiting redundancies or patterns in the data and replacing similar data points with representative vectors.
+
+
+This package offers several advantages for performing data compression as it is designed to handle `high-dimensional data` more efficiently. It provides a `hierarchical compression approach`, allowing  multi-resolution representation of the data. The hierarchical structure enables `efficient compression` and `storage` of the data while preserving different levels of detail. HVT aims to preserve the topological structure of the data during compression.`Spatial data` with `irregular shapes` and complex structures in high-dimensional data can contain valuable information about relationships and patterns. HVT seeks to capture and retain these topological characteristics, enabling meaningful analysis and visualization.This package employs tessellation to divide the compressed data space into distinct cells or regions while preserving the topology of the original data. This means that the relationships and connectivity between data points are maintained in the compressed representation.
 
 
 This package can perform vector quantization using the following algorithms - 
@@ -268,6 +271,8 @@ $$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
 
 # Projection
 
+Projection mainly involves converting data from its original form to a different space or coordinate system while preserving certain properties of it. By projecting data into a common coordinate system, spatial relationships, distances, areas, and other spatial attributes can be accurately measured and compared.
+
 HVT performs projection as part of its workflow to visualize and explore high-dimensional data. The projection step in HVT involves mapping the compressed data, represented by the hierarchical structure of cells, onto a lower-dimensional space for visualization purposes, as human perception is more suited to interpreting information in lower-dimensional spaces.Users can zoom in/out, rotate, and explore different regions of the projected space to gain insights and understand the data from different perspectives.
 
 
@@ -282,7 +287,9 @@ The minimization  of this can be performed either by gradient descent, as propos
 
 # Voronoi Tessellations
 
-A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called Voronoi cells. It is complementary to Delaunay triangulation which has the property that no data point lies within the circumcircle of any triangle in the triangulation. This property guarantees that the resulting cells in the tessellation do not overlap with each other. By using Delaunay triangulation, HVT can achieve a partitioning of the data space into distinct and non-overlapping regions, which is crucial for accurately representing and analyzing the compressed data.Additionally, the use of Delaunay triangulation for tessellation ensures that the resulting cells have well-defined shapes, typically triangles in two dimensions or tetrahedra in three dimensions. 
+A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called `Voronoi cells`. It is complementary to `Delaunay triangulation` is a geometrical algorithm used to create a triangulated mesh from a set of points in a plane which has the property that no data point lies within the circumcircle of any triangle in the triangulation. This property guarantees that the resulting cells in the tessellation do not overlap with each other. 
+
+By using `Delaunay triangulation`, HVT can achieve a partitioning of the data space into distinct and non-overlapping regions, which is crucial for accurately representing and analyzing the compressed data.Additionally, the use of Delaunay triangulation for tessellation ensures that the resulting cells have well-defined shapes, typically triangles in two dimensions or tetrahedra in three dimensions. 
 
 The hierarchical structure resulting from tessellation preserves the inherent structure and relationships within the data. It captures clusters, subclusters, and other patterns in the data, allowing for a more organized and interpretable representation.
 The hierarchical structure reduces redundancy and enables more compact representations
@@ -293,7 +300,13 @@ In this package, we use `sammons` from the package `MASS` to project higher dime
 
 # Prediction
 
+
+Prediction basically refers to the process of making predictions or estimating future values or outcomes based on existing data patterns.In data prediction, a model is developed based on historical data or a training dataset, and this model is then used to make predictions on new, unseen data. The model captures the underlying patterns, trends, and relationships present in the training data, allowing it to make informed predictions on similar or related data points.
+
 In this package, we use `predictLayerHVT` function to predict based on the the sets of maps ( map A, map B, map C) constructed using HVT function. For each test records, the function will assign that record to either of Layer1 or Layer2. 
+
+
+This function takes several input parameters, including the test dataset (data) and the set of maps obtained as a result from `HVT` function .This function first performs predictions on the test dataset using each of the map separately. It calls the `predictHVT` function to predict the cell and level for each point in the test dataset based on the respective HVT maps. Next,  the function combines the predictions from the different HVT configurations into a single predictions table. It merges the predictions from map A, map B, and map C based on the row number of the test dataset. The resulting table contains information about the predicted cell and level from each HVT configuration.The function then processes the predictions to handle identified novelty cells. It assigns the cell ID from map B to the corresponding points if they belong to identified novelty cells in map A. If a point does not belong to a novelty cell, it assigns the cell ID from map C. 
 
 **Prediction Algorithm**
 

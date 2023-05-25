@@ -5,25 +5,43 @@ date: "Built on: `r format(Sys.Date(), '%m/%d/%Y')`"
 fig.height: 4
 fig.width: 15
 output:
-  minidown::mini_document:
-    framework: spcss
-    theme: default
+  rmarkdown::html_vignette:
+    number_sections: true
     toc: true
-    toc_float: true
-    toc_highlight: true
-    code_folding: "none"
-    results_folding: "none"
-    tabset: true
-    code_download: true
-    math: "katex_serverside"
-    section_divs: true
+    toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{Model diagnostics and validation for muHVT model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-params:
-  eval_render: true
 ---
+
+
+```{css, echo=FALSE}
+/* CSS for floating TOC on the left side */
+#TOC {
+    /* float: left; */
+    position: fixed;
+    margin-left: -22vw;
+    width: 18vw;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -14em;
+}
+
+.main-container {
+  margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
+}
+
+li {
+  padding-bottom: 5px;
+}
+  
+```
+
 
 ```{=html}
 <style>
@@ -313,27 +331,27 @@ compressionSummaryTable <-
 set.seed(240)
 ```
 
-## 1 Abstract
+# Abstract
 
 The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
 
 1. **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
 
-2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension. Additionally, [embedding](https://en.wikipedia.org/wiki/Word_embedding) can be learned from the compressed data to further enhance the representation of the multivariate data. Embedding provide a lower-dimensional space where high-dimensional vectors, such as word vectors, can be translated, making it easier to perform machine learning tasks on large inputs. 
+2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map(also called as [embedding](https://en.wikipedia.org/wiki/embedding)) coordinates into the desired output dimension.
 
 3. **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
 
 4. **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 
-## 2 Compress: Vector Quantization
+# Compress: Vector Quantization
 
 This package can perform vector quantization using the following algorithms -
 
 -   Hierarchical Vector Quantization using \(k-means\)
 -   Hierarchical Vector Quantization using \(k-medoids\)
 
-### 2.1 Hierarchical VQ
+## Hierarchical VQ
 
 ### 2.1.1 Using k-means
 
@@ -456,7 +474,7 @@ where
     = 2 represents L2 Norm.
 
 
-## 3 Project: Sammon's projection
+# Project: Sammon's projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space
 to a space of lower dimensionality while attempting to preserve the
@@ -480,7 +498,7 @@ and convergent solutions are not always guaranteed. Many implementations
 prefer to use the first Principal Components as a starting
 configuration.
 
-## 4 Voronoi Tessellations
+# Voronoi Tessellations
 
 A Voronoi diagram is a way of dividing space into a number of regions. A
 set of points (called seeds, sites, or generators) is specified
@@ -505,9 +523,9 @@ transformed points as centroids. The lines in the tessellations are
 chopped in places so that they do not protrude outside the parent
 polygon. This is done for all the subsequent levels.
 
-## 5 Import Dataset
+#  Import Dataset
 
-### 5.1 Import Dataset from Local
+## Import Dataset from Local
 
 The user can provide an absolute or relative path in the cell below to
 access the data from his/her computer. User can set `import_data_from_local` variable to TRUE to upload dataset from local. <br>
@@ -545,7 +563,7 @@ if(import_data_from_local){
 } 
 ```
 
-## 6 Simulate Dataset
+# Simulate Dataset
 
 In this section, we will use a simulated dataset. If you are not using this option set `simulate_dataset` to FALSE. Given below is a simulated dataset that contains
 2500 observations and 5 features. In this step, a Normal Multivariate
@@ -584,9 +602,9 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
 
 ------------------------------------------------------------------------
 
-## 7 Data Understanding
+# Data Understanding
 
-### 7.1 Quick Peek of the Data
+## Quick Peek of the Data
 
 **Summary of Dataset**
 
@@ -618,7 +636,7 @@ In the below section we can see the structure of the data.
 dataset_updated %>% str()
 ```
 
-### 7.2 Deleting Irrelevant Columns
+## Deleting Irrelevant Columns
 
 The cell below will allow user to drop irrelevant column.
 
@@ -644,7 +662,7 @@ if(want_to_delete_column == "yes"){
 
 ```
 
-### 7.3 Formatting and Renaming Columns
+## Formatting and Renaming Columns
 
 The code below contains a user defined function to rename or reformat
 any column that the user chooses.
@@ -681,7 +699,7 @@ str( dataset_updated) ## showing summary for updated
 
 ```
 
-### 7.4  Changing Data Type of Columns
+## Changing Data Type of Columns
 
 The section allows the user to change the data type of columns of his
 choice.
@@ -719,7 +737,7 @@ str( dataset_updated)
 
 ```
 
-### 7.5 Checking and Removing Duplicates
+## Checking and Removing Duplicates
 
 Presence of duplicate observations can be misleading, this sections
 helps get rid of such rows in the datasets.
@@ -740,7 +758,7 @@ if(want_to_remove_duplicates == "yes"){
 }
 ```
 
-### 7.6 List of Numerical and Categorical Column Names
+## List of Numerical and Categorical Column Names
 
 ```{r, warning=FALSE, message=FALSE, purl = FALSE}
 
@@ -770,7 +788,7 @@ paste0("\n Categorical Column(s): \n Count : ", length(cat_cols), "\n") %>% cat(
 paste0(cat_cols) %>% print()
 ```
 
-### 7.7 Filtering Dataset for Analysis
+## Filtering Dataset for Analysis
 
 In this section, the dataset can be filtered for required row(s) for
 further analysis.
@@ -797,7 +815,7 @@ if(want_to_filter_dataset == "yes"){
 
 ------------------------------------------------------------------------
 
-### 7.8 Missing Value Analysis
+## Missing Value Analysis
 
 Missing values in the training data can lead to a biased model because
 we have not analyzed the behavior and relationship of those values with
@@ -934,7 +952,7 @@ if(drop_row == "yes"){
 }
 ```
 
-### 7.9 One-Hot Encoding
+### One-Hot Encoding
 
 This technique bins all categorical values as either 1 or 0. It is used
 for categorical variables with 2 classes. This is done because
@@ -1004,7 +1022,7 @@ dataset_updated %>% head(100) %>% DT::datatable(options = options)
 
 ```
 
-### 7.10 Check for Singularity {#singularity}
+### Check for Singularity {#singularity}
 
 ```{r,purl = FALSE}
 # Check data for singularity
@@ -1026,7 +1044,7 @@ Table(data,scroll = T, limit = 20)
 
 ```
 
-### 7.11 Selecting only Numeric Cols after Dummification
+###  Selecting only Numeric Cols after Dummification
 
 ```{r}
 numeric_cols=as.vector(sapply(dataset_updated, is.numeric))
@@ -1036,7 +1054,7 @@ colnames(dataset_updated)
 
 ------------------------------------------------------------------------
 
-### 7.12 Final Dataset Summary
+## Final Dataset Summary
 
 All further operations will be performed on the following dataset.
 
@@ -1107,7 +1125,7 @@ Table(aa,scroll = T, limit = 20)
 #)
 ```
 
-## 8 Data distribution 
+# Data distribution 
 
 **Variable Histograms** 
 
@@ -1253,7 +1271,7 @@ corrplot::corrplot(cor(dataset_updated),
 
 ```
 
-## 9 Train - Test Split 
+# Train - Test Split 
 
 Let us first split the data into train and test. We will use 80% of the
 data as train and remaining as test.
@@ -1297,7 +1315,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-## 10 Model Training
+# Model Training
 
 In HVT, we use `sammons` from the package `MASS` to project higher
 dimensional data to a 2D space. The function `hvq` called from the `HVT`
@@ -1362,7 +1380,7 @@ More information on building an HVT model at different levels and visualizing th
 output can be found [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) 
 
 In the section below, we build a Level 1 HVT model. The number of clusters 
-`n_clust` is set to 1035 to achieve 95% compression.
+`n_cells` is set to 1035 to achieve 95% compression.
 
 ```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
 set.seed(240)
@@ -1407,7 +1425,7 @@ summaryTable(hvt.results[[3]][['summary']])
 ```
 
 
-## 11 Model Diagnostics and Validation
+##  Model Diagnostics and Validation
 
 ### Diagnostics {.unlisted .unnumbered}
 
@@ -1441,7 +1459,7 @@ be used for validation
 
 
 
-### 11.1 Diagnostic Plots
+## Diagnostic Plots
 
 The basic tool for examining the model fit is proximity plots and
 distribution of observations across centroids.
@@ -1476,7 +1494,7 @@ plotDiag(hvt.results)
 ```
 :::
 
-### 11.1.1 Mean Absolute Deviation based Calibration: HVT Model \| Train Data
+###  Mean Absolute Deviation based Calibration: HVT Model \| Train Data
 
 The first diagnostic plot is a calibration plot for HVT Model run on
 train data. This plot is obtained by scoring(predicting) the train data
@@ -1489,7 +1507,7 @@ p3=hvt.results[[4]]$mad_plot_train+ggtitle("Mean Absolute Deviation Plot: Calibr
 p3
 ```
 
-### 11.1.2 Minimum Intra-DataPoint Distance Plot: Train Data
+###  Minimum Intra-DataPoint Distance Plot: Train Data
 
 The second diagnostics plot helps us in finding out how the points in the
 training data are distributed. Shown below is a histogram of minimum
@@ -1502,7 +1520,7 @@ p1
 
 As seen in the plot above the mean value is 0.23. While running our model we had also selected the QE value as 0.2 which is near this value.
 
-### 11.1.3 Minimum Intra-Centroid Distance Plot: HVT Model | Train Data
+### Minimum Intra-Centroid Distance Plot: HVT Model | Train Data
 
 The third diagnostics plot helps us in finding out how the centroids in the
 HVT Model are distributed. Shown below is a histogram of minimum
@@ -1517,7 +1535,7 @@ p2
 <font color="red"> As seen in the plot above the mean value is **0.6**. This value can be selected as the Mean Absolute Deviation Threshold for scoring data using predict function </font>
 
 
-### 11.1.4 Distribution of Number of Observations in HVT Cells
+### Distribution of Number of Observations in HVT Cells
 
 The fourth diagnostics plot finds out distribution of number of
 observations in each centroid. Shown below is a histogram to depict the
@@ -1530,7 +1548,7 @@ p4
 
 As shown in the plot above the mean number of records in each HVT cell is **2**.
 
-### 11.1.5 Singleton Count
+### Singleton Count
 
 The fifth diagnostics plot finds out number of Singleton
 centroids (Segments/Centroids with single observation.)
@@ -1558,12 +1576,12 @@ obtained in Minimum Intra-Centroid Distance Plot section. Thus 0.6 (Mean of Mini
 be used as the mean absolute deviation threshold for prediction.
 </font>
 
-## 12 Prediction
+# Prediction
 
 Now once we have built the model, let us try to predict using our test
 dataset to see which cell each point belongs to.
 
-### 12.1 Prediction Algorithm
+## Prediction Algorithm
 
 
 
@@ -1579,7 +1597,7 @@ the test dataset :
 4.  If it doesn't, return the path. Or else repeat steps 1 to 4 till we
     reach a level at which the cell doesn't drill down further
 
-### 12.2 Load Test Data
+## Load Test Data
 
 The user can provide an absolute or relative path in the cell below to
 access the data from his/her computer.
@@ -1615,7 +1633,7 @@ if(load_test_data){
 }
 ```
 
-### 12.3 Transformation of Categorical Features
+### Transformation of Categorical Features
 
 In this section we will perform one hot encoding on test dataset, based
 on whether one hot encoding has been performed on train dataset.
@@ -1639,7 +1657,7 @@ dummified_cols_test %>% head(5) %>% DT::datatable(options = options)
 }
 ```
 
-### 12.4 Subsetting Test Dataset
+### Subsetting Test Dataset
 
 In this section we will subset the test data based on numeric columns present in train data.
 
@@ -1656,7 +1674,7 @@ Now once we have the test data ready, lets look at how the predictHVT function l
 
 
 
-## 13 Prediction on Test Data
+# Prediction on Test Data
 
 ```
 predictHVT(data,
@@ -1737,7 +1755,7 @@ Quant.Error.Actual <- QEdata %>%
 
 
   
-### 13.1 Quantization Error Comparison (Train vs. Test)
+### Quantization Error Comparison (Train vs. Test)
 
 Table below shows cell(s) containing anomalous test data points.
 Datapoints are flagged as anomalous when Quantization Error for such is
@@ -1764,7 +1782,7 @@ test data:
 qeHistPlot(hvt.results,hvt.prediction)
 ```
 
-### 13.2 Anomalous Observations
+### Anomalous Observations
 
 The anomalous observations are shown below in the datatable.
 
@@ -1864,7 +1882,7 @@ Table(df1,scroll = T, limit = 10)
 
 
 
-### 13.3 Anomalous Test Cells (highlighted) in Fitted HVT Map
+### Anomalous Test Cells (highlighted) in Fitted HVT Map
 
 The plot below shows anomalous cell(s) with color indicating
 change in Quantization Error after scoring.
@@ -1883,7 +1901,7 @@ knitr::include_graphics('./interactive.png')
 ```
 
 
-## 14 Download Predictions
+# Download Predictions
 
 The predictions from the above sections can be downloaded in section
 below. The downloaded predictions can be found in the output(LOCAL)
@@ -1897,7 +1915,7 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
 ```
 
 
-## 15 Applications
+# Applications
 
 1.  Pricing Segmentation - The package can be used to discover groups of
     similar customers based on the customer spend pattern and understand
@@ -1924,7 +1942,7 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
 6.  Using the base idea of Systems Dynamics, these diagrams can also be
     used to depict customer state changes over a period of time
 
-## 16 References
+# References
 
 1. Topology Preserving Maps : <https://link.springer.com/chapter/10.1007/1-84628-118-0_7>
 

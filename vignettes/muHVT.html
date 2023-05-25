@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+
+<html>
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="generator" content="pandoc" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Somya Shambhawi" />
-  <meta name="dcterms.date" content="2023-05-17" />
-  <title>muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis</title>
-  <style>
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
-  </style>
-  <!--[if lt IE 9]>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
-  <![endif]-->
-  <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Somya Shambhawi" />
+
+<meta name="date" content="2023-05-25" />
+
+<title>muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
 document.addEventListener('DOMContentLoaded', function(e) {
   var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
@@ -29,157 +29,265 @@ document.addEventListener('DOMContentLoaded', function(e) {
   }
 });
 </script>
-  <style type="text/css">body{color:#333;font-family:helvetica,arial,sans-serif;line-height:1.5;margin:0 auto;max-width:40em;padding:0 1em}h1,h2,h3,h4,h5,h6{margin:1em 0 .5em;line-height:1.2}a:link,a:visited{color:#03c;text-decoration:none}a:active,a:focus,a:hover{color:#06f;text-decoration:underline}h1 a:empty:before,h2 a:empty:before,h3 a:empty:before,h4 a:empty:before,h5 a:empty:before,h6 a:empty:before{content:"#"}h1 a:empty,h2 a:empty,h3 a:empty,h4 a:empty,h5 a:empty,h6 a:empty{visibility:hidden;padding-left:.25em}h1:hover a:empty,h2:hover a:empty,h3:hover a:empty,h4:hover a:empty,h5:hover a:empty,h6:hover a:empty{visibility:visible}img{max-width:100%}figure{margin:1em 0;text-align:center}figcaption{font-size:small}code,kbd,pre,samp{color:#009;font-family:monospace,monospace}pre kbd{color:#060}blockquote,pre{background:#eee;padding:.5em}pre{overflow:auto}blockquote{border-left:medium solid #ccc;margin:1em 0}blockquote :first-child{margin-top:0}blockquote :last-child{margin-bottom:0}table{border-collapse:collapse}td,th{border:thin solid #999;padding:.3em .4em;text-align:left}@media (prefers-color-scheme: dark){body{color:#bbb;background:#222}a:link,a:visited{color:#9bf}a:active,a:hover{color:#acf}code,kbd,pre,samp{color:#6cf}pre kbd{color:#9c9}blockquote,pre{background:#111}blockquote{border-color:#444}td,th{border-color:#666}}body{background-color:white}nav ul{list-style-type:none;padding-inline-start:1rem}div.sourceCode{overflow:visible;margin-left:0}pre.numberSource{margin:0}pre.sourceCode{overflow:auto}pre.sourceCode.numberSource{overflow:visible}pre.sourceCode.numberSource>code{white-space:pre-wrap}pre.sourceCode.numberSource>code>span{left:8px;text-indent:-4.5em}pre>code{white-space:pre}@media screen and (max-width: 960px){header,nav,article{padding:0 3rem}}nav[role="doc-toc"]{font-size:0.9em;border:none}nav[role="doc-toc"]>ul{box-sizing:border-box}nav[role="doc-toc"] ul{margin:0}nav[role="doc-toc"] li,nav[role="doc-toc"] a{margin:0;padding:0}.tooltip{position:relative;display:inline-block}.tooltip:before,.tooltip:after{position:absolute;opacity:0;clip:rect(0 0 0 0);-webkit-clip-path:inset(100%);clip-path:inset(100%);transition:all 0.3s;z-index:1010;left:50%}.tooltip:not(.bottom):before,.tooltip:not(.bottom):after{bottom:75%}.tooltip.bottom:before,.tooltip.bottom:after{top:75%}.tooltip:hover:before,.tooltip:hover:after,.tooltip:focus:before,.tooltip:focus:after{opacity:1;clip:auto;-webkit-clip-path:inset(0%);clip-path:inset(0%)}.tooltip:before{content:'';background:transparent;border:0.5rem solid transparent;left:calc(50% - 0.5rem)}.tooltip:not(.bottom):before{border-top-color:#212121}.tooltip.bottom:before{border-bottom-color:#212121}.tooltip:after{content:attr(aria-label);color:#fafafa;background:#212121;border-radius:0.125rem;padding:0.5rem;white-space:nowrap;transform:translateX(-50%)}.tooltip:not(.bottom):after{margin-bottom:1rem}.tooltip.bottom:after{margin-top:1rem}:root{--toc-width: 300px}@media screen and (min-width: 960px){body{max-width:100vw;margin:0;padding:0}main{display:grid;grid-template-columns:var(--toc-width) 1fr;grid-template-rows:auto auto}nav[role="doc-toc"]{grid-row:1 / -1;grid-column:1 / 2;border:none;margin:0;width:var(--toc-width)}nav[role="doc-toc"]>ul{padding-top:0;padding-bottom:0;position:sticky;max-height:100vh;overflow-y:auto;top:0;border:none}nav[role="doc-toc"]>ul>li:first-child{padding-top:0.5rem}}@media screen and (min-width: 960px) and (max-width: 1260px){main{width:calc(100vw - 2rem)}header,article{width:calc(100vw - var(--toc-width) - 6rem);padding:0 0 0 4rem}}@media screen and (min-width: 1260px){main{width:calc(1260px - 2rem);margin:0 calc(50vw - 480px) 0 auto}header,article{width:calc(960px - 6rem);padding:0 0 0 4rem}}.tabset>.tab{display:none;border:solid 1px black;padding:5px}.tabset>.tab.active{display:block}.tabset>.tab>:first-child{display:none}.tabset>.tabmenu{margin-bottom:0;padding:0}.tabset>.tabmenu li{display:inline-block;margin:0 2px 0 0}.tabset>.tabmenu button{text-decoration:none;font-weight:normal}.tabset>.tabmenu .active button{text-decoration:solid underline;font-weight:bold}.tabset>.tabmenu .active button:before{content:"> "}
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-  <script>window.addEventListener('load', function() {
-  let tabIds = [];
 
-  function toggle(elem, from = 0, to = 0) {
-    elem[from].classList.remove("active");
-    elem[to].classList.add("active");
-    return to;
-  }
 
-  function initialize(tabs) {
-    const active = tabs.findIndex(x => x.classList.contains("active"));
-    tabs.forEach(function(x) {
-      tabIds.push(x.id);
-      x.dataset.id = x.id;
-      x.removeAttribute("id");
-      x.classList.add("tab");
-      x.classList.remove("active");
-    });
-    return toggle(tabs, 0, active * (active > 0));
-  }
 
-  // Implement
-  Array.from(document.querySelectorAll("section.tabset")).forEach(section => {
-    const tabs = Array.from(section.querySelectorAll(":scope>section"));
-    let active = initialize(tabs);
 
-    const ul = section.insertBefore(document.createElement("ul"), tabs[0]);
-    ul.classList.add("tabmenu");
-    tabs.forEach((tab, current) => {
-      const button = document.createElement("button");
-      ul.appendChild(document.createElement("li")).appendChild(button);
-      button.id = tab.dataset.id;
-      button.innerHTML = tab.children[0].innerHTML;
-      button.addEventListener("click", function() {
-        history.pushState(null, null, "#" + button.id);
-        toggle(tabs, active, current);
-        active = toggle(ul.children, active, current);
-      });
-    });
-    toggle(ul.children, 0, active);
-  });
-
-  // Navigation
-  function showHashTab() {
-    const buttonId = tabIds.find(x => ('#' + x) === location.hash);
-    if (!buttonId) return;
-    const button = document.getElementById(buttonId);
-    let el = button.parentElement.parentElement.parentElement;
-    while (el) {
-      if (
-        el.tagName === "SECTION"
-        && el.classList.contains("tab")
-        && !el.classList.contains("active")
-      ) {
-        document.getElementById(el.dataset.id).click();
-      }
-      el = el.parentElement;
-    }
-    button.click();
-    button.scrollIntoView();
-  }
-  showHashTab();
-  window.addEventListener("hashchange", showHashTab); 
-});
-</script>
-  <script>document.addEventListener('DOMContentLoaded', function() {
-  function getBGColor(el) {
-    const b = window.getComputedStyle(el).backgroundColor;
-    return (b !== "transparent" &&
-            b !== "rgba(0, 0, 0, 0)" &&
-            b !== "rgba(255,255,255,0)") ? b
-         : (el.parentNode === null)      ? "white"
-                                         : getBGColor(el.parentNode);
-  }
-
-  function argMin(x) {
-    return x.indexOf(Math.min(...x));
-  }
-
-  const anchors = document.querySelectorAll('nav[role="doc-toc"] li>a');
-  const headerIDs = Array.from(anchors).map(x => x.attributes.href.value.substring(1));
-  let highlighted = 0;
-
-  window.document.styleSheets[0].insertRule(
-    `nav[role="doc-toc"] a.highlight{display:inline-block;width:100%;color:${getBGColor(anchors[0])};background-color:${window.getComputedStyle(anchors[0]).color}`
-  );
-
-  function highlight() {
-    const closest = argMin(headerIDs.map(
-      x => Math.pow(document.getElementById(x).getBoundingClientRect().top, 2)
-    ));
-    if (highlighted !== closest) {
-      anchors[highlighted].classList.remove("highlight");
-    }
-    anchors[closest].classList.add("highlight");
-    highlighted = closest;
-  }
-
-  highlight();
-  document.addEventListener('scroll', highlight, {passive: true});
-});
-</script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous" data-external="1">
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous" data-external="1"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/contrib/auto-render.min.js" integrity="sha384-kWPLUVMOks5AQFrykwIup5lo0m3iMkkHrD0uJ4H5cjeGihAutqP0yW0J6dpFiVkI" crossorigin="anonymous" onload="renderMathInElement(document.body);" data-external="1"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      renderMathInElement(document.body, {
-        delimiters: [
-          {left: "$$", right: "$$", display: true},
-          {left: "$", right: "$", display: false}
-        ],
-        displayMode: true
-      });
-    });
-  </script>
 </head>
+
 <body>
-<aside style="text-align:right">
-  <a href="data:text/x-markdown;base64,LS0tCnRpdGxlOiAibXVIVlQ6IENvbGxlY3Rpb24gb2YgZnVuY3Rpb25zIHVzZWQgZm9yIHZlY3RvciBxdWFudGl6YXRpb24gYW5kIGNvbnN0cnVjdGlvbiBvZiBoaWVyYXJjaGljYWwgdm9yb25vaSB0ZXNzZWxsYXRpb25zIGZvciBkYXRhIGFuYWx5c2lzIgphdXRob3I6ICJadWJpbiBEb3dsYXR5LCBTaHViaHJhIFByYWthc2gsIFNhbmdlZXQgTW95IERhcywgU2hhbnRhbnUgVmFpZHlhLCBQcmFkaXRpIFNoYWgsIFNvbXlhIFNoYW1iaGF3aSAiCmRhdGU6ICJgciBTeXMuRGF0ZSgpYCIKZmlnLmhlaWdodDogNApmaWcud2lkdGg6IDE1Cm91dHB1dDoKICBtaW5pZG93bjo6bWluaV9kb2N1bWVudDoKICAgIGZyYW1ld29yazogc3Bjc3MKICAgIHRoZW1lOiBkZWZhdWx0CiAgICB0b2M6IHRydWUKICAgIHRvY19mbG9hdDogdHJ1ZQogICAgdG9jX2hpZ2hsaWdodDogdHJ1ZQogICAgY29kZV9mb2xkaW5nOiAibm9uZSIKICAgIHJlc3VsdHNfZm9sZGluZzogIm5vbmUiCiAgICB0YWJzZXQ6IHRydWUKICAgIGNvZGVfZG93bmxvYWQ6IHRydWUKICAgIG1hdGg6ICJrYXRleCIKdmlnbmV0dGU6ID4KICAlXFZpZ25ldHRlSW5kZXhFbnRyeXtDb2xsZWN0aW9uIG9mIGZ1bmN0aW9ucyB1c2VkIGZvciB2ZWN0b3IgcXVhbnRpemF0aW9uIGFuZCBjb25zdHJ1Y3Rpb24gb2YgaGllcmFyY2hpY2FsIHZvcm9ub2kgdGVzc2VsbGF0aW9ucyBmb3IgZGF0YSBhbmFseXNpcyJ9CiAgJVxWaWduZXR0ZUVuZ2luZXtrbml0cjo6cm1hcmtkb3dufQogICVcVmlnbmV0dGVFbmNvZGluZ3tVVEYtOH0KcGFyYW1zOgogIGV2YWxfcmVuZGVyOiB0cnVlCi0tLQoKYGBge3Igc2V0dXAsIHdhcm5pbmcgPSBGQUxTRSwgaW5jbHVkZSA9IEZBTFNFfQprbml0cjo6b3B0c19jaHVuayRzZXQoCiAgY29sbGFwc2UgPSBUUlVFLAogIGNvbW1lbnQgPSAiIz4iLAogIG91dC53aWR0aCA9ICI2NzJweCIsCiAgb3V0LmhlaWdodCA9ICI0ODBweCIsCiAgZmlnLndpZHRoID0gNywKICBmaWcuaGVpZ2h0ID0gNSwKICBmaWcuYWxpZ24gPSAiY2VudGVyIiwKICBmaWcucmV0aW5hID0gMSwKICBkcGkgPSAxNTAKKQpgYGAKCiMjIDEgQWJzdHJhY3QKClRoZSBtdUhWVCBwYWNrYWdlIGlzIGEgY29sbGVjdGlvbiBvZiBSIGZ1bmN0aW9ucyB0byBmYWNpbGl0YXRlIGJ1aWxkaW5nIFt0b3BvbG9neSBwcmVzZXJ2aW5nIG1hcHNdKGh0dHBzOi8vbGluay5zcHJpbmdlci5jb20vY2hhcHRlci8xMC4xMDA3LzEtODQ2MjgtMTE4LTBfNykgZm9yIHJpY2ggbXVsdGl2YXJpYXRlIGRhdGEuIFRlbmRpbmcgdG93YXJkcyBhIGJpZyBkYXRhIHByZXBvbmRlcmFuY2UsIGEgbGFyZ2UgbnVtYmVyIG9mIHJvd3MuIEEgY29sbGVjdGlvbiBvZiBSIGZ1bmN0aW9ucyBmb3IgdGhpcyB0eXBpY2FsIHdvcmtmbG93IGlzIG9yZ2FuaXplZCBiZWxvdyA6CgoxLiAqKkRhdGEgQ29tcHJlc3Npb24qKjogVmVjdG9yIHF1YW50aXphdGlvbiAoVlEpLCBIVlEgKGhpZXJhcmNoaWNhbCB2ZWN0b3IgcXVhbnRpemF0aW9uKSB1c2luZyBtZWFucyBvciBtZWRpYW5zLiBUaGUgZ29hbCBpcyB0byBjb21wcmVzcyB0aGUgcm93cyBvZiBhIGxvbmcgZGF0YSBmcmFtZSBieSBhcHBseWluZyBhIGNvbXByZXNzaW9uIG9iamVjdGl2ZS4gVGhpcyBjb21wcmVzc2lvbiByZWR1Y2VzIHRoZSBkaW1lbnNpb25hbGl0eSBvZiB0aGUgZGF0YSB3aGlsZSBwcmVzZXJ2aW5nIGltcG9ydGFudCBpbmZvcm1hdGlvbi4KCjIuICoqRGF0YSBQcm9qZWN0aW9uKio6IERpbWVuc2lvbiBwcm9qZWN0aW9uIG9mIHRoZSBjb21wcmVzc2VkIGNlbGxzIHRvIDFELDJEIGFuZCAzRCB3aXRoIHRoZSBTYW1tb25zIE5vbmxpbmVhciBBbGdvcml0aG0uIFRoaXMgc3RlcCBjcmVhdGVzIHRvcG9sb2d5IHByZXNlcnZpbmcgbWFwIGNvb3JkaW5hdGVzIGludG8gdGhlIGRlc2lyZWQgb3V0cHV0IGRpbWVuc2lvbi4gQWRkaXRpb25hbGx5LCBbZW1iZWRkaW5nXShodHRwczovL2VuLndpa2lwZWRpYS5vcmcvd2lraS9Xb3JkX2VtYmVkZGluZykgY2FuIGJlIGxlYXJuZWQgZnJvbSB0aGUgY29tcHJlc3NlZCBkYXRhIHRvIGZ1cnRoZXIgZW5oYW5jZSB0aGUgcmVwcmVzZW50YXRpb24gb2YgdGhlIG11bHRpdmFyaWF0ZSBkYXRhLiBFbWJlZGRpbmcgcHJvdmlkZSBhIGxvd2VyLWRpbWVuc2lvbmFsIHNwYWNlIHdoZXJlIGhpZ2gtZGltZW5zaW9uYWwgdmVjdG9ycywgc3VjaCBhcyB3b3JkIHZlY3RvcnMsIGNhbiBiZSB0cmFuc2xhdGVkLCBtYWtpbmcgaXQgZWFzaWVyIHRvIHBlcmZvcm0gbWFjaGluZSBsZWFybmluZyB0YXNrcyBvbiBsYXJnZSBpbnB1dHMuCgozLiAqKlRlc3NlbGxhdGlvbioqOiBDcmVhdGUgY2VsbHMgcmVxdWlyZWQgZm9yIG9iamVjdCB2aXN1YWxpemF0aW9uIHVzaW5nIHRoZSBWb3Jvbm9pIFRlc3NlbGxhdGlvbiBtZXRob2QsIHBhY2thZ2UgaW5jbHVkZXMgaGVhdG1hcCBwbG90cyBmb3IgaGllcmFyY2hpY2FsIFZvcm9ub2kgdGVzc2VsbGF0aW9ucyAoSFZUKS4gVGhpcyBzdGVwIGVuYWJsZXMgZGF0YSBpbnNpZ2h0cywgdmlzdWFsaXphdGlvbiwgYW5kIGludGVyYWN0aW9uIHdpdGggdGhlIHRvcG9sb2d5IHByZXNlcnZpbmcgbWFwLiBVc2VmdWwgZm9yIHNlbWktc3VwZXJ2aXNlZCB0YXNrcyB3aGVyZSBpbmNvcnBvcmF0aW5nIHRoZSBzdHJ1Y3R1cmUgb2YgdGhlIGRhdGEgaXMgZXNzZW50aWFsLgoKNC4gKipQcmVkaWN0aW9uKio6IFNjb3JpbmcgbmV3IGRhdGEgc2V0cyBhbmQgcmVjb3JkaW5nIHRoZWlyIGFzc2lnbm1lbnQgdXNpbmcgdGhlIG1hcCBvYmplY3RzIGZyb20gdGhlIGFib3ZlIHN0ZXBzLCBpbiBhIHNlcXVlbmNlIG9mIG1hcHMgaWYgcmVxdWlyZWQsIGVuYWJsaW5nIG1vcmUgYWR2YW5jZWQgYW5hbHlzaXMgYW5kIG1vZGVsaW5nLgoKVGhpcyBwYWNrYWdlIGFkZGl0aW9uYWxseSBwcm92aWRlcyBmdW5jdGlvbnMgZm9yIGNvbXB1dGluZyBTYW1tb27igJlzIHByb2plY3Rpb24gYW5kIHBsb3R0aW5nIHRoZSBoZWF0IG1hcCBvZiB0aGUgdmFyaWFibGVzIG9uIHRoZSB0aWxlcyBvZiB0aGUgdGVzc2VsbGF0aW9ucy4KCgoKPCEtLSAjIyMgMS4xIEluc3RhbGxhdGlvbiBvZiBtdUhWVCA0LjAuMCAtLT4KCjwhLS0gYGBgIHIgLS0+CjwhLS0gbGlicmFyeShkZXZ0b29scykgLS0+CjwhLS0gZGV2dG9vbHM6Omluc3RhbGxfZ2l0aHViKHJlcG8gPSAiTXUtU2lnbWEvbXVIVlQiLCByZWYgPSAiZGV2IikgLS0+CjwhLS0gYGBgIC0tPgoKIyMgMiBWaWduZXR0ZXMKCiMjIyAyLjEgbXVIVlQgNC4wLjAgfCBXaGF0J3MgTmV3PwoKMDh0aCBNYXksIDIwMjMKClRoaXMgcGFja2FnZSBub3cgYWRkaXRpb25hbGx5IHByb3ZpZGVzIGZ1bmN0aW9uYWxpdHkgdG8gcHJlZGljdCBjZWxscyBhbmQgbGF5ZXJzIGJhc2VkIG9uIGEgc2V0IG9mIG1hcHMgdG8gbW9uaXRvciBlbnRpdGllcyBvdmVyIHRpbWUuCgpUaGUgY3JlYXRpb24gb2YgYSBwcmVkaWN0aXZlIHNldCBvZiBtYXBzIGludm9sdmVzIGZpdmUgc3RlcHMgLQoKMS4gKipDb21wcmVzczoqKiBDb21wcmVzcyB0aGUgZGF0YXNldCB1c2luZyBhIHBlcmNlbnRhZ2UgY29tcHJlc3Npb24gcmF0ZSBhbmQgYSBxdWFudGl6YXRpb24gdGhyZXNob2xkIHVzaW5nIHRoZSBIVlQoKSBmdW5jdGlvbiB0byBnZW5lcmF0ZSBtYXAgQQoyLiAqKlJlbW92ZSBub3ZlbHR5IGNlbGxzOioqIE1hbnVhbGx5IGlkZW50aWZ5IGFuZCByZW1vdmUgdGhlIG5vdmVsdHkgY2VsbHMgZnJvbSB0aGUgZGF0YXNldCB1c2luZyB0aGUgcmVtb3ZlTm92ZWx0eSgpIGZ1bmN0aW9uCjMuICoqQ29tcHJlc3MgdGhlIGRhdGFzZXQgd2l0aCBub3ZlbHR5OioqIGNvbXByZXNzIHRoZSBkYXRhc2V0IHdpdGggbm92ZWx0eSByZWNvcmRzIHVzaW5nIG5fY2VsbHMsIGRlcHRoIGFuZCBhIHF1YW50aXphdGlvbiB0aHJlc2hvbGQgICAgIHVzaW5nIHRoZSBIVlQoKSBmdW5jdGlvbiB0byBnZW5lcmF0ZSBtYXAgQgo0LiAqKkNvbXByZXNzIHRoZSBkYXRhc2V0IHdpdGhvdXQgbm92ZWx0eToqKiBBZ2FpbiwgY29tcHJlc3MgdGhlIGRhdGFzZXQgd2l0aG91dCBub3ZlbHR5KHMpIHVzaW5nIG5fY2VsbHMsIGRlcHRoIGFuZCBhIHF1YW50aXphdGlvbiB0aHJlc2hvbGQgdXNpbmcgdGhlIEhWVCgpIGZ1bmN0aW9uIHRvIGdlbmVyYXRlIG1hcCBDCjUuICoqUHJlZGljdCBiYXNlZCBvbiBhIHByZWRpY3RpdmUgc2V0IG9mIG1hcHM6KiogVXNpbmcgdGhlIHByZWRpY3RMYXllckhWVCBmdW5jdGlvbgoKTGV0IHVzIHRyeSB0byB1bmRlcnN0YW5kIHRoZSBzdGVwcyB3aXRoIHRoZSBoZWxwIG9mIHRoZSBkaWFncmFtIGJlbG93IC0KCmBgYHtyIG1sYXllcl9mbG93LGVjaG89RkFMU0Usd2FybmluZz1GQUxTRSxmaWcuc2hvdz0naG9sZCcsbWVzc2FnZT1GQUxTRSxvdXQud2lkdGg9JzkwJScsZmlnLmhlaWdodD04LGZpZy5jYXA9J0ZpZ3VyZSAxOiBGbG93IGRpYWdyYW0gZm9yIHByZWRpY3RpbmcgYmFzZWQgb24gYSBzZXQgb2YgbWFwcyB1c2luZyBwcmVkaWN0TGF5ZXJIVlQoKSd9CmtuaXRyOjppbmNsdWRlX2dyYXBoaWNzKCcuL3ByZWRpY3RMYXllckhWVF9mdW5jdGlvbi5wbmcnKQpgYGAKCkluaXRpYWxseSwgdGhlIHJhdyBkYXRhIGlzIHBhc3NlZCwgYW5kIGEgaGlnaGx5IGNvbXByZXNzZWQgbWFwIEEgaXMgY29uc3RydWN0ZWQgdXNpbmcgdGhlIF9fYEhWVGBfXyBmdW5jdGlvbi4gVGhlIG91dHB1dCBvZiB0aGlzIGZ1bmN0aW9uIHdpbGwgYmUgaGllcmFyY2hpY2FsbHkgYXJyYW5nZWQgdmVjdG9yIHF1YW50aXplZCBkYXRhIHRoYXQgaXMgdXNlZCB0byBpZGVudGlmeSB0aGUgbm92ZWx0eSBjZWxscyBpbiB0aGUgZGF0YXNldCB1c2luZyB0aGUgbnVtYmVyIG9mIGRhdGEgcG9pbnRzIHdpdGhpbiBlYWNoIGNlbGwgYW5kIHRoZSB6LXNjb3JlcyBmb3IgZWFjaCBjZWxsLgoKVGhlIGlkZW50aWZpZWQgbm92ZWx0eSBjZWxsKHMpIGlzIHRoZW4gcGFzc2VkIHRvIHRoZSBfX2ByZW1vdmVOb3ZlbHR5YF9fIGZ1bmN0aW9uIGFsb25nIHdpdGggbWFwIEEuIFRoaXMgZnVuY3Rpb24gcmVtb3ZlcyB0aGUgaWRlbnRpZmllZCBub3ZlbHR5IGNlbGwocykgZnJvbSB0aGUgZGF0YXNldCBhbmQgc3RvcmVzIHRoZW0gc2VwYXJhdGVseS4gVGhlIGZpbmFsIG91dHB1dCBvZiB0aGlzIGZ1bmN0aW9uIGlzIGEgbGlzdCBvZiB0d28gaXRlbXMgLSBhIGRhdGFzZXQgd2l0aCBub3ZlbHR5IHJlY29yZHMsIGFuZCBhIHN1YnNldCBvZiB0aGUgZGF0YXNldCB3aXRob3V0IG5vdmVsdHkgY2VsbChzKS4KClRoZSBfX2BwbG90Q2VsbHNgX18gZnVuY3Rpb24gcGxvdHMgdGhlIFZvcm9ub2kgdGVzc2VsbGF0aW9ucyBmb3IgdGhlIGNvbXByZXNzZWQgbWFwIChtYXAgQSkgYW5kIGhpZ2hsaWdodHMgdGhlIGlkZW50aWZpZWQgbm92ZWx0eSBjZWxsKHMpIGluIHJlZCBvbiB0aGUgcGxvdC4gVGhlIGZ1bmN0aW9uIHJlcXVpcmVzIHRoZSBpZGVudGlmaWVkIG5vdmVsdHkgY2VsbChzKSBudW1iZXIgYW5kIHRoZSBjb21wcmVzc2VkIG1hcCAobWFwIEEpIGFzIGlucHV0IGluIG9yZGVyIHRvIHBsb3QgdGhlIHRlc3NlbGxhdGlvbnMgbWFwIGFuZCBoaWdobGlnaHQgdGhvc2Ugbm92ZWx0eSBjZWxscyBvbiBpdC4KClRoZSBkYXRhc2V0IHdpdGggbm92ZWx0eSByZWNvcmRzIGdvdHRlbiBhcyBhbiBvdXRwdXQgZnJvbSB0aGUgX19gcmVtb3ZlTm92ZWx0eWBfXyBmdW5jdGlvbiBpcyB0aGVuIHBhc3NlZCBhcyBhbiBhcmd1bWVudCB0byB0aGUgX19gSFZUYF9fIGZ1bmN0aW9uIHdpdGggb3RoZXIgcGFyYW1ldGVycyBzdWNoIGFzIG5fY2VsbHMsIHF1YW50LmVycm9yLCBkZXB0aCwgZXRjLiB0byBjb25zdHJ1Y3QgYW5vdGhlciBtYXAgKG1hcCBCKS4KClRoZSBkYXRhc2V0IHdpdGhvdXQgbm92ZWx0eSBnb3R0ZW4gYXMgYW4gb3V0cHV0IGZyb20gdGhlIF9fYHJlbW92ZU5vdmVsdHlgX18gZnVuY3Rpb24gaXMgdGhlbiBwYXNzZWQgYXMgYW4gYXJndW1lbnQgdG8gdGhlIF9fYEhWVGBfXyBmdW5jdGlvbiB3aXRoIG90aGVyIHBhcmFtZXRlcnMgc3VjaCBhcyBuX2NlbGxzLCBxdWFudC5lcnJvciwgZGVwdGgsIGV0Yy4gdG8gY29uc3RydWN0IGFub3RoZXIgbWFwIChtYXAgQykuCgpGaW5hbGx5LCBhbGwgdGhlIGNvbnN0cnVjdGVkIG1hcHMgYXJlIHBhc3NlZCB0byB0aGUgX19gcHJlZGljdExheWVySFZUYF9fIGZ1bmN0aW9uIGFsb25nIHdpdGggdGhlIHRlc3QgZGF0YXNldCBvbiB3aGljaCB0aGUgZnVuY3Rpb24gd2lsbCBwcmVkaWN0L3Njb3JlIGZvciBmaW5kaW5nIHdoaWNoIG1hcCBhbmQgd2hhdCBjZWxsIGVhY2ggdGVzdCByZWNvcmQgZ2V0cyBhc3NpZ25lZCB0by4KCgoKCgpfX0ZvciBtb3JlIGRldGFpbGVkIGluZm9ybWF0aW9uIG9uIHRoZSBmdW5jdGlvbnMgbWVudGlvbmVkIGFib3ZlIGFuZCB0aGVpciB1c2FnZSB3aXRoaW4gdGhlIG11SFZUIHBhY2thZ2UsIHlvdSBjYW4gcmVmZXIgdG8gdGhlIGF2YWlsYWJsZSB2aWduZXR0ZXNfXwoKCkZvbGxvd2luZyBhcmUgdGhlIGxpbmtzIHRvIHRoZSB2aWduZXR0ZXMgZm9yIHRoZSBtdUhWVCBwYWNrYWdlOgoKCjEuIFsqKm11SFZUIFZpZ25ldHRlOioqXShodHRwczovL2h0bWxwcmV2aWV3LmdpdGh1Yi5pby8/aHR0cHM6Ly9naXRodWIuY29tL1NvbXlhNTQ1L211SFZUL2Jsb2IvbWFzdGVyL3ZpZ25ldHRlcy9tdUhWVF92aWduZXR0ZS5odG1sKSBDb250YWlucyBkZXNjcmlwdGlvbnMgb2YgdGhlIGZ1bmN0aW9ucyB1c2VkIGZvciB2ZWN0b3IgcXVhbnRpemF0aW9uIGFuZCBjb25zdHJ1Y3Rpb24gb2YgaGllcmFyY2hpY2FsIHZvcm9ub2kgdGVzc2VsbGF0aW9ucyBmb3IgZGF0YSBhbmFseXNpcwoKMi4gWyoqbXVIVlQgTW9kZWwgRGlhZ25vc3RpY3MgVmlnbmV0dGU6KipdKGh0dHBzOi8vaHRtbHByZXZpZXcuZ2l0aHViLmlvLz9odHRwczovL2dpdGh1Yi5jb20vU29teWE1NDUvbXVIVlQvYmxvYi9tYXN0ZXIvdmlnbmV0dGVzL211SFZUX21vZGVsX2RpYWdub3N0aWNzX3ZpZ25ldHRlLmh0bWwpIENvbnRhaW5zIGRlc2NyaXB0aW9ucyBvZiBmdW5jdGlvbnMgdXNlZCB0byBwZXJmb3JtIG1vZGVsIGRpYWdub3N0aWNzIGFuZCB2YWxpZGF0aW9uIGZvciBtdUhWVCBtb2RlbAoKMy4gWyoqbXVIVlQgOiBQcmVkaWN0aW5nIENlbGxzIGFuZCBMYXllcnMgdXNpbmcgcHJlZGljdExheWVySFZUIHRvIG1vbml0b3IgZW50aXRpZXMgb3ZlciB0aW1lKipdKGh0dHBzOi8vaHRtbHByZXZpZXcuZ2l0aHViLmlvLz9odHRwczovL2dpdGh1Yi5jb20vU29teWE1NDUvbXVIVlQvYmxvYi9tYXN0ZXIvdmlnbmV0dGVzL1ByZWRpY3RpbmdfQ2VsbHNfYW5kX0xheWVyc191c2luZ19wcmVkaWN0TGF5ZXJIVlQuaHRtbCkgQ29udGFpbnMgZGVzY3JpcHRpb25zIG9mIHRoZSBmdW5jdGlvbnMgdXNlZCBmb3IgbW9uaXRvcmluZyBlbnRpdGllcyBvdmVyIHRpbWUgdXNpbmcgYSBwcmVkaWN0aXZlIHNldCBvZiBIVlQgbWFwcwoKCgoKCg==" download="muHVT.Rmd" class="button">Download Rmd</a>
-</aside>
-<main>
-<header id="title-block-header">
-<h1 class="title">muHVT: Collection of functions used for vector
-quantization and construction of hierarchical voronoi tessellations for
-data analysis</h1>
-<p class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
-Shantanu Vaidya, Praditi Shah, Somya Shambhawi</p>
-<p class="date">2023-05-17</p>
-</header>
-<nav id="TOC" role="doc-toc">
+
+
+
+
+<h1 class="title toc-ignore">muHVT: Collection of functions used for
+vector quantization and construction of hierarchical voronoi
+tessellations for data analysis</h1>
+<h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
+Shantanu Vaidya, Praditi Shah, Somya Shambhawi</h4>
+<h4 class="date">2023-05-25</h4>
+
+
+<div id="TOC">
 <ul>
-<li><a href="#abstract" id="toc-abstract">1 Abstract</a></li>
-<li><a href="#vignettes" id="toc-vignettes">2 Vignettes</a>
+<li><a href="#abstract" id="toc-abstract"><span class="toc-section-number">1</span> Abstract</a></li>
+<li><a href="#vignettes" id="toc-vignettes"><span class="toc-section-number">2</span> Vignettes</a>
 <ul>
-<li><a href="#muhvt-4.0.0-whats-new" id="toc-muhvt-4.0.0-whats-new">2.1
-muHVT 4.0.0 | What’s New?</a></li>
+<li><a href="#muhvt-4.0.0-whats-new" id="toc-muhvt-4.0.0-whats-new"><span class="toc-section-number">2.1</span> muHVT 4.0.0 | What’s New?</a></li>
 </ul></li>
 </ul>
-</nav>
-<article>
-<section id="abstract" class="level2">
-<h2>1 Abstract</h2>
+</div>
+
+<style type="text/css">
+/* CSS for floating TOC on the left side */
+#TOC {
+    /* float: left; */
+    position: fixed;
+    margin-left: -22vw;
+    width: 18vw;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -18em;
+}
+
+.main-container {
+  margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
+}
+
+li {
+  padding-bottom: 5px;
+}
+  
+</style>
+<div id="abstract" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Abstract</h1>
 <p>The muHVT package is a collection of R functions to facilitate
 building <a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7">topology
 preserving maps</a> for rich multivariate data. Tending towards a big
 data preponderance, a large number of rows. A collection of R functions
 for this typical workflow is organized below :</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li><p><strong>Data Compression</strong>: Vector quantization (VQ), HVQ
 (hierarchical vector quantization) using means or medians. The goal is
 to compress the rows of a long data frame by applying a compression
@@ -188,7 +296,7 @@ preserving important information.</p></li>
 <li><p><strong>Data Projection</strong>: Dimension projection of the
 compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm.
 This step creates topology preserving map coordinates into the desired
-output dimension. Additionally, <a href="https://en.wikipedia.org/wiki/Word_embedding">embedding</a> can be
+output dimension. Additionally, <a href="https://en.wikipedia.org/wiki/embedding">embedding</a> can be
 learned from the compressed data to further enhance the representation
 of the multivariate data. Embedding provide a lower-dimensional space
 where high-dimensional vectors, such as word vectors, can be translated,
@@ -213,16 +321,17 @@ the tessellations.</p>
 <!-- library(devtools) -->
 <!-- devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev") -->
 <!-- ``` -->
-</section>
-<section id="vignettes" class="level2">
-<h2>2 Vignettes</h2>
-<section id="muhvt-4.0.0-whats-new" class="level3">
-<h3>2.1 muHVT 4.0.0 | What’s New?</h3>
+</div>
+<div id="vignettes" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Vignettes</h1>
+<div id="muhvt-4.0.0-whats-new" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> muHVT 4.0.0 | What’s
+New?</h2>
 <p>08th May, 2023</p>
 <p>This package now additionally provides functionality to predict cells
 and layers based on a set of maps to monitor entities over time.</p>
 <p>The creation of a predictive set of maps involves five steps -</p>
-<ol type="1">
+<ol style="list-style-type: decimal">
 <li><strong>Compress:</strong> Compress the dataset using a percentage
 compression rate and a quantization threshold using the HVT() function
 to generate map A</li>
@@ -283,8 +392,8 @@ map and what cell each test record gets assigned to.</p>
 above and their usage within the muHVT package, you can refer to the
 available vignettes</strong></p>
 <p>Following are the links to the vignettes for the muHVT package:</p>
-<ol type="1">
-<li><p><a href="https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html"><strong>muHVT
+<ol style="list-style-type: decimal">
+<li><p><a href="https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html"><strong>muHVT
 Vignette:</strong></a> Contains descriptions of the functions used for
 vector quantization and construction of hierarchical voronoi
 tessellations for data analysis</p></li>
@@ -298,9 +407,23 @@ over time</strong></a> Contains descriptions of the functions used for
 monitoring entities over time using a predictive set of HVT
 maps</p></li>
 </ol>
-</section>
-</section>
-</article>
-</main>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
 </body>
 </html>
