@@ -164,7 +164,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 
-# Compress: Vector Quantization
+# Data Compression
 
 Compression is a technique used to reduce the data size while preserving its essential information, allowing for efficient storage and decompression to reconstruct the original data. While Vector quantization (VQ) is a technique used in data compression to represent a set of data points with a smaller number of representative vectors. It achieves compression by exploiting redundancies or patterns in the data and replacing similar data points with representative vectors.
 
@@ -269,7 +269,7 @@ If we select `mean` as the error metric, the above Quantization Error equation w
 
 $$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$ 
 
-# Projection
+# Data Projection
 
 Projection mainly involves converting data from its original form to a different space or coordinate system while preserving certain properties of it. By projecting data into a common coordinate system, spatial relationships, distances, areas, and other spatial attributes can be accurately measured and compared.
 
@@ -285,7 +285,7 @@ $$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-# Voronoi Tessellations
+# Tessellations
 
 A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called `Voronoi cells`. It is complementary to `Delaunay triangulation` is a geometrical algorithm used to create a triangulated mesh from a set of points in a plane which has the property that no data point lies within the circumcircle of any triangle in the triangulation. This property guarantees that the resulting cells in the tessellation do not overlap with each other. 
 
@@ -404,7 +404,7 @@ knitr::include_graphics('torus_donut.png')
 
 In this section all the outlined workflow steps provided in the abstract section (Compression, Projection, Tessellation and Prediction) are executed at level 1.
 
-### Step 1: Data Compression
+## Step 1: Data Compression
 
 The core function for compression in the workflow is `HVQ`, which is called within the `HVT` function. we have a parameter called quantization error. This parameter acts as a threshold and determines the number of levels in the hierarchy. It means that, if there are 'n' number of levels in the hierarchy, then all the clusters formed till this level will have quantization error equal or greater than the threshold quantization error. The user can define the number of clusters in the first level of hierarchy and then each cluster in first level is sub-divided into the same number of clusters as there are in the first level. This process continues and each group is divided into smaller clusters as long as thethreshold quantization error is met. The output of this technique will be hierarchically arranged vector quantized data.
 
@@ -500,7 +500,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 **As it can be seen from the table above, none of the 100 cells have reached the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
 
-### Step 2: Data Projection
+## Step 2: Data Projection
 
 The function `sammonsProjection()` utilizes the `sammons` function from the MASS package being called in `HVT`. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
@@ -522,7 +522,7 @@ Table(head(centroid_coordinates), scroll = T, limit = 20)
 
 ```
 
-### Step 3: Tessellation
+## Step 3: Tessellation
 
 The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids.
 
@@ -837,7 +837,7 @@ muHVT::hvtHmap(
 )
 ```
 
-### Step 4: Prediction(predictHVT)
+## Step 4: Prediction(predictHVT)
 
 Lets have a look at out test dataset before we pass it to predictHVT function for scoring
 
@@ -973,7 +973,7 @@ Table(head(testComputers1))
 
 As we are familiar with the structure of the computers data, we will now follow the following steps to get the predictions using the Computers dataset.
 
-### Step 1: Data Compression
+## Step 1: Data Compression
 
 For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#compress-vector-quantization) of this vignette.
 
@@ -1045,7 +1045,7 @@ Now let us understand what each column in the above summary table means:
 
 All the columns after this will contain centroids for each cell. They can also be called a codebook, which represents a collection of all centroids or codewords.
 
-### Step 2: Data Projection
+## Step 2: Data Projection
 
 For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#projection) of this vignette.
 
@@ -1068,7 +1068,7 @@ Table(head(centroid_coordinates))
 
 ```
 
-### Step 3: Tessellation
+## Step 3: Tessellation
 
 For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#voronoi-tessellations) of this vignette.
 
@@ -1207,7 +1207,7 @@ muHVT::hvtHmap(
 
 ```
 
-### Step 4: Prediction(predictHVT)
+## Step 4: Prediction(predictHVT)
 
 For more detailed information on prediction please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#prediction) of this vignette.
 
