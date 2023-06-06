@@ -344,7 +344,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 4. **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 
-# Compress: Vector Quantization
+# Data Compression
 
 This package can perform vector quantization using the following algorithms -
 
@@ -353,7 +353,7 @@ This package can perform vector quantization using the following algorithms -
 
 ## Hierarchical VQ
 
-### 2.1.1 Using k-means
+###  Using k-means
 
 1.  The k-means algorithm randomly selects *k* data points as initial
     means
@@ -366,7 +366,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(n).
 
-### 2.1.2 Using k-medoids
+###  Using k-medoids
 
 1.  The k-medoids algorithm randomly selects *k* data points as initial
     means out of the n data points as the medoids.
@@ -379,7 +379,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(k \* (n-k)\^2).
 
-### 2.1.3 Hierarchical Vector Quantization
+###  Hierarchical Vector Quantization
 
 The algorithm divides the dataset recursively into cells using \(k-means\)
 or \(k-medoids\) algorithm. The maximum number of subsets are decided by
@@ -409,7 +409,7 @@ one of the below conditions
 -   there are less than three data point in the cell
 -   the user specified depth has been attained
 
-### 2.1.4 Quantization Error
+###  Quantization Error
 
 Let us try to understand quantization error with an example.
 
@@ -522,6 +522,22 @@ within its parent tile. Tessellations are plotted using these
 transformed points as centroids. The lines in the tessellations are
 chopped in places so that they do not protrude outside the parent
 polygon. This is done for all the subsequent levels.
+
+# Prediction
+
+
+Prediction basically refers to the process of making predictions or estimating future values or outcomes based on existing data patterns.In data prediction, a model is developed based on historical data or a training dataset, and this model is then used to make predictions on new, unseen data. The model captures the underlying patterns, trends, and relationships present in the training data, allowing it to make informed predictions on similar or related data points.
+
+In this package, we use `predictHVT` function to predict each point in the test dataset 
+
+**Prediction Algorithm**
+
+The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in the test dataset :
+
+1. Calculate the distance between the point and the centroid of all the cells in the first level
+2. Find the cell whose centroid has minimum distance to the point
+3. Check if the cell drills down further to form more cells
+4. If it doesn’t, return the path. Or else repeat steps 1 to 4 till we reach a level at which the cell doesn’t drill down further
 
 #  Import Dataset
 
