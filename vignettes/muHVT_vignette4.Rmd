@@ -1,6 +1,6 @@
 
 ---
-title: "muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"
+title: "muHVT: An Introduction"
 author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Praditi Shah, Shantanu Vaidya, Somya Shambhawi"
 date: "`r Sys.Date()`"
 fig.height: 4
@@ -30,11 +30,11 @@ vignette: >
     padding-bottom: 20px;
     background-color: #f9f9f9;
     border-right: 1px solid #ddd;
-    margin-top: -18em;
+    margin-top: -12em; 
 }
 
 .main-container {
-  margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
+  margin-left: 222px; /* Adjust this value to match the width of the TOC + some margin */
 }
 
 li {
@@ -314,9 +314,9 @@ The prediction algorithm recursively calculates the distance between each point 
 3. Check if the cell drills down further to form more cells
 4. If it doesn’t, return the path. Or else repeat steps 1 to 4 till we reach a level at which the cell doesn’t drill down further
 
-# Example Usage : Visualizing Multidimensional Data with Sammon's Projection using Torus (Donut)
+# Example I: muHVT with the Torus dataset
 
-**In this section, we will see how we can use the package to visualize multidimensional data by projecting them to two dimensions using Sammon's projection**
+**In this section, we will see how we can use the package to visualize multidimensional data by projecting them to two dimensions using Sammon's projection and further used for scoring**
 
 **Data Understanding**
 
@@ -351,7 +351,7 @@ Now let's do some EDA on the data. First of all, we will see how the training da
 
 ```{r torus head, warning=FALSE, eval = global_var}
 
-Table(head(trainTorus))
+Table(head(trainTorus1))
 
 ```
 
@@ -367,21 +367,29 @@ summary(torus_df)
 
 Now let's try to visualize the torus (donut) in  3D Space.
 
-```{r eval=FALSE,echo=FALSE}
+```{r eval=F,echo=F}
 # library(rgl)
 # plotids <- plot3d(torus_df$x, torus_df$y, torus_df$z,
-#                   type = "s", col = c("white", "red"),
-#                   xlab = "X", ylab = "Y", zlab = "Z",
+#                   type = "p", col = c("blue", "red"),  #col = c("white", "red")
+#                   xlab = "X", ylab = "Y", zlab = "Z",box=T,
 #                   xlim = c(-5, 5), ylim = c(-5, 5), zlim = c(-5, 5))
 # 
+# 
+# 
 # rglwidget(elementId = "plot3drgl")
+
 
 ```
 
 
 ```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =TRUE,echo=TRUE}
 
-plot_torus <- plotly::plot_ly(torus_df, x= ~x, y= ~y, z = ~z, color = ~z) %>% add_markers()
+plot_torus <- plotly::plot_ly(torus_df, x= ~x, y= ~y, z = ~z) %>% add_markers( marker = list(
+                          size = 2,
+                          symbol = "circle",
+                          color = ~z,
+                          colorscale = "Bluered",
+                          colorbar = (list(title = 'z_var'))))
 plot_torus
 
 ```
@@ -615,7 +623,7 @@ Table(head(centroid_coordinates), scroll = T, limit = 20)
 
 **Step 3: Tessellation**
 
-For more detailed information on Data Compression please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#voronoi- tessellations) of this vignette.
+For more detailed information on Voronoi Tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#voronoi-tessellations) of this vignette.
 
 For better visualisation, let's plot the Voronoi tessellation.
 
@@ -866,7 +874,6 @@ set.seed(240)
 predictions_torus <- muHVT::predictHVT(
   testTorus,
   hvt.torus3,
-  hmap.cols = "Quant.Error",
   child.level = 1,
   line.width = c(1.2),
   color.vec = c("#141B41"),
@@ -887,7 +894,7 @@ predictions_torus[["scoredPredictedData"]] %>% head(100) %>%
 ```
 
 
-# Example Usage: Predictions using the predictHVT on Personal Computers Dataset.
+# Example II: muHVT with the Personal Computer dataset
 
 **Data Understanding**
 
@@ -970,6 +977,13 @@ As we are familiar with the structure of the computers data, we will now follow 
 
 For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#compress-vector-quantization) of this vignette.
 
+We will use the `HVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the HVT function again.
+
+**In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce the level of detail captured in the data representation**
+
+
+We will pass the below mentioned model parameters along with computers dataset to `HVT` function.
+
 **Model Parameters**
 
 * Number of Cells at each Level = 1001
@@ -1002,7 +1016,7 @@ compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
 
-**As it can be seen from the table above, __`83%`__ of the cells have reached the quantization threshold error. Since we are successfully able to compress `83%` of the data, so we will not further subdivide the cells **
+**As it can be seen from the table above, __`83%`__ of the cells have reached the quantization threshold error. Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells **
 
 __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 
@@ -1056,11 +1070,11 @@ Table(head(centroid_coordinates))
 
 ### Step 3: Tessellation
 
-For more detailed information on Data Compression please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#voronoi- tessellations) of this vignette.
+For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#voronoi-tessellations) of this vignette.
 
 Now, we have obtained the centroid coordinates resulting from the application of Sammon's projection. 
 
-For better visualisation, let's plot the Voronoi tessellation for Map A using the `plotHVT` function.
+For better visualisation, let's plot the Voronoi tessellation using the `plotHVT` function.
 
 ```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi Tessellation for layer 1 shown for the 1001 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level one
@@ -1195,7 +1209,7 @@ muHVT::hvtHmap(
 
 ### Step 4: Prediction(predictHVT)
 
-For more detailed information on Data Compression please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#prediction) of this vignette.
+For more detailed information on prediction please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html#prediction) of this vignette.
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which level each point belongs to.
 
@@ -1225,7 +1239,6 @@ set.seed(240)
 predictions <- muHVT::predictHVT(
   testComputers,
   hvt.results,
-  hmap.cols = "Quant.Error",
   child.level = 1,
   line.width = c(1.2),
   color.vec = c("#141B41"),
@@ -1250,9 +1263,11 @@ We can see the predictions for the points in the table above.The centroid of the
 
 # Executive Summary
 
-* **Example Usage1: Visualizing Multidimensional Data with Sammon's Projection using Torus (Donut)**
+* **Example I: muHVT with the Torus dataset**
 
 *  We have considered torus dataset for multidimensional data visualization using sammons projection.
+
+*  Our goal is to achieve data compression upto atleast `80%`
 
 * We constructed a compressed HVT map (hvt.torus) by applying the HVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
 
@@ -1260,11 +1275,13 @@ We can see the predictions for the points in the table above.The centroid of the
 
 * Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 93% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
-* **Example Usage2: Example Usage of Predictions using the predictHVT on Personal Computers Dataset**
+* **Example II: muHVT with the Personal Computer dataset**
 
 *  We have considered computers dataset for generating predictions to see which cell and level each point belongs to.
 
-*  We construct a compressed HVT map using the HVT() on the training dataset by setting __`n_cells`__ to 1001 and  __`quant.error`__ to 0.1
+*  Our goal is to achieve data compression upto atleast `80%`
+
+*  We construct a compressed HVT map using the HVT() on the training dataset by setting __`n_cells`__ to 1001 and  __`quant.error`__ to 0.1, because on passing n_cells to 1001 we were able to attain a compression of 83%
 
 * We then plot the Voronoi Tessellation with the heatmap overlaid for all the features in the computers dataset for better visualization
 
