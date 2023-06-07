@@ -1,8 +1,9 @@
 ---
 title: "Model diagnostics and validation for muHVT model"
-author: "Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah"
+author: "Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi"
 date: "Built on: `r format(Sys.Date(), '%m/%d/%Y')`"
-
+fig.height: 4
+fig.width: 15
 output:
   rmarkdown::html_vignette:
     number_sections: true
@@ -12,8 +13,35 @@ vignette: >
   %\VignetteIndexEntry{Model diagnostics and validation for muHVT model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-
 ---
+
+
+```{css, echo=FALSE}
+/* CSS for floating TOC on the left side */
+#TOC {
+    /* float: left; */
+    position: fixed;
+    margin-left: -22vw;
+    width: 18vw;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -14em;
+}
+
+.main-container {
+  margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
+}
+
+li {
+  padding-bottom: 5px;
+}
+  
+```
+
 
 ```{=html}
 <style>
@@ -135,7 +163,7 @@ list.of.packages <<- c(
   "kableExtra",
   "gganimate",
       "gdata",
-  # "muHVT",
+   "muHVT",
   "data.table",
   "jmuOutlier",
   "viridis",
@@ -309,19 +337,19 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 1. **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
 
-2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map coordinates into the desired output dimension
+2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map(also called as [embedding](https://en.wikipedia.org/wiki/embedding)) coordinates into the desired output dimension.
 
 3. **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
 
 4. **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 
-# Compress: Vector Quantization
+# Data Compression
 
 This package can perform vector quantization using the following algorithms -
 
--   Hierarchical Vector Quantization using $k-means$
--   Hierarchical Vector Quantization using $k-medoids$
+-   Hierarchical Vector Quantization using \(k-means\)
+-   Hierarchical Vector Quantization using \(k-medoids\)
 
 ## Using k-means
 
@@ -351,9 +379,9 @@ algorithm is O(k \* (n-k)\^2).
 
 ## Hierarchical Vector Quantization
 
-The algorithm divides the dataset recursively into cells using $k-means$
-or $k-medoids$ algorithm. The maximum number of subsets are decided by
-setting $n_cells$ to, say five, in order to divide the dataset into
+The algorithm divides the dataset recursively into cells using \(k-means\)
+or \(k-medoids\) algorithm. The maximum number of subsets are decided by
+setting \(n-cells\) to, say five, in order to divide the dataset into
 maximum of five subsets. These five subsets are further divided into
 five subsets(or less), resulting in a total of twenty five (5\*5)
 subsets. The recursion terminates when the cells either contain less
@@ -364,7 +392,7 @@ threshold.
 The steps for this method are as follows :
 
 1.  Select k(number of cells), depth and quantization error threshold
-2.  Perform quantization (using $k-means$ or $k-medoids$) on the input
+2.  Perform quantization (using \(k-means\) or \(k-medoids\)) on the input
     dataset
 3.  Calculate quantization error for each of the k cells
 4.  Compare the quantization error for each cell to quantization error
@@ -379,7 +407,7 @@ one of the below conditions
 -   there are less than three data point in the cell
 -   the user specified depth has been attained
 
-### Quantization Error
+###  Quantization Error
 
 Let us try to understand quantization error with an example.
 
@@ -396,12 +424,12 @@ points in that cell. The set of all codewords is called a codebook.
 
 Now we want to calculate quantization error for each cell. For the sake
 of simplicity, let's consider only one cell having centroid `A` and `m`
-data points $F_i$ for calculating quantization error.
+data points \(F_i\) for calculating quantization error.
 
 For each point, we calculate the distance between the point and the
 centroid.
 
-$$ d = ||A - F_i||_{p} $$
+\[ d = ||A - F_i||_{p} \]
 
 In the above equation, p = 1 means `L1_Norm` distance whereas p = 2
 means `L2_Norm` distance. In the package, the `L1_Norm` distance is
@@ -414,8 +442,8 @@ $$QE  = \max(||A-F_i||_{p})$$
 where
 
 -   $A$ is the centroid of the cell
--   $F_i$ represents a data point in the cell
--   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
+-   \(F_i\) represents a data point in the cell
+-   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
     = 2 represents L2 Norm.
 
 Now, we take the maximum calculated distance of all m points. This gives
@@ -433,25 +461,18 @@ and returns a single value which is the Quantization Error for the cell.
 If we select `mean` as the error metric, the above Quantization Error
 equation will look like this :
 
-$$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
+\[QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}\]
 
 where
 
--   $A$ is the centroid of the cell
--   $F_i$ represents a data point in the cell
--   $m$ is the number of points in the cell
--   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
+-   \(A\) is the centroid of the cell
+-   \(F_i\) represents a data point in the cell
+-   \(m\) is the number of points in the cell
+-   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
     = 2 represents L2 Norm.
 
-# Voronoi Tessellations
 
-A Voronoi diagram is a way of dividing space into a number of regions. A
-set of points (called seeds, sites, or generators) is specified
-beforehand and for each seed, there will be a corresponding region
-consisting of all points within proximity of that seed. These regions
-are called Voronoi cells. It is complementary to Delaunay triangulation.
-
-## Project: Sammon's projection
+# Data Projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space
 to a space of lower dimensionality while attempting to preserve the
@@ -461,12 +482,12 @@ non-linear approach since the mapping cannot be represented as a linear
 combination of the original variables. The centroids are plotted in 2D
 after performing Sammon's projection at every level of the tessellation.
 
-Denoting the distance between $i^{th}$ and $j^{th}$ objects in the
-original space by $d_{ij}^*$, and the distance between their projections
-by $d_{ij}$. Sammon's mapping aims to minimize the below error function,
+Denoting the distance between \(i^{th}\) and \(j^{th}\) objects in the
+original space by \(d_{ij}^*\), and the distance between their projections
+by \(d_{ij}\). Sammon's mapping aims to minimize the below error function,
 which is often referred to as Sammon's stress or Sammon's error
 
-$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
+\[E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}\]
 
 The minimization of this can be performed either by gradient descent, as
 proposed initially, or by other means, usually involving iterative
@@ -475,7 +496,15 @@ and convergent solutions are not always guaranteed. Many implementations
 prefer to use the first Principal Components as a starting
 configuration.
 
-## Tessellate: Constructing Voronoi Tesselations
+# Tessellations
+
+A Voronoi diagram is a way of dividing space into a number of regions. A
+set of points (called seeds, sites, or generators) is specified
+beforehand and for each seed, there will be a corresponding region
+consisting of all points within proximity of that seed. These regions
+are called Voronoi cells. It is complementary to Delaunay triangulation.
+
+**Tessellate: Constructing Voronoi Tesselations**
 
 In this package, we use `sammons` from the package `MASS` to project
 higher dimensional data to a 2D space. The function `hvq` called from
@@ -492,7 +521,8 @@ transformed points as centroids. The lines in the tessellations are
 chopped in places so that they do not protrude outside the parent
 polygon. This is done for all the subsequent levels.
 
-# Import Dataset
+
+#  Import Dataset
 
 ## Import Dataset from Local
 
@@ -560,11 +590,11 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
     # Round only the numeric columns in dataset
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
     
-    paste0("Code chunk executed successfully. The table below is showing first 10 row(s) of the dataset.") %>% cat("\n")
+    paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
-    dataset_updated %>% head(10) %>% 
+    dataset_updated %>% head(100) %>% 
       as.data.frame() %>%
-      DT::datatable(options = options, rownames = TRUE)
+      Table(scroll = T, limit = 20)
   }
 
 ```
@@ -575,7 +605,7 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
 
 ## Quick Peek of the Data
 
-### Summary of Dataset
+**Summary of Dataset**
 
 The table below shows summary of all (numeric & categorical) columns of
 Data set
@@ -585,16 +615,19 @@ df <- do.call(cbind, lapply(dataset_updated, summary)) %>%
   data.frame() %>%
   tibble::rownames_to_column("Metrics")
 
-DT::datatable(df %>% 
-                mutate_if(is.numeric, round,4) %>% 
-                head(),
-    options  = options,
-    rownames = FALSE)
+df %>% head(100) %>% as.data.frame() %>%
+Table(scroll = T, limit = 20)
+
+# DT::datatable(df %>% 
+#                 mutate_if(is.numeric, round,4) %>% 
+#                 head(),
+#     options  = options,
+#     rownames = FALSE)
 
 rm(df)
 ```
 
-### Structure of Data
+**Structure of Data**
 
 In the below section we can see the structure of the data.
 
@@ -806,7 +839,7 @@ classification. Missing values can be of 3 types:
     the missing values are not random and are related to the unobserved
     input variable.
 
-### Missing Value on Entire dataset
+**Missing Value on Entire dataset**
 
 ```{r miss_value_entire_data, warning=FALSE, purl = FALSE}
 na_total <- sum(is.na( dataset_updated))/prod(dim( dataset_updated))
@@ -819,7 +852,7 @@ if(na_total == 0){
 
 ```
 
-### Missing Value on Column-level
+**Missing Value on Column-level**
 
 The following code is to visualize the missing values (if any) using bar
 chart.
@@ -858,7 +891,7 @@ if(total_na > 0 && length(missing_col_names) > 1){
 
 ```
 
-### Missing Value Treatment
+**Missing Value Treatment**
 
 In this section user can make decisions, how to tackle missing values in
 dataset. Both column(s) and row(s) can be removed in the following
@@ -867,7 +900,7 @@ dataset should the user choose to do so.
 **Note** for missing value imputation, please refer to data wrangling
 brick.
 
-#### Drop Column(s) with Missing Values
+**Drop Column(s) with Missing Values**
 
 The below code accepts user input and deletes the specified column.
 
@@ -893,7 +926,7 @@ if(drop_cloumn_name_na == "yes"){
 }
 ```
 
-#### Drop Row(s) with Missing Values
+**Drop Row(s) with Missing Values**
 
 The below code accepts user input and deletes rows.
 
@@ -958,6 +991,7 @@ dum_cols <- c("location.type","class")
 ```
 
 ```{r dummify1, purl=FALSE,echo=dummify_cat}
+
 # Below we dummify the columns mentioned by the user in the above code chunk
 if(dummify_cat){
 dummified_cols <- dataset_updated %>% dplyr::select(dum_cols) %>%       
@@ -1001,11 +1035,15 @@ if(nrow(singular_cols) != 0) {
   paste("There are no singular columns in the dataset") %>% htmltools::HTML()
 }
 # Display variance of columns
-dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>% 
-  data.frame() %>%  round(3) %>% DT::datatable(colnames = "Variance")
+data <- dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>% 
+  data.frame() %>% round(3) #%>% DT::datatable(colnames = "Variance")
+
+colnames(data) <- c("Variance")
+Table(data,scroll = T, limit = 20)
+
 ```
 
-### Selecting only Numeric Cols after Dummification
+###  Selecting only Numeric Cols after Dummification
 
 ```{r}
 numeric_cols=as.vector(sapply(dataset_updated, is.numeric))
@@ -1026,11 +1064,11 @@ dataset_updated <-  dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
 
 dataset_updated %>% head(10) %>%
   as.data.frame() %>%
-  DT::datatable(options = options, rownames = TRUE)
+  Table(scroll = T, limit = 20)
 
 ```
 
-```{r}
+```{r,echo=TRUE,eval=FALSE}
       DT::datatable(
         dataset_updated %>%
           select_if(., is.numeric) %>%
@@ -1069,9 +1107,26 @@ dataset_updated %>% head(10) %>%
       )
 ```
 
-# Data distribution {.tabset}
+```{r}
+#print(
+ aa <-  dataset_updated %>%
+    select_if(., is.numeric) %>%
+    skimr::skim() %>%
+    mutate_if(is.numeric, round, digits = 4) %>%
+    rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
+    rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
+    select(-c(type, n_missing, complete_rate)) %>%
+    mutate(n_row = nrow(dataset_updated),
+           n_missing = rowSums(is.na(.))
+           # ,n_non_missing = n_row - n_missing
+           )
+Table(aa,scroll = T, limit = 20)
+#)
+```
 
-## Variable Histograms {.unlisted .unnumbered}
+# Data distribution 
+
+**Variable Histograms** 
 
 Shown below is the distribution of all the variables in the dataset.
 
@@ -1143,7 +1198,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-## Box Plots {.tabset .unlisted .unnumbered}
+**Box Plots** 
 
 In this section, we plot box plots for each numeric column in the
 dataset across panels. These plots will display the median and Inter
@@ -1185,7 +1240,7 @@ gridExtra::grid.arrange(grobs = box_plots, ncol = 3)
 
 ```
 
-## Correlation Matrix {.unlisted .unnumbered}
+**Correlation Matrix** 
 
 In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
@@ -1215,7 +1270,7 @@ corrplot::corrplot(cor(dataset_updated),
 
 ```
 
-# Train - Test Split {.tabset}
+# Train - Test Split 
 
 Let us first split the data into train and test. We will use 80% of the
 data as train and remaining as test.
@@ -1237,7 +1292,7 @@ The train data contains `r nrow(dataset_updated_train)` rows and
 `r nrow(dataset_updated_test)` rows and `r ncol(dataset_updated_test)`
 columns.
 
-## Train Distribution {.unlisted .unnumbered}
+### Train Distribution 
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_train)
@@ -1248,7 +1303,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-## Test Distribution {.unlisted .unnumbered}
+### Test Distribution 
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_test)
@@ -1324,7 +1379,7 @@ More information on building an HVT model at different levels and visualizing th
 output can be found [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/muHVT_vignette.html) 
 
 In the section below, we build a Level 1 HVT model. The number of clusters 
-`n_clust` is set to 1035 to achieve 95% compression.
+`n_cells` is set to 1035 to achieve 95% compression.
 
 ```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
 set.seed(240)
@@ -1355,10 +1410,11 @@ muHVT::plotHVT(hvt.results,
 The table below shows number of cells having quantization error below threshold and percentage of cells having quantization error below threshold.
 
 ```{r}
-compressionSummaryTable(hvt.results[[3]]$compression_summary)
+Table(hvt.results[[3]]$compression_summary,scroll = T, limit = 10)
+#compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
-As seen in the above table, 95% of the cells have a quantization error below the 
+As seen in the above table, 98% of the cells have a quantization error below the 
 threshold. Let's have a closer look at `Quant.Error` variable in the below table.
 The values for `Quant.Error` of the cells which have hit the Quantization Error threshold 
 are shown in red. Here we are showing just top 50 rows for the sake of brevity.
@@ -1368,9 +1424,9 @@ summaryTable(hvt.results[[3]][['summary']])
 ```
 
 
-## Model Diagnostics and Validation
+##  Model Diagnostics and Validation
 
-#### Diagnostics {.unlisted .unnumbered}
+### Diagnostics {.unlisted .unnumbered}
 
 **HVT model diagnostics** are used to evaluate the model fit and investigate
 the proximity between centroids. The distribution of proximity value can
@@ -1381,7 +1437,7 @@ The diagnosis can be enabled by setting the **`diagnose`** parameter to `TRUE`
 while building the HVT Model.
 
 
-#### Validation {.unlisted .unnumbered}
+### Validation {.unlisted .unnumbered}
 
 **Model validation** is used to measure the fit/quality of the model.
 Measuring model fit is the key to iteratively improving the models. The
@@ -1437,7 +1493,7 @@ plotDiag(hvt.results)
 ```
 :::
 
-### Mean Absolute Deviation based Calibration: HVT Model \| Train Data
+###  Mean Absolute Deviation based Calibration: HVT Model \| Train Data
 
 The first diagnostic plot is a calibration plot for HVT Model run on
 train data. This plot is obtained by scoring(predicting) the train data
@@ -1450,7 +1506,7 @@ p3=hvt.results[[4]]$mad_plot_train+ggtitle("Mean Absolute Deviation Plot: Calibr
 p3
 ```
 
-### Minimum Intra-DataPoint Distance Plot: Train Data
+###  Minimum Intra-DataPoint Distance Plot: Train Data
 
 The second diagnostics plot helps us in finding out how the points in the
 training data are distributed. Shown below is a histogram of minimum
@@ -1501,7 +1557,7 @@ p5=hvt.results[[4]]$singleton_piechart
 p5
 ```
 
-#### Validation
+**Validation**
 
 
 The Mean Absolute Deviation Plot for Validation Data has been shown in above section. Alternatively. to fetch it separately, we can use the following code:
@@ -1729,7 +1785,7 @@ qeHistPlot(hvt.results,hvt.prediction)
 
 The anomalous observations are shown below in the datatable.
 
-```{r}
+```{r,echo=TRUE,eval=TRUE}
 
 QECompareDf <- hvt.prediction$QECompareDf %>% filter(anomalyFlag == 1)
 # adding cell ID to table
@@ -1798,13 +1854,36 @@ DT::datatable(
               backgroundColor = styleEqual(c(1), c('#ff7f7f')))
 
 ```
+```{r, echo=FALSE}
+# library(knitr)
+# library(kableExtra)
+# 
+# kable(
+#   QECompareDf1 %>%
+#     mutate_if(is.numeric, ~ round(., 4)) %>%
+#     select(-c(`Quant.Error.Diff (%)`)) %>%
+#     rename(No.Of.Points = n),
+#   format = "html",
+#   table.attr = 'class="cell-border stripe"',
+#   row.names = FALSE
+# ) %>%
+#   kable_styling(bootstrap_options = c("striped"))
+
+#print(
+df1 <-  QECompareDf1 %>%
+    mutate_if(is.numeric, ~ round(., 4)) %>%
+    select(-c(`Quant.Error.Diff (%)`)) %>%
+    rename(No.Of.Points = n)
+Table(df1,scroll = T, limit = 10)
+#)
+```
 
 
 
 
 ### Anomalous Test Cells (highlighted) in Fitted HVT Map
 
-The interactive plot below shows anomalous cell(s) with color indicating
+The plot below shows anomalous cell(s) with color indicating
 change in Quantization Error after scoring.
 
 <!-- ```{r, echo=FALSE} -->
@@ -1816,7 +1895,7 @@ hvt.prediction[["predictPlot"]]
 
 ```
 
-```{r, echo=FALSE}
+```{r, echo=FALSE,fig.height=8, fig.width=12,out.width='80%'}
 knitr::include_graphics('./interactive.png')
 ```
 
@@ -1831,7 +1910,7 @@ folder.
 predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
-      DT::datatable(options = options, rownames = TRUE)
+      Table(scroll = T, limit = 20)
 ```
 
 

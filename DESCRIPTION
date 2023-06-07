@@ -1,15 +1,16 @@
 Package: muHVT
 Type: Package
-Date: 2023-03-03
+Date: 2023-06-07
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 3.0.0
+Version: 4.0.0
 Authors@R: c(
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Shubhra", "Prakash", email = "shubhraprakash@live.com", role = "ctb"),
     person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "ctb"),
     person("Sunuganty Achyut", "Raj", email = "achyut.raj92@gmail.com", role = "ctb"),
     person("Shantanu", "Vaidya", email = "snv.shantanu@gmail.com", role = "ctb"),
+    person("Somya", "Shambhawi", email = "shambhawisomya@gmail.com", role = "ctb")
     person("Praditi", "Shah", email = "shahpraditi@gmail.com", role = "ctb"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
@@ -36,8 +37,9 @@ Author: Zubin Dowlaty [aut],
   Shantanu Vaidya [ctb],
   Praditi Shah [ctb],
   Avinash Joshi [ctb],
+  Somya Shambhawi [ctb]
   Meet Dave [ctb], 
   Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2023-03-03 20:10:03 UTC
+Date/Publication: 2023-06-07 20:10:03 UTC
