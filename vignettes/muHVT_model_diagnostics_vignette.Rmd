@@ -1854,7 +1854,7 @@ DT::datatable(
               backgroundColor = styleEqual(c(1), c('#ff7f7f')))
 
 ```
-```{r, echo=FALSE,eval=FALSE}
+```{r, echo=FALSE}
 # library(knitr)
 # library(kableExtra)
 # 
