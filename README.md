@@ -59,7 +59,7 @@ The creation of a predictive set of maps involves five steps -
 
 Let us try to understand the steps with the help of the diagram below -
 
-<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
+<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
 <p class="caption">
 Figure 1: Flow diagram for predicting based on a set of maps using predictLayerHVT()
 </p>
@@ -112,7 +112,7 @@ The creation of a predictive set of maps involves four steps -
 
 Let us try to understand the steps with the help of the diagram below -
 
-<img src="https://github.com/Mu-Sigma/muHVT/blob/dev/vignettes/mlayer1.png" width="672px" height="480px" />
+<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/mlayer1.png" width="672px" height="480px" />
 <p class="caption">
 Figure 2: Flow diagram for predicting based on a set of maps using mlayerHVT()
 </p>
