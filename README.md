@@ -33,7 +33,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 This package additionally provides functions for computing Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
-The muHVT process involves three steps:
+This process involves three steps:
 
 1.  **Compress:** Using a quantization threshold
 2.  **Project:** Using a dimension projection algorithm
@@ -53,7 +53,7 @@ The creation of a predictive set of maps involves five steps -
 
 1.  **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function to generate map A
 2.  **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function
-3.  **Compress the dataset with novelty:** compress the dataset with novelty records using n_cells, depth and a quantization threshold     using the HVT() function to generate map B
+3.  **Compress the dataset with novelty:** compress the dataset with novelty using n_cells, depth and a quantization threshold using the HVT() function to generate map B
 4.  **Compress the dataset without novelty:** Again, compress the dataset without novelty(s) using n_cells, depth and a quantization threshold using the HVT() function to generate map C
 5.  **Predict based on a predictive set of maps:** Using the predictLayerHVT function
 
