@@ -742,7 +742,7 @@ Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the 
 
 
 
-**The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher coordinate values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure**
+The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (X,Y and Z). The sheer green shades highlight regions with higher coordinate values in each of the heatmaps, while the indigo  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure
 
 
 
@@ -1049,7 +1049,7 @@ Now let's plot the Voronoi Tessellation with the heatmap overlaid for all the fe
 
 
 
-**The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data**
+The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data
 
 
 

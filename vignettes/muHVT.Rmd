@@ -81,7 +81,7 @@ The creation of a predictive set of maps involves five steps -
 
 1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function to generate map A
 2. **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function
-3. **Compress the dataset with novelty:** compress the dataset with novelty records using n_cells, depth and a quantization threshold     using the HVT() function to generate map B
+3. **Compress the dataset with novelty:** compress the dataset with novelty using n_cells, depth and a quantization threshold     using the HVT() function to generate map B
 4. **Compress the dataset without novelty:** Again, compress the dataset without novelty(s) using n_cells, depth and a quantization threshold using the HVT() function to generate map C
 5. **Predict based on a predictive set of maps:** Using the predictLayerHVT function
 
