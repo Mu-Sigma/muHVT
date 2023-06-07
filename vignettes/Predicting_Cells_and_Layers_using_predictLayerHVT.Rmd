@@ -375,7 +375,7 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization and interpretation of data patterns and distributions.
 
-
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data**
 
 
 ```{r hvt_mapA hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 2: The Voronoi Tessellation with the heat map overlaid for variable ’price’ in the ’computers’ dataset',eval = global_var}
@@ -624,6 +624,8 @@ muHVT::plotHVT(map_C,
 ```
 
 Now let's plot all the features for each cell at level two as a heatmap for better visualization.
+
+**The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The <span style="color: #8FD400;">sheer green</span>  shades highlight regions with higher values in each of the heatmaps, while the <span style="color: indigo;">indigo</span>  shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data**
 
 
 ```{r hvt_mapC hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi Tessellation with the heat map overlaid for features price in the ’computers’ dataset',eval = global_var}
