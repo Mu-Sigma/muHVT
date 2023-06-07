@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Somya Shambhawi" />
 
-<meta name="date" content="2023-05-25" />
+<meta name="date" content="2023-06-06" />
 
 <title>muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis</title>
 
@@ -242,7 +242,7 @@ vector quantization and construction of hierarchical voronoi
 tessellations for data analysis</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
 Shantanu Vaidya, Praditi Shah, Somya Shambhawi</h4>
-<h4 class="date">2023-05-25</h4>
+<h4 class="date">2023-06-06</h4>
 
 
 <div id="TOC">
@@ -289,29 +289,21 @@ data preponderance, a large number of rows. A collection of R functions
 for this typical workflow is organized below :</p>
 <ol style="list-style-type: decimal">
 <li><p><strong>Data Compression</strong>: Vector quantization (VQ), HVQ
-(hierarchical vector quantization) using means or medians. The goal is
-to compress the rows of a long data frame by applying a compression
-objective. This compression reduces the dimensionality of the data while
-preserving important information.</p></li>
+(hierarchical vector quantization) using means or medians. This step
+compresses the rows (long data frame) using a compression
+objective</p></li>
 <li><p><strong>Data Projection</strong>: Dimension projection of the
-compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm.
-This step creates topology preserving map coordinates into the desired
-output dimension. Additionally, <a href="https://en.wikipedia.org/wiki/embedding">embedding</a> can be
-learned from the compressed data to further enhance the representation
-of the multivariate data. Embedding provide a lower-dimensional space
-where high-dimensional vectors, such as word vectors, can be translated,
-making it easier to perform machine learning tasks on large
-inputs.</p></li>
+compressed cells to 1D,2D and 3D with the Sammons Non-linear Algorithm.
+This step creates topology preserving map (also called as <a href="https://en.wikipedia.org/wiki/Embedding">embedding</a>)
+coordinates into the desired output dimension .</p></li>
 <li><p><strong>Tessellation</strong>: Create cells required for object
 visualization using the Voronoi Tessellation method, package includes
 heatmap plots for hierarchical Voronoi tessellations (HVT). This step
 enables data insights, visualization, and interaction with the topology
-preserving map. Useful for semi-supervised tasks where incorporating the
-structure of the data is essential.</p></li>
+preserving map. Useful for semi-supervised tasks</p></li>
 <li><p><strong>Prediction</strong>: Scoring new data sets and recording
 their assignment using the map objects from the above steps, in a
-sequence of maps if required, enabling more advanced analysis and
-modeling.</p></li>
+sequence of maps if required</p></li>
 </ol>
 <p>This package additionally provides functions for computing Sammon’s
 projection and plotting the heat map of the variables on the tiles of
@@ -393,7 +385,7 @@ above and their usage within the muHVT package, you can refer to the
 available vignettes</strong></p>
 <p>Following are the links to the vignettes for the muHVT package:</p>
 <ol style="list-style-type: decimal">
-<li><p><a href="https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette3.html"><strong>muHVT
+<li><p><a href="https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html"><strong>muHVT
 Vignette:</strong></a> Contains descriptions of the functions used for
 vector quantization and construction of hierarchical voronoi
 tessellations for data analysis</p></li>

@@ -986,9 +986,9 @@ We will pass the below mentioned model parameters along with computers dataset t
 
 **Model Parameters**
 
-* Number of Cells at each Level = 1001
+* Number of Cells at each Level = 440
 * Maximum Depth = 1
-* Quantization Error Threshold = 0.1
+* Quantization Error Threshold = 0.2
 * Error Metric = Max
 * Distance Metric = Manhattan
 
@@ -997,9 +997,9 @@ We will pass the below mentioned model parameters along with computers dataset t
 set.seed(240)
 hvt.results <- list()
 hvt.results <- muHVT::HVT(trainComputers,   
-                          n_cells = 1001,
+                          n_cells = 440,
                           depth = 1,
-                          quant.err = 0.1,
+                          quant.err = 0.2,
                           projection.scale = 10,
                           normalize = F,
                           distance_metric = "L1_Norm",
@@ -1016,7 +1016,7 @@ compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
 
-**As it can be seen from the table above, __`83%`__ of the cells have reached the quantization threshold error. Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells **
+**As it can be seen from the table above, __`81%`__ of the cells have reached the quantization threshold error. Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells **
 
 __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 
@@ -1076,7 +1076,7 @@ Now, we have obtained the centroid coordinates resulting from the application of
 
 For better visualisation, let's plot the Voronoi tessellation using the `plotHVT` function.
 
-```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi Tessellation for layer 1 shown for the 1001 cells in the dataset ’computers’',eval = global_var}
+```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi Tessellation for layer 1 shown for the 440 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level one
 
  muHVT::plotHVT(hvt.results,
@@ -1133,7 +1133,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
 ```
@@ -1150,7 +1150,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
 
@@ -1167,7 +1167,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
 ```
@@ -1183,7 +1183,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
 
@@ -1201,7 +1201,7 @@ muHVT::hvtHmap(
   palette.color = 6,
   centroid.size = 0.01,
   show.points = T,
-  quant.error.hmap = 0.1,
+  quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
 
@@ -1242,8 +1242,8 @@ predictions <- muHVT::predictHVT(
   child.level = 1,
   line.width = c(1.2),
   color.vec = c("#141B41"),
-  quant.error.hmap = 0.1,
-  n_cells.hmap = 1001
+  quant.error.hmap = 0.2,
+  n_cells.hmap = 440
 )
 ```
 
@@ -1281,7 +1281,7 @@ We can see the predictions for the points in the table above.The centroid of the
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
-*  We construct a compressed HVT map using the HVT() on the training dataset by setting __`n_cells`__ to 1001 and  __`quant.error`__ to 0.1, because on passing n_cells to 1001 we were able to attain a compression of 83%
+*  We construct a compressed HVT map using the HVT() on the training dataset by setting __`n_cells`__ to 440 and  __`quant.error`__ to 0.2, and we were able to attain a compression of 81%
 
 * We then plot the Voronoi Tessellation with the heatmap overlaid for all the features in the computers dataset for better visualization
 
