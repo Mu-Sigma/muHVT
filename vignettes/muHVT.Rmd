@@ -10,7 +10,7 @@ output:
     toc: true
     toc_depth : 2
 vignette: >
-  %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
+  %\VignetteIndexEntry{muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -71,19 +71,9 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 This package additionally provides functions for computing Sammon’s projection and plotting the heat map of the variables on the tiles of the tessellations.
 
 
+# muHVT 4.0.0 | What's New?
 
-<!-- ### 1.1 Installation of muHVT 4.0.0 -->
-
-<!-- ``` r -->
-<!-- library(devtools) -->
-<!-- devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev") -->
-<!-- ``` -->
-
-# Vignettes
-
-## muHVT 4.0.0 | What's New?
-
-08th May, 2023
+07th June, 2023
 
 This package now additionally provides functionality to predict cells and layers based on a set of maps to monitor entities over time.
 
@@ -95,9 +85,10 @@ The creation of a predictive set of maps involves five steps -
 4. **Compress the dataset without novelty:** Again, compress the dataset without novelty(s) using n_cells, depth and a quantization threshold using the HVT() function to generate map C
 5. **Predict based on a predictive set of maps:** Using the predictLayerHVT function
 
+
 Let us try to understand the steps with the help of the diagram below -
 
-```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using predictLayerHVT()'}
+```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using predictLayerHVT()'}
 knitr::include_graphics('./predictLayerHVT_function.png')
 ```
 
@@ -113,12 +104,50 @@ The dataset without novelty gotten as an output from the __`removeNovelty`__ fun
 
 Finally, all the constructed maps are passed to the __`predictLayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
+## Installation of muHVT 4.0.0
+
+``` r
+library(devtools)
+devtools::install_github(repo = "Mu-Sigma/muHVT", ref = "dev")
+```
+
+# muHVT 3.0.0
+
+06th December, 2022
+
+This package now additionally provides functionality to predict based on a set of maps to monitor entities over time.
+
+The creation of a predictive set of maps involves four steps -
+
+1. **Compress:** Compress the datasetInstallation of muHVT 3.0.0 using a percentage compression rate and a quantization threshold using the HVT() function (Map A)
+2. **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function (Map B)
+3. **Compress the dataset without novelty:** Again, compress the dataset without novelty(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
+4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
+
+Let us try to understand the steps with the help of the diagram below -
+
+```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 2: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
+#knitr::include_graphics('./mlayer1.png')
+knitr::include_graphics('./mlayer1.png')
+```
+
+Initially, the raw data is passed, and a highly compressed Map A is constructed using the __`HVT`__ function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the novelty cells in the dataset using the number of data points within each cell and the z-scores for each cell.
+
+The identified novelty cell(s) is then passed to the __`removeNovelty`__ function along with Map A. This function removes the identified novelty cell(s) from the dataset and stores them in Map B as shown in the diagram. The final output of this function is a list of two items - a newly constructed map (Map B), and a subset of the dataset without novelty cell(s).
+
+The __`plotCells`__ function plots the Voronoi tessellations for the compressed map (Map A) and highlights the identified novelty cell(s) in red on the plot. The function requires the identified novelty cell(s) number and the compressed map (Map A) as input in order to plot the tessellations map and highlight those novelty cells on it.
+
+The dataset without novelty(s) gotten as an output from the removeNovelty function is then passed as an argument to the __`HVT`__ function with other parameters such as n_cells, quant.error, depth, etc. to construct another map (Map C).
+
+Finally, all the constructed maps are passed to the __`mlayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
 
 
 
 __For more detailed information on the functions mentioned above and their usage within the muHVT package, you can refer to the available vignettes__
 
+
+# Vignettes
 
 Following are the links to the vignettes for the muHVT package:
 
