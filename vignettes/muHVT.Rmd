@@ -152,7 +152,7 @@ __For more detailed information on the functions mentioned above and their usage
 Following are the links to the vignettes for the muHVT package:
 
 
-1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette4.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+1. [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
 2. [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model
 
