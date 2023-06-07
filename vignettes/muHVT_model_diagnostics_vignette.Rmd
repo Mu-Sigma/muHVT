@@ -351,9 +351,7 @@ This package can perform vector quantization using the following algorithms -
 -   Hierarchical Vector Quantization using \(k-means\)
 -   Hierarchical Vector Quantization using \(k-medoids\)
 
-## Hierarchical VQ
-
-###  Using k-means
+## Using k-means
 
 1.  The k-means algorithm randomly selects *k* data points as initial
     means
@@ -366,7 +364,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(n).
 
-###  Using k-medoids
+## Using k-medoids
 
 1.  The k-medoids algorithm randomly selects *k* data points as initial
     means out of the n data points as the medoids.
@@ -379,7 +377,7 @@ The second and third steps are iterated until a predefined number of
 iterations is reached or the clusters converge. The runtime for the
 algorithm is O(k \* (n-k)\^2).
 
-###  Hierarchical Vector Quantization
+## Hierarchical Vector Quantization
 
 The algorithm divides the dataset recursively into cells using \(k-means\)
 or \(k-medoids\) algorithm. The maximum number of subsets are decided by
@@ -474,7 +472,7 @@ where
     = 2 represents L2 Norm.
 
 
-# Project: Sammon's projection
+# Data Projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space
 to a space of lower dimensionality while attempting to preserve the
@@ -498,7 +496,7 @@ and convergent solutions are not always guaranteed. Many implementations
 prefer to use the first Principal Components as a starting
 configuration.
 
-# Voronoi Tessellations
+# Tessellations
 
 A Voronoi diagram is a way of dividing space into a number of regions. A
 set of points (called seeds, sites, or generators) is specified
@@ -523,21 +521,6 @@ transformed points as centroids. The lines in the tessellations are
 chopped in places so that they do not protrude outside the parent
 polygon. This is done for all the subsequent levels.
 
-# Prediction
-
-
-Prediction basically refers to the process of making predictions or estimating future values or outcomes based on existing data patterns.In data prediction, a model is developed based on historical data or a training dataset, and this model is then used to make predictions on new, unseen data. The model captures the underlying patterns, trends, and relationships present in the training data, allowing it to make informed predictions on similar or related data points.
-
-In this package, we use `predictHVT` function to predict each point in the test dataset 
-
-**Prediction Algorithm**
-
-The prediction algorithm recursively calculates the distance between each point in the test dataset and the cell centroids for each level. The following steps explain the prediction method for a single point in the test dataset :
-
-1. Calculate the distance between the point and the centroid of all the cells in the first level
-2. Find the cell whose centroid has minimum distance to the point
-3. Check if the cell drills down further to form more cells
-4. If it doesn’t, return the path. Or else repeat steps 1 to 4 till we reach a level at which the cell doesn’t drill down further
 
 #  Import Dataset
 
@@ -1690,7 +1673,7 @@ Now once we have the test data ready, lets look at how the predictHVT function l
 
 
 
-# Prediction on Test Data
+## Prediction on Test Data
 
 ```
 predictHVT(data,
@@ -1871,7 +1854,7 @@ DT::datatable(
               backgroundColor = styleEqual(c(1), c('#ff7f7f')))
 
 ```
-```{r, echo=FALSE}
+```{r, echo=FALSE,eval=FALSE}
 # library(knitr)
 # library(kableExtra)
 # 

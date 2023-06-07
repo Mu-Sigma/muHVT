@@ -5,23 +5,14 @@ date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
 output:
-  minidown::mini_document:
-    framework: spcss
-    theme: default
+  rmarkdown::html_vignette:
+    number_sections: true
     toc: true
-    toc_float: true
-    toc_highlight: true
-    code_folding: "none"
-    results_folding: "none"
-    tabset: true
-    code_download: true
-    math: "katex"
+    toc_depth : 3
 vignette: >
   %\VignetteIndexEntry{muHVT: Predicting Cells and Layers using predictLayerHVT to monitor entities over time}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-params:
-  eval_render: true
 ---
 ```{r setup, warning = FALSE, include = FALSE}
 knitr::opts_chunk$set(
@@ -125,20 +116,20 @@ compressionSummaryTable <- function(data,scroll = T,columnName='percentOfCellsBe
 set.seed(240)
 ```
 
-## 1 Abstract
+# Abstract
 
 The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://link.springer.com/chapter/10.1007/1-84628-118-0_7) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map coordinates into the desired output dimension. Additionally, [embedding](https://en.wikipedia.org/wiki/Word_embedding) can be learned from the compressed data to further enhance the representation of the multivariate data. Embedding provide a lower-dimensional space where high-dimensional vectors, such as word vectors, can be translated, making it easier to perform machine learning tasks on large inputs. 
+2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension . 
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
 
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
 
 
-## 2 Data Understanding
+# Data Understanding
 
 In this vignette, we will use the __`Prices of Personal Computers`__ dataset. This dataset contains 6261 observations and 6 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, hd, ram, screen and ads. 
 
@@ -173,7 +164,7 @@ str(trainComputers)
 summary(trainComputers)
 ```
 
-## 3 Map A : Compress using vector quantization
+# Map A : Compress using vector quantization
 
 This package can perform vector quantization using the following algorithms -
 
@@ -235,7 +226,7 @@ First, we will construct __`map A`__ by performing Hierarchical Vector Quantizat
 
 **Model Parameters**
 
-* Number of Cells at each Level = 100
+* Number of Cells at each Level = 450
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.46
 * Error Metric = Max
@@ -313,10 +304,10 @@ Let’s plot the Voronoi tessellation for layer 1 (map A)
 
 ```{r, warning=FALSE,message=FALSE}
 muHVT::plotHVT(map_A,
-        line.width = c(0.6), 
+        line.width = c(0.4), 
         color.vec = c("#141B41"),
-        centroid.size = 0.05,
-        maxDepth = 1) 
+        centroid.size = 0.01,
+        maxDepth = 1) %>% ggplotly()
 ```
 
 
@@ -360,8 +351,8 @@ hmap <- lapply(1:length(col_list), function(x){
   palette.color = 6,
   centroid.size = 1.0,
   show.points = T,
-  quant.error.hmap = 0.46,
-  n_cells.hmap = 100,
+  quant.error.hmap = 0.2,
+  n_cells.hmap = 450,
 ) 
 })
 ```
@@ -375,14 +366,14 @@ grid.arrange(hmap[[5]], nrow = 1, ncol=1)
 grid.arrange(hmap[[6]], nrow = 1, ncol=1)
 ```
 
-## 4 Map B : Identify the novelties and construct a map on the dataset with novelty
+# Map B : Identify the novelties and construct a map on the dataset with novelty
 
 The __`removeNovelty`__ function removes the identified novelty cell(s) from the dataset and stores those records separately.
 
 It takes input as the cell number (Segment.Child) of the manually identified novelty cell(s) from the above table and the compressed HVT map (map A). It returns a list of two items: `dataset with novelty records`, and a subset of the `dataset without the novelty records`.
 
 ```{r remove_novelty,results='asis'}
-identified_Novelty_cells <<- c(22, 32, 33)
+identified_Novelty_cells <<- c(17,71,203)
 output_list <- removeNovelty(identified_Novelty_cells, map_A)
 data_with_novelty <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
@@ -400,12 +391,12 @@ data_with_novelty %>% head(100) %>%
   Table(scroll = T, limit = 20)
 ```
 
-### 4.1 Voronoi tessellation to highlight novelty cell in the map
+## Voronoi tessellation to highlight novelty cell in the map
 
 The __`plotCells`__ function is used to plot the Voronoi tessellation using the compressed HVT map (map A) and highlights the identified novelty cell(s) in red on the map.
 
 ```{r compress_novelty_plot,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi Tessellation constructed using the compressed HVT map (map A) with the novelty cell(s) highlighted in red',eval = global_var}
-plotCells(identified_Novelty_cells, map_A)
+plotCells(identified_Novelty_cells, map_A,line.width = c(0.4),centroid.size = 0.01)
 ```
 
 
@@ -415,7 +406,7 @@ We pass the dataframe with novelty records to HVT function along with other mode
 
 * Number of Cells at each Level = 3
 * Maximum Depth = 1
-* Quantization Error Threshold = 0.46
+* Quantization Error Threshold = 0.2
 * Error Metric = Max
 * Distance Metric = Manhattan
 
@@ -427,7 +418,7 @@ map_B <- list()
 map_B <- muHVT::HVT(dataset_with_novelty,
                   n_cells = 3,
                   depth = 1,
-                  quant.err = 0.46,
+                  quant.err = 0.2,
                   projection.scale = 10,
                   normalize = F,
                   distance_metric = "L1_Norm",
@@ -445,13 +436,13 @@ summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
 ```
 
 
-## 5 Map C : Construct a map on the dataset without novelty
+# Map C : Construct a map on the dataset without novelty
 
 Construct another hierarchical Voronoi tessellation **map C** on the dataset without novelty setting the below mentioned model parameters.
 
 * Number of Cells at each Level = 100
 * Maximum Depth = 2
-* Quantization Error Threshold = 0.46
+* Quantization Error Threshold = 0.2
 * Error Metric = Max
 * Distance Metric = Manhattan
 
@@ -463,7 +454,7 @@ map_C <- list()
 map_C <- muHVT::HVT(dataset_without_novelty,
                   n_cells = 100,
                   depth = 2,
-                  quant.err = 0.46,
+                  quant.err = 0.2,
                   projection.scale = 10,
                   normalize = F,
                   distance_metric = "L1_Norm",
@@ -520,7 +511,7 @@ grid.arrange(hmap[[5]], nrow = 1, ncol=1)
 grid.arrange(hmap[[6]], nrow = 1, ncol=1)
 ```
 
-## 6 Prediction on Test Data
+# Prediction on Test Data
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which layer each point belongs to.
 
