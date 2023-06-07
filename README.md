@@ -1,6 +1,6 @@
 # muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
 
-#### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah
+#### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Somya Shambhawi
 
 #### 2023-06-07
 
