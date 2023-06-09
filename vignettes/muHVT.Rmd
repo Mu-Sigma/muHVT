@@ -109,7 +109,7 @@ The creation of a predictive set of maps involves four steps -
 3. **Compress the dataset without outliers:** Again, compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
 4. **Predict based on a predictive set of maps:** Using the mlayerHVT() function
 
-Let us try to understand the steps briefly :
+Let us try to understand the steps with the help of the diagram below
 
 ```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()'}
 #knitr::include_graphics('./mlayer1.png')
