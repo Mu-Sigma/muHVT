@@ -344,7 +344,7 @@ muHVT::plotHVT(map_A,
         line.width = c(0.4), 
         color.vec = c("#141B41"),
         centroid.size = 0.01,
-        maxDepth = 1) 
+        maxDepth = 1) %>% ggplotly()
 ```
 
 
@@ -505,7 +505,7 @@ The __`removeNovelty`__ function removes the identified novelty cell(s) from the
 It takes input as the cell number (Segment.Child) of the manually identified novelty cell(s) from the above table and the compressed HVT map (map A). It returns a list of two items: `dataset with novelty records`, and a subset of the `dataset without the novelty records`.
 
 ```{r remove_novelty,results='asis'}
-identified_Novelty_cells <<- c(35,262,318)
+identified_Novelty_cells <<- c(35,262,318,231,203,132,77)
 output_list <- removeNovelty(identified_Novelty_cells, map_A)
 data_with_novelty <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
@@ -548,7 +548,7 @@ We pass the dataframe with novelty records to HVT function along with other mode
 dataset_with_novelty <- data_with_novelty[,-1:-2]
 map_B <- list()
 map_B <- muHVT::HVT(dataset_with_novelty,
-                  n_cells = 3,
+                  n_cells = 8,
                   depth = 1,
                   quant.err = 0.2,
                   projection.scale = 10,
@@ -586,7 +586,7 @@ With the Novelties removed, we construct another hierarchical Voronoi tessellati
 ```{r,warning=FALSE,message=FALSE}
 map_C <- list()
 map_C <- muHVT::HVT(dataset_without_novelty,
-                  n_cells = 100,
+                  n_cells = 23,
                   depth = 2,
                   quant.err = 0.2,
                   projection.scale = 10,
