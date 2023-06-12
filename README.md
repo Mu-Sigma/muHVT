@@ -1,6 +1,6 @@
-# muHVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis
+# muHVT: Collection of functions used to build hierarchical topology preserving maps
 
-#### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Somya Shambhawi
+#### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi
 
 #### 2023-06-07
 
@@ -8,13 +8,13 @@
 
 *   [<span class="toc-section-number">1</span> Abstract](#abstract)
 *   [<span class="toc-section-number">2</span> Version History](#version-history)
-    *   [<span class="toc-section-number">2.1</span> muHVT v(23.06.3.5) | What’s New?](#muhvt-v(23.06.3.5)-whats-new)
-        *   [<span class="toc-section-number">2.1.1</span> Installation of muHVT v(23.06.3.5)](#installation-of-muhvt-v(23.06.3.5))
-    *   [<span class="toc-section-number">2.2</span> muHVT v(22.12.3)](#muhvt-v(22.12.3))
-*   [<span class="toc-section-number">3</span> Vignettes](#vignettes)
-    *   [<span class="toc-section-number">3.1</span> muHVT Vignette](#muhvt-vignette)
-    *   [<span class="toc-section-number">3.2</span> muHVT Model Diagnostics Vignette](#muhvt-model-diagnostics-vignette)
-    *   [<span class="toc-section-number">3.3</span> muHVT : Predicting Cells and Layers using predictLayerHVT to monitor entities over time](#muhvt---predicting-cells-and-layers-using-predictLayerHVT-to-monitor-entities-over-time)
+    *   [<span class="toc-section-number">2.1</span> muHVT (v23.06.07) | What’s New?](#muhvt-(v23.06.07)-whats-new)
+    *   [<span class="toc-section-number">2.2</span> muHVT (v22.12.06)](#muhvt-(v22.12.06))
+*   [<span class="toc-section-number">3</span> Installation of muHVT (v23.06.07)](#installation-of-muhvt-(v23.06.07))
+*   [<span class="toc-section-number">4</span> Vignettes](#vignettes)
+    *   [<span class="toc-section-number">4.1</span> muHVT Vignette](#muhvt-vignette)
+    *   [<span class="toc-section-number">4.2</span> muHVT Model Diagnostics Vignette](#muhvt-model-diagnostics-vignette)
+    *   [<span class="toc-section-number">4.3</span> muHVT : Predicting Cells and Layers using predictLayerHVT to monitor entities over time](#muhvt---predicting-cells-and-layers-using-predictLayerHVT-to-monitor-entities-over-time)
 
 </div>
 
@@ -46,61 +46,26 @@ This process involves three steps:
 
 # <span class="header-section-number">2</span> Version History 
 
-<div id="muHVT v(23.06.3.5)| What’s New?" class="section level1" number="2.1">
+<div id="muHVT (v23.06.07)| What’s New?" class="section level1" number="2.1">
 
-## <span class="header-section-number">2.1</span> muHVT v(23.06.3.5) | What’s New? 
+## <span class="header-section-number">2.1</span> muHVT (v23.06.07) | What’s New? 
 
 07th June, 2023
 
 In this version of muHVT package, the following new features have been introduced
 
-This package now additionally provides functionality to predict cells and layers based on a set of maps using `predictLayerHVT` to monitor entities over time. However an additional step of compressing the dataset with novelty is introduced.
+This package provides a functionality to predict cells and layers based on a set of maps using `predictLayerHVT` to monitor entities over time. However an additional step of compressing the dataset with novelty is introduced.
 
-The creation of a predictive set of maps now involves five steps -
+The steps of compression, identification and removal of novelty cells from the compressed data using `removeNovelty` and compressing the dataset without novelty is similar in (v22.12.06) and (v23.06.07) of the package. However muHVT (v23.06.07) introduces a novel step of compressing the dataset with novelty using n_cells, depth, and a quantization threshold to generate `map B`. This additional step enhances the package's functionality and allows for better handling of novelty cells in the dataset during the predictive monitoring process.
 
-1. **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function to generate map A
-2. **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function
-3. **Compress the dataset with novelty:** compress the dataset with novelty using n_cells, depth and a quantization threshold     using the HVT() function to generate map B
-4. **Compress the dataset without novelty:** Again, compress the dataset without novelty(s) using n_cells, depth and a quantization threshold using the HVT() function to generate map C
-5. **Predict based on a predictive set of maps:** Using the predictLayerHVT function
-
-
-The steps of compression, identification and removal of novelty cells from the compressed data using `removeNovelty` and compressing the dataset without novelty is similar in v(22.12.3) and v(23.06.3.5) of the package. However muHVT v(23.06.3.5) introduces a novel step of compressing the dataset with novelty using n_cells, depth, and a quantization threshold to generate `map B`. This additional step enhances the package's functionality and allows for better handling of novelty cells in the dataset during the predictive monitoring process.
-
-The prediction step remains the same in both versions, where cells and layers are assigned to test records based on the constructed set of maps.
-
-Finally, all the constructed maps are passed to the __`predictLayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to in either of the layers.
-
-
-Let us try to understand the steps with the help of the diagram below -
-
-<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
-<p class="caption">
-Figure 1: Flow diagram for predicting based on a set of maps using predictLayerHVT()
-</p>
-
-
-<div id="installation-of-muhvt-v(23.06.3.5)" class="section level2" number="2.1.1">
-
-## <span class="header-section-number">2.1.1</span> Installation of muHVT v(23.06.3.5)
-
-<div class="sourceCode" id="cb1">
-
-    library(devtools)
-    devtools::install_github(repo = "Mu-Sigma/muHVT")
-
-</div>
-
-</div>
-
-
+The prediction step remains the same in both versions, where all the constructed maps are passed to the __`predictLayerHVT`__ function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to in either of the layers
 
 
 </div>
 
-<div id="muhvt-v(22.12.3)" class="section level1" number="2.2">
+<div id="muhvt-(v22.12.06)" class="section level1" number="2.2">
 
-## <span class="header-section-number">2.2</span> muHVT v(22.12.3) 
+## <span class="header-section-number">2.2</span> muHVT (v22.12.06) 
 
 06th December, 2022
 
@@ -113,7 +78,12 @@ The creation of a predictive set of maps involves four steps -
 3.  **Compress the dataset without outliers:** Again, compress the dataset without outlier(s) using n_cells, depth and a quantization threshold using the HVT() function (Map C)
 4.  **Predict based on a predictive set of maps:** Using the mlayerHVT() function
 
-Let us try to understand the steps in brief -
+Let us try to understand the steps with the help of the diagram below -
+
+<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/mlayer1.png" width="672px" height="480px" />
+<p class="caption">
+Figure 1: Flow diagram for predicting based on a set of maps using mlayerHVT()
+</p>
 
 Initially, the raw data is passed, and a highly compressed Map A is constructed using the **`HVT`** function. The output of this function will be hierarchically arranged vector quantized data that is used to identify the outlier cells in the dataset using the number of data points within each cell and the z-scores for each cell.
 
@@ -125,35 +95,48 @@ The dataset without outlier(s) gotten as an output from the removeOutliers funct
 
 Finally, all the constructed maps are passed to the **`mlayerHVT`** function along with the test dataset on which the function will predict/score for finding which map and what cell each test record gets assigned to.
 
-**For detailed information on the above functions, refer the vignette.**
+**For detailed information on the above functions, refer the vignettes.**
+
+<div id="installation-of-muhvt-(v23.06.07)" class="section level2" number="3">
+
+## <span class="header-section-number">3</span> Installation of muHVT (v23.06.07)
+
+<div class="sourceCode" id="cb1">
+
+    library(devtools)
+    devtools::install_github(repo = "Mu-Sigma/muHVT")
+
+</div>
+
+</div>
 
 
 </div>
 
-<div id="vignettes" class="section level1" number="3">
+<div id="vignettes" class="section level1" number="4">
 
-# <span class="header-section-number">3</span> Vignettes
+# <span class="header-section-number">4</span> Vignettes
 
 Following are the links to the vignettes for the muHVT package:
 
-<div id="muhvt-vignette" class="section level2" number="3.1">
+<div id="muhvt-vignette" class="section level2" number="4.1">
 
-## <span class="header-section-number">3.1</span> muHVT Vignette
+## <span class="header-section-number">4.1</span> muHVT Vignette
 
 [**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
-<div id="muhvt-model-diagnostics-vignette" class="section level2" number="3.2">
+<div id="muhvt-model-diagnostics-vignette" class="section level2" number="4.2">
 
-## <span class="header-section-number">3.2</span> muHVT Model Diagnostics Vignette
+## <span class="header-section-number">4.2</span> muHVT Model Diagnostics Vignette
 
 [**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model.
 
 </div>
 
-<div id="muhvt---predicting-cells-and-layers-using-predictLayerHVT-to-monitor-entities-over" class="section level2" number="3.3">
+<div id="muhvt---predicting-cells-and-layers-using-predictLayerHVT-to-monitor-entities-over" class="section level2" number="4.3">
 
-## <span class="header-section-number">3.3</span> muHVT - Predicting Cells and Layers using predictLayerHVT to monitor entities over Time
+## <span class="header-section-number">4.3</span> muHVT - Predicting Cells and Layers using predictLayerHVT to monitor entities over Time
 
 [**muHVT : Predicting Cells and Layers using predictLayerHVT to monitor entities over Time:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/Predicting_Cells_and_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for monitoring entities over time using a predictive set of HVT maps.
