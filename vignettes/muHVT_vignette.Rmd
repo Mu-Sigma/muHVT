@@ -332,14 +332,14 @@ set.seed(240)
 # n represents number of points
 torus <- geozoo::torus(p = 3,n = 12000)
 torus_df <- data.frame(torus$points)
-torus_df1 <- torus_df %>% round(4)
+#torus_df1 <- torus_df %>% round(4)
 colnames(torus_df) <- c("x","y","z")
 ```
 
 ```{r warning=FALSE,message=FALSE}
 noOfPoints <- dim(torus_df)[1]
 trainTorus <- torus_df[1:9000,]
-trainTorus1 <- trainTorus %>% round(4)
+trainTorus_data <- trainTorus %>% round(4)
 testTorus <- torus_df[9001:noOfPoints,]
 ```
 
@@ -347,22 +347,26 @@ testTorus <- torus_df[9001:noOfPoints,]
 torus_df<-trainTorus
 ```
 
+**Training Dataset**
+
 Now let's do some EDA on the data. First of all, we will see how the training data looks like. For the shake of brevity we are displaying first six rows.
 
 ```{r torus head, warning=FALSE, eval = global_var}
 
-Table(head(trainTorus1))
+trainTorus_data$Row.No <- as.numeric(row.names(trainTorus_data))
+trainTorus_data <- trainTorus_data %>% dplyr::select(Row.No,x,y,z)
+Table(head(trainTorus_data))
 
 ```
 
 Now let's have a look at structure and summary of the data.
 
 ```{r torus structure, warning=FALSE, eval = global_var}
-str(torus_df)
+str(trainTorus)
 ```
 
 ```{r torus summary, warning=FALSE,eval = global_var}
-summary(torus_df)
+summary(trainTorus)
 ```
 
 Now let's try to visualize the torus (donut) in  3D Space.
@@ -517,6 +521,8 @@ centroids <<- list()
   })
 centroid_coordinates<<- do.call(rbind.data.frame, coordinates_value)  
 colnames(centroid_coordinates) <- c("x","y")
+centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
+centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x,y)
 centroid_coordinates <- centroid_coordinates %>% data.frame() %>% round(4)
 Table(head(centroid_coordinates), scroll = T, limit = 20)
 
@@ -616,6 +622,8 @@ centroids <<- list()
   })
 centroid_coordinates<<- do.call(rbind.data.frame, coordinates_value)  
 colnames(centroid_coordinates) <- c("x","y")
+centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
+centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x,y)
 centroid_coordinates <- centroid_coordinates %>% data.frame() %>% round(4)
 Table(head(centroid_coordinates), scroll = T, limit = 20)
 
@@ -690,6 +698,8 @@ centroids <<- list()
   })
 centroid_coordinates<<- do.call(rbind.data.frame, coordinates_value)  
 colnames(centroid_coordinates) <- c("x","y")
+centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
+centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x,y)
 centroid_coordinates <- centroid_coordinates %>% data.frame() %>% round(4)
 Table(head(centroid_coordinates), scroll = T, limit = 20)
 
@@ -796,10 +806,17 @@ muHVT::hvtHmap(
 
 ## Step 4: Prediction(predictHVT)
 
+**Testing Dataset**
+
 Lets have a look at out test dataset before we pass it to predictHVT function for scoring
 
 ```{r}
-Table(head(testTorus))
+test_dataset <- testTorus
+test_dataset <- round(test_dataset,4)
+test_dataset$Row.No <- row.names(test_dataset)
+test_dataset <- test_dataset %>% dplyr::select(Row.No,x,y,z) 
+rownames(test_dataset) <- NULL
+Table(head(test_dataset))
 ```
 
 However, let's try to comprehend the **predictHVT function** first before moving on
@@ -872,7 +889,6 @@ Let's explore the Personal Computers Dataset. For the shake of brevity we are di
 
 ```{r sample data computer,warning=FALSE,message=FALSE,eval = T}
 # Quick peek
-
 Table(head(computers), scroll = T, limit = 20)
 ```
 
@@ -907,6 +923,8 @@ testComputers <-
   testComputers %>% dplyr::select(-c(X, cd, multi, premium, trend))
 ```
 
+**Training Dataset**
+
 Now, lets have a look at the scaled training dataset containing (5007 data points). For the shake of brevity we are displaying first six rows.
 
 ```{r}
@@ -915,17 +933,24 @@ trainComputers <- scale(trainComputers)
 metric_list <- colnames(trainComputers)
 scale_attr <- attributes(trainComputers)
 
-trainComputers1 <- trainComputers %>% as.data.frame() %>% round(4)
-Table(head(trainComputers1))
+trainComputers_data <- trainComputers %>% as.data.frame() %>% round(4)
+trainComputers_data$Row.No <- as.numeric(row.names(trainComputers_data))
+trainComputers_data <- trainComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+Table(head(trainComputers_data))
 ```
+
+**Testing Dataset**
 
 Now, lets have a look at the scaled testing dataset containing (1252 data points). For the shake of brevity we are displaying first six rows.
 
 
 ```{r}
 testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) 
-testComputers1 <- testComputers %>% as.data.frame() %>% round(4)
-Table(head(testComputers1))
+testComputers_data <- testComputers %>% as.data.frame() %>% round(4)
+testComputers_data$Row.No <- as.numeric(row.names(testComputers_data))
+testComputers_data <- testComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+rownames(testComputers_data) <- NULL
+Table(head(testComputers_data))
 ```
 
 As we are familiar with the structure of the computers data, we will now follow the following steps to get the predictions using the Computers dataset.
@@ -1020,6 +1045,8 @@ centroids <<- list()
   })
 centroid_coordinates<<- do.call(rbind.data.frame, coordinates_value)  
 colnames(centroid_coordinates) <- c("x","y")
+centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
+centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x,y)
 centroid_coordinates <- centroid_coordinates %>% data.frame() %>% round(4)
 Table(head(centroid_coordinates))
 

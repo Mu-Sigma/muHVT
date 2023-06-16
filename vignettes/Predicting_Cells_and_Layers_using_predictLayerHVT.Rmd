@@ -191,8 +191,10 @@ metric_list <- colnames(trainComputers)
 scale_attr <- attributes(trainComputers)
 
 trainComputers <- trainComputers %>% as.data.frame()
-trainComputers1 <- round(trainComputers,4)
-Table(head(trainComputers1))
+trainComputers_data <- round(trainComputers,4)
+trainComputers_data$Row.No <- row.names(trainComputers_data)
+trainComputers_data <- trainComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+Table(head(trainComputers_data))
 ```
 
 
@@ -575,8 +577,11 @@ dataset_without_novelty <- output_list[[2]]
 Let's have a look at the data with novelties.For the sake of brevity, we will only show the first 10 rows
 
 ```{r hvt_mapB results, warning=FALSE, echo=TRUE}
-colnames(data_with_novelty) <- c("Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
-data_with_novelty %>% head(100) %>% 
+novelty_data <- data_with_novelty
+novelty_data$Row.No <- row.names(novelty_data)
+novelty_data <- novelty_data %>% dplyr::select("Row.No","Cell.ID","Cell.Number","price","speed","hd","ram","screen","ads")
+colnames(novelty_data) <- c("Row.No","Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
+novelty_data %>% head(100) %>% 
   as.data.frame() %>%
   Table(scroll = T, limit = 20)
 ```
@@ -603,6 +608,7 @@ We pass the dataframe with novelty records to HVT function along with other mode
 
 
 ```{r, message=FALSE,warning=FALSE}
+colnames(data_with_novelty) <- c("Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
 dataset_with_novelty <- data_with_novelty[,-1:-2]
 map_B <- list()
 map_B <- muHVT::HVT(dataset_with_novelty,
@@ -867,8 +873,10 @@ Let's have a look at our scaled test dataset containing 1253 datapoints
 ```{r sample test data computer,warning=FALSE,message=FALSE,eval = T}
 # Quick peek
 testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) %>% as.data.frame()
-testComputers1 <- round(testComputers,4)
-Table(head(testComputers1))
+testComputers_data <- round(testComputers,4)
+testComputers_data$Row.No <- row.names(testComputers_data)
+testComputers_data <- testComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+Table(head(testComputers_data))
 ```
 
 Now let us check the structure of the test data and analyse its summary
