@@ -147,7 +147,7 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high-dimensional%20data) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high-dimensional%20data) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -161,35 +161,54 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 **Data Understanding**
 
-In this vignette, we will use the __`Prices of Personal Computers`__ dataset. This dataset contains 6261 observations and 6 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, hd, ram, screen and ads. 
+In this vignette, we will use the __`Prices of Personal Computers`__ dataset. This dataset contains 6259 observations and 6 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, hd, ram, screen and ads. 
 
-Here, we load the training and the testing dataset.
+Here, we load the raw personal computers dataset along with raw training and testing dataset.
 
 ```{r load data computer,warning=FALSE,message=FALSE,eval = T}
 set.seed(240)
 # Load data from csv files
+computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/master/vignettes/sample_dataset/Computers.csv")
 trainComputers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/trainComputers.csv")
 testComputers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/sample_dataset/testComputers.csv")
 ```
 
-**Training Dataset**
+**Raw Personal Computers Dataset**
 
-The training dataset includes the following columns:
+The Computers dataset includes the following columns:
 
 * Price: The price of 486 PCs in US dollars.
 * Speed: The clock speed of the PCs in MHz.
 * HD: The size of the hard drive in MB.
 * RAM: The size of RAM in MB.
 * Screen: The size of the screen in inches.
-* Ads: The number of listings for 486 PCs' prices for each month.
+* Ads: The number of listings for 486 PCs’ prices for each month.
 
-Let's have a look at the **scaled training dataset** containing 5008 data points.
+Let’s explore the Personal Computers Dataset containing (6259 points). For the shake of brevity we are displaying first six rows.
+
+```{r}
+Table(head(computers), scroll = T, limit = 20)
+```
+
+Now, let us check the **structure** of the data and analyse its **summary**.
+
+```{r, message=FALSE, warning=FALSE}
+str(computers)
+```
+
+```{r, message=FALSE,warning=FALSE}
+summary(computers)
+```
+
+**Raw Training Dataset**
+
+Let's have a look at the **raw training dataset** containing 5008 data points. For the shake of brevity we are displaying first 6 rows.
 
 ```{r sample data computer,warning=FALSE,message=FALSE,eval = T}
 # Quick peek
-trainComputers <- scale(trainComputers) 
-metric_list <- colnames(trainComputers)
-scale_attr <- attributes(trainComputers)
+# trainComputers <- scale(trainComputers) 
+# metric_list <- colnames(trainComputers)
+# scale_attr <- attributes(trainComputers)
 
 trainComputers <- trainComputers %>% as.data.frame()
 trainComputers_data <- round(trainComputers,4)
@@ -198,15 +217,17 @@ trainComputers_data <- trainComputers_data %>% dplyr::select(Row.No,price,speed,
 Table(head(trainComputers_data))
 ```
 
+**Raw Testing Dataset**
 
-Now let us check the **structure** of the training data and analyse its **summary**.
+Let's have a look at our **raw test dataset** containing 1253 datapoints. For the shake of brevity we are displaying first 6 columns
 
-```{r data structure computer,warning=FALSE,message=FALSE,eval = global_var}
-str(trainComputers)
-```
-
-```{r data summary computer,warning=FALSE,message=FALSE,eval = global_var}
-summary(trainComputers)
+```{r sample test data computer,warning=FALSE,message=FALSE,eval = T}
+# Quick peek
+testComputers <- scale(testComputers, center = scale_attr$`scaled:center`, scale = scale_attr$`scaled:scale`) %>% as.data.frame()
+testComputers_data <- round(testComputers,4)
+testComputers_data$Row.No <- row.names(testComputers_data)
+testComputers_data <- testComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+Table(head(testComputers_data))
 ```
 
 # Map A : Base Compressed Map
