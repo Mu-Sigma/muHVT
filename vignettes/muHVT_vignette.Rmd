@@ -1028,7 +1028,7 @@ testComputers <-
 
 **Raw Training Dataset**
 
-Now, lets have a look at the **raw training dataset** containing (5007 data points). For the shake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw training dataset** containing (5007 data points). For the shake of brevity we are displaying first six rows.
 
 ```{r, warning=FALSE,message=FALSE}
 trainComputers_data <- trainComputers %>% as.data.frame() %>% round(4)
@@ -1039,7 +1039,7 @@ Table(head(trainComputers_data))
 
 **Raw Testing Dataset**
 
-Now, lets have a look at the **raw testing dataset** containing (1252 data points). For the shake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points). For the shake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1294,6 +1294,17 @@ muHVT::hvtHmap(
 ## Step 4: Prediction(predictHVT)
 
 For more detailed information on prediction please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#prediction) of this vignette.
+
+
+**Raw Testing Dataset**
+
+
+Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to predictHVT function for scoring. For the shake of brevity we are displaying first six rows.
+
+
+```{r,warning=FALSE,message=FALSE}
+Table(head(testComputers_data))
+```
 
 Now once we have built the model, let us try to predict using our test dataset which cell and which level each point belongs to.
 
