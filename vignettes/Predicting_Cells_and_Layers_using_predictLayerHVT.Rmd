@@ -1,5 +1,5 @@
 ---
-title: "muHVT: Predicting Cells and Layers using predictLayerHVT to monitor entities over time"
+title: "muHVT: Predicting Cells with Layers using predictLayerHVT to monitor entities over time"
 author: "Zubin Dowlaty, Srinivasan Sudarsanam, Somya Shambhawi"
 date: "`r Sys.Date()`"
 fig.height: 4
@@ -39,6 +39,7 @@ vignette: >
 li {
   padding-bottom: 5px;
 }
+
   
 ```
 
@@ -299,7 +300,7 @@ map_A  <- muHVT::HVT(
   depth = 1,
   quant.err = 0.2,
   projection.scale = 10,
-  normalize = T,
+  normalize = F,
   distance_metric = "L1_Norm",
   error_metric = "max",
   quant_method = "kmeans"
@@ -436,11 +437,30 @@ Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the 
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The sheer green shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data.
 
 
-```{r hvt_mapA hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi Tessellation with the heat map overlaid for variable ’price’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi Tessellation with the heat map overlaid for No. of entities in each cell ',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
+  child.level = 1,
+  hmap.cols = "n",
+  line.width = c(0.2),
+  color.vec = c("#141B41"),
+  palette.color = 6,
+  centroid.size = 0.1,
+  show.points = T,
+  quant.error.hmap = 0.2,
+  n_cells.hmap = 450,
+) 
+
+```
+
+
+```{r hvt_mapA hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi Tessellation with the heat map overlaid for variable ’price’ in the ’computers’ dataset',eval = global_var}
+
+  hvtHmap(
+  map_A,
+  trainComputers,
   child.level = 1,
   hmap.cols = "price",
   line.width = c(0.2),
@@ -456,11 +476,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 
 
-```{r hvt_mapA hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi Tessellation with the heat map overlaid for variable ’speed’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi Tessellation with the heat map overlaid for variable ’speed’ in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
   child.level = 1,
   hmap.cols = "speed",
   line.width = c(0.2),
@@ -475,11 +495,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapA hmp  level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi Tessellation with the heat map overlaid for variable ’hd’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp  level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 6: The Voronoi Tessellation with the heat map overlaid for variable ’hd’ in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
   child.level = 1,
   hmap.cols = "hd",
   line.width = c(0.2),
@@ -494,11 +514,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapA hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 6: The Voronoi Tessellation with the heat map overlaid for variable ’ram’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 7: The Voronoi Tessellation with the heat map overlaid for variable ’ram’ in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
   child.level = 1,
   hmap.cols = "ram",
   line.width = c(0.2),
@@ -513,11 +533,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapA hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 7: The Voronoi Tessellation with the heat map overlaid for variable ’screen’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 8: The Voronoi Tessellation with the heat map overlaid for variable ’screen’ in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
   child.level = 1,
   hmap.cols = "screen",
   line.width = c(0.2),
@@ -532,11 +552,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapA hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 8: The Voronoi Tessellation with the heat map overlaid for variable ’ads’ in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapA hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi Tessellation with the heat map overlaid for variable ’ads’ in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_A,
-  scores,
+  trainComputers,
   child.level = 1,
   hmap.cols = "ads",
   line.width = c(0.2),
@@ -556,7 +576,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 Let us try to visualize the Map B from the flow diagram below.
 
-```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 9: Flow map with highlighted bounding box in red around map B'}
+```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 10: Flow map with highlighted bounding box in red around map B'}
 knitr::include_graphics('predictLayerHVT_function_mapB.png')
 ```
 
@@ -590,7 +610,7 @@ novelty_data %>% head(100) %>%
 
 The __`plotCells`__ function is used to plot the Voronoi tessellation using the compressed HVT map (map A) and highlights the identified novelty cell(s) in red on the map.
 
-```{r compress_novelty_plot,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi Tessellation constructed using the compressed HVT map (map A) with the novelty cell(s) highlighted in red',eval = global_var}
+```{r compress_novelty_plot,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi Tessellation constructed using the compressed HVT map (map A) with the novelty cell(s) highlighted in red',eval = global_var}
 plotCells(identified_Novelty_cells, map_A,line.width = c(0.4),centroid.size = 0.01)
 ```
 
@@ -637,7 +657,7 @@ summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
 
 Let us try to visualize the compressed Map C from the flow diagram below.
 
-```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 11:Flow map with highlighted bounding box in red around compressed map C'}
+```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 12:Flow map with highlighted bounding box in red around compressed map C'}
 knitr::include_graphics('predictLayerHVT_function_mapC.png')
 ```
 
@@ -663,7 +683,8 @@ map_C <- muHVT::HVT(dataset_without_novelty,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
                   quant_method = "kmeans",
-                  diagnose = F)
+                  diagnose = F
+                  )
 
 ```
 
@@ -693,7 +714,7 @@ Since, we are yet to achive atleast 80% compression at depth 2. Let's try to com
 ```{r,warning=FALSE,message=FALSE}
 map_C <- list()
 map_C <- muHVT::HVT(dataset_without_novelty,
-                  n_cells = 23,
+                  n_cells = 23,    #23
                   depth = 2,
                   quant.err = 0.2,
                   projection.scale = 10,
@@ -701,7 +722,8 @@ map_C <- muHVT::HVT(dataset_without_novelty,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
                   quant_method = "kmeans",
-                  diagnose = F)
+                  diagnose = F
+                  )
 
 ```
 
@@ -723,7 +745,7 @@ compressionSummaryTable(mapC_compression_summary)
 
 Let’s plot the Voronoi tessellation for layer 2 (map C)
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation for layer 2 (map C) shown for the 100 cells in the dataset ’computers’ at level 2'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation for layer 2 (map C) shown for the 100 cells in the dataset ’computers’ at level 2'}
 muHVT::plotHVT(map_C,
         line.width = c(0.4,0.2), 
         color.vec = c("#141B41","#0582CA"),
@@ -736,11 +758,29 @@ Now let's plot all the features for each cell at level two as a heatmap for bett
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data.
 
 
-```{r hvt_mapC hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation with the heat map overlaid for features price in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi Tessellation with the heat map overlaid for features No. of entities in each cell',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
+  child.level = 2,
+  hmap.cols = "n",
+  line.width = c(0.6,0.4),
+  color.vec = c("#141B41","#0582CA"),
+  palette.color = 6,
+  centroid.size = 0.1,
+  show.points = T,
+  quant.error.hmap = 0.2,
+  n_cells.hmap = 100,
+) 
+
+```
+
+```{r hvt_mapC hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation with the heat map overlaid for features price in the ’computers’ dataset',eval = global_var}
+
+  hvtHmap(
+  map_C,
+  trainComputers,
   child.level = 2,
   hmap.cols = "price",
   line.width = c(0.6,0.4),
@@ -755,11 +795,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi Tessellation with the heat map overlaid for features speed in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid for features speed in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
   child.level = 2,
   hmap.cols = "speed",
   line.width = c(0.6,0.4),
@@ -773,11 +813,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 ```
 
-```{r hvt_mapC hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation with the heat map overlaid for features hd in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid for features hd in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
   child.level = 2,
   hmap.cols = "hd",
   line.width = c(0.6,0.4),
@@ -792,11 +832,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid for features ram in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid for features ram in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
   child.level = 2,
   hmap.cols = "ram",
   line.width = c(0.6,0.4),
@@ -811,11 +851,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid for features screen in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation with the heat map overlaid for features screen in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
   child.level = 2,
   hmap.cols = "screen",
   line.width = c(0.6,0.4),
@@ -830,11 +870,11 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid for features ads in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid for features ads in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
-  scores,
+  trainComputers,
   child.level = 2,
   hmap.cols = "ads",
   line.width = c(0.6,0.4),
@@ -950,6 +990,7 @@ The prediction algorithm recursively calculates the distance between each point 
 Let’s see which cell and layer each point belongs to.For the sake of brevity, we will only show the first 10 rows.
 
 ```{r, message=FALSE,warning=FALSE}
+
 validation_data <- testComputers
 new_predict <- predictLayerHVT(
     data=validation_data,
@@ -986,7 +1027,7 @@ Predictions%>% head(100) %>%
 
 *  We construct a compressed HVT map (Map A) using the HVT() on the training dataset by setting __`n_cells`__ to 450 and __`quant.error`__    to 0.2 and we were able to attain a compression of 82%.
 
-*  Based on the output of the above step, we manually identify the novelty cell(s) from the plotted map A. For this dataset, we identify      the 35th, 262nd and 318th cells as the novelty cell.
+*  Based on the output of the above step, we manually identify the novelty cell(s) from the plotted map A. For this dataset, we identify      the 77th,203rd,231th,262th,318th cells as the novelty cell.
 
 *  We pass the identified novelty cell(s) as a parameter to the removeNovelty() along with HVT map A. The function removes that novelty       cell(s) from the dataset and stores them separately. It also returns the dataset without novelty(s).
 
