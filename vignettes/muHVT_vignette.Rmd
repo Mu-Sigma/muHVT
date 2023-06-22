@@ -8,7 +8,7 @@ output:
   rmarkdown::html_vignette:
     number_sections: true
     toc: true
-    toc_depth : 3
+    toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
   %\VignetteEngine{knitr::rmarkdown}
@@ -155,7 +155,7 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -333,7 +333,7 @@ The torus dataset includes the following columns:
 * y: This column represents the Y-coordinate of each point in the torus.
 * z: This column represents the Z-coordinate of each point in the torus.
 
-Lets, explore the **raw torus dataset containing 12000 points**. For the shake of brevity we are displaying first 6 rows.
+Lets, explore the **raw torus dataset containing 12000 points**. For the sake of brevity we are displaying first 6 rows.
 
 ```{r torus generate,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
@@ -367,7 +367,7 @@ torus_df<-trainTorus
 
 **Raw Training Dataset**
 
-First of all, we will see the randomly selected **training data containing (9000 data points)**. For the shake of brevity we are displaying first six rows.
+First of all, we will see the randomly selected **training data containing (9000 data points)**. For the sake of brevity we are displaying first six rows.
 
 ```{r torus head, warning=FALSE, eval = global_var}
 
@@ -390,7 +390,7 @@ summary(trainTorus_data)
 
 **Raw Testing Dataset**
 
-Now, lets have a look at randomly selected **testing dataset containing(3000 data points)**.For the shake of brevity we are displaying first six rows.
+Now, lets have a look at randomly selected **testing dataset containing(3000 data points)**.For the sake of brevity we are displaying first six rows.
 
 
 ```{r}
@@ -488,7 +488,8 @@ We will use the `HVT` function to compress our data while preserving essential f
 
 **In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce the level of detail captured in the data representation**
 
-**Iteration 1:**
+
+### <span style="color:blue">Iteration 1: </span>
 
 We will pass the below mentioned model parameters along with torus dataset to `HVT` function.
 
@@ -526,7 +527,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 
 **As it can be seen from the table above, none of the 100 cells have reached the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
-**Iteration 2:**
+### <span style="color:blue">Iteration 2: </span>
 
 Let's retry by increasing the n_cells parameter to 300.
 
@@ -564,7 +565,7 @@ compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 
 **It can be observed from the table above that only 5 cells out of 300 i.e. `2%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
 
-**Iteration 3:**
+### <span style="color:blue">Iteration 3: </span>
 
 Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900.
 
@@ -608,9 +609,9 @@ We successfully compressed 85% of the data using n_cells parameter as 900, the n
 
 The function `sammonsProjection()` utilizes the `sammons` function from the MASS package being called in `HVT`. Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
-**Iteration 1**
+### <span style="color:blue">Iteration 1: </span>
 
-lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **first iteration** where we set **n_cells parameter as 100**. For the shake of brevity we are displaying first six rows.
+lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **first iteration** where we set **n_cells parameter as 100**. For the sake of brevity we are displaying first six rows.
 
 
 ```{r, warning=FALSE,message=FALSE}
@@ -640,9 +641,9 @@ ggplot(centroid_coordinates1, aes(x_coord, y_coord)) +
 ```
 
 
-**Iteration 2**
+### <span style="color:blue">Iteration 2: </span>
 
-lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **Second iteration** where we set **n_cells parameter as 300**. For the shake of brevity we are displaying first six rows.
+lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **Second iteration** where we set **n_cells parameter as 300**. For the sake of brevity we are displaying first six rows.
 
 
 ```{r, warning=FALSE,message=FALSE}
@@ -671,9 +672,9 @@ ggplot(centroid_coordinates2, aes(x_coord, y_coord)) +
   labs(x = "X", y = "Y")
 ```
 
-**Iteration 3**
+### <span style="color:blue">Iteration 3: </span>
 
-lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **third iteration** where we set **n_cells parameter as 900**. For the shake of brevity we are displaying first six rows.
+lets view the projected **2D coordinates** after performing sammon's projection on the compressed data for the **third iteration** where we set **n_cells parameter as 900**. For the sake of brevity we are displaying first six rows.
 
 ```{r, warning=FALSE,message=FALSE}
 
@@ -728,7 +729,7 @@ plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title 
 
 * __`maxDepth`__ - An integer indicating the number of levels. (default = NULL)
 
-**Iteration 1**
+### <span style="color:blue">Iteration 1: </span>
 
 To enhance visualization, let's generate a plot of the Voronoi tessellation for the **first iteration** where we set **n_cells parameter as 100**. This plot will provide a visual representation of the Voronoi regions corresponding to the data points, aiding in the analysis and understanding of the data distribution.
 
@@ -742,7 +743,7 @@ muHVT::plotHVT(
 )
 ```
 
-**Iteration 2**
+### <span style="color:blue">Iteration 2: </span>
 
 Now, let's plot the Voronoi tessellation for the **second iteration** where we set **n_cells parameter to 300**.
 
@@ -756,7 +757,7 @@ muHVT::plotHVT(
 )
 ```
 
-**Iteration 3**
+### <span style="color:blue">Iteration 3: </span>
 
 Now, let's plot the Voronoi tessellation again, for the **third iteration** where we set **n_cells parameter to 900**.
 
@@ -875,7 +876,7 @@ muHVT::hvtHmap(
 
 **Raw Testing Dataset**
 
-Lets have a look at out test dataset containing (3000 points) before we pass it to predictHVT function for scoring.
+Lets have a look at our randomly selected test dataset containing (3000 points) before we pass it to predictHVT function for scoring.
 
 ```{r}
 Table(head(test_dataset1))
@@ -987,7 +988,7 @@ The Computers dataset includes the following columns:
 * Screen: The size of the screen in inches.
 * Ads: The number of listings for 486 PCs' prices for each month.
 
-Let's explore the **Personal Computers Dataset containing (6259 points)**. For the shake of brevity we are displaying first six rows.
+Let's explore the **Personal Computers Dataset containing (6259 points)**. For the sake of brevity we are displaying first six rows.
 
 
 ```{r sample data computer,warning=FALSE,message=FALSE,eval = T}
@@ -1006,18 +1007,18 @@ str(computers)
 summary(computers)
 ```
 
-Let us first split the data into train and test. We will use 80% of the data as train and remaining as test.
+Let us first split the data into train and test. We will randomly select 80% of the data as train and remaining as test.
 
 ```{r train-test computer,warning=FALSE,message=FALSE,eval = global_var}
-noOfPoints <- dim(computers)[1]
-trainLength <- as.integer(noOfPoints * 0.8)
-trainComputers <- computers[1:trainLength,]
-testComputers <- computers[(trainLength+1):noOfPoints,]
+
+num_rows <- nrow(computers)
+set.seed(123)
+train_indices <- sample(1:num_rows, 0.8 * num_rows)
+trainComputers <- computers[train_indices, ]
+testComputers <- computers[-train_indices, ]
 ```
 
 K-means is not suitable for factor variables as the sample space for factor variables is discrete. A Euclidean distance function on such a space isn't really meaningful. Hence, we will delete the factor variables(X, cd, multi, premium, trend) in our dataset. 
-
-Here we keep the original `trainComputers` and `testComputers` as we will use the variables from this dataset to overlay as heatmap and generate some insights.
 
 ```{r pre-processing data computer,warning=FALSE,message=FALSE,eval = global_var}
 trainComputers <-
@@ -1028,18 +1029,19 @@ testComputers <-
 
 **Raw Training Dataset**
 
-Now, lets have a look at the randomly selected **raw training dataset** containing (5007 data points). For the shake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw training dataset** containing (5007 data points). For the sake of brevity we are displaying first six rows.
 
 ```{r, warning=FALSE,message=FALSE}
 trainComputers_data <- trainComputers %>% as.data.frame() %>% round(4)
 trainComputers_data$Row.No <- as.numeric(row.names(trainComputers_data))
 trainComputers_data <- trainComputers_data %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
+row.names(trainComputers_data) <- NULL
 Table(head(trainComputers_data))
 ```
 
 **Raw Testing Dataset**
 
-Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points). For the shake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points). For the sake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1129,7 +1131,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#data-projection) of this vignette.
 
-lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization. For the shake of brevity we are displaying first six rows.
+lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization. For the sake of brevity we are displaying first six rows.
 
 
 
@@ -1299,7 +1301,7 @@ For more detailed information on prediction please refer to [section 5](https://
 **Raw Testing Dataset**
 
 
-Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to predictHVT function for scoring. For the shake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to predictHVT function for scoring. For the sake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1405,17 +1407,21 @@ We can see the predictions for the points in the table above.The centroid of the
 
 *  We have considered torus dataset for multidimensional data visualization using sammons projection.
 
+*  We have randomly selected 9000 datapoints for testing and remaining datapoints for validation.
+
 *  Our goal is to achieve data compression upto atleast `80%`
 
 * We constructed a compressed HVT map (hvt.torus) by applying the HVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
 
-* We created another compressed HVT map (hvt.torus2) using the HVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 14% of the cells have reached the quantization threshold error.
+* We created another compressed HVT map (hvt.torus2) using the HVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 2% of the cells have reached the quantization threshold error.
 
-* Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 93% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
+* Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 85% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
 * **Example II: muHVT with the Personal Computer dataset**
 
 *  We have considered computers dataset for generating predictions to see which cell and level each point belongs to.
+
+*  We have randomly selected 80% of datapoints for training and rest 20% for validation.
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
@@ -1442,7 +1448,7 @@ We can see the predictions for the points in the table above.The centroid of the
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
+1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data
 
 2. Vector Quantization : https://en.wikipedia.org/wiki/Vector_quantization
 
