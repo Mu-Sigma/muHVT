@@ -33,7 +33,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
 
-The muHVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [Vignette](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) for more details.
+The muHVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) for more details.
 
 <img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus2.png" width="642px" height="440px" />
 <p class="caption">
