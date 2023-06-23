@@ -22,7 +22,7 @@
 
 # <span class="header-section-number">1</span> Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis, see `Figure 1` as an example of a 2D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -35,7 +35,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 The muHVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. below is an image depicting a captivating tessellation of a torus-
 
-<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus.png" width="672px" height="480px" />
+<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus2.png" width="642px" height="440px" />
 <p class="caption">
 Figure 1:  Heatmap Visualization of a Torus with 900 Cells
 </p>
