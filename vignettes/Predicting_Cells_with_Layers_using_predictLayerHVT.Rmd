@@ -1121,7 +1121,7 @@ hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference
 
 # Executive Summary
 
-*  We have considered computers dataset for creating a predictive set of maps to monitor entities over time using predictLayerHVT() in this  vignette.
+*  We have considered computers dataset for creating a predictive sequence of maps using predictLayerHVT() in this  vignette.
 
 * Our goal is to achieve data compression upto atleast `80%`.
 
