@@ -64,7 +64,7 @@ This package provides  functionality to predict cells with layers based on a seq
 
 06th December, 2022
 
-This package provides functionality to predict based on a set of maps to monitor entities over time.
+This package provides functionality to predict based on a sequence of maps.
 
 The creation of a predictive set of maps involves three steps -
 

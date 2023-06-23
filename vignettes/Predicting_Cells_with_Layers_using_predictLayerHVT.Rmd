@@ -969,7 +969,7 @@ Let's have a look at our randomly selected **test dataset** containing 1253 data
 Table(head(testComputers_data))
 ```
 
-**Prediction using predictLayerHVT**
+
 
 The **predictLayerHVT** function is used to score the test data using the predictive set of maps. This function takes an input - a test data and a set of maps (map A, map B, map C).
 
@@ -1066,17 +1066,15 @@ Predictions%>% head(100) %>%
 **Note: From the above table, we can see that 343rd observation from the test data having Cell.ID as A399 have been identified as novelty and is mapped to 1st(B1) novelty cell in Layer2.Cell.ID column .Similarly, 367th,423rd....... test record having Cell.ID as A399 is correctly identified as novelty and gets mapped to B1 novelty cell in the Layer2.Cell.ID column respectively**
 
 
-<!-- ########################## -->
+```{r}
+summary_list <- map_A[[3]]
 
-<!-- ```{r} -->
-<!-- summary_list <- map_A[[3]] -->
-
-<!--   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]]) -->
-<!--   scaled_test_data <- scale( -->
-<!--      testComputers[, train_colnames], -->
-<!--       center = summary_list$scale_summary$mean_data[train_colnames], -->
-<!--       scale = summary_list$scale_summary$std_data[train_colnames]) -->
-<!-- ``` -->
+  train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
+  scaled_test_data <- scale(
+     testComputers[, train_colnames],
+      center = summary_list$scale_summary$mean_data[train_colnames],
+      scale = summary_list$scale_summary$std_data[train_colnames])
+```
 
 
 
@@ -1093,80 +1091,31 @@ combined <- combined %>%
 mapC_summary <- map_C[[3]]$summary
 
 df1 <- combined
-df1 <- as.numeric(df1$Cell.ID)
+df1$Cell.ID <- as.numeric(df1$Cell.ID)
 df2 <- mapC_summary
+merged_df <- merge(df1, df2, by = "Cell.ID", all.x = TRUE)
+sorted_df <- merged_df[order(merged_df$Row.No), ]
+sorted_df <- sorted_df %>% select(price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
+sorted_df$Row.No <- testComputers_data$Row.No
 
-aa <- df1 %>% 
-  bind_rows(semi_join(df2, df1, by = "Cell.ID"))
-
-
-# matched <- lapply(1:nrow(df2), function(x) {
-#   lapply(1:nrow(df1), function(y) {
-#     if (!is.na(df1$layer2[y]) && !is.na(df2$Cell.ID[x]) && df1$layer2[y] == df2$Cell.ID[x]) {
-#       return(df2[x, ])
-#     }
-#   })
-# })
-
-
-# aa <-unlist(matched)
-
-matched <- lapply(1:nrow(df2),function(x){
-  lapply(1:nrow(df1),function(y){
-
-    aa <-df1$layer2[x]
-    bb <-df2$Cell.ID[y]
-
-    if(aa==bb)
-    {
-      return(df2[y,])
-    }
-})
-
-})
-
-
-# Assuming your first dataframe is named 'df1' and the column is named 'column1_df1'
-# Assuming your second dataframe is named 'df2' and the column is named 'column1_df2'
-# Replace 'df1', 'df2', 'column1_df1', and 'column1_df2' with your actual dataframe and column names
-
-# Create an empty list to store the appended rows
-appended_rows <- list()
-
-# Iterate over each value in column1_df1 of df1
-lapply(df1$Layer2.Cell.ID, function(value) {
-  # Check if the value exists in column1_df2 of df2
-  matching_rows <- df2[df2$Cell.ID == value, ]
-  if (nrow(matching_rows) > 0) {
-    # Append the matching rows to the list
-    appended_rows <<- append(appended_rows, matching_rows)
-  }
-})
-
-# Combine the appended rows into a single dataframe
-appended_df <- do.call(rbind, appended_rows)
-
-# Append the appended_df to df1
-combined_df <- rbind(df1, appended_df)
-
-
-
-combined$diff <- rowMeans(abs(combined[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - combined[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
-rownames(combined) <- NULL
+sorted_df <- sorted_df%>% dplyr::select(Row.No,price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
+colnames(sorted_df) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act","Layer2.Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
+sorted_df$diff <- rowMeans(abs(sorted_df[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - sorted_df[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
+rownames(sorted_df) <- NULL
 options(scipen = 999)
-combined %>% head(100) %>%
+sorted_df %>% head(100) %>%
   as.data.frame() %>%
   Table(scroll = T, limit = 10)
 
 ```
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 21: Mean Absolute Difference'}
-hist(combined$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
 ```
 
 # Executive Summary
 
-*  We have considered computers dataset for creating a predictive set of maps to monitor entities over time using predictLayerHVT() in this    vignette.
+*  We have considered computers dataset for creating a predictive set of maps to monitor entities over time using predictLayerHVT() in this  vignette.
 
 * Our goal is to achieve data compression upto atleast `80%`.
 
