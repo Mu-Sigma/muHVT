@@ -26,7 +26,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or 3D with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map useful for semi-supervised tasks.
 
@@ -35,9 +35,9 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 The muHVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) for more details.
 
-<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus2.png" width="642px" height="440px" />
+<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus.png" width="642px" height="440px" />
 <p class="caption">
-Figure 1:  Heatmap Visualization of a Torus with 900 Cells
+Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z.
 </p>
 
 

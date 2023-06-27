@@ -283,18 +283,18 @@ HVT(
 
 Each of the parameters have been explained below :
 
-* __`dataset`__ - A dataframe with numeric columns. 
+* __`dataset`__ - A dataframe with numeric columns. This is the input dataset on which the compression algorithm will be applied.
 
-* __`min_compression_perc`__  -  An integer indicating the minimum percent compression rate to be achieved for the dataset.
+* __`min_compression_perc`__  -  An integer indicating the minimum percent compression rate to be achieved for the dataset. The algorithm aims to compress the dataset while maintaining at least this specified compression percentage.
 
-* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level).
+* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level). This parameter determines the granularity or level of detail in the hierarchical vector quantization.
 
-* __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...).
+* __`depth`__   - An integer indicating the number of levels in the hierarchy. A depth of 1 means no hierarchy (single level), while higher values indicate multiple levels of hierarchy.
 
 * __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown.
 into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough.
+* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
 
 * __`scale_summary`__ -  A list with mean and standard deviation values for all the features in the
 dataset. Pass the scale summary when the input dataset is already scaled or
@@ -389,7 +389,7 @@ map_A <-muHVT::HVT(trainComputers,
 As per the manual, __`map_A[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 __`map_A[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-The datatable displayed below is the **summary from map A**
+The datatable displayed below is the **summary from map A** (containing 440 records)
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 summaryTable(map_A[[3]]$summary,scroll = T,limit = 500)
@@ -642,13 +642,13 @@ The __`removeNovelty`__ function removes the identified novelty cell(s) from the
 It takes input as the cell number (Segment.Child) of the manually identified novelty cell(s) from the above table and the compressed HVT map (map A). It returns a list of two items: `dataset with novelty records`, and a subset of the `dataset without the novelty records`.
 
 ```{r remove_novelty,results='asis'}
-identified_Novelty_cells <<- c(73,321,332,338,435)
+identified_Novelty_cells <<- c(73,321,332,338,435)   #73,321,332,338,435
 output_list <- removeNovelty(identified_Novelty_cells, map_A)
 data_with_novelty <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
 ```
 
-Let's have a look at the **data with novelties**.For the sake of brevity, we will only show the first 10 rows.
+Let's have a look at the **data with novelties**(containing 24 records). For the sake of brevity, we will only show the first 10 rows.
 
 ```{r hvt_mapB results, warning=FALSE, echo=TRUE}
 novelty_data <- data_with_novelty
@@ -680,7 +680,7 @@ We pass the dataframe with novelty records to HVT function along with other mode
 
 **Model Parameters**
 
-* Number of Cells at each Level = 5
+* Number of Cells at each Level = 12
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.2
 * Error Metric = Max
@@ -694,7 +694,7 @@ dataset_with_novelty <- data_with_novelty[,-1:-2]
 map_B <- list()
 mapA_scale_summary = map_A[[3]]$scale_summary
 map_B <- muHVT::HVT(dataset_with_novelty,
-                  n_cells = 5,
+                  n_cells = 12 ,   #6
                   depth = 1,
                   quant.err = 0.2,
                   projection.scale = 10,
@@ -707,14 +707,21 @@ map_B <- muHVT::HVT(dataset_with_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map B (layer 2)**.
+The datatable displayed below is the **summary from map B (layer 2)** containing 12 records.
 
 ```{r, message=FALSE,warning=FALSE}
 summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
 
 ```
 
+Now let's check the compression summary for HVT (map B). The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
+```{r hvt_map_B compression summary,warning=FALSE,eval = global_var}
+mapB_compression_summary <- map_B[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
+compressionSummaryTable(mapB_compression_summary)
+```
+
+**As it can be seen from the table above, __`83%`__ of the cells have hit the quantization threshold error.Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells**
 
 # Map C : Compressed Map without Novelty
 
@@ -794,7 +801,7 @@ map_C <- muHVT::HVT(dataset_without_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map C (layer2)**.
+The datatable displayed below is the **summary from map C (layer2)** containing 552 records.
 
 ```{r,message=FALSE,warning=FALSE}
 summaryTable(map_C[[3]]$summary,scroll = T,limit = 500)
@@ -1009,22 +1016,21 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 
 * __`data`__ - A dataframe containing the test dataset. The variables from this dataset can also be used to overlay as heatmap.
 
-* __`map A`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data.
+* __`map A`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data. This list containes information about the hierarchical vector quantized data along with a summary section.
 
-
-* __`map B`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on  data with novelty which was obtained as a result of removeNovelty function.
+* __`map B`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on  data with novelty which was obtained as a result of removeNovelty function. 
 
 * __`map C`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on data without novelty obtained as a result of removeNovelty function.
 
 * __`child.level`__ - A number indicating the layer for which the heat map is to be plotted.(Only used if hmap.cols is not NULL).It specifies the specific layer within the hierarchical structure of the model.
 
-* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation.
+* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation. It determines how extreme a deviation from the median has to be in order to be considered an outlier.
 
-* __`normalize`__ -  A logical value indicating if the columns in your dataset should be normalized. Default value is TRUE, which means the columns will be normalized.
+* __`normalize`__ -  A logical value indicating if the columns in the dataset should be normalized. If set to TRUE, the algorithm will normalize the data before performing compression. The default value is TRUE
 
-* __`distance_metric`__ -  The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points. It can be set to "Euclidean" (default) for straight-line distance or "Manhattan" for the sum of absolute differences between coordinates.
 
-* __`error_metric`__ -  The error metric can be "mean" or "max". mean is selected by default.
+* __`error_metric`__ -  It specifies the error metrics to be used for evaluating the performance of the model. It can be "mean" or "max". mean is selected by default.
 
 * __`yVar`__ -  Name of the dependent variable(s).
 
@@ -1062,52 +1068,54 @@ new_predict <- predictLayerHVT(
 
 ```
 
-<!-- ```{r, echo=FALSE} -->
-<!-- prediction_output <- head(new_predict,7) -->
-<!-- row_indices <- c(287, 397, 873) -->
-<!-- new_df <- new_predict[row_indices, ] -->
-<!-- Predictions <- rbind(prediction_output,new_df) -->
-<!-- row.names(Predictions) <- NULL -->
-
-<!-- Predictions%>% head(100) %>% -->
-<!--   as.data.frame() %>% -->
-<!--   Table(scroll = T, limit = 20) -->
-<!-- ``` -->
 
 ```{r}
-summary_list <- map_A[[3]]
+predictions <- new_predict %>%
+  dplyr::select(Layer1.Cell.ID, Layer2.Cell.ID) %>%
+  mutate(Cell.ID = as.numeric(gsub("[A]", "", Layer1.Cell.ID)),
+         Row.No = row.names(testComputers_data))
 
-  train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
-  scaled_test_data <- scale(
-     testComputers[, train_colnames],
-      center = summary_list$scale_summary$mean_data[train_colnames],
-      scale = summary_list$scale_summary$std_data[train_colnames])
-```
+merged_df <- merge(predictions, map_A[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price, speed, hd, ram, screen, ads, Layer1.Cell.ID, Layer2.Cell.ID) %>%
+  rename(price_act = price, speed_act = speed, hd_act = hd,
+         ram_act = ram, screen_act = screen, ads_act = ads)
 
-```{r,warning=FALSE,message=FALSE}
-testComputers <- scaled_test_data
-data1 <- data.frame(testComputers)
-data1$Row.No <- row.names(testComputers_data)
-data1 <- data1 %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
-colnames(data1) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act")
-Layer2.Cell.ID <- new_predict$Layer2.Cell.ID
-combined <- cbind(data1,Layer2.Cell.ID)
-combined <- combined %>%mutate(Cell.ID = gsub("[BC]", "", Layer2.Cell.ID))
-mapC_summary <- map_C[[3]]$summary
-
-df1 <- combined
-df1$Cell.ID <- as.numeric(df1$Cell.ID)
-df2 <- mapC_summary
-merged_df <- merge(df1, df2, by = "Cell.ID", all.x = TRUE)
-sorted_df <- merged_df[order(merged_df$Row.No), ]
-sorted_df <- sorted_df %>% select(price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
-sorted_df$Row.No <- testComputers_data$Row.No
+colnames(merged_df) <- c("Row.No", "price_act", "speed_act", "hd_act", "ram_act", "screen_act", "ads_act",
+                         "Layer1.Cell.ID", "Layer2.Cell.ID")
 
 ```
 
+```{r}
+
+combined <- merged_df %>%
+  mutate(Cell.ID = gsub("[C]", "", Layer2.Cell.ID)) %>%
+  merge(map_C[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         Segment.Level, Segment.Parent, Segment.Child, n, Quant.Error, price, speed, hd, ram, screen, ads)
+
+
+merged_df <- combined %>%
+  mutate(Cell.ID = gsub("[B]", "", Layer2.Cell.ID)) %>%
+  merge(map_B[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         price.x, speed.x, hd.x, ram.x, screen.x, ads.x, price.y, speed.y, hd.y, ram.y, screen.y, ads.y) %>%
+  mutate(price_pred = coalesce(price.x, price.y),
+         speed_pred = coalesce(speed.x, speed.y),
+         hd_pred = coalesce(hd.x, hd.y),
+         ram_pred = coalesce(ram.x, ram.y),
+         screen_pred = coalesce(screen.x, screen.y),
+         ads_pred = coalesce(ads.x, ads.y)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         price_pred, speed_pred, hd_pred, ram_pred, screen_pred, ads_pred)
+```
+
+
+
 ```{r,warning=FALSE,message=FALSE}
-sorted_df <- sorted_df%>% dplyr::select(Row.No,price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
-colnames(sorted_df) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act","Layer2.Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
+sorted_df <- merged_df
 sorted_df$diff <- rowMeans(abs(sorted_df[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - sorted_df[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
 rownames(sorted_df) <- NULL
 options(scipen = 999)

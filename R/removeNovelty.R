@@ -93,7 +93,7 @@ removeNovelty <-
     dataset_without_outliers_scaled <- select(dataset_without_outliers_scaled, -c(Row.Number, Cell.Number, Cell.ID))
     dataset_without_outliers_scaled <- dataset_without_outliers_scaled[ order(as.numeric(row.names(dataset_without_outliers_scaled))), ]
     
-    print(paste0(c("The following cell(s) have been removed as outliers from the dataset: ", remove_outlier_cells), collapse = " "))
+    print(paste0(c("The following cell(s) have been removed as novelties from the dataset: ", remove_outlier_cells), collapse = " "))
 
     
     return(list(
