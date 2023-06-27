@@ -283,18 +283,18 @@ HVT(
 
 Each of the parameters have been explained below :
 
-* __`dataset`__ - A dataframe with numeric columns. 
+* __`dataset`__ - A dataframe with numeric columns. This is the input dataset on which the compression algorithm will be applied.
 
-* __`min_compression_perc`__  -  An integer indicating the minimum percent compression rate to be achieved for the dataset.
+* __`min_compression_perc`__  -  An integer indicating the minimum percent compression rate to be achieved for the dataset. The algorithm aims to compress the dataset while maintaining at least this specified compression percentage.
 
-* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level).
+* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level). This parameter determines the granularity or level of detail in the hierarchical vector quantization.
 
-* __`depth`__   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...).
+* __`depth`__   - An integer indicating the number of levels in the hierarchy. A depth of 1 means no hierarchy (single level), while higher values indicate multiple levels of hierarchy.
 
 * __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown.
 into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough.
+* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
 
 * __`scale_summary`__ -  A list with mean and standard deviation values for all the features in the
 dataset. Pass the scale summary when the input dataset is already scaled or
@@ -389,7 +389,7 @@ map_A <-muHVT::HVT(trainComputers,
 As per the manual, __`map_A[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 __`map_A[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-The datatable displayed below is the **summary from map A**
+The datatable displayed below is the **summary from map A** (containing 440 records)
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 summaryTable(map_A[[3]]$summary,scroll = T,limit = 500)
@@ -626,9 +626,14 @@ Let us try to visualize the Map B from the flow diagram below.
 knitr::include_graphics('predictLayerHVT_function_mapB.png')
 ```
 
+
 In this section, we will manually figure out the novelty cells from the plotted map A and store it in **identified_Novelty_cells** variable.
 
-**Note**: For manual selecting the novelty cells from map A, one can enhance its interactivity by adding plotly elements to the code. This will transform map A into an interactive plot, allowing users to actively engage with the data. By hovering over the centroids of the cells, a tag containing segment child information will be displayed. Users can explore the map by hovering over different cells and selectively choose the novelty cells they wish to consider. 
+**Note**: For manual selecting the novelty cells from map A, one can enhance its interactivity by adding plotly elements to the code. This will transform map A into an interactive plot, allowing users to actively engage with the data. By hovering over the centroids of the cells, a tag containing segment `child` information will be displayed. Users can explore the map by hovering over different cells and selectively choose the novelty cells they wish to consider. Added an image for reference.
+
+```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 11: Manually selecting novelty cells'}
+knitr::include_graphics('reference.png')
+```
 
 
 The __`removeNovelty`__ function removes the identified novelty cell(s) from the dataset and stores those records separately.
@@ -637,13 +642,13 @@ The __`removeNovelty`__ function removes the identified novelty cell(s) from the
 It takes input as the cell number (Segment.Child) of the manually identified novelty cell(s) from the above table and the compressed HVT map (map A). It returns a list of two items: `dataset with novelty records`, and a subset of the `dataset without the novelty records`.
 
 ```{r remove_novelty,results='asis'}
-identified_Novelty_cells <<- c(73,321,332,338,435)
+identified_Novelty_cells <<- c(73,321,332,338,435)   #73,321,332,338,435
 output_list <- removeNovelty(identified_Novelty_cells, map_A)
 data_with_novelty <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
 ```
 
-Let's have a look at the **data with novelties**.For the sake of brevity, we will only show the first 10 rows.
+Let's have a look at the **data with novelties**(containing 24 records). For the sake of brevity, we will only show the first 10 rows.
 
 ```{r hvt_mapB results, warning=FALSE, echo=TRUE}
 novelty_data <- data_with_novelty
@@ -655,11 +660,18 @@ novelty_data %>% head(100) %>%
   Table(scroll = T, limit = 20)
 ```
 
+<style>
+/* Add space after the table */
+table {
+  margin-bottom: 20px;
+}
+</style>
+
 ## Voronoi Tessellation with highlighted novelty cell
 
 The __`plotCells`__ function is used to plot the Voronoi tessellation using the compressed HVT map (map A) and highlights the identified novelty cell(s) in red on the map.
 
-```{r compress_novelty_plot,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi Tessellation constructed using the compressed HVT map (map A) with the novelty cell(s) highlighted in red',eval = global_var}
+```{r compress_novelty_plot,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation constructed using the compressed HVT map (map A) with the novelty cell(s) highlighted in red',eval = global_var}
 plotCells(identified_Novelty_cells, map_A,line.width = c(0.4),centroid.size = 0.01)
 ```
 
@@ -668,7 +680,7 @@ We pass the dataframe with novelty records to HVT function along with other mode
 
 **Model Parameters**
 
-* Number of Cells at each Level = 5
+* Number of Cells at each Level = 12
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.2
 * Error Metric = Max
@@ -682,7 +694,7 @@ dataset_with_novelty <- data_with_novelty[,-1:-2]
 map_B <- list()
 mapA_scale_summary = map_A[[3]]$scale_summary
 map_B <- muHVT::HVT(dataset_with_novelty,
-                  n_cells = 5,
+                  n_cells = 12 ,   #6
                   depth = 1,
                   quant.err = 0.2,
                   projection.scale = 10,
@@ -695,20 +707,27 @@ map_B <- muHVT::HVT(dataset_with_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map B (layer 2)**.
+The datatable displayed below is the **summary from map B (layer 2)** containing 12 records.
 
 ```{r, message=FALSE,warning=FALSE}
 summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
 
 ```
 
+Now let's check the compression summary for HVT (map B). The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
+```{r hvt_map_B compression summary,warning=FALSE,eval = global_var}
+mapB_compression_summary <- map_B[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
+compressionSummaryTable(mapB_compression_summary)
+```
+
+**As it can be seen from the table above, __`83%`__ of the cells have hit the quantization threshold error.Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells**
 
 # Map C : Compressed Map without Novelty
 
 Let us try to visualize the compressed Map C from the flow diagram below.
 
-```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 12:Flow map with highlighted bounding box in red around compressed map C'}
+```{r ,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 13:Flow map with highlighted bounding box in red around compressed map C'}
 knitr::include_graphics('predictLayerHVT_function_mapC.png')
 ```
 
@@ -782,7 +801,7 @@ map_C <- muHVT::HVT(dataset_without_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map C (layer2)**.
+The datatable displayed below is the **summary from map C (layer2)** containing 552 records.
 
 ```{r,message=FALSE,warning=FALSE}
 summaryTable(map_C[[3]]$summary,scroll = T,limit = 500)
@@ -800,7 +819,7 @@ compressionSummaryTable(mapC_compression_summary)
 
 Let’s plot the Voronoi tessellation for layer 2 (map C)
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation for layer 2 (map C) shown for the 100 cells in the dataset ’computers’ at level 2'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 14: The Voronoi Tessellation for layer 2 (map C) shown for the 100 cells in the dataset ’computers’ at level 2'}
 muHVT::plotHVT(map_C,
         line.width = c(0.4,0.2), 
         color.vec = c("#141B41","#0582CA"),
@@ -815,7 +834,7 @@ Now let's plot all the features for each cell at level two as a heatmap for bett
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (n,price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data.
 
 
-```{r hvt_mapC hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi Tessellation with the heat map overlaid for features No. of entities in each cell',eval = global_var}
+```{r hvt_mapC hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation with the heat map overlaid for features No. of entities in each cell',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -833,7 +852,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 ```
 
-```{r hvt_mapC hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation with the heat map overlaid for features price in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid for features price in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -852,7 +871,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid for features speed in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one speed computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid for features speed in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -870,7 +889,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 ```
 
-```{r hvt_mapC hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid for features hd in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid for features hd in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -889,7 +908,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid for features ram in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation with the heat map overlaid for features ram in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -908,7 +927,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation with the heat map overlaid for features screen in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid for features screen in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -927,7 +946,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```
 
 
-```{r hvt_mapC hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid for features ads in the ’computers’ dataset',eval = global_var}
+```{r hvt_mapC hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid for features ads in the ’computers’ dataset',eval = global_var}
 
   hvtHmap(
   map_C,
@@ -997,22 +1016,21 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 
 * __`data`__ - A dataframe containing the test dataset. The variables from this dataset can also be used to overlay as heatmap.
 
-* __`map A`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data.
+* __`map A`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data. This list containes information about the hierarchical vector quantized data along with a summary section.
 
-
-* __`map B`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on  data with novelty which was obtained as a result of removeNovelty function.
+* __`map B`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on  data with novelty which was obtained as a result of removeNovelty function. 
 
 * __`map C`__ - A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on data without novelty obtained as a result of removeNovelty function.
 
 * __`child.level`__ - A number indicating the layer for which the heat map is to be plotted.(Only used if hmap.cols is not NULL).It specifies the specific layer within the hierarchical structure of the model.
 
-* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation.
+* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation. It determines how extreme a deviation from the median has to be in order to be considered an outlier.
 
-* __`normalize`__ -  A logical value indicating if the columns in your dataset should be normalized. Default value is TRUE, which means the columns will be normalized.
+* __`normalize`__ -  A logical value indicating if the columns in the dataset should be normalized. If set to TRUE, the algorithm will normalize the data before performing compression. The default value is TRUE
 
-* __`distance_metric`__ -  The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points. It can be set to "Euclidean" (default) for straight-line distance or "Manhattan" for the sum of absolute differences between coordinates.
 
-* __`error_metric`__ -  The error metric can be "mean" or "max". mean is selected by default.
+* __`error_metric`__ -  It specifies the error metrics to be used for evaluating the performance of the model. It can be "mean" or "max". mean is selected by default.
 
 * __`yVar`__ -  Name of the dependent variable(s).
 
@@ -1034,7 +1052,7 @@ The prediction algorithm recursively calculates the distance between each point 
 
 
 
-Let’s see which cell and layer each point belongs to.For the sake of brevity, we will only show the first 10 rows.
+Let’s see which cell and layer each point belongs to and check the Mean Absolute Difference. 
 
 ```{r, message=FALSE,warning=FALSE}
 
@@ -1050,78 +1068,74 @@ new_predict <- predictLayerHVT(
 
 ```
 
-```{r}
-prediction_output <- head(new_predict,7)
-row_indices <- c(287, 397, 873)
-new_df <- new_predict[row_indices, ]
-Predictions <- rbind(prediction_output,new_df)
-row.names(Predictions) <- NULL
 
-Predictions%>% head(100) %>%
-  as.data.frame() %>%
-  Table(scroll = T, limit = 20)
+```{r}
+predictions <- new_predict %>%
+  dplyr::select(Layer1.Cell.ID, Layer2.Cell.ID) %>%
+  mutate(Cell.ID = as.numeric(gsub("[A]", "", Layer1.Cell.ID)),
+         Row.No = row.names(testComputers_data))
+
+merged_df <- merge(predictions, map_A[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price, speed, hd, ram, screen, ads, Layer1.Cell.ID, Layer2.Cell.ID) %>%
+  rename(price_act = price, speed_act = speed, hd_act = hd,
+         ram_act = ram, screen_act = screen, ads_act = ads)
+
+colnames(merged_df) <- c("Row.No", "price_act", "speed_act", "hd_act", "ram_act", "screen_act", "ads_act",
+                         "Layer1.Cell.ID", "Layer2.Cell.ID")
+
 ```
 
-
-**Note: From the above table, we can see that 343rd observation from the test data having Cell.ID as A399 have been identified as novelty and is mapped to 1st(B1) novelty cell in Layer2.Cell.ID column .Similarly, 367th,423rd....... test record having Cell.ID as A399 is correctly identified as novelty and gets mapped to B1 novelty cell in the Layer2.Cell.ID column respectively**
-
-
 ```{r}
-summary_list <- map_A[[3]]
 
-  train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
-  scaled_test_data <- scale(
-     testComputers[, train_colnames],
-      center = summary_list$scale_summary$mean_data[train_colnames],
-      scale = summary_list$scale_summary$std_data[train_colnames])
+combined <- merged_df %>%
+  mutate(Cell.ID = gsub("[C]", "", Layer2.Cell.ID)) %>%
+  merge(map_C[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         Segment.Level, Segment.Parent, Segment.Child, n, Quant.Error, price, speed, hd, ram, screen, ads)
+
+
+merged_df <- combined %>%
+  mutate(Cell.ID = gsub("[B]", "", Layer2.Cell.ID)) %>%
+  merge(map_B[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  arrange(as.numeric(Row.No)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         price.x, speed.x, hd.x, ram.x, screen.x, ads.x, price.y, speed.y, hd.y, ram.y, screen.y, ads.y) %>%
+  mutate(price_pred = coalesce(price.x, price.y),
+         speed_pred = coalesce(speed.x, speed.y),
+         hd_pred = coalesce(hd.x, hd.y),
+         ram_pred = coalesce(ram.x, ram.y),
+         screen_pred = coalesce(screen.x, screen.y),
+         ads_pred = coalesce(ads.x, ads.y)) %>%
+  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
+         price_pred, speed_pred, hd_pred, ram_pred, screen_pred, ads_pred)
 ```
 
 
 
 ```{r,warning=FALSE,message=FALSE}
-testComputers <- scaled_test_data
-data1 <- data.frame(testComputers)
-data1$Row.No <- row.names(testComputers_data)
-data1 <- data1 %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
-colnames(data1) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act")
-Layer2.Cell.ID <- new_predict$Layer2.Cell.ID
-combined <- cbind(data1,Layer2.Cell.ID)
-combined <- combined %>%
-  mutate(Cell.ID = gsub("[BC]", "", Layer2.Cell.ID))
-mapC_summary <- map_C[[3]]$summary
-
-df1 <- combined
-df1$Cell.ID <- as.numeric(df1$Cell.ID)
-df2 <- mapC_summary
-merged_df <- merge(df1, df2, by = "Cell.ID", all.x = TRUE)
-sorted_df <- merged_df[order(merged_df$Row.No), ]
-sorted_df <- sorted_df %>% select(price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
-sorted_df$Row.No <- testComputers_data$Row.No
-
-sorted_df <- sorted_df%>% dplyr::select(Row.No,price_act,speed_act,hd_act,ram_act,screen_act,ads_act,Layer2.Cell.ID,price,speed,hd,ram,screen,ads)
-colnames(sorted_df) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act","Layer2.Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
+sorted_df <- merged_df
 sorted_df$diff <- rowMeans(abs(sorted_df[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - sorted_df[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
 rownames(sorted_df) <- NULL
 options(scipen = 999)
-sorted_df %>% head(100) %>%
-  as.data.frame() %>%
-  Table(scroll = T, limit = 10)
-
+sorted_df %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
 ```
 
-```{r,message=FALSE,warning=FALSE,fig.cap='Figure 21: Mean Absolute Difference'}
+
+```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
 hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
 ```
 
 # Executive Summary
 
-*  We have considered computers dataset for creating a predictive set of maps to monitor entities over time using predictLayerHVT() in this  vignette.
+*  We have considered computers dataset for creating a predictive sequence of maps using predictLayerHVT() in this  vignette.
 
 * Our goal is to achieve data compression upto atleast `80%`.
 
 *  We construct a compressed HVT map (Map A) using the HVT() on the training dataset by setting __`n_cells`__ to 440 and __`quant.error`__    to 0.2 and we were able to attain a compression of 81%.
 
-*  Based on the output of the above step, we manually identify the novelty cell(s) from the plotted map A. For this dataset, we identify      the 77th,203rd,231th,262th,318th cells as the novelty cell.
+*  Based on the output of the above step, we manually identify the novelty cell(s) from the plotted map A. For this dataset, we identify      the 73rd,321,332th,338th,435th cells as the novelty cell.
 
 *  We pass the identified novelty cell(s) as a parameter to the removeNovelty() along with HVT map A. The function removes that novelty       cell(s) from the dataset and stores them separately. It also returns the dataset without novelty(s).
 
@@ -1136,11 +1150,11 @@ hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference
 *  The output of predictLayerHVT is a dataset with two columns Layer1.Cell.ID and Layer2.Cell.ID. Layer1.Cell.ID contains cell ids from map    A in the form A1,A2,A3.... and Layer2.Cell.ID contains cell ids from map B as B1,B2... depending on the identified novelties and map C     as C1,C2,C3.....
 
 
-* From the output of `predictLayerHVT`we can see that 343rd observation from the test data having Cell.ID as A399 have been identified as novelty and is mapped to 1st(B1) novelty cell in Layer2.Cell.ID column .Similarly, 367th,423rd....... test record having Cell.ID as A399 is correctly identified as novelty and gets mapped to B1 novelty cell in the Layer2.Cell.ID column respectively.
+<!-- * From the output of `predictLayerHVT`we can see that 343rd observation from the test data having Cell.ID as A399 have been identified as novelty and is mapped to 1st(B1) novelty cell in Layer2.Cell.ID column .Similarly, 367th,423rd....... test record having Cell.ID as A399 is correctly identified as novelty and gets mapped to B1 novelty cell in the Layer2.Cell.ID column respectively. -->
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
+1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high-dimensional%20data
 
 2. Vector Quantization :  https://en.wikipedia.org/wiki/Vector_quantization
 
