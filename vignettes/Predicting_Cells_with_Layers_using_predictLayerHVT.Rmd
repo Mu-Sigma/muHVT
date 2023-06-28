@@ -982,7 +982,7 @@ The testing dataset includes the following columns:
 * Screen: The size of the screen in inches.
 * Ads: The number of listings for 486 PCs' prices for each month.
 
-Let's have a look at our randomly selected **test dataset** containing 1253 datapoints.
+Let's have a look at our randomly selected **test dataset** containing 1252 datapoints.
 
 ```{r sample test data computer,warning=FALSE,message=FALSE,eval = T}
 Table(head(testComputers_data))
@@ -1052,7 +1052,6 @@ The prediction algorithm recursively calculates the distance between each point 
 
 
 
-Let’s see which cell and layer each point belongs to and check the Mean Absolute Difference. 
 
 ```{r, message=FALSE,warning=FALSE}
 
@@ -1123,7 +1122,7 @@ merged_df <- combined %>%
          price_pred, speed_pred, hd_pred, ram_pred, screen_pred, ads_pred)
 ```
 
-
+Let’s see which cell and layer each point belongs to and check the Mean Absolute Difference for each of the **1252 records**.
 
 ```{r,warning=FALSE,message=FALSE}
 sorted_df <- merged_df

@@ -451,24 +451,24 @@ HVT(
 
 Each of the parameters of HVT function have been explained below:
 
-* __`dataset`__ - A dataframe with numeric columns.
+* __`dataset`__ - A dataframe, with numeric columns that will be used for training the model.
 
-* __`min_compression_perc`__ - An integer indicating the minimum percent compression rate to be achieved for the dataset.
+* __`min_compression_perc`__ - An integer, indicating the minimum compression percentage to be achieved for the dataset. It indicates the desired level of reduction in dataset size compared to its original size.
 
-* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level).
+* __`n_cells`__  - An integer indicating the number of cells per hierarchy (level). This parameter determines the granularity or level of detail in the hierarchical vector quantization.
 
-* __`depth`__   - An integer indicating the number of level. (1 = No hierarchy, 2 = 2 level, etc ...).
+* __`depth`__   - An integer indicating the number of level in the hierarchy. A depth of 1 means no hierarchy (single level), while higher values indicate multiple levels of hierarchy.
 
 * __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown
 into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough.
+* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
 
 * __`scale_summary`__ -  A list with mean and standard deviation values for all the features in the
 dataset. Pass the scale summary when the input dataset is already scaled or
 normalize is set to False.
 
-* __`distance_metric`__	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance.
+* __`distance_metric`__	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric.
 
@@ -784,7 +784,7 @@ Let's have look at the `hvtHmap` function which we will use to overlay a variabl
 hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
 ```
 
-* __`hvt.results`__ - A list of results obtained from the HVT function.
+* __`hvt.results`__ - A list of results obtained from the HVT function while performing hierarchical vector quantization on training data. The list containes detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell, as per the n_cells given to the HVT() function.
 
 * __`dataset`__	- A dataframe containing the variables to overlay as a heatmap. The user can pass an external dataset or the dataset that was used to perform hierarchical vector quantization. The dataset should have the same number of points as the dataset used to perform hierarchical Vector Quantization in the HVT function.
 
@@ -929,7 +929,7 @@ predictions_torus <- muHVT::predictHVT(
 ```
 
 
-Let's see which cell and level each point belongs to and check the mean absolute difference. For the sake of brevity, we will only show the first 10 rows
+Let's see which cell and level each point belongs to and check the mean absolute difference for each of the **3000 records**. For the sake of brevity, we will only show the first 10 rows
 
 ```{r}
 actuals_torus <- predictions_torus[["scoredPredictedData"]]
@@ -1350,7 +1350,7 @@ predictions <- muHVT::predictHVT(
 ```
 
 
-Let's see which cell and level each point belongs to and check the mean absolute difference. For the sake of brevity, we will only show the first 10 rows
+Let's see which cell and level each point belongs to and check the mean absolute difference of each of the **1252 records**. For the sake of brevity, we will only show the first 10 rows
 
 ```{r predictHVT pred computers,warning=FALSE,eval = FALSE,echo=FALSE}
 
