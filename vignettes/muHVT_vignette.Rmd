@@ -1440,7 +1440,7 @@ hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Differ
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#
+1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
 
 2. Vector Quantization : https://en.wikipedia.org/wiki/Vector_quantization
 

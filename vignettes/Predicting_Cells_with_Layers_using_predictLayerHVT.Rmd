@@ -147,7 +147,7 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -1167,7 +1167,7 @@ hist(sorted_df$diff, breaks = 30, col = "blue", main = "Mean Absolute Difference
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#
+1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
 
 2. Vector Quantization :  https://en.wikipedia.org/wiki/Vector_quantization
 
