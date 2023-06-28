@@ -389,7 +389,7 @@ map_A <-muHVT::HVT(trainComputers,
 As per the manual, __`map_A[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 __`map_A[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-The datatable displayed below is the **summary from map A** (containing 440 records)
+The datatable displayed below is the **summary from map A** showing Cell.ID, Centroids and Quantization Error for each of the 440 cells.
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
 summaryTable(map_A[[3]]$summary,scroll = T,limit = 500)
@@ -707,7 +707,7 @@ map_B <- muHVT::HVT(dataset_with_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map B (layer 2)** containing 12 records.
+The datatable displayed below is the **summary from map B (layer 2)** showing Cell.ID, Centroids and Quantization Error for each of the 12 cells.
 
 ```{r, message=FALSE,warning=FALSE}
 summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
@@ -801,7 +801,7 @@ map_C <- muHVT::HVT(dataset_without_novelty,
 
 ```
 
-The datatable displayed below is the **summary from map C (layer2)** containing 552 records.
+The datatable displayed below is the **summary from map C (layer2)** showing Cell.ID, Centroids and Quantization Error for each of the 531 cells.
 
 ```{r,message=FALSE,warning=FALSE}
 summaryTable(map_C[[3]]$summary,scroll = T,limit = 500)
@@ -1024,7 +1024,7 @@ Each of the parameters of **predictLayerHVT** function has been explained below:
 
 * __`child.level`__ - A number indicating the layer for which the heat map is to be plotted.(Only used if hmap.cols is not NULL).It specifies the specific layer within the hierarchical structure of the model.
 
-* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation. It determines how extreme a deviation from the median has to be in order to be considered an outlier.
+* __`mad.threshold`__ - A numeric values indicating the permissible Mean Absolute Deviation. It determines how extreme a deviation from the median has to be in order to be considered an novelty.
 
 * __`normalize`__ -  A logical value indicating if the columns in the dataset should be normalized. If set to TRUE, the algorithm will normalize the data before performing compression. The default value is TRUE
 
@@ -1069,18 +1069,29 @@ new_predict <- predictLayerHVT(
 ```
 
 
+
+```{r}
+summary_list <- map_A[[3]]
+
+  train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
+  scaled_test_data <- scale(
+     testComputers[, train_colnames],
+      center = summary_list$scale_summary$mean_data[train_colnames],
+      scale = summary_list$scale_summary$std_data[train_colnames]) %>% data.frame()
+  scaled_test_data$Row.No <- row.names(testComputers)
+```
+
+
 ```{r}
 predictions <- new_predict %>%
   dplyr::select(Layer1.Cell.ID, Layer2.Cell.ID) %>%
   mutate(Cell.ID = as.numeric(gsub("[A]", "", Layer1.Cell.ID)),
-         Row.No = row.names(testComputers_data))
+         Row.No = row.names(testComputers))
 
-merged_df <- merge(predictions, map_A[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+merged_df <- merge(predictions,scaled_test_data, by = "Row.No", all.x = TRUE) %>%
   arrange(as.numeric(Row.No)) %>%
-  select(Row.No, price, speed, hd, ram, screen, ads, Layer1.Cell.ID, Layer2.Cell.ID) %>%
-  rename(price_act = price, speed_act = speed, hd_act = hd,
-         ram_act = ram, screen_act = screen, ads_act = ads)
-
+  select(Row.No, price, speed, hd, ram, screen, ads, Layer1.Cell.ID, Layer2.Cell.ID) 
+  
 colnames(merged_df) <- c("Row.No", "price_act", "speed_act", "hd_act", "ram_act", "screen_act", "ads_act",
                          "Layer1.Cell.ID", "Layer2.Cell.ID")
 
@@ -1124,7 +1135,9 @@ sorted_df %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
 
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
-hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+
+hist(sorted_df$diff, breaks = 30, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+
 ```
 
 # Executive Summary
@@ -1154,7 +1167,7 @@ hist(sorted_df$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high-dimensional%20data
+1. Topology Preserving Maps : [https://users.ics.aalto.fi/jhollmen/dippa/node9.html#](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data)
 
 2. Vector Quantization :  https://en.wikipedia.org/wiki/Vector_quantization
 

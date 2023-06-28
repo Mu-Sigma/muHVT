@@ -931,34 +931,29 @@ predictions_torus <- muHVT::predictHVT(
 
 Let's see which cell and level each point belongs to and check the mean absolute difference. For the sake of brevity, we will only show the first 10 rows
 
-<!-- ```{r predictHVT pred torus,warning=FALSE,eval = global_var, eval=FALSE, echo=TRUE} -->
+```{r}
+actuals_torus <- predictions_torus[["scoredPredictedData"]]
+colnames(actuals_torus) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error"  ,"x_act","y_act","z_act","centroidRadius", "diff","anomalyFlag")
+actuals_torus$Row_no  <- as.numeric(row.names(testTorus))
+merged_result = merge(x = actuals_torus, y =hvt.torus3[[3]]$summary %>% select ("x","y","z","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","x_act","y_act","z_act","Cell.ID","x","y","z")
 
-<!-- predictions_torus[["scoredPredictedData"]] %>% head(100) %>%  -->
-<!--   round(2) %>% -->
-<!--   as.data.frame() %>% -->
-<!--   Table(scroll = T, limit = 10) -->
-<!-- ``` -->
+colnames(merged_result) <- c("Row_no","x_act_norm","y_act_norm","z_act_norm","Cell.ID","x_pred","y_pred","z_pred")
+merged_result<-merged_result[order(merged_result$Row_no),]
 
-```{r,message=FALSE,warning=FALSE}
-data1 <- test_dataset
-data1$Row.No <- row.names(test_dataset)
-data1 <- data1 %>% dplyr::select(Row.No,x,y,z)
-rownames(data1) <- NULL
-colnames(data1) <- c("Row.No","x_act","y_act","z_act")
-data2 <- predictions_torus[["scoredPredictedData"]]
-data2 <- data2 %>% dplyr::select(Cell.ID,x,y,z)
-colnames(data2) <- c("Cell.ID","x_pred","y_pred","z_pred")
-combined <- cbind(data1,data2)
-combined$diff <- rowMeans(abs(combined[, c("x_act", "y_act", "z_act")] - combined[, c("x_pred", "y_pred", "z_pred")]))
+merged_result$diff <- rowMeans(abs(merged_result[, c("x_act_norm","y_act_norm","z_act_norm")] - merged_result[, c("x_pred","y_pred","z_pred")]))
+
+rownames(merged_result) <- NULL
 options(scipen = 999)
-combined %>% head(100) %>% 
+merged_result %>% head(100) %>%
   as.data.frame() %>%
   Table(scroll = T, limit = 10)
-
 ```
 
+
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 13: Mean Absolute Difference'}
-hist(combined$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
+
+
 ```
 
 # Example II: muHVT with the Personal Computer dataset
@@ -1104,7 +1099,7 @@ __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vect
 
 __`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
 
-The datatable displayed below is the summary from hvt.results
+The datatable displayed below is the summary from hvt.results showing Cell.IDs, Centroids and Quantization Error for the 440 cells.
 
 
 ```{r summary level one computers,warning=FALSE,eval = global_var}
@@ -1365,38 +1360,38 @@ predictions[["scoredPredictedData"]] %>% head(100) %>%
   Table(scroll = T, limit = 10)
 ```
 
-```{r}
-summary_list <- hvt.results[[3]]
-  
-  train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
-  scaled_test_data <- scale(
-     testComputers[, train_colnames],
-      center = summary_list$scale_summary$mean_data[train_colnames],
-      scale = summary_list$scale_summary$std_data[train_colnames])
-```
+<!-- ```{r} -->
+<!-- summary_list <- hvt.results[[3]] -->
+
+<!--   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]]) -->
+<!--   scaled_test_data <- scale( -->
+<!--      testComputers[, train_colnames], -->
+<!--       center = summary_list$scale_summary$mean_data[train_colnames], -->
+<!--       scale = summary_list$scale_summary$std_data[train_colnames]) -->
+<!-- ``` -->
 
 
 ```{r,warning=FALSE,message=FALSE}
-testComputers <- scaled_test_data
-data1 <- data.frame(testComputers)
-data1$Row.No <- row.names(testComputers)
-data1 <- data1 %>% dplyr::select(Row.No,price,speed,hd,ram,screen,ads)
-colnames(data1) <- c("Row.No","price_act","speed_act","hd_act","ram_act","screen_act","ads_act")
-data2 <- predictions[["scoredPredictedData"]]
-data2 <- data2 %>% dplyr::select(Cell.ID,price,speed,hd,ram,screen,ads)
-colnames(data2) <- c("Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
-combined <- cbind(data1,data2)
-combined$diff <- rowMeans(abs(combined[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - combined[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
-rownames(combined) <- NULL
+
+actuals <- predictions[["scoredPredictedData"]]
+colnames(actuals) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error"  ,"price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","centroidRadius", "diff",          "anomalyFlag")
+actuals$Row_no  <- as.numeric(row.names(testComputers))
+merged_result = merge(x = actuals, y =hvt.results[[3]]$summary %>% select ("price","speed","hd","ram","screen","ads","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price","speed","hd","ram","screen","ads")
+colnames(merged_result) <-c ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
+merged_result<-merged_result[order(merged_result$Row_no),]
+
+merged_result$diff <- rowMeans(abs(merged_result[, c("price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm")] - merged_result[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
+
+rownames(merged_result) <- NULL
 options(scipen = 999)
-combined %>% head(100) %>%
+merged_result %>% head(100) %>%
   as.data.frame() %>%
   Table(scroll = T, limit = 10)
 
 ```
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
-hist(combined$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 
 We can see the predictions for the points in the table above.The centroid of the cell that the point is mapped to is the codeword (predictor) for that cell. 
@@ -1448,7 +1443,7 @@ We can see the predictions for the points in the table above.The centroid of the
 
 # References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data
+1. Topology Preserving Maps : [https://users.ics.aalto.fi/jhollmen/dippa/node9.html#](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data)
 
 2. Vector Quantization : https://en.wikipedia.org/wiki/Vector_quantization
 
