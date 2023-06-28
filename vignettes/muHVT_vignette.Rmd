@@ -491,7 +491,7 @@ We will use the `HVT` function to compress our data while preserving essential f
 
 ### <span style="color:blue">Iteration 1: </span>
 
-We will pass the below mentioned model parameters along with torus dataset to `HVT` function.
+We will pass the below mentioned model parameters along with torus training dataset (containing 9000 datapoints) to `HVT` function.
 
 
 **Model Parameters**
@@ -529,7 +529,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 
 ### <span style="color:blue">Iteration 2: </span>
 
-Let's retry by increasing the n_cells parameter to 300.
+Let's retry by increasing the n_cells parameter to 300 along with torus training dataset (containing 9000 datapoints).
 
 **Model Parameters**
 
@@ -721,7 +721,7 @@ plotHVT(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 3, title 
 
 * __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer.
 
-* __`pch1`__	- Symbol type of the centroids of the tessellations (parent levels). Refer points (default = 21).
+* __`pch1`__	- Symbol, It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations (parent levels).(default = 21 i.e filled circle).
 
 * __`centroid.size`__	- Size of centroids of first level tessellations (default = 3).
 
@@ -792,9 +792,9 @@ hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, pal
 
 * __`hmap.cols`__	- The column number of column name from the dataset indicating the variables for which the heat map is to be plotted. To plot the quantization error as heatmap, pass `'quant_error'`. Similarly to plot the no of points in each cell as heatmap, pass `'no_of_points'` as a parameter.
 
-* __`color.vec`__	- A color vector such that length(color.vec) = child.level (default = NULL).
+* __`color.vec`__	- A color vector such that length(color.vec) = child.level, let say if the child.level is 2 then 2 color vector should be provided for each level. (default = NULL).
 
-* __`line.width`__ - A line width vector such that length(line.width) = child.level (default = NULL).
+* __`line.width`__ - A line width vector such that length(line.width) = child.level, let say if the child.level is 2 then 2 line width vector should be provided for each level (default = NULL).
 
 * __`palette.color`__ - A number indicating the heat map color palette. 1 - rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
 
@@ -904,15 +904,15 @@ The important parameters for the function `predictHVT` are as below:
 
 * __`normalize`__ - A logical value indicating if the columns in your dataset should be normalized. Basically it is a technique that scales the values of each variable to have a mean of 0 and a standard deviation of 1.. Default value is TRUE.
 
-* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points. It can be set to “Euclidean” (default) for straight-line distance or “Manhattan” for the sum of absolute differences between coordinates.
+* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points.The distance calculation involves taking the difference between centroid_data and data_vec either by using `Euclidean` which calculates the sum of squared differences for each column and takes the square root or `Manhattan` which calculates the sum of absolute differences for each column. Euclidean is selected by default.
 
-* __`error_metric`__ - It specifies the error metrics to be used for evaluating the performance of the model. It can be “mean” or “max”. mean is selected by default.
+* __`error_metric`__ - It specifies the error metrics to be used for evaluating the performance of the model. It can be “mean” or “max”. If error_metric is set to `mean`, the code calculates the mean quantization error within each group while if the error_metric is not set to `max`, the code calculates the maximum quantization error within each group of columns. mean is selected by default.
 
 * __`yVar`__ - Name of the dependent variable(s)
 
 * __`...`__ - color.vec and line.width can be passed from here
 
-Now once we have built the model, let us try to predict using our test dataset which cell and which level each point belongs to.
+Now once we have built the model, let us try to predict using our test dataset (containing 3000 data points) which cell and which level each point belongs to.
 
 ```{r predictHVT torus,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
@@ -935,8 +935,8 @@ Let's see which cell and level each point belongs to and check the mean absolute
 actuals_torus <- predictions_torus[["scoredPredictedData"]]
 colnames(actuals_torus) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error"  ,"x_act","y_act","z_act","centroidRadius", "diff","anomalyFlag")
 actuals_torus$Row_no  <- as.numeric(row.names(testTorus))
-merged_result = merge(x = actuals_torus, y =hvt.torus3[[3]]$summary %>% select ("x","y","z","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","x_act","y_act","z_act","Cell.ID","x","y","z")
 
+merged_result = merge(x = actuals_torus, y =hvt.torus3[[3]]$summary %>% select ("x","y","z","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","x_act","y_act","z_act","Cell.ID","x","y","z")
 colnames(merged_result) <- c("Row_no","x_act_norm","y_act_norm","z_act_norm","Cell.ID","x_pred","y_pred","z_pred")
 merged_result<-merged_result[order(merged_result$Row_no),]
 
@@ -944,9 +944,7 @@ merged_result$diff <- rowMeans(abs(merged_result[, c("x_act_norm","y_act_norm","
 
 rownames(merged_result) <- NULL
 options(scipen = 999)
-merged_result %>% head(100) %>%
-  as.data.frame() %>%
-  Table(scroll = T, limit = 10)
+merged_result %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 ```
 
 
@@ -960,7 +958,7 @@ hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Differ
 
 **Data Understanding**
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/SangeetM/dataset/blob/master/Computers.csv).
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/sample_dataset/Computers.csv).
 
 In this example, we will compress this dataset by using hierarchical VQ via k-means and visualize the Voronoi Tessellation plots using Sammons projection. Later on, we will overlay all the variables as a heatmap to generate further insights.
 
@@ -1059,7 +1057,7 @@ We will use the `HVT` function to compress our data while preserving essential f
 **In our example we will iteratively increase the number of cells until the desired compression percentage is reached instead of increasing the quantization threshold because it may reduce the level of detail captured in the data representation**
 
 
-We will pass the below mentioned model parameters along with computers dataset to `HVT` function.
+We will pass the below mentioned model parameters along with computers training dataset (5007) to `HVT` function.
 
 **Model Parameters**
 
@@ -1126,7 +1124,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#data-projection) of this vignette.
 
-lets view the projected 2D centroids after performing sammon's projection on the compressed data recieved after performing vector quantization. For the sake of brevity we are displaying first six rows.
+lets view the projected 2D centroids after performing sammon's projection on the compressed data (440 cells) recieved after performing vector quantization. For the sake of brevity we are displaying first six rows.
 
 
 
@@ -1147,7 +1145,7 @@ Table(head(centroid_coordinates))
 
 ```
 
-Lets visualize the projected Sammons 2D onto a plane.
+Lets visualize the projected Sammons 2D (440 centroids) onto a plane.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 14: Sammons 2D Plot for 440 cells'}
 # Assuming your sammons_data is a dataframe with columns "x" and "y"
@@ -1303,7 +1301,7 @@ Now, lets have a look at the randomly selected **raw testing dataset** containin
 Table(head(testComputers_data))
 ```
 
-Now once we have built the model, let us try to predict using our test dataset which cell and which level each point belongs to.
+Now once we have built the model, let us try to predict using our test dataset containing(1252 data points) which cell and which level each point belongs to.
 
 
 ```{r predictHVT function,echo = TRUE, eval= FALSE}
@@ -1326,9 +1324,9 @@ The important parameters for the function `predictHVT` are as below:
 
 * __`normalize`__ - A logical value indicating if the columns in your dataset should be normalized. Basically it is a technique that scales the values of each variable to have a mean of 0 and a standard deviation of 1.. Default value is TRUE.
 
-* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points. It can be set to “Euclidean” (default) for straight-line distance or “Manhattan” for the sum of absolute differences between coordinates.
+* __`distance_metric`__ - It specifies the type of distance measurement used to calculate similarity or dissimilarity between data points.The distance calculation involves taking the difference between centroid_data and data_vec either by using `Euclidean` which calculates the sum of squared differences for each column and takes the square root or `Manhattan` which calculates the sum of absolute differences for each column. Euclidean is selected by default.
 
-* __`error_metric`__ - It specifies the error metrics to be used for evaluating the performance of the model. It can be “mean” or “max”. mean is selected by default.
+* __`error_metric`__ - It specifies the error metrics to be used for evaluating the performance of the model. It can be “mean” or “max”. If error_metric is set to `mean`, the code calculates the mean quantization error within each group while if the error_metric is not set to `max`, the code calculates the maximum quantization error within each group of columns. mean is selected by default.
 
 * __`yVar`__ - Name of the dependent variable(s)
 
@@ -1374,27 +1372,26 @@ predictions[["scoredPredictedData"]] %>% head(100) %>%
 ```{r,warning=FALSE,message=FALSE}
 
 actuals <- predictions[["scoredPredictedData"]]
-colnames(actuals) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error"  ,"price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","centroidRadius", "diff",          "anomalyFlag")
+colnames(actuals) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","centroidRadius", "diff","anomalyFlag")
 actuals$Row_no  <- as.numeric(row.names(testComputers))
-merged_result = merge(x = actuals, y =hvt.results[[3]]$summary %>% select ("price","speed","hd","ram","screen","ads","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price","speed","hd","ram","screen","ads")
-colnames(merged_result) <-c ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
-merged_result<-merged_result[order(merged_result$Row_no),]
 
-merged_result$diff <- rowMeans(abs(merged_result[, c("price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm")] - merged_result[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
+merged_result = merge(x = actuals, y =hvt.results[[3]]$summary %>% select ("price","speed","hd","ram","screen","ads","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price","speed","hd","ram","screen","ads")
+
+colnames(merged_result) <-c ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
+merged_result <- merged_result[order(merged_result$Row_no),]
+
+merged_result$diff <- rowMeans(abs(merged_result[,c("price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm")] - merged_result[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
 
 rownames(merged_result) <- NULL
 options(scipen = 999)
-merged_result %>% head(100) %>%
-  as.data.frame() %>%
-  Table(scroll = T, limit = 10)
+merged_result %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 
-```
+``` 
+
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
 hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
-
-We can see the predictions for the points in the table above.The centroid of the cell that the point is mapped to is the codeword (predictor) for that cell. 
 
 # Executive Summary
 
@@ -1443,7 +1440,7 @@ We can see the predictions for the points in the table above.The centroid of the
 
 # References
 
-1. Topology Preserving Maps : [https://users.ics.aalto.fi/jhollmen/dippa/node9.html#](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data)
+1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html#
 
 2. Vector Quantization : https://en.wikipedia.org/wiki/Vector_quantization
 
