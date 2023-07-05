@@ -567,7 +567,7 @@ compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 
 ### <span style="color:blue">Iteration 3: </span>
 
-Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900.
+Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900 along with torus training dataset (containing 9000 datapoints) .
 
 **Model Parameters**
 
@@ -916,7 +916,7 @@ Now once we have built the model, let us try to predict using our test dataset (
 
 ```{r predictHVT torus,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions_torus <- muHVT::predictHVT(
+predictions_torus <- predictHVT(
   testTorus,
   hvt.torus3,
   child.level = 1,
@@ -931,25 +931,19 @@ predictions_torus <- muHVT::predictHVT(
 
 Let's see which cell and level each point belongs to and check the mean absolute difference for each of the **3000 records**. For the sake of brevity, we will only show the first 10 rows
 
+
+
 ```{r}
-actuals_torus <- predictions_torus[["scoredPredictedData"]]
-colnames(actuals_torus) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error"  ,"x_act","y_act","z_act","centroidRadius", "diff","anomalyFlag")
-actuals_torus$Row_no  <- as.numeric(row.names(testTorus))
-
-merged_result = merge(x = actuals_torus, y =hvt.torus3[[3]]$summary %>% select ("x","y","z","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","x_act","y_act","z_act","Cell.ID","x","y","z")
-colnames(merged_result) <- c("Row_no","x_act_norm","y_act_norm","z_act_norm","Cell.ID","x_pred","y_pred","z_pred")
-merged_result<-merged_result[order(merged_result$Row_no),]
-
-merged_result$diff <- rowMeans(abs(merged_result[, c("x_act_norm","y_act_norm","z_act_norm")] - merged_result[, c("x_pred","y_pred","z_pred")]))
-
-rownames(merged_result) <- NULL
-options(scipen = 999)
-merged_result %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
+Act_pred_Table <- predictions_torus[["actual_predictedTable"]] %>%      select(Row.No,act_x,act_y,act_z,act_Cell.ID,pred_x,pred_y,pred_z)
+colnames(Act_pred_Table) <- c("Row.No","act_x","act_y","act_z","Cell.ID","pred_x","pred_y","pred_z")
+Act_pred_Table$diff <- rowMeans(abs(Act_pred_Table[, c("act_x","act_y","act_z")] - Act_pred_Table[, c("pred_x","pred_y","pred_z")]))
+rownames(Act_pred_Table) <- NULL
+Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 ```
 
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 13: Mean Absolute Difference'}
-hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
+hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
 
 
 ```
@@ -1145,7 +1139,7 @@ Table(head(centroid_coordinates))
 
 ```
 
-Lets visualize the projected Sammons 2D (440 centroids) onto a plane.
+Lets visualize the projected Sammons 2D for n_cell set to 440 onto a plane.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 14: Sammons 2D Plot for 440 cells'}
 # Assuming your sammons_data is a dataframe with columns "x" and "y"
@@ -1157,7 +1151,7 @@ ggplot(centroid_coordinates, aes(x_coord, y_coord)) +
 
 ## Step 3: Tessellation
 
-For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#tessellations) of this vignette.
+For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#tessellation) of this vignette.
 
 Now, we have obtained the centroid coordinates resulting from the application of Sammon's projection. 
 
@@ -1335,7 +1329,7 @@ The important parameters for the function `predictHVT` are as below:
 
 ```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions <- muHVT::predictHVT(
+predictions <-predictHVT(
   testComputers,
   hvt.results,
   child.level = 1,
@@ -1358,39 +1352,19 @@ predictions[["scoredPredictedData"]] %>% head(100) %>%
   Table(scroll = T, limit = 10)
 ```
 
-<!-- ```{r} -->
-<!-- summary_list <- hvt.results[[3]] -->
 
-<!--   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]]) -->
-<!--   scaled_test_data <- scale( -->
-<!--      testComputers[, train_colnames], -->
-<!--       center = summary_list$scale_summary$mean_data[train_colnames], -->
-<!--       scale = summary_list$scale_summary$std_data[train_colnames]) -->
-<!-- ``` -->
+```{r}
+Act_pred_Table <- predictions[["actual_predictedTable"]] %>%      select(Row.No,act_price,act_speed,act_hd,act_ram,act_screen,act_ads,act_Cell.ID,pred_price,pred_speed,pred_hd,pred_ram,pred_screen,pred_ads) 
+colnames(Act_pred_Table) <- c("Row.No","act_price","act_speed","act_hd","act_ram","act_screen","act_ads","Cell.ID","pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")
+Act_pred_Table$diff <- rowMeans(abs(Act_pred_Table[, c("act_price","act_speed","act_hd","act_ram","act_screen","act_ads")] - Act_pred_Table[, c("pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")]))
+rownames(Act_pred_Table) <- NULL
+Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 
-
-```{r,warning=FALSE,message=FALSE}
-
-actuals <- predictions[["scoredPredictedData"]]
-colnames(actuals) <- c("Segment.Level","Segment.Parent","Segment.Child","n","Cell.ID","Quant.Error","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","centroidRadius", "diff","anomalyFlag")
-actuals$Row_no  <- as.numeric(row.names(testComputers))
-
-merged_result = merge(x = actuals, y =hvt.results[[3]]$summary %>% select ("price","speed","hd","ram","screen","ads","Cell.ID") , by = "Cell.ID") %>% select ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price","speed","hd","ram","screen","ads")
-
-colnames(merged_result) <-c ("Row_no","price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm","Cell.ID","price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")
-merged_result <- merged_result[order(merged_result$Row_no),]
-
-merged_result$diff <- rowMeans(abs(merged_result[,c("price_act_norm","speed_act_norm","hd_act_norm","ram_act_norm","screen_act_norm","ads_act_norm")] - merged_result[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
-
-rownames(merged_result) <- NULL
-options(scipen = 999)
-merged_result %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
-
-``` 
+```
 
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
-hist(merged_result$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
+hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 
 # Executive Summary

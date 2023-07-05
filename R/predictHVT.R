@@ -342,8 +342,28 @@ predictHVT <- function(data,
   predict_test_dataRaw <- predict_test_data3
   predict_test_dataRaw[, train_colnames] <- data[, train_colnames]
   
+  #################################################
+  
+  predicted_result <- hvt.results.model[[3]]$summary
+  current_predicted <- colnames(predicted_result)
+  new_names <- paste0("pred_", current_predicted)
+  colnames(predicted_result) <- new_names
+  
+  actuals <- predict_test_data3
+  current_actual <- colnames(actuals)
+  new_names <- paste0("act_", current_actual)
+  colnames(actuals) <- new_names
+  actuals$Row.No <- row.names(data)
+  
+  merged_df <- merge(actuals, predicted_result, by.x = "act_Cell.ID", by.y = "pred_Cell.ID")
+  merged_result <-merged_df %>% arrange(as.numeric(merged_df$Row.No))
+  
+  
+  #################################################
+  
   prediction_list = list(
     scoredPredictedData = predict_test_data3,
+    actual_predictedTable = merged_result,
     QECompareDf = QECompareDf2,
     predictPlot = plotlyPredict,
     predictInput = c("depth"= child.level, "quant.err"=mad.threshold),

@@ -1053,8 +1053,6 @@ The prediction algorithm recursively calculates the distance between each point 
 **Note : The prediction algorithm will not work if some of the variables used to perform quantization are missing. In the test dataset, we should not remove any features**
 
 
-
-
 ```{r, message=FALSE,warning=FALSE}
 
 validation_data <- testComputers
@@ -1070,67 +1068,27 @@ new_predict <- predictLayerHVT(
 ```
 
 
-
-```{r}
-summary_list <- map_A[[3]]
-
-train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
-scaled_test_data <- scale(
-     testComputers[, train_colnames],
-      center = summary_list$scale_summary$mean_data[train_colnames],
-      scale = summary_list$scale_summary$std_data[train_colnames]) %>% data.frame()
-      scaled_test_data$Row.No <- row.names(testComputers)
-```
-
-
-```{r}
-predictions <- new_predict %>%
-  dplyr::select(Layer1.Cell.ID, Layer2.Cell.ID) %>%
-  mutate(Cell.ID = as.numeric(gsub("[A]", "", Layer1.Cell.ID)),
-  Row.No = row.names(testComputers))
-
-merged_df <- merge(predictions,scaled_test_data, by = "Row.No", all.x = TRUE) %>%
-             arrange(as.numeric(Row.No)) %>% select(Row.No, price, speed, hd, ram, screen, ads, Layer1.Cell.ID, Layer2.Cell.ID) 
-  
-colnames(merged_df) <- c("Row.No", "price_act", "speed_act", "hd_act", "ram_act", "screen_act", "ads_act",
-                         "Layer1.Cell.ID", "Layer2.Cell.ID")
-
-```
-
-```{r}
-
-combined <- merged_df %>%
-  mutate(Cell.ID = gsub("[C]", "", Layer2.Cell.ID)) %>%
-  merge(map_C[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
-  arrange(as.numeric(Row.No)) %>%
-  select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
-  Segment.Level, Segment.Parent, Segment.Child, n, Quant.Error, price, speed, hd, ram, screen, ads)
-
-
-merged_df <- combined %>%
-             mutate(Cell.ID = gsub("[B]", "", Layer2.Cell.ID)) %>%
-             merge(map_B[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
-             arrange(as.numeric(Row.No)) %>%
-             select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
-             price.x, speed.x, hd.x, ram.x, screen.x, ads.x, price.y, speed.y, hd.y, ram.y, screen.y, ads.y)%>%
-             mutate(price_pred = coalesce(price.x, price.y),
-             speed_pred = coalesce(speed.x, speed.y),
-             hd_pred = coalesce(hd.x, hd.y),
-             ram_pred = coalesce(ram.x, ram.y),
-             screen_pred = coalesce(screen.x, screen.y),
-             ads_pred = coalesce(ads.x, ads.y)) %>%
-             select(Row.No, price_act, speed_act, hd_act, ram_act, screen_act, ads_act, Layer1.Cell.ID, Layer2.Cell.ID,
-             price_pred, speed_pred, hd_pred, ram_pred, screen_pred, ads_pred)
-```
-
 Let’s see which cell and layer each point belongs to and check the Mean Absolute Difference for each of the **1252 records**.
 
-```{r,warning=FALSE,message=FALSE}
+```{r}
+merged_df <- new_predict[["actual_predictedTable"]] %>%
+  transmute(Row.Number,act_price,act_speed,act_hd,act_ram,act_screen,act_ads,Layer1.Cell.ID,Layer2.Cell.ID,
+    pred_price = coalesce(price.x, price.y),
+    pred_speed = coalesce(speed.x, speed.y),
+    pred_hd = coalesce(hd.x, hd.y),
+    pred_ram = coalesce(ram.x, ram.y),
+    pred_screen = coalesce(screen.x, screen.y),
+    pred_ads = coalesce(ads.x, ads.y)
+  )
+
+
 sorted_df <- merged_df
-sorted_df$diff <- rowMeans(abs(sorted_df[, c("price_act","speed_act","hd_act","ram_act","screen_act","ads_act")] - sorted_df[, c("price_pred","speed_pred","hd_pred","ram_pred","screen_pred","ads_pred")]))
+sorted_df$diff <- rowMeans(abs(sorted_df[, c("act_price","act_speed","act_hd","act_ram","act_screen","act_ads")] - sorted_df[, c("pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")]))
 rownames(sorted_df) <- NULL
 options(scipen = 999)
 sorted_df %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
+
+
 ```
 
 
