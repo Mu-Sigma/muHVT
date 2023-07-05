@@ -934,9 +934,7 @@ Let's see which cell and level each point belongs to and check the mean absolute
 
 
 ```{r}
-Act_pred_Table <- predictions_torus[["actual_predictedTable"]] %>%      select(Row.No,act_x,act_y,act_z,act_Cell.ID,pred_x,pred_y,pred_z)
-colnames(Act_pred_Table) <- c("Row.No","act_x","act_y","act_z","Cell.ID","pred_x","pred_y","pred_z")
-Act_pred_Table$diff <- rowMeans(abs(Act_pred_Table[, c("act_x","act_y","act_z")] - Act_pred_Table[, c("pred_x","pred_y","pred_z")]))
+Act_pred_Table <- predictions_torus[["actual_predictedTable"]]
 rownames(Act_pred_Table) <- NULL
 Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 ```
@@ -1354,9 +1352,7 @@ predictions[["scoredPredictedData"]] %>% head(100) %>%
 
 
 ```{r}
-Act_pred_Table <- predictions[["actual_predictedTable"]] %>%      select(Row.No,act_price,act_speed,act_hd,act_ram,act_screen,act_ads,act_Cell.ID,pred_price,pred_speed,pred_hd,pred_ram,pred_screen,pred_ads) 
-colnames(Act_pred_Table) <- c("Row.No","act_price","act_speed","act_hd","act_ram","act_screen","act_ads","Cell.ID","pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")
-Act_pred_Table$diff <- rowMeans(abs(Act_pred_Table[, c("act_price","act_speed","act_hd","act_ram","act_screen","act_ads")] - Act_pred_Table[, c("pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")]))
+Act_pred_Table <- predictions[["actual_predictedTable"]]
 rownames(Act_pred_Table) <- NULL
 Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
 

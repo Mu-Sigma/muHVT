@@ -344,26 +344,71 @@ predictHVT <- function(data,
   
   #################################################
   
+  
+  
   predicted_result <- hvt.results.model[[3]]$summary
   current_predicted <- colnames(predicted_result)
   new_names <- paste0("pred_", current_predicted)
   colnames(predicted_result) <- new_names
+  Cell.ID <- data.frame(predicted_result$pred_Cell.ID)
+  predicted_result <- predicted_result %>% select(-c("pred_Segment.Level","pred_Segment.Parent","pred_Segment.Child","pred_n","pred_Cell.ID", "pred_Quant.Error", "pred_centroidRadius"))
+  predicted_result <- cbind(Cell.ID,predicted_result)
+  predicted_result <- rename(predicted_result, c("predicted_result.pred_Cell.ID"="Cell.ID"))
+  
   
   actuals <- predict_test_data3
   current_actual <- colnames(actuals)
   new_names <- paste0("act_", current_actual)
   colnames(actuals) <- new_names
-  actuals$Row.No <- row.names(data)
   
-  merged_df <- merge(actuals, predicted_result, by.x = "act_Cell.ID", by.y = "pred_Cell.ID")
+  actuals$Row.No <- row.names(data)
+  data_with_row <- data.frame(actuals$Row.No)
+  data_with_cell <- data.frame(actuals$act_Cell.ID)
+  actuals <- actuals %>% select(-c("act_Segment.Level","act_Segment.Parent","act_Segment.Child","act_n","act_Cell.ID", "act_Quant.Error", "act_centroidRadius","act_diff","act_anomalyFlag","Row.No"))
+  actuals_data <- cbind(data_with_row,actuals,data_with_cell)
+  actuals_data <- rename(actuals_data, c("actuals.Row.No"="Row.No","actuals.act_Cell.ID"="Cell.ID"))
+  
+  
+  merged_df <- merge(actuals_data, predicted_result, by="Cell.ID")
   merged_result <-merged_df %>% arrange(as.numeric(merged_df$Row.No))
+  
+  subtract_predicted_actual <- function(data, actual_prefix = "act_", predicted_prefix = "pred_") {
+    actual_cols <- grep(paste0("^", actual_prefix), names(data), value = TRUE)
+    df_new <- data.frame(matrix(ncol = 1, nrow = nrow(data)))
+    temp0 <<- data.frame(matrix(nrow = nrow(data)))
+    for (col in actual_cols) {
+      predicted_col <- gsub(actual_prefix, predicted_prefix, col)
+      
+      if (predicted_col %in% names(data)) {
+        temp0[[predicted_col]] <<- abs(data[[col]] - data[[predicted_col]])
+        
+      }
+    }
+    temp0 <- temp0 %>% discard(~all(is.na(.) | . ==""))   
+    df_new[,1] <- rowMeans(temp0)
+    return(df_new)
+  }
+  
+  
+  
+  diff <- subtract_predicted_actual(merged_result)
+  merged_result$diff <- diff$matrix.ncol...1..nrow...nrow.data.. 
+  merged_result <- rename(merged_result, c("diff"="diff"))
+  
+  
+  # Define the desired column order
+  desired_order <- c("Row.No", grep("^act_", colnames(merged_result), value = TRUE), "Cell.ID", grep("^pred_", colnames(merged_result), value = TRUE),"diff")
+  
+  # Reorder the columns in the data frame
+  df_reordered <- merged_result[, desired_order]
+  
   
   
   #################################################
   
   prediction_list = list(
     scoredPredictedData = predict_test_data3,
-    actual_predictedTable = merged_result,
+    actual_predictedTable = df_reordered,
     QECompareDf = QECompareDf2,
     predictPlot = plotlyPredict,
     predictInput = c("depth"= child.level, "quant.err"=mad.threshold),
