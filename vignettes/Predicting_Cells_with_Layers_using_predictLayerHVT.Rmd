@@ -735,7 +735,7 @@ knitr::include_graphics('predictLayerHVT_function_mapC.png')
 
 ### <span style="color:blue">Iteration 1: </span>
 
-With the Novelties removed, we construct another hierarchical Voronoi tessellation  **map C** layer 2 on the dataset without Novelty (containing 4986 records) and below mentioned model parameters.
+With the Novelties removed, we construct another hierarchical Voronoi tessellation  **map C** layer 2 on the dataset without Novelty (containing 4983 records) and below mentioned model parameters.
 
 **Model Parameters**
 
