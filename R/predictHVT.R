@@ -353,7 +353,9 @@ predictHVT <- function(data,
   Cell.ID <- data.frame(predicted_result$pred_Cell.ID)
   predicted_result <- predicted_result %>% select(-c("pred_Segment.Level","pred_Segment.Parent","pred_Segment.Child","pred_n","pred_Cell.ID", "pred_Quant.Error", "pred_centroidRadius"))
   predicted_result <- cbind(Cell.ID,predicted_result)
-  predicted_result <- rename(predicted_result, c("predicted_result.pred_Cell.ID"="Cell.ID"))
+  #predicted_result$predicted_result.pred_Cell.ID <- as.numeric(predicted_result$predicted_result.pred_Cell.ID)
+  #predicted_result <- rename(predicted_result, c("predicted_result.pred_Cell.ID"="Cell.ID"))
+  predicted_result <- rename(predicted_result, c("Cell.ID"="predicted_result.pred_Cell.ID"))
   
   
   actuals <- predict_test_data3
@@ -366,7 +368,8 @@ predictHVT <- function(data,
   data_with_cell <- data.frame(actuals$act_Cell.ID)
   actuals <- actuals %>% select(-c("act_Segment.Level","act_Segment.Parent","act_Segment.Child","act_n","act_Cell.ID", "act_Quant.Error", "act_centroidRadius","act_diff","act_anomalyFlag","Row.No"))
   actuals_data <- cbind(data_with_row,actuals,data_with_cell)
-  actuals_data <- rename(actuals_data, c("actuals.Row.No"="Row.No","actuals.act_Cell.ID"="Cell.ID"))
+  #actuals_data <- rename(actuals_data, c("actuals.Row.No"="Row.No","actuals.act_Cell.ID"="Cell.ID"))
+  actuals_data <- rename(actuals_data, c("Row.No"="actuals.Row.No","Cell.ID"="actuals.act_Cell.ID"))
   
   
   merged_df <- merge(actuals_data, predicted_result, by="Cell.ID")

@@ -323,7 +323,7 @@ First, we will construct __`map A`__ by using the below mentioned model paramete
 
 ### <span style="color:blue">Iteration 1: </span>
 
-We will pass the below mentioned model parameters along with training dataset (containing 5007 data poits) to `HVT` function.
+We will pass the below mentioned model parameters along with training dataset (containing 5007 data points) to `HVT` function.
 
 
 **Model Parameters**
@@ -648,7 +648,7 @@ data_with_novelty <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
 ```
 
-Let's have a look at the **data with novelties**(containing 24 records). For the sake of brevity, we will only show the first 10 rows.
+Let's have a look at the **data with novelties**(containing 24 records). For the sake of brevity, we will only show the first 20 rows.
 
 ```{r hvt_mapB results, warning=FALSE, echo=TRUE}
 novelty_data <- data_with_novelty
@@ -1071,22 +1071,10 @@ new_predict <- predictLayerHVT(
 Let’s see which cell and layer each point belongs to and check the Mean Absolute Difference for each of the **1252 records**.
 
 ```{r}
-merged_df <- new_predict[["actual_predictedTable"]] %>%
-  transmute(Row.Number,act_price,act_speed,act_hd,act_ram,act_screen,act_ads,Layer1.Cell.ID,Layer2.Cell.ID,
-    pred_price = coalesce(price.x, price.y),
-    pred_speed = coalesce(speed.x, speed.y),
-    pred_hd = coalesce(hd.x, hd.y),
-    pred_ram = coalesce(ram.x, ram.y),
-    pred_screen = coalesce(screen.x, screen.y),
-    pred_ads = coalesce(ads.x, ads.y)
-  )
 
-
-sorted_df <- merged_df
-sorted_df$diff <- rowMeans(abs(sorted_df[, c("act_price","act_speed","act_hd","act_ram","act_screen","act_ads")] - sorted_df[, c("pred_price","pred_speed","pred_hd","pred_ram","pred_screen","pred_ads")]))
-rownames(sorted_df) <- NULL
-options(scipen = 999)
-sorted_df %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
+act_pred <- new_predict[["actual_predictedTable"]]
+rownames(act_pred) <- NULL
+act_pred %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
 
 
 ```
@@ -1094,7 +1082,7 @@ sorted_df %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
 
 ```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
 
-hist(sorted_df$diff, breaks = 30, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
+hist(act_pred$diff, breaks = 30, col = "blue", main = "Mean Absolute Difference", xlab = "Difference")
 
 ```
 

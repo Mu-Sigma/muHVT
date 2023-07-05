@@ -174,6 +174,25 @@ predictLayerHVT <- function(data,
   colnames(scoredPredictionsData_CellID) <- c("Row.Number","Layer1.Cell.ID","Layer2.Cell.ID")
   
   #####################
+  # new_predict <- scoredPredictionsData_CellID
+  # scaled_test_data <- mapA_predictions[["scoredPredictedData"]]
+  # current_actual <- colnames(scaled_test_data)
+  # new_names <- paste0("act_", current_actual)
+  # colnames(scaled_test_data) <- new_names
+  # merge <- cbind(new_predict,scaled_test_data) %>% select(-c("act_Segment.Level","act_Segment.Parent","act_Segment.Child","act_n", "act_centroidRadius","act_diff", "act_anomalyFlag","act_Cell.ID"))
+  # 
+  # data <- merge
+  # combined <- data %>% 
+  #   mutate(Cell.ID = gsub("[C]", "", Layer2.Cell.ID)) %>%
+  #   merge(hvt_mapC[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  #   arrange(as.numeric(Row.Number))
+  # 
+  # data1 <- combined
+  # combined <- data1 %>%
+  #   mutate(Cell.ID = gsub("[B]", "", Layer2.Cell.ID)) %>%
+  #   merge(hvt_mapB[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
+  #   arrange(as.numeric(Row.Number)) %>% select(-c(Cell.ID))
+  
   new_predict <- scoredPredictionsData_CellID
   scaled_test_data <- mapA_predictions[["scoredPredictedData"]]
   current_actual <- colnames(scaled_test_data)
@@ -193,11 +212,63 @@ predictLayerHVT <- function(data,
     merge(hvt_mapB[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
     arrange(as.numeric(Row.Number)) %>% select(-c(Cell.ID))
   
+  
+  combined <- combined %>% select(-c("act_Quant.Error","Segment.Level.x" ,"Segment.Parent.x","Segment.Child.x","n.x","Quant.Error.x","Segment.Level.y" ,"Segment.Parent.y","Segment.Child.y", "n.y","Quant.Error.y" ))
+  
+  library(dplyr)
+  
+  df_data <- combined %>%
+    select(matches("^act_|Row.Number|Layer1.Cell.ID|Layer2.Cell.ID"))
+  
+  df <- combined %>%
+    select(-c(Row.Number, Layer1.Cell.ID, Layer2.Cell.ID)) %>%
+    select(-starts_with("act_"))  
+  
+  create_predictions <- function(df) {
+    pred_cols <- unique(sub("\\..*", "", names(df)))  # Extract unique column names
+    pred_values <- vector("list", length(pred_cols))
+    
+    for (i in seq_along(pred_cols)) {
+      col_x <- paste0(pred_cols[i], ".x")
+      col_y <- paste0(pred_cols[i], ".y")
+      pred_values[[i]] <- coalesce(df[[col_x]], df[[col_y]])
+    }
+    
+    df1 <- as.data.frame(pred_values)
+    names(df1) <- paste0("pred_", pred_cols)
+    return(df1)
+  }
+  
+  df1 <- create_predictions(df)
+  combined_data <- cbind(df_data,df1)
+  
+  subtract_predicted_actual <- function(data, actual_prefix = "act_", predicted_prefix = "pred_") {
+    actual_cols <- grep(paste0("^", actual_prefix), names(data), value = TRUE)
+    df_new <- data.frame(matrix(ncol = 1, nrow = nrow(data)))
+    temp0 <<- data.frame(matrix(nrow = nrow(data)))
+    for (col in actual_cols) {
+      predicted_col <- gsub(actual_prefix, predicted_prefix, col)
+      
+      if (predicted_col %in% names(data)) {
+        temp0[[predicted_col]] <<- abs(data[[col]] - data[[predicted_col]])
+        
+      }
+    }
+    temp0 <- temp0 %>% discard(~all(is.na(.) | . ==""))   
+    df_new[,1] <- rowMeans(temp0)
+    return(df_new)
+  }
+  
+  diff <- subtract_predicted_actual(combined_data)
+  combined_data$diff <- diff$matrix.ncol...1..nrow...nrow.data..
+  desired_order <- c("Row.Number", grep("^act_", colnames(combined_data), value = TRUE), "Layer1.Cell.ID","Layer2.Cell.ID", grep("^pred_", colnames(combined_data), value = TRUE),"diff")
+  df_reordered <- combined_data[, desired_order]
+  
   ####################
 
   prediction_list = list(
     predictLayer_Output = scoredPredictionsData_CellID,
-    actual_predictedTable = combined
+    actual_predictedTable = df_reordered
   )
   
   return(prediction_list)
