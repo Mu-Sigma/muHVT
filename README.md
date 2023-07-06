@@ -43,7 +43,7 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 </div>
 
-<div id="Version History" class="section level1" number="2">
+<div id="version-history" class="section level1" number="2">
 
 # <span class="header-section-number">2</span> Version History 
 
