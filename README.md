@@ -47,7 +47,7 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 # <span class="header-section-number">2</span> Version History 
 
-<div id="muHVT (v23.06.07)| What’s New?" class="section level1" number="2.1">
+<div id="muhvt-(v23.06.07)-whats-new" class="section level2" number="2.1">
 
 ## <span class="header-section-number">2.1</span> muHVT (v23.06.07) | What’s New? 
 
@@ -58,7 +58,7 @@ In this version of muHVT package, the following new features have been introduce
 This package provides  functionality to predict cells with layers based on a sequence of maps using `predictLayerHVT`. 
 </div>
 
-<div id="muhvt-(v22.12.06)" class="section level1" number="2.2">
+<div id="muhvt-(v22.12.06)" class="section level2" number="2.2">
 
 ## <span class="header-section-number">2.2</span> muHVT (v22.12.06) 
 
