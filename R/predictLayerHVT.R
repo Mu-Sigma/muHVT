@@ -173,26 +173,7 @@ predictLayerHVT <- function(data,
   scoredPredictionsData_CellID <- scoredPredictionsData_CellID %>% dplyr::select("Row.Number","MapA.Cell.ID","Combined.Cell.ID")
   colnames(scoredPredictionsData_CellID) <- c("Row.Number","Layer1.Cell.ID","Layer2.Cell.ID")
   
-  #####################
-  # new_predict <- scoredPredictionsData_CellID
-  # scaled_test_data <- mapA_predictions[["scoredPredictedData"]]
-  # current_actual <- colnames(scaled_test_data)
-  # new_names <- paste0("act_", current_actual)
-  # colnames(scaled_test_data) <- new_names
-  # merge <- cbind(new_predict,scaled_test_data) %>% select(-c("act_Segment.Level","act_Segment.Parent","act_Segment.Child","act_n", "act_centroidRadius","act_diff", "act_anomalyFlag","act_Cell.ID"))
-  # 
-  # data <- merge
-  # combined <- data %>% 
-  #   mutate(Cell.ID = gsub("[C]", "", Layer2.Cell.ID)) %>%
-  #   merge(hvt_mapC[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
-  #   arrange(as.numeric(Row.Number))
-  # 
-  # data1 <- combined
-  # combined <- data1 %>%
-  #   mutate(Cell.ID = gsub("[B]", "", Layer2.Cell.ID)) %>%
-  #   merge(hvt_mapB[[3]]$summary, by = "Cell.ID", all.x = TRUE) %>%
-  #   arrange(as.numeric(Row.Number)) %>% select(-c(Cell.ID))
-  
+  ##################### Changes ###############
   new_predict <- scoredPredictionsData_CellID
   scaled_test_data <- mapA_predictions[["scoredPredictedData"]]
   current_actual <- colnames(scaled_test_data)
