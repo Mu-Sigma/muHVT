@@ -323,6 +323,8 @@ The output of HVT function (list of 6 elements) have been explained below:
 
 * The '4th element'  is a list that contains all the diagnostics information of the model when diagnose is set to TRUE.Otherwise NA
 
+* The '5th element' is a list that contains all the information required to generates a Mean Absolute Deviation (MAD) plot, if hvt_validation is set to TRUE. Otherwise NA 
+
 * The '6th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
 
 
