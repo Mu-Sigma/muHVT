@@ -1,9 +1,9 @@
 Package: muHVT
 Type: Package
-Date: 2023-06-07
+Date: 2023-07-07
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: 4.0.0
+Version: (v23.06.07)
 Authors@R: c(
     person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     person("Shubhra", "Prakash", email = "shubhraprakash@live.com", role = "ctb"),
@@ -19,8 +19,8 @@ Description: The muHVT package is a collection of R functions to facilitate buil
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, magrittr, polyclip, rgeos,
-        ggplot2, tidyr, scales, cluster, reshape2, plyr
+        stats, dplyr, purrr, magrittr, polyclip, geos,
+        ggplot2, tidyr, scales, cluster, reshape2, plyr, sf
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
@@ -29,7 +29,7 @@ Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly,
         data.table
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-03-03 17:45:51 UTC; somya
+Packaged: 2023-07-07 17:45:51 UTC; somya
 Author: Zubin Dowlaty [aut],
   Shubhra Prakash [ctb],
   Sangeet Moy Das [ctb],
@@ -42,4 +42,4 @@ Author: Zubin Dowlaty [aut],
   Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2023-06-07 20:10:03 UTC
+Date/Publication: 2023-07-07 20:10:03 UTC
