@@ -4,7 +4,7 @@ function(current_dirsgs, current_tile, current_polygon){
   requireNamespace("splancs")      #csr function 
   requireNamespace("sp")           #point.in.polygon function
   requireNamespace("polyclip")
-  requireNamespace("rgeos")
+  
     
   initial_dirsgs <- current_dirsgs
   #vert_outside1 and vert_outside2 check for the points which are outside the parent polygon
@@ -20,7 +20,7 @@ function(current_dirsgs, current_tile, current_polygon){
   
   #if the same index is present in both vert_outside1 and vert_outside2, it means the line 
   #joining these points has both the end-points outside the parent polygon
-  vert_outside <- rgeos::intersect(vert_outside1, vert_outside2)
+  vert_outside <- intersect(vert_outside1, vert_outside2)
   
   #if the line joining the points p1 and p2 is outside the parent polygon and
   #p1 is boundary point and p2 is not, then make p2 the boundary point or vice versa
@@ -33,7 +33,7 @@ function(current_dirsgs, current_tile, current_polygon){
       y_coord_index2 <- which((current_dirsgs[vert_outside[j], "y2"] == current_dirsgs[, c("y1", "y2")]) == TRUE)
       x_coord_index <- c(x_coord_index1, x_coord_index2)
       y_coord_index <- c(y_coord_index1, y_coord_index2)
-      xy_index <- rgeos::intersect(x_coord_index, y_coord_index)
+      xy_index <- intersect(x_coord_index, y_coord_index)
       ind_len <- length(xy_index)
       #change the boundary points of those indices to TRUE
       for (i in 1: ind_len) {

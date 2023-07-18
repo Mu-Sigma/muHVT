@@ -19,8 +19,8 @@ Description: The muHVT package is a collection of R functions to facilitate buil
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, magrittr, polyclip, geos,
-        ggplot2, tidyr, scales, cluster, reshape2, plyr, sf
+        stats, dplyr, purrr, magrittr, polyclip,
+        ggplot2, tidyr, scales, cluster, reshape2, plyr
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/muHVT/issues
 URL: https://github.com/Mu-Sigma/muHVT
