@@ -1,6 +1,6 @@
 
 library(testthat)
-library(muHVT)
+library(HVT)
 
-test_check("muHVT")
+test_check("HVT")
 

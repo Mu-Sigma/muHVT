@@ -1,5 +1,5 @@
 ---
-title: "muHVT: Predicting Cells with Layers using predictLayerHVT"
+title: "HVT: Predicting Cells with Layers using predictLayerHVT"
 author: "Zubin Dowlaty, Srinivasan Sudarsanam, Somya Shambhawi"
 date: "`r Sys.Date()`"
 fig.height: 4
@@ -10,7 +10,7 @@ output:
     toc: true
     toc_depth : 2
 vignette: >
-  %\VignetteIndexEntry{muHVT: Predicting Cells with Layers using predictLayerHVT}
+  %\VignetteIndexEntry{HVT: Predicting Cells with Layers using predictLayerHVT}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -147,7 +147,7 @@ set.seed(240)
 
 # Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -157,7 +157,7 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
-# Example: muHVT with the Personal Computer dataset
+# Example: HVT with the Personal Computer dataset
 
 **Data Understanding**
 
@@ -257,7 +257,7 @@ This package can perform vector quantization using the following algorithms -
 *  Hierarchical Vector Quantization using k−means
 *  Hierarchical Vector Quantization using k−medoids
 
-For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html#compress-vector-quantization).
+For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/HVT_vignette.html#compress-vector-quantization).
 
 The HVT function constructs highly compressed hierarchical Voronoi tessellations. 
 The raw data is first scaled and this scaled data is supplied as input to the vector quantization algorithm. The vector quantization algorithm compresses the dataset until a user-defined compression percentage/rate is achieved using a parameter called quantization error which acts as a threshold and determines the compression percentage. It means that for a given user-defined compression percentage we get the 'n' number of cells, then all of these cells formed will have a quantization error less than the threshold quantization error.
