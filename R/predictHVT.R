@@ -354,7 +354,7 @@ predictHVT <- function(data,
   Cell.ID <- data.frame(predicted_result$pred_Cell.ID)
   predicted_result <- predicted_result %>% select(-c("pred_Segment.Level","pred_Segment.Parent","pred_Segment.Child","pred_n","pred_Cell.ID", "pred_Quant.Error", "pred_centroidRadius"))
   predicted_result <- cbind(Cell.ID,predicted_result)
-  predicted_result <- setnames(predicted_result, "predicted_result.pred_Cell.ID", "Cell.ID")
+  predicted_result <- data.table::setnames(predicted_result, "predicted_result.pred_Cell.ID", "Cell.ID")
  
   
   
@@ -368,8 +368,8 @@ predictHVT <- function(data,
   data_with_cell <- data.frame(actuals$act_Cell.ID)
   actuals <- actuals %>% select(-c("act_Segment.Level","act_Segment.Parent","act_Segment.Child","act_n","act_Cell.ID", "act_Quant.Error", "act_centroidRadius","act_diff","act_anomalyFlag","Row.No"))
   actuals_data <- cbind(data_with_row,actuals,data_with_cell)
-  actuals_data <- setnames(actuals_data, "actuals.act_Cell.ID", "Cell.ID")
-  actuals_data <- setnames(actuals_data, "actuals.Row.No", "Row.No")
+  actuals_data <- data.table::setnames(actuals_data, "actuals.act_Cell.ID", "Cell.ID")
+  actuals_data <- data.table::setnames(actuals_data, "actuals.Row.No", "Row.No")
   
   
   
@@ -388,7 +388,7 @@ predictHVT <- function(data,
         
       }
     }
-    temp0 <- temp0 %>% discard(~all(is.na(.) | . ==""))   
+    temp0 <- temp0 %>% purrr::discard(~all(is.na(.) | . ==""))   
     df_new[,1] <- rowMeans(temp0)
     return(df_new)
   }

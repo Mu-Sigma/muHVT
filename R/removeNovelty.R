@@ -1,4 +1,4 @@
-#' removeOutliers
+#' removeNovelty
 #'
 #' Remove identified outlier cell(s) from the dataset
 #'
@@ -17,7 +17,7 @@
 #' \item{[[2]] }{Dataframe. Subset of dataset without the outlier cell(s)}
 #' 
 #' @author Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
-#' @seealso \code{\link{HVT}} \cr \code{\link{mlayerHVT}}
+#' @seealso \code{\link{HVT}} \cr \code{\link{predictLayerHVT}}
 #' @importFrom magrittr %>%
 #' @importFrom plyr rbind.fill
 #' @examples
@@ -30,10 +30,10 @@
 #' plotHVT(hvt_mapA, line.width = c(0.8), color.vec = c('#141B41'), 
 #'         maxDepth = 1)
 #'         
-#' identified_outlier_cells <- c(2, 10)
-#' output_list <- removeOutliers(identified_outlier_cells, hvt_mapA)
+#' identified_Novelty_cells <<- c(2, 10)
+#' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' hvt_mapB <- output_list[[1]]
-#' dataset_without_outliers <- output_list[[2]]
+#' dataset_without_novelty <- output_list[[2]]
 #'
 #' @export removeNovelty
 

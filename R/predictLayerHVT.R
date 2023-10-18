@@ -35,7 +35,7 @@
 #'                    quant_method="kmeans")
 #'
 #' 
-#' identified_Novelty_cells <<- c(2, 10)
+#' identified_outlier_cells <<- c(2, 10)
 #' output_list <- removeNovelty(identified_outlier_cells, hvt_mapA)
 #' 
 #' data_with_novelty <- output_list[[1]]

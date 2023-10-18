@@ -19,8 +19,6 @@
 #' observation, and each column corresponds to a variable. Missing values are
 #' not accepted.
 #' @param n_cells Numeric. Indicating the number of nodes per hierarchy.
-#' @param depth Numeric. Indicating the hierarchy depth (or) the depth of the
-#' tree (1 = no hierarchy, 2 = 2 levels, etc..)
 #' @param quant.err Numeric. The quantization error for the algorithm.
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
