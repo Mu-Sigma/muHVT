@@ -5,3 +5,4 @@
 inst/doc
 ^.*\.log
 HVT/
+..Rcheck/
