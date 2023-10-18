@@ -53,10 +53,10 @@ predictHVT <- function(data,
   
   set.seed(300)
   requireNamespace("dplyr")
-  library("purrr")
+  requireNamespace("purrr")
   # require("plotly")
   # requireNamespace("rjson")
-  library('data.table')
+  requireNamespace('data.table')
   
   # browser()
   if(!('Cell.ID' %in% colnames(hvt.results.model[[3]]$summary))){

@@ -196,7 +196,6 @@ predictLayerHVT <- function(data,
   
   combined <- combined %>% select(-c("act_Quant.Error","Segment.Level.x" ,"Segment.Parent.x","Segment.Child.x","n.x","Quant.Error.x","Segment.Level.y" ,"Segment.Parent.y","Segment.Child.y", "n.y","Quant.Error.y" ))
   
-  library(dplyr)
   
   df_data <- combined %>%
     select(matches("^act_|Row.Number|Layer1.Cell.ID|Layer2.Cell.ID"))
