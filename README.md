@@ -33,9 +33,9 @@ The HVT package is a collection of R functions to facilitate building [topology 
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
 
-The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT.html) for more details.
+The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT.html) for more details.
 
-<img src="https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/torus.png" width="642px" height="440px" />
+<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/torus.png" width="642px" height="440px" />
 <p class="caption">
 Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z.
 </p>
@@ -75,7 +75,7 @@ The creation of a predictive set of maps involves three steps -
 
 Let us try to understand the steps with the help of the diagram below -
 
-<img src="https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
+<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
 <p class="caption">
 Figure 2: Flow diagram for predicting based on a sequence of maps using predictLayerHVT()
 </p>
@@ -89,7 +89,7 @@ Figure 2: Flow diagram for predicting based on a sequence of maps using predictL
 <div class="sourceCode" id="cb1">
 
     library(devtools)
-    devtools::install_github(repo = "Mu-Sigma/muHVT")
+    devtools::install_github(repo = "Mu-Sigma/HVT")
 
 </div>
 
@@ -108,7 +108,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">4.1</span> HVT Vignette
 
-[**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+[**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
@@ -116,7 +116,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">4.2</span> HVT Model Diagnostics Vignette
 
-[**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+[**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
 
 </div>
 
@@ -124,4 +124,4 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">4.3</span> HVT - Predicting Cells with Layers using predictLayerHVT
 
-[**HVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
+[**HVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.

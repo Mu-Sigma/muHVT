@@ -123,9 +123,9 @@ devtools::install_github(repo = "Mu-Sigma/HVT")
 Following are the links to the vignettes for the HVT package:
 
 
-1. [**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+1. [**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
-2. [**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+2. [**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
 
-3. [**HVT : Predicting Cells with Layers using predictLayerHVT:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
+3. [**HVT : Predicting Cells with Layers using predictLayerHVT:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
 
