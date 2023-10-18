@@ -1,45 +1,29 @@
-Package: muHVT
+Package: HVT
 Type: Package
-Date: 2023-07-07
+Date: 2023-10-15
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmap for Data Analysis
-Version: (v23.06.07)
+Version: 3.0.1
 Authors@R: c(
-    person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
-    person("Shubhra", "Prakash", email = "shubhraprakash@live.com", role = "ctb"),
-    person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "ctb"),
-    person("Sunuganty Achyut", "Raj", email = "achyut.raj92@gmail.com", role = "ctb"),
-    person("Shantanu", "Vaidya", email = "snv.shantanu@gmail.com", role = "ctb"),
-    person("Somya", "Shambhawi", email = "shambhawisomya@gmail.com", role = "ctb")
-    person("Praditi", "Shah", email = "shahpraditi@gmail.com", role = "ctb"),
-    person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
-    person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
-    person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: The muHVT package is a collection of R functions to facilitate building topology preserving maps for rich multivariate data.See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
+	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
+    	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
+Description: The HVT package is a collection of R functions to facilitate building topology preserving maps for rich multivariate data.See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, magrittr, polyclip,
-        ggplot2, tidyr, scales, cluster, reshape2, plyr
+        stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr,
+        scales, cluster, reshape2, plyr
 Depends: R (>= 3.6.0)
-BugReports: https://github.com/Mu-Sigma/muHVT/issues
-URL: https://github.com/Mu-Sigma/muHVT
+BugReports: https://github.com/Mu-Sigma/HVT/issues
+URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.1.2
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly,
         data.table
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-07-07 17:45:51 UTC; somya
+Packaged: 2023-10-15 12:35:23 UTC; ponanureka
 Author: Zubin Dowlaty [aut],
-  Shubhra Prakash [ctb],
-  Sangeet Moy Das [ctb],
-  Sunuganty Achyut Raj [ctb],
-  Shantanu Vaidya [ctb],
-  Praditi Shah [ctb],
-  Avinash Joshi [ctb],
-  Somya Shambhawi [ctb]
-  Meet Dave [ctb], 
-  Mu Sigma, Inc. [cre]
+	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2023-07-07 20:10:03 UTC
+Date/Publication: 2023-10-15 20:10:03 UTC
