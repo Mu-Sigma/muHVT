@@ -11,10 +11,12 @@ output:
     toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{Model diagnostics and validation for HVT model}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
 ---
-
 
 ```{css, echo=FALSE}
 /* CSS for floating TOC on the left side */
@@ -41,7 +43,6 @@ li {
 }
   
 ```
-
 
 ```{=html}
 <style>
@@ -163,7 +164,7 @@ list.of.packages <<- c(
   "kableExtra",
   "gganimate",
       "gdata",
-   "muHVT",
+   "HVT",
   "data.table",
   "jmuOutlier",
   "viridis",
@@ -242,7 +243,7 @@ lengthChange = FALSE,
 
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "HVT")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
@@ -333,23 +334,40 @@ set.seed(240)
 
 # Abstract
 
-The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below :
+The HVT package is a collection of R functions to facilitate building
+[topology preserving
+maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich
+multivariate data. Tending towards a big data preponderance, a large
+number of rows. A collection of R functions for this typical workflow is
+organized below :
 
-1. **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective
+1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical
+    vector quantization) using means or medians. This step compresses
+    the rows (long data frame) using a compression objective
 
-2. **Data Projection**: Dimension projection of the compressed cells to 1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates topology preserving map(also called as [embedding](https://en.wikipedia.org/wiki/embedding)) coordinates into the desired output dimension.
+2.  **Data Projection**: Dimension projection of the compressed cells to
+    1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates
+    topology preserving map(also called as
+    [embedding](https://en.wikipedia.org/wiki/embedding)) coordinates
+    into the desired output dimension.
 
-3. **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks
+3.  **Tessellation**: Create cells required for object visualization
+    using the Voronoi Tessellation method, package includes heatmap
+    plots for hierarchical Voronoi tessellations (HVT). This step
+    enables data insights, visualization, and interaction with the
+    topology preserving map. Useful for semi-supervised tasks
 
-4. **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required
-
+4.  **Prediction**: Scoring new data sets and recording their assignment
+    using the map objects from the above steps, in a sequence of maps if
+    required
 
 # Data Compression
 
-This package can perform vector quantization using the following algorithms -
+This package can perform vector quantization using the following
+algorithms -
 
--   Hierarchical Vector Quantization using \(k-means\)
--   Hierarchical Vector Quantization using \(k-medoids\)
+-   Hierarchical Vector Quantization using $k-means$
+-   Hierarchical Vector Quantization using $k-medoids$
 
 ## Using k-means
 
@@ -379,9 +397,9 @@ algorithm is O(k \* (n-k)\^2).
 
 ## Hierarchical Vector Quantization
 
-The algorithm divides the dataset recursively into cells using \(k-means\)
-or \(k-medoids\) algorithm. The maximum number of subsets are decided by
-setting \(n-cells\) to, say five, in order to divide the dataset into
+The algorithm divides the dataset recursively into cells using $k-means$
+or $k-medoids$ algorithm. The maximum number of subsets are decided by
+setting $n-cells$ to, say five, in order to divide the dataset into
 maximum of five subsets. These five subsets are further divided into
 five subsets(or less), resulting in a total of twenty five (5\*5)
 subsets. The recursion terminates when the cells either contain less
@@ -392,7 +410,7 @@ threshold.
 The steps for this method are as follows :
 
 1.  Select k(number of cells), depth and quantization error threshold
-2.  Perform quantization (using \(k-means\) or \(k-medoids\)) on the input
+2.  Perform quantization (using $k-means$ or $k-medoids$) on the input
     dataset
 3.  Calculate quantization error for each of the k cells
 4.  Compare the quantization error for each cell to quantization error
@@ -407,7 +425,7 @@ one of the below conditions
 -   there are less than three data point in the cell
 -   the user specified depth has been attained
 
-###  Quantization Error
+### Quantization Error
 
 Let us try to understand quantization error with an example.
 
@@ -424,12 +442,12 @@ points in that cell. The set of all codewords is called a codebook.
 
 Now we want to calculate quantization error for each cell. For the sake
 of simplicity, let's consider only one cell having centroid `A` and `m`
-data points \(F_i\) for calculating quantization error.
+data points $F_i$ for calculating quantization error.
 
 For each point, we calculate the distance between the point and the
 centroid.
 
-\[ d = ||A - F_i||_{p} \]
+$$ d = ||A - F_i||_{p} $$
 
 In the above equation, p = 1 means `L1_Norm` distance whereas p = 2
 means `L2_Norm` distance. In the package, the `L1_Norm` distance is
@@ -442,8 +460,8 @@ $$QE  = \max(||A-F_i||_{p})$$
 where
 
 -   $A$ is the centroid of the cell
--   \(F_i\) represents a data point in the cell
--   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
+-   $F_i$ represents a data point in the cell
+-   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
     = 2 represents L2 Norm.
 
 Now, we take the maximum calculated distance of all m points. This gives
@@ -461,16 +479,15 @@ and returns a single value which is the Quantization Error for the cell.
 If we select `mean` as the error metric, the above Quantization Error
 equation will look like this :
 
-\[QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}\]
+$$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$
 
 where
 
--   \(A\) is the centroid of the cell
--   \(F_i\) represents a data point in the cell
--   \(m\) is the number of points in the cell
--   \(p\) is the \(p\)-norm metric. Here \(p\) = 1 represents L1 Norm and \(p\)
+-   $A$ is the centroid of the cell
+-   $F_i$ represents a data point in the cell
+-   $m$ is the number of points in the cell
+-   $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$
     = 2 represents L2 Norm.
-
 
 # Data Projection
 
@@ -482,12 +499,12 @@ non-linear approach since the mapping cannot be represented as a linear
 combination of the original variables. The centroids are plotted in 2D
 after performing Sammon's projection at every level of the tessellation.
 
-Denoting the distance between \(i^{th}\) and \(j^{th}\) objects in the
-original space by \(d_{ij}^*\), and the distance between their projections
-by \(d_{ij}\). Sammon's mapping aims to minimize the below error function,
+Denoting the distance between $i^{th}$ and $j^{th}$ objects in the
+original space by $d_{ij}^*$, and the distance between their projections
+by $d_{ij}$. Sammon's mapping aims to minimize the below error function,
 which is often referred to as Sammon's stress or Sammon's error
 
-\[E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}\]
+$$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$$
 
 The minimization of this can be performed either by gradient descent, as
 proposed initially, or by other means, usually involving iterative
@@ -509,26 +526,27 @@ are called Voronoi cells. It is complementary to Delaunay triangulation.
 In this package, we use `sammons` from the package `MASS` to project
 higher dimensional data to a 2D space. The function `hvq` called from
 the `HVT` function returns hierarchical quantized data which will be the
-input for construction of the tessellations. The data is then represented
-in 2D coordinates and the tessellations are plotted using these
-coordinates as centroids. We use the package `deldir` for this purpose.
-The `deldir` package computes the Delaunay triangulation (and hence the
-Dirichlet or Voronoi tessellation) of a planar point set according to the
-second (iterative) algorithm of Lee and Schacter. For subsequent levels,
-transformation is performed on the 2D coordinates to get all the points
-within its parent tile. Tessellations are plotted using these
-transformed points as centroids. The lines in the tessellations are
-chopped in places so that they do not protrude outside the parent
-polygon. This is done for all the subsequent levels.
+input for construction of the tessellations. The data is then
+represented in 2D coordinates and the tessellations are plotted using
+these coordinates as centroids. We use the package `deldir` for this
+purpose. The `deldir` package computes the Delaunay triangulation (and
+hence the Dirichlet or Voronoi tessellation) of a planar point set
+according to the second (iterative) algorithm of Lee and Schacter. For
+subsequent levels, transformation is performed on the 2D coordinates to
+get all the points within its parent tile. Tessellations are plotted
+using these transformed points as centroids. The lines in the
+tessellations are chopped in places so that they do not protrude outside
+the parent polygon. This is done for all the subsequent levels.
 
-
-#  Import Dataset
+# Import Dataset
 
 ## Import Dataset from Local
 
 The user can provide an absolute or relative path in the cell below to
-access the data from his/her computer. User can set `import_data_from_local` variable to TRUE to upload dataset from local. <br>
-**Note: For this notebook import_data_from_local has been set to FALSE as we are simulating a dataset in next section.**
+access the data from his/her computer. User can set
+`import_data_from_local` variable to TRUE to upload dataset from local.
+<br> **Note: For this notebook import_data_from_local has been set to
+FALSE as we are simulating a dataset in next section.**
 
 ```{r loading csv, message=FALSE, warning=FALSE}
 import_data_from_local = FALSE # expects logical input
@@ -564,12 +582,13 @@ if(import_data_from_local){
 
 # Simulate Dataset
 
-In this section, we will use a simulated dataset. If you are not using this option set `simulate_dataset` to FALSE. Given below is a simulated dataset that contains
-2500 observations and 5 features. In this step, a Normal Multivariate
-cross-sectional dataset is simulated with 5 features using the rnorm()
-function (N=2500,mean=0,sd=1) such that every feature has normal
-distribution and linear combination of its k components also has a
-univariate normal distribution.
+In this section, we will use a simulated dataset. If you are not using
+this option set `simulate_dataset` to FALSE. Given below is a simulated
+dataset that contains 2500 observations and 5 features. In this step, a
+Normal Multivariate cross-sectional dataset is simulated with 5 features
+using the rnorm() function (N=2500,mean=0,sd=1) such that every feature
+has normal distribution and linear combination of its k components also
+has a univariate normal distribution.
 
 Here, we load the data and store into a variable `dataset_updated`.
 
@@ -1043,7 +1062,7 @@ Table(data,scroll = T, limit = 20)
 
 ```
 
-###  Selecting only Numeric Cols after Dummification
+### Selecting only Numeric Cols after Dummification
 
 ```{r}
 numeric_cols=as.vector(sapply(dataset_updated, is.numeric))
@@ -1124,9 +1143,9 @@ Table(aa,scroll = T, limit = 20)
 #)
 ```
 
-# Data distribution 
+# Data distribution
 
-**Variable Histograms** 
+**Variable Histograms**
 
 Shown below is the distribution of all the variables in the dataset.
 
@@ -1198,7 +1217,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-**Box Plots** 
+**Box Plots**
 
 In this section, we plot box plots for each numeric column in the
 dataset across panels. These plots will display the median and Inter
@@ -1240,7 +1259,7 @@ gridExtra::grid.arrange(grobs = box_plots, ncol = 3)
 
 ```
 
-**Correlation Matrix** 
+**Correlation Matrix**
 
 In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
@@ -1270,7 +1289,7 @@ corrplot::corrplot(cor(dataset_updated),
 
 ```
 
-# Train - Test Split 
+# Train - Test Split
 
 Let us first split the data into train and test. We will use 80% of the
 data as train and remaining as test.
@@ -1292,7 +1311,7 @@ The train data contains `r nrow(dataset_updated_train)` rows and
 `r nrow(dataset_updated_test)` rows and `r ncol(dataset_updated_test)`
 columns.
 
-### Train Distribution 
+### Train Distribution
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_train)
@@ -1303,7 +1322,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
  
 ```
 
-### Test Distribution 
+### Test Distribution
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_test)
@@ -1333,58 +1352,81 @@ polygon. This is done for all the subsequent levels.
 
 Let us try to understand the HVT function first.
 
-    muHVT::HVT(
-      dataset,
-      n_cells,
-      depth,
-      quant.err,
-      projection.scale,
-      normalize = T,
-      distance_metric = c("L1_Norm", "L2_Norm"),
-      error_metric = c("mean", "max"),
-      quant_method = c("kmeans", "kmedoids"),
-      diagnose = TRUE,
-      hvt_validation = FALSE,
-      train_validation_split_ratio = 0.8,
-      ...
-    )
+```         
+HVT::HVT(
+  dataset,
+  n_cells,
+  depth,
+  quant.err,
+  projection.scale,
+  normalize = T,
+  distance_metric = c("L1_Norm", "L2_Norm"),
+  error_metric = c("mean", "max"),
+  quant_method = c("kmeans", "kmedoids"),
+  diagnose = TRUE,
+  hvt_validation = FALSE,
+  train_validation_split_ratio = 0.8,
+  ...
+)
+```
 
 Each of the parameters have been explained below
 
--   **`dataset`** - A dataframe with numeric columns 
+-   **`dataset`** - A dataframe with numeric columns
 
--   **`n_cells`**  - An integer indicating the number of cells per hierarchy (level)
+-   **`n_cells`** - An integer indicating the number of cells per
+    hierarchy (level)
 
--   **`depth`**   - An integer indicating the number of levels. (1 = No hierarchy, 2 = 2 levels, etc ...)
+-   **`depth`** - An integer indicating the number of levels. (1 = No
+    hierarchy, 2 = 2 levels, etc ...)
 
--   **`quant.error`** - A number indicating the quantization error threshold. A cell will only breakdown
-into further cells if the quantization error of the cell is above the defined quantization error threshold
+-   **`quant.error`** - A number indicating the quantization error
+    threshold. A cell will only breakdown into further cells if the
+    quantization error of the cell is above the defined quantization
+    error threshold
 
--   **`distance_metric`**	- The distance metric can be `L1_Norm` or `L2_Norm`. `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The user can also pass a custom function to calculate this distance
+-   **`distance_metric`** - The distance metric can be `L1_Norm` or
+    `L2_Norm`. `L1_Norm` is selected by default. The distance metric is
+    used to calculate the distance between an `n` dimensional point and
+    centroid. The user can also pass a custom function to calculate this
+    distance
 
--   **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. Moreover, the user can also pass a custom function to calculate the error metric
+-   **`error_metric`** - The error metric can be `mean` or `max`. `max`
+    is selected by default. `max` will return the max of `m` values and
+    `mean` will take mean of `m` values where each value is a distance
+    between a point and centroid of the cell. Moreover, the user can
+    also pass a custom function to calculate the error metric
 
--   **`quant_method`** - The quantization method can be `kmeans` or `kmedoids`. `kmeans` is selected by default
-    
--   **`normalize`**	- A logical value indicating whether the columns in your dataset need to be normalized. Default value is TRUE. The algorithm supports Z-score normalization
+-   **`quant_method`** - The quantization method can be `kmeans` or
+    `kmedoids`. `kmeans` is selected by default
 
--   **`diagnose`** - A logical value indicating whether user wants to perform diagnostics on the model. Default value is TRUE.
+-   **`normalize`** - A logical value indicating whether the columns in
+    your dataset need to be normalized. Default value is TRUE. The
+    algorithm supports Z-score normalization
 
--   **`hvt_validation`** - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
+-   **`diagnose`** - A logical value indicating whether user wants to
+    perform diagnostics on the model. Default value is TRUE.
 
--   **`train_validation_split_ratio`** - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
+-   **`hvt_validation`** - A logical value indicating whether user wants
+    to holdout a validation set and find mean absolute deviation of the
+    validation points from the centroid. Default value is FALSE.
 
+-   **`train_validation_split_ratio`** - A numeric value indicating
+    train validation split ratio. This argument is only used when
+    hvt_validation has been set to TRUE. Default value for the argument
+    is 0.8
 
-More information on building an HVT model at different levels and visualizing the
-output can be found [here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/muHVT/dev/vignettes/HVT_vignette.html) 
+More information on building an HVT model at different levels and
+visualizing the output can be found
+[here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/HVT/dev/vignettes/HVT_vignette.html)
 
-In the section below, we build a Level 1 HVT model. The number of clusters 
-`n_cells` is set to 1035 to achieve 95% compression.
+In the section below, we build a Level 1 HVT model. The number of
+clusters `n_cells` is set to 1035 to achieve 95% compression.
 
 ```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- muHVT::HVT(dataset_updated_train,
+hvt.results <- HVT::HVT(dataset_updated_train,
                           n_cells = 1035,
                           depth = 1,
                           quant.err = 0.2,
@@ -1400,42 +1442,43 @@ hvt.results <- muHVT::HVT(dataset_updated_train,
 
 ```{r fig.height=4, fig.width=6}
 # Voronoi tessellation plot for level one
-muHVT::plotHVT(hvt.results,
+HVT::plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
         maxDepth = 1)
 ```
 
-The table below shows number of cells having quantization error below threshold and percentage of cells having quantization error below threshold.
+The table below shows number of cells having quantization error below
+threshold and percentage of cells having quantization error below
+threshold.
 
 ```{r}
 Table(hvt.results[[3]]$compression_summary,scroll = T, limit = 10)
 #compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
-As seen in the above table, 98% of the cells have a quantization error below the 
-threshold. Let's have a closer look at `Quant.Error` variable in the below table.
-The values for `Quant.Error` of the cells which have hit the Quantization Error threshold 
-are shown in red. Here we are showing just top 50 rows for the sake of brevity.
+As seen in the above table, 98% of the cells have a quantization error
+below the threshold. Let's have a closer look at `Quant.Error` variable
+in the below table. The values for `Quant.Error` of the cells which have
+hit the Quantization Error threshold are shown in red. Here we are
+showing just top 50 rows for the sake of brevity.
 
 ```{r}
 summaryTable(hvt.results[[3]][['summary']])
 ```
 
-
-##  Model Diagnostics and Validation
+## Model Diagnostics and Validation
 
 ### Diagnostics {.unlisted .unnumbered}
 
-**HVT model diagnostics** are used to evaluate the model fit and investigate
-the proximity between centroids. The distribution of proximity value can
-also be used to decided an optimum Mean Absolute Deviation threshold for
-HVT model based prediction.
+**HVT model diagnostics** are used to evaluate the model fit and
+investigate the proximity between centroids. The distribution of
+proximity value can also be used to decided an optimum Mean Absolute
+Deviation threshold for HVT model based prediction.
 
-The diagnosis can be enabled by setting the **`diagnose`** parameter to `TRUE` 
-while building the HVT Model.
-
+The diagnosis can be enabled by setting the **`diagnose`** parameter to
+`TRUE` while building the HVT Model.
 
 ### Validation {.unlisted .unnumbered}
 
@@ -1446,17 +1489,16 @@ points. The percentage anomalies ideally should match with level of
 compression achieved during modeling, where PercentageAnomlies $\approx$
 1-ModelCompression.
 
-Model Validation can be enabled by setting the **`hvt_validation`** parameter 
-to `TRUE` and setting the `train_validation_split_ratio` value while training
-the HVT Model. 
+Model Validation can be enabled by setting the **`hvt_validation`**
+parameter to `TRUE` and setting the `train_validation_split_ratio` value
+while training the HVT Model.
 
-The model trained above has a `train_validation_split_ratio` of 0.8, i.e 80% 
-of the Train dataset is used for training the model while the remaining 20% will
-be used for validation
+The model trained above has a `train_validation_split_ratio` of 0.8, i.e
+80% of the Train dataset is used for training the model while the
+remaining 20% will be used for validation
 
-**Note:** User can skip this step, if the number of observations in train data is low. 
-
-
+**Note:** User can skip this step, if the number of observations in
+train data is low.
 
 ## Diagnostic Plots
 
@@ -1472,10 +1514,11 @@ an object to itself. This minimum distance value gives the
 **proximity(distance to nearest neighbour)** of other object in the
 datatable.
 
-plotDiag() function can be used to print diagnostic plots for HVT model or HVT prediction.
+plotDiag() function can be used to print diagnostic plots for HVT model
+or HVT prediction.
 
-The plotDiag() function for HVT Model provides 5 diagnostic plots which are as
-follows:
+The plotDiag() function for HVT Model provides 5 diagnostic plots which
+are as follows:
 
 -   Mean Absolute Deviation Plot: Calibration: HVT Model \| Train Data
 -   Minimum Intra-DataPoint Distance Plot: Train Data
@@ -1493,23 +1536,24 @@ plotDiag(hvt.results)
 ```
 :::
 
-###  Mean Absolute Deviation based Calibration: HVT Model \| Train Data
+### Mean Absolute Deviation based Calibration: HVT Model \| Train Data
 
 The first diagnostic plot is a calibration plot for HVT Model run on
 train data. This plot is obtained by scoring(predicting) the train data
 itself on the HVT model. It is a comparison of Percentage_Anomalies with
-at varying Mean Absolute Deviation values. It can be seen from the
-plot that at **0.22** Mean Absolute Deviation value the percentage anomlaies drop below one percent.
+at varying Mean Absolute Deviation values. It can be seen from the plot
+that at **0.22** Mean Absolute Deviation value the percentage anomlaies
+drop below one percent.
 
 ```{r fig.height=4, fig.width=6}
 p3=hvt.results[[4]]$mad_plot_train+ggtitle("Mean Absolute Deviation Plot: Calibration: HVT Model | Train Data")
 p3
 ```
 
-###  Minimum Intra-DataPoint Distance Plot: Train Data
+### Minimum Intra-DataPoint Distance Plot: Train Data
 
-The second diagnostics plot helps us in finding out how the points in the
-training data are distributed. Shown below is a histogram of minimum
+The second diagnostics plot helps us in finding out how the points in
+the training data are distributed. Shown below is a histogram of minimum
 distances with nearest neighbour for each observation in train data.
 
 ```{r fig.height=4, fig.width=6}
@@ -1517,12 +1561,13 @@ p1=hvt.results[[4]]$datapoint_plot+ggtitle("Minimum Intra-DataPoint Distance Plo
 p1
 ```
 
-As seen in the plot above the mean value is 0.23. While running our model we had also selected the QE value as 0.2 which is near this value.
+As seen in the plot above the mean value is 0.23. While running our
+model we had also selected the QE value as 0.2 which is near this value.
 
-### Minimum Intra-Centroid Distance Plot: HVT Model | Train Data
+### Minimum Intra-Centroid Distance Plot: HVT Model \| Train Data
 
-The third diagnostics plot helps us in finding out how the centroids in the
-HVT Model are distributed. Shown below is a histogram of minimum
+The third diagnostics plot helps us in finding out how the centroids in
+the HVT Model are distributed. Shown below is a histogram of minimum
 distances with nearest neighbour for each centroid in HVT Model
 
 ```{r fig.height=4, fig.width=6}
@@ -1530,9 +1575,9 @@ p2=hvt.results[[4]]$cent_plot+ggtitle("Minimum Intra-Centroid Distance Plot: HVT
 p2
 ```
 
-
-<font color="red"> As seen in the plot above the mean value is **0.6**. This value can be selected as the Mean Absolute Deviation Threshold for scoring data using predict function </font>
-
+<font color="red"> As seen in the plot above the mean value is **0.6**.
+This value can be selected as the Mean Absolute Deviation Threshold for
+scoring data using predict function </font>
 
 ### Distribution of Number of Observations in HVT Cells
 
@@ -1545,12 +1590,13 @@ p4=hvt.results[[4]]$number_plot+ggtitle("Distribution of Number of Observations 
 p4
 ```
 
-As shown in the plot above the mean number of records in each HVT cell is **2**.
+As shown in the plot above the mean number of records in each HVT cell
+is **2**.
 
 ### Singleton Count
 
-The fifth diagnostics plot finds out number of Singleton
-centroids (Segments/Centroids with single observation.)
+The fifth diagnostics plot finds out number of Singleton centroids
+(Segments/Centroids with single observation.)
 
 ```{r fig.height=4, fig.width=6}
 p5=hvt.results[[4]]$singleton_piechart
@@ -1559,21 +1605,20 @@ p5
 
 **Validation**
 
-
-The Mean Absolute Deviation Plot for Validation Data has been shown in above section. Alternatively. to fetch it separately, we can use the following code:
+The Mean Absolute Deviation Plot for Validation Data has been shown in
+above section. Alternatively. to fetch it separately, we can use the
+following code:
 
 ```{r fig.height=4, fig.width=6}
 m1=hvt.results[[5]][["mad_plot"]]+ggtitle("Mean Absolute Deviation Plot:Validation")
 m1
 ```
 
-
-<font color="red">
-As seen in the plot above the suggested threshold for scoring using Mean
-Absolute Deviation is 0.59 which is very close to Mean of distribution
-obtained in Minimum Intra-Centroid Distance Plot section. Thus 0.6 (Mean of Minimum Intra-Centroid Distance) can
-be used as the mean absolute deviation threshold for prediction.
-</font>
+<font color="red"> As seen in the plot above the suggested threshold for
+scoring using Mean Absolute Deviation is 0.59 which is very close to
+Mean of distribution obtained in Minimum Intra-Centroid Distance Plot
+section. Thus 0.6 (Mean of Minimum Intra-Centroid Distance) can be used
+as the mean absolute deviation threshold for prediction. </font>
 
 # Prediction
 
@@ -1581,8 +1626,6 @@ Now once we have built the model, let us try to predict using our test
 dataset to see which cell each point belongs to.
 
 ## Prediction Algorithm
-
-
 
 The prediction algorithm recursively calculates the distance between
 each point in the test dataset and the cell centroids for each level.
@@ -1658,7 +1701,8 @@ dummified_cols_test %>% head(5) %>% DT::datatable(options = options)
 
 ### Subsetting Test Dataset
 
-In this section we will subset the test data based on numeric columns present in train data.
+In this section we will subset the test data based on numeric columns
+present in train data.
 
 ```{r, purl = FALSE,results='asis',class.source = 'fold-show'}
 
@@ -1667,15 +1711,12 @@ dataset_updated_test=dataset_updated_test %>% dplyr::select(nums)
 
 ```
 
-
-Now once we have the test data ready, lets look at how the predictHVT function looks like.
-
-
-
+Now once we have the test data ready, lets look at how the predictHVT
+function looks like.
 
 ## Prediction on Test Data
 
-```
+```         
 predictHVT(data,
                   hvt.results,
                   hmap.cols = NULL,
@@ -1700,19 +1741,24 @@ The important parameters for the function `predictHVT` are as below
 
 -   **`child.level`** - A number indicating the level for which the heat
     map is to be plotted (Only used if hmap.cols is not NULL)
-    
--   **`mad.threshold`** - A threshold indicating the level for which the heat
-    map is to be plotted 
 
--   **`...`** - color.vec and line.width can be passed from here    
+-   **`mad.threshold`** - A threshold indicating the level for which the
+    heat map is to be plotted
+
+-   **`...`** - color.vec and line.width can be passed from here
 
 <p style="color:red;">
-Here the mad_threshold has been selected as 0.6 which is based on Mean of Minimum Intra-Centroid Distance, and verified by Validation Mean Absolute Deviation Plot </p>
+
+Here the mad_threshold has been selected as 0.6 which is based on Mean
+of Minimum Intra-Centroid Distance, and verified by Validation Mean
+Absolute Deviation Plot
+
+</p>
 
 ```{r,class.source = 'fold-show'}
 hvt.prediction = list()
 mad_threshold= 0.6 #Mean of Minimum Intra-Centroid Distance
-hvt.prediction <- muHVT::predictHVT(
+hvt.prediction <- HVT::predictHVT(
   data = dataset_updated_test,
   hvt.results.model=hvt.results,
   child.level = 1,
@@ -1724,17 +1770,16 @@ hvt.prediction <- muHVT::predictHVT(
 )
 ```
 
-The plotDiag() function can be called for prediction object as well. Shown below is the comparison of Mean Absolute Deviation Plot for train validation and test data.
+The plotDiag() function can be called for prediction object as well.
+Shown below is the comparison of Mean Absolute Deviation Plot for train
+validation and test data.
 
 ::: superbigimage
-
 ```{r, fig.width=8,fig.height=10,class.source = 'fold-show'}
 
 plotDiag(hvt.prediction)
 ```
-::: 
-
-
+:::
 
 ```{r predictHVT2 hotel,warning=FALSE,message=FALSE,eval=global_var}
 
@@ -1752,15 +1797,13 @@ Quant.Error.Actual <- QEdata %>%
 # Table(predictions$predictions %>% dplyr::relocate(Cell_path), scroll = T, limit = 10)
 ```
 
-
-  
 ### Quantization Error Comparison (Train vs. Test)
 
 Table below shows cell(s) containing anomalous test data points.
 Datapoints are flagged as anomalous when Quantization Error for such is
 greater than the same of assigned centroid based on error metric.
-Comparison between scored/test and fitted Quantization error of cell(s) is
-provided for further insights.
+Comparison between scored/test and fitted Quantization error of cell(s)
+is provided for further insights.
 
 ```{r out.width="100%"}
 QECompareDf <- hvt.prediction$QECompareDf %>% filter(anomalyFlag == 1)
@@ -1768,11 +1811,10 @@ percentageAnomalies = formatC((sum(QECompareDf$n) / nrow(dataset_updated_test)) 
                                 100, digits = 2, format = "f") %>% paste0("%")
 ```
 
-**Number of test data points:`r nrow(dataset_updated_test)` \| Number
-of anomalous data points:`r sum(QECompareDf$n)` \| Percentage of
-anomalous data points: `r percentageAnomalies`** <br> **Mean QE for
-fitted data: `r Quant.Error.Actual %>% round(digits = 4)` \| Mean QE for
-test data:
+**Number of test data points:`r nrow(dataset_updated_test)` \| Number of
+anomalous data points:`r sum(QECompareDf$n)` \| Percentage of anomalous
+data points: `r percentageAnomalies`** <br> **Mean QE for fitted data:
+`r Quant.Error.Actual %>% round(digits = 4)` \| Mean QE for test data:
 `r hvt.prediction[["scoredPredictedData"]]$Quant.Error %>%  mean() %>% round(digits = 4)`
 \| Difference in QE between fitted and test data:
 `r abs(Quant.Error.Actual%>%round(digits = 4)-hvt.prediction[["scoredPredictedData"]]$Quant.Error%>%mean() %>%round(digits = 4))`**
@@ -1834,12 +1876,12 @@ DT::datatable(
   selection = "none",
   options = options,
   callback = htmlwidgets::JS(
-    "var tips = ['Segment Level based on the hierarchical structure of the muHVT model output',
-                        'Segment Parent based on the hierarchical structure of the muHVT model output',
-                        'Segment Child based on the hierarchical structure of the muHVT model output',
-                        'Cell ID based on the hierarchical structure of the muHVT model output',
+    "var tips = ['Segment Level based on the hierarchical structure of the HVT model output',
+                        'Segment Parent based on the hierarchical structure of the HVT model output',
+                        'Segment Child based on the hierarchical structure of the HVT model output',
+                        'Cell ID based on the hierarchical structure of the HVT model output',
                         'Flag indicating whether data points are anomalous or not',
-                        'Number of anomalous scored data points for each centroid in the muHVT map',
+                        'Number of anomalous scored data points for each centroid in the HVT map',
                         'Quantization Error for the highlighted cell built on the fitted data',
                         'Quantization Error for the highlighted cell built on the scored data',
                         'Change in Quantization Error between scored and the fitted model'],
@@ -1854,6 +1896,7 @@ DT::datatable(
               backgroundColor = styleEqual(c(1), c('#ff7f7f')))
 
 ```
+
 ```{r, echo=FALSE}
 # library(knitr)
 # library(kableExtra)
@@ -1878,16 +1921,15 @@ Table(df1,scroll = T, limit = 10)
 #)
 ```
 
-
-
-
 ### Anomalous Test Cells (highlighted) in Fitted HVT Map
 
-The plot below shows anomalous cell(s) with color indicating
-change in Quantization Error after scoring.
+The plot below shows anomalous cell(s) with color indicating change in
+Quantization Error after scoring.
 
 <!-- ```{r, echo=FALSE} -->
+
 <!-- knitr::include_graphics('./interactive.png') -->
+
 <!-- ``` -->
 
 ```{r,class.source = 'fold-show', fig.height=4, fig.width=6,eval=FALSE}
@@ -1898,7 +1940,6 @@ hvt.prediction[["predictPlot"]]
 ```{r, echo=FALSE,fig.height=8, fig.width=12,out.width='80%'}
 knitr::include_graphics('./interactive.png')
 ```
-
 
 # Download Predictions
 
@@ -1912,7 +1953,6 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
       as.data.frame() %>%
       Table(scroll = T, limit = 20)
 ```
-
 
 # Applications
 
@@ -1943,7 +1983,8 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
 
 # References
 
-1. Topology Preserving Maps : <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
+1.  Topology Preserving Maps :
+    <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
 
 2.  Vector Quantization :
     <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf>
@@ -1952,4 +1993,5 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
 
 4.  Sammon's Projection : <http://en.wikipedia.org/wiki/Sammon_mapping>
 
-5.  Voronoi Tessellations : <http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
+5.  Voronoi Tessellations :
+    <http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
