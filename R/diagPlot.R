@@ -6,7 +6,7 @@
 #' Distribution of number of cells,  a Minimum Intra-DataPoint Distance Plot,
 #' Distribution of number of cells and count of singletons(segments with single observation)
 #' 
-#' @param hvt.results.model A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data
+#' @param hvt.results A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data
 #' @param data Data frame. A data frame with different columns is given as input. The dataframe should be the same dataframe used to train the HVT Model
 #' @param level Numeric. Indicating the level for which the heat map is
 #' to be plotted.
