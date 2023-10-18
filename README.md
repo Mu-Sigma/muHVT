@@ -1,20 +1,20 @@
-# muHVT: Collection of functions used to build hierarchical topology preserving maps
+# HVT: Collection of functions used to build hierarchical topology preserving maps
 
-#### Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi
+#### Zubin Dowlaty
 
-#### 2023-06-07
+#### 2023-10-15
 
 <div id="TOC">
 
 *   [<span class="toc-section-number">1</span> Abstract](#abstract)
 *   [<span class="toc-section-number">2</span> Version History](#version-history)
-    *   [<span class="toc-section-number">2.1</span> muHVT (v23.06.07) | What’s New?](#muhvt-(v23.06.07)-whats-new)
-    *   [<span class="toc-section-number">2.2</span> muHVT (v22.12.06)](#muhvt-(v22.12.06))
-*   [<span class="toc-section-number">3</span> Installation of muHVT (v23.06.07)](#installation-of-muhvt-(v23.06.07))
+    *   [<span class="toc-section-number">2.1</span> HVT (v23.10.15) | What’s New?](#hvt-(v23.10.15)-whats-new)
+    *   [<span class="toc-section-number">2.2</span> HVT (v22.12.06)](#hvt-(v22.12.06))
+*   [<span class="toc-section-number">3</span> Installation of HVT (v23.10.15)](#installation-of-hvt-(v23.10.15))
 *   [<span class="toc-section-number">4</span> Vignettes](#vignettes)
-    *   [<span class="toc-section-number">4.1</span> muHVT Vignette](#muhvt-vignette)
-    *   [<span class="toc-section-number">4.2</span> muHVT Model Diagnostics Vignette](#muhvt-model-diagnostics-vignette)
-    *   [<span class="toc-section-number">4.3</span> muHVT : Predicting Cells with Layers using predictLayerHVT ](#muhvt---predicting-cells-with-layers-using-predictLayerHVT)
+    *   [<span class="toc-section-number">4.1</span> HVT Vignette](#hvt-vignette)
+    *   [<span class="toc-section-number">4.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
+    *   [<span class="toc-section-number">4.3</span> HVT : Predicting Cells with Layers using predictLayerHVT ](#hvt---predicting-cells-with-layers-using-predictLayerHVT)
 
 </div>
 
@@ -22,7 +22,7 @@
 
 # <span class="header-section-number">1</span> Abstract
 
-The muHVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis, see `Figure 1` as an example of a 2D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis, see `Figure 1` as an example of a 2D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
@@ -33,9 +33,9 @@ The muHVT package is a collection of R functions to facilitate building [topolog
 4.  **Prediction**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
 
-The muHVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) for more details.
+The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT.html) for more details.
 
-<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/torus.png" width="642px" height="440px" />
+<img src="https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/torus.png" width="642px" height="440px" />
 <p class="caption">
 Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z.
 </p>
@@ -47,20 +47,20 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 # <span class="header-section-number">2</span> Version History 
 
-<div id="muhvt-(v23.06.07)-whats-new" class="section level2" number="2.1">
+<div id="hvt-(v23.10.15)-whats-new" class="section level2" number="2.1">
 
-## <span class="header-section-number">2.1</span> muHVT (v23.06.07) | What’s New? 
+## <span class="header-section-number">2.1</span> HVT (v23.10.15) | What’s New? 
 
-07th June, 2023
+15th October, 2023
 
-In this version of muHVT package, the following new features have been introduced:
+In this version of HVT package, the following new features have been introduced:
 
 This package provides  functionality to predict cells with layers based on a sequence of maps using `predictLayerHVT`. 
 </div>
 
-<div id="muhvt-(v22.12.06)" class="section level2" number="2.2">
+<div id="hvt-(v22.12.06)" class="section level2" number="2.2">
 
-## <span class="header-section-number">2.2</span> muHVT (v22.12.06) 
+## <span class="header-section-number">2.2</span> HVT (v22.12.06) 
 
 06th December, 2022
 
@@ -75,16 +75,16 @@ The creation of a predictive set of maps involves three steps -
 
 Let us try to understand the steps with the help of the diagram below -
 
-<img src="https://github.com/Somya545/muHVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
+<img src="https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
 <p class="caption">
 Figure 2: Flow diagram for predicting based on a sequence of maps using predictLayerHVT()
 </p>
 
 
 
-<div id="installation-of-muhvt-(v23.06.07)" class="section level2" number="3">
+<div id="installation-of-hvt-(v23.10.15)" class="section level2" number="3">
 
-# <span class="header-section-number">3</span> Installation of muHVT (v23.06.07)
+# <span class="header-section-number">3</span> Installation of HVT (v23.10.15)
 
 <div class="sourceCode" id="cb1">
 
@@ -102,26 +102,26 @@ Figure 2: Flow diagram for predicting based on a sequence of maps using predictL
 
 # <span class="header-section-number">4</span> Vignettes
 
-Following are the links to the vignettes for the muHVT package:
+Following are the links to the vignettes for the HVT package:
 
-<div id="muhvt-vignette" class="section level2" number="4.1">
+<div id="hvt-vignette" class="section level2" number="4.1">
 
-## <span class="header-section-number">4.1</span> muHVT Vignette
+## <span class="header-section-number">4.1</span> HVT Vignette
 
-[**muHVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
-
-</div>
-
-<div id="muhvt-model-diagnostics-vignette" class="section level2" number="4.2">
-
-## <span class="header-section-number">4.2</span> muHVT Model Diagnostics Vignette
-
-[**muHVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/muHVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for muHVT model.
+[**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
-<div id="muhvt---predicting-cells-with-layers-using-predictLayerHVT" class="section level2" number="4.3">
+<div id="hvt-model-diagnostics-vignette" class="section level2" number="4.2">
 
-## <span class="header-section-number">4.3</span> muHVT - Predicting Cells with Layers using predictLayerHVT
+## <span class="header-section-number">4.2</span> HVT Model Diagnostics Vignette
 
-[**muHVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Somya545/muHVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
+[**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+
+</div>
+
+<div id="hvt---predicting-cells-with-layers-using-predictLayerHVT" class="section level2" number="4.3">
+
+## <span class="header-section-number">4.3</span> HVT - Predicting Cells with Layers using predictLayerHVT
+
+[**HVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/muHVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
