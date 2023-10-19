@@ -1,8 +1,8 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-vignettes/Testing.Rmd
-..Rcheck/
-.git/
+^vignettes/Testing.Rmd
+^..Rcheck/
+^.git/
 .gitignore
 .gitattributes
 ^CRAN-SUBMISSION$
