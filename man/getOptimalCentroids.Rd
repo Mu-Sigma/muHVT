@@ -22,13 +22,15 @@ getOptimalCentroids(
 observation, and each column corresponds to a variable. Missing values are
 not accepted.}
 
+\item{iter.max}{Numeric. Indicating maximum iteration number}
+
 \item{algorithm}{String. The type of algorithm used for quantization.
 Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 (default is "Hartigan-Wong")}
 
 \item{n_cells}{Numeric. Indicating the number of nodes per hierarchy.}
 
-\item{function_to_calculate_distance_metric}{Function. The function is to find 'L1_Norm" or "L2_Norm" distances. L1_Norm is selected by default.}
+\item{function_to_calculate_distance_metric}{Function. The function is to find "L1_Norm" or "L2_Norm" distances. L1_Norm is selected by default.}
 
 \item{function_to_calculate_error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
@@ -38,8 +40,6 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 
 \item{quant_method}{Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
 
-\item{depth}{Numeric. Indicating the hierarchy depth (or) the depth of the
-tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 }
 \value{
 \item{values}{ List. A list showing observations assigned to a cluster.}

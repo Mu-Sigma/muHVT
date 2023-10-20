@@ -24,7 +24,7 @@ to be plotted.}
 
 \item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
 
-\item{hvt.results.model}{A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data}
+\item{hvt.results}{A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data}
 }
 \value{
 A list that contains  a Minimum Inter-Centroid distance plot, a Minimum Intra-DataPoint Distance Plot,
@@ -39,7 +39,7 @@ Function to construct Diagnosis Plots for HVT Model
 }
 \details{
 This function creates Diagnosis Plots for HVT Model. The output of the functions contains a Minimum Intra-Centroid distance plot, a Minimum Intra-DataPoint Distance Plot,
-Distribution of number of cells,  a Minimum Intra-DataPoint Distance Plot,
+Distribution of number of cells,
 Distribution of number of cells and count of singletons(segments with single observation)
 }
 \examples{
