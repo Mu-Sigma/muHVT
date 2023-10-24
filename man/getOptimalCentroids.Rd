@@ -37,9 +37,6 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 \item{distance_metric}{Character. The distance metric to calculate inter point distance. It can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.}
 
 \item{quant_method}{Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
-
-\item{depth}{Numeric. Indicating the hierarchy depth (or) the depth of the
-tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 }
 \value{
 \item{values}{ List. A list showing observations assigned to a cluster.}

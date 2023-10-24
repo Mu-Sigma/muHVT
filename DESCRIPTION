@@ -16,10 +16,10 @@ Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly,
         data.table
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2023-10-15 12:35:23 UTC; ponanureka
 Author: Zubin Dowlaty [aut],

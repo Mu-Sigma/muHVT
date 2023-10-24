@@ -15,6 +15,8 @@ diagPlot(
 )
 }
 \arguments{
+\item{hvt.results}{A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data}
+
 \item{data}{Data frame. A data frame with different columns is given as input. The dataframe should be the same dataframe used to train the HVT Model}
 
 \item{level}{Numeric. Indicating the level for which the heat map is
@@ -23,8 +25,6 @@ to be plotted.}
 \item{quant.err}{Numeric. A number indicating the quantization error threshold.}
 
 \item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
-
-\item{hvt.results.model}{A list of hvt.results.model obtained from HVT function while performing hierarchical vector quantization on train data}
 }
 \value{
 A list that contains  a Minimum Inter-Centroid distance plot, a Minimum Intra-DataPoint Distance Plot,
