@@ -10,7 +10,7 @@ Authors@R: c(
     person("Sangeet Moy", "Das", email = "dassangeet768@gmail.com", role = "ctb"),
     person("Sunuganty Achyut", "Raj", email = "achyut.raj92@gmail.com", role = "ctb"),
     person("Shantanu", "Vaidya", email = "snv.shantanu@gmail.com", role = "ctb"),
-    person("Somya", "Shambhawi", email = "shambhawisomya@gmail.com", role = "ctb")
+    person("Somya", "Shambhawi", email = "shambhawisomya@gmail.com", role = "ctb"),
     person("Praditi", "Shah", email = "shahpraditi@gmail.com", role = "ctb"),
     person("Avinash", "Joshi", email = "avinash.joshi@mu-sigma.com", role = "ctb"),
     person("Meet", "Dave", email = "meetdave06@gmail.com", role = "ctb"),
@@ -37,7 +37,7 @@ Author: Zubin Dowlaty [aut],
   Shantanu Vaidya [ctb],
   Praditi Shah [ctb],
   Avinash Joshi [ctb],
-  Somya Shambhawi [ctb]
+  Somya Shambhawi [ctb],
   Meet Dave [ctb], 
   Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
