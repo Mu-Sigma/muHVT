@@ -1435,9 +1435,9 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 3. K-means : https://en.wikipedia.org/wiki/K-means_clustering
 
-4. Sammon’s Projection : http://en.wikipedia.org/wiki/Sammon_mapping
+4. Sammon’s Projection : https://en.wikipedia.org/wiki/Sammon_mapping
 
-5. Voronoi Tessellations : http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
+5. Voronoi Tessellations : https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
 
 6. Embedding : https://en.wikipedia.org/wiki/Embedding
 

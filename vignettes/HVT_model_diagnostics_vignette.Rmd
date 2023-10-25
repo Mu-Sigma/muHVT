@@ -124,7 +124,7 @@ eq_no <- 0
 ref_no <- 0
 
 if(!require('devtools')){
-  install.packages("devtools", repos = 'http://cran.us.r-project.org')
+  install.packages("devtools", repos = 'https://cran.us.r-project.org')
   library(devtools)
 }else{
   library(devtools)
@@ -133,7 +133,7 @@ if(!require('devtools')){
 # for windows user
 if (Sys.info()['sysname'] == 'Windows' && find_rtools() == FALSE){
   if(!require('installr')){
-    install.packages("installr", repos = 'http://cran.us.r-project.org')
+    install.packages("installr", repos = 'https://cran.us.r-project.org')
   }
   installr::install.URL(exe_URL = 'https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe')
 }
@@ -195,7 +195,7 @@ list.of.packages <<- c(
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 
 # Installing the missing packages
-if (length(new.packages)){install.packages(new.packages, repos='http://cran.us.r-project.org')}
+if (length(new.packages)){install.packages(new.packages, repos='https://cran.us.r-project.org')}
 
 # Load all required packages
 invisible(lapply(list.of.packages, library, character.only=T))
@@ -1990,7 +1990,7 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
 
 3.  K-means : <https://en.wikipedia.org/wiki/K-means_clustering>
 
-4.  Sammon's Projection : <http://en.wikipedia.org/wiki/Sammon_mapping>
+4.  Sammon's Projection : <https://en.wikipedia.org/wiki/Sammon_mapping>
 
 5.  Voronoi Tessellations :
-    <http://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
+    <https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>

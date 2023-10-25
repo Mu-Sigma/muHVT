@@ -12,14 +12,14 @@ License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
         stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr,
-        scales, cluster, reshape2, plyr
+        scales, cluster, reshape2, plyr, data.table
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.2.3
-Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly,
-        data.table
-VignetteBuilder: rmarkdown
+Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, DT,
+        gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools
+VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2023-10-15 12:35:23 UTC; ponanureka
 Author: Zubin Dowlaty [aut],

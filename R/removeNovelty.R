@@ -30,8 +30,8 @@
 #' plotHVT(hvt_mapA, line.width = c(0.8), color.vec = c('#141B41'), 
 #'         maxDepth = 1)
 #'         
-#' outlier_cells <<- c(2, 10)
-#' output_list <- removeNovelty(outlier_cells, hvt_mapA)
+#' identified_Novelty_cells <<- c(2, 10)
+#' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' hvt_mapB <- output_list[[1]]
 #' dataset_without_novelty <- output_list[[2]]
 #'
@@ -82,7 +82,7 @@ removeNovelty <-
     
     scaled_data <- merge(x = scaled_data, y = Cell.ID.mapping, by.x = c("Cell.Number"), by.y = c("Segment.Child"))
     
-    outlier_rows_df <- scaled_data %>% dplyr::filter(Cell.Number %in% outlier_cells)
+    outlier_rows_df <- scaled_data %>% dplyr::filter(Cell.Number %in% identified_Novelty_cells)
     removed_outlier_rows <- as.vector(outlier_rows_df$Row.Number)
     outliers_data_scaled <- select(outlier_rows_df, -c(Row.Number))
     outliers_data_scaled <- outliers_data_scaled[,c(ncol(outliers_data_scaled),1:(ncol(outliers_data_scaled)-1))]

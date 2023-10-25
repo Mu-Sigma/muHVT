@@ -7,3 +7,5 @@
 .gitattributes
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
+^README.html
+^LICENSE

@@ -1,26 +1,10 @@
 ## R CMD check results
-Duration: 31.4s
+Duration: 1m 28.1s
 
-❯ checking files in ‘vignettes’ ... WARNING
-  Files in the 'vignettes' directory but no files in 'inst/doc':
-    ‘HVT.Rmd’ ‘HVT.html’ ‘HVT_model_diagnostics_vignette.Rmd’
-    ‘HVT_model_diagnostics_vignette.html’ ‘HVT_vignette.Rmd’
-    ‘HVT_vignette.html’
-    ‘Predicting_Cells_with_Layers_using_predictLayerHVT.Rmd’
-    ‘Predicting_Cells_with_Layers_using_predictLayerHVT.html’
-    ‘Testing.html’ ‘heatmaps/ads.png’ ‘heatmaps/hd.png’
-    ‘heatmaps/price.png’ ‘heatmaps/quant_error.png’ ‘heatmaps/ram.png’
-    ‘heatmaps/screen.png’ ‘heatmaps/speed.png’ ‘interactive.png’
-    ‘mlayer1.png’ ‘predictLayerHVT_function.png’
-    ‘predictLayerHVT_function_mapA.png’
-    ‘predictLayerHVT_function_mapB.png’
-    ‘predictLayerHVT_function_mapC.png’ ‘quant_explainer.png’
-    ‘reference.png’ ‘sample_dataset/Computers.csv’
-    ‘sample_dataset/hotel_data_test.csv’
-    ‘sample_dataset/hotel_data_train.csv’
-    ‘sample_dataset/testComputers.csv’
-    ‘sample_dataset/trainComputers.csv’ ‘torus.png’ ‘torus1.png’
-    ‘torus2.png’ ‘torus_donut.png’
+❯ checking installed package size ... NOTE
+    installed size is 12.3Mb
+    sub-directories of 1Mb or more:
+      doc  11.9Mb
 
 ❯ checking top-level files ... NOTE
   File
@@ -29,4 +13,15 @@ Duration: 31.4s
   Non-standard file/directory found at top level:
     ‘README.html’
 
-0 errors ✔ | 1 warning ✖ | 1 note ✖
+❯ checking files in ‘vignettes’ ... NOTE
+  Files named as vignettes but with no recognized vignette engine:
+     ‘vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.Rmd’
+  (Is a VignetteBuilder field missing?)
+
+❯ checking for unstated dependencies in vignettes ... NOTE
+  '::' or ':::' imports not declared from:
+    ‘DT’ ‘gridExtra’ ‘gtable’ ‘htmlwidgets’ ‘installr’ ‘skimr’ ‘tibble’
+  'library' or 'require' calls not declared from:
+    ‘devtools’ ‘installr’
+
+0 errors ✔ | 0 warnings ✔ | 4 notes ✖
