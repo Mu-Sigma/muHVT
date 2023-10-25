@@ -3,7 +3,7 @@ Type: Package
 Date: 2023-10-15
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
-Version: 3.0.1
+Version: 23.10.01
 Authors@R: c(
 	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
@@ -18,7 +18,8 @@ BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, DT,
-        gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools
+        gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools,
+        tidyverse, DataExplorer, dummies, htmltools, corrplot
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2023-10-15 12:35:23 UTC; ponanureka

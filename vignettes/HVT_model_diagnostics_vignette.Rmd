@@ -124,7 +124,7 @@ eq_no <- 0
 ref_no <- 0
 
 if(!require('devtools')){
-  install.packages("devtools", repos = 'https://cran.us.r-project.org')
+  install.packages("devtools", repos = 'https://cloud.r-project.org/')
   library(devtools)
 }else{
   library(devtools)
@@ -133,9 +133,9 @@ if(!require('devtools')){
 # for windows user
 if (Sys.info()['sysname'] == 'Windows' && find_rtools() == FALSE){
   if(!require('installr')){
-    install.packages("installr", repos = 'https://cran.us.r-project.org')
+    install.packages("installr", repos = 'https://cloud.r-project.org/')
   }
-  installr::install.URL(exe_URL = 'https://cran.r-project.org/bin/windows/Rtools/Rtools35.exe')
+  installr::install.URL(exe_URL = 'https://cloud.r-project.org/bin/windows/Rtools/Rtools35.exe')
 }
 
 library(knitr)
@@ -195,7 +195,7 @@ list.of.packages <<- c(
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 
 # Installing the missing packages
-if (length(new.packages)){install.packages(new.packages, repos='https://cran.us.r-project.org')}
+if (length(new.packages)){install.packages(new.packages, repos='https://cloud.r-project.org/')}
 
 # Load all required packages
 invisible(lapply(list.of.packages, library, character.only=T))
@@ -347,7 +347,7 @@ organized below :
 2.  **Data Projection**: Dimension projection of the compressed cells to
     1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates
     topology preserving map(also called as
-    [embedding](https://en.wikipedia.org/wiki/embedding)) coordinates
+    [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates
     into the desired output dimension.
 
 3.  **Tessellation**: Create cells required for object visualization
@@ -1986,7 +1986,7 @@ predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
     <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
 
 2.  Vector Quantization :
-    <https://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-450-principles-of-digital-communications-i-fall-2006/lecture-notes/book_3.pdf>
+    <https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/>
 
 3.  K-means : <https://en.wikipedia.org/wiki/K-means_clustering>
 
