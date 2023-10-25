@@ -54,6 +54,7 @@ Predict which cell and what level each point in the test dataset belongs to
 }
 \examples{
 data(USArrests)
+library('dplyr')
 
 #Split in train and test
 train <- USArrests[1:40,]
@@ -66,10 +67,11 @@ hvt_mapA <- HVT(train, min_compression_perc = 70, quant.err = 0.2,
                    quant_method="kmeans")
 
 
-identified_outlier_cells <<- c(2, 10)
-output_list <- removeNovelty(identified_outlier_cells, hvt_mapA)
+identified_Novelty_cells <<- c(2, 10)
+output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 
-data_with_novelty <- output_list[[1]]
+data_with_novelty <- output_list[[1]] \%>\% dplyr::select(!c("Cell.ID","Cell.Number"))
+
 
 hvt_mapB <- HVT(data_with_novelty ,n_cells = 3, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",

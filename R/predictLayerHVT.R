@@ -23,6 +23,7 @@
 #' @importFrom magrittr %>%
 #' @examples
 #' data(USArrests)
+#' library('dplyr')
 #' 
 #' #Split in train and test
 #' train <- USArrests[1:40,]
@@ -35,10 +36,11 @@
 #'                    quant_method="kmeans")
 #'
 #' 
-#' identified_outlier_cells <<- c(2, 10)
-#' output_list <- removeNovelty(identified_outlier_cells, hvt_mapA)
+#' identified_Novelty_cells <<- c(2, 10)
+#' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' 
-#' data_with_novelty <- output_list[[1]]
+#' data_with_novelty <- output_list[[1]] %>% dplyr::select(!c("Cell.ID","Cell.Number"))
+#'
 #' 
 #' hvt_mapB <- HVT(data_with_novelty ,n_cells = 3, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
@@ -196,7 +198,6 @@ predictLayerHVT <- function(data,
   
   combined <- combined %>% select(-c("act_Quant.Error","Segment.Level.x" ,"Segment.Parent.x","Segment.Child.x","n.x","Quant.Error.x","Segment.Level.y" ,"Segment.Parent.y","Segment.Child.y", "n.y","Quant.Error.y" ))
   
-  library(dplyr)
   
   df_data <- combined %>%
     select(matches("^act_|Row.Number|Layer1.Cell.ID|Layer2.Cell.ID"))
@@ -235,7 +236,7 @@ predictLayerHVT <- function(data,
         
       }
     }
-    temp0 <- temp0 %>% discard(~all(is.na(.) | . ==""))   
+    temp0 <- temp0 %>% purrr::discard(~all(is.na(.) | . ==""))   
     df_new[,1] <- rowMeans(temp0)
     return(df_new)
   }

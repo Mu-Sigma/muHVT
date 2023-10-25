@@ -11,7 +11,7 @@ output:
     toc_depth : 2
 vignette: >
   %\VignetteIndexEntry{HVT: Predicting Cells with Layers using predictLayerHVT}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -255,7 +255,7 @@ This package can perform vector quantization using the following algorithms -
 -   Hierarchical Vector Quantization using k−means
 -   Hierarchical Vector Quantization using k−medoids
 
-For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Somya545/HVT/blob/master/vignettes/HVT_vignette.html#compress-vector-quantization).
+For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#compress-vector-quantization).
 
 The HVT function constructs highly compressed hierarchical Voronoi tessellations. The raw data is first scaled and this scaled data is supplied as input to the vector quantization algorithm. The vector quantization algorithm compresses the dataset until a user-defined compression percentage/rate is achieved using a parameter called quantization error which acts as a threshold and determines the compression percentage. It means that for a given user-defined compression percentage we get the 'n' number of cells, then all of these cells formed will have a quantization error less than the threshold quantization error.
 

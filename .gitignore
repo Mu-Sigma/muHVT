@@ -2,7 +2,8 @@
 .Rhistory
 .RData
 .Ruserdata
-inst/doc
 ^.*\.log
 HVT/
-..Rcheck/
+..Rcheck
+.git
+inst/doc

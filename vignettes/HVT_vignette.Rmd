@@ -1057,7 +1057,7 @@ As we are familiar with the structure of the computers data, we will now follow 
 
 ## Step 1: Data Compression
 
-For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Somya545/HVT/blob/master/vignettes/HVT_vignette.html#data-compression) of this vignette.
+For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#data-compression) of this vignette.
 
 We will use the `HVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the HVT function again.
 
@@ -1129,7 +1129,7 @@ All the columns after this will contain centroids for each cell. They can also b
 
 ## Step 2: Data Projection
 
-For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Somya545/HVT/blob/master/vignettes/HVT_vignette.html#data-projection) of this vignette.
+For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#data-projection) of this vignette.
 
 lets view the projected 2D centroids after performing sammon's projection on the compressed data (440 cells) recieved after performing vector quantization. For the sake of brevity we are displaying first six rows.
 
@@ -1164,7 +1164,7 @@ ggplot(centroid_coordinates, aes(x_coord, y_coord)) +
 
 ## Step 3: Tessellation
 
-For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Somya545/HVT/blob/master/vignettes/HVT_vignette.html#tessellation) of this vignette.
+For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#tessellation) of this vignette.
 
 Now, we have obtained the centroid coordinates resulting from the application of Sammon's projection. 
 

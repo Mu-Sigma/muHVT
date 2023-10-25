@@ -37,8 +37,8 @@ hvt_mapA <- HVT(USArrests, min_compression_perc = 70, quant.err = 0.2,
 plotHVT(hvt_mapA, line.width = c(0.8), color.vec = c('#141B41'), 
         maxDepth = 1)
         
-identified_Novelty_cells <<- c(2, 10)
-output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
+outlier_cells <<- c(2, 10)
+output_list <- removeNovelty(outlier_cells, hvt_mapA)
 hvt_mapB <- output_list[[1]]
 dataset_without_novelty <- output_list[[2]]
 
