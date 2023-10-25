@@ -9,3 +9,4 @@
 ^cran-comments\.md$
 ^README.html
 ^LICENSE
+^.*.tar.gz

@@ -7,3 +7,4 @@ HVT/
 ..Rcheck
 .git
 inst/doc
+*.tar.gz

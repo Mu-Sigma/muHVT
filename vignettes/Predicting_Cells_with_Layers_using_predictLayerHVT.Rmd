@@ -61,7 +61,7 @@ list.of.packages <- c("plyr", "dplyr", "reactable", "kableExtra", "geozoo", "plo
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages, dependencies = TRUE)
+  install.packages(new.packages, dependencies = TRUE, repos='https://cloud.r-project.org/')
 
 # Loading the required libraries
 lapply(list.of.packages, library, character.only = T)

@@ -19,7 +19,7 @@ URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, DT,
         gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools,
-        tidyverse, DataExplorer, dummies, htmltools, corrplot
+        tidyverse, DataExplorer, htmltools, corrplot, gganimate
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2023-10-15 12:35:23 UTC; ponanureka

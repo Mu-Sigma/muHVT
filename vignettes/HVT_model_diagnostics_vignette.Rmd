@@ -247,8 +247,9 @@ list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages, dependencies = TRUE)
+  install.packages(new.packages, dependencies = TRUE, repos='https://cloud.r-project.org/')
 
+install.packages('https://cran.r-project.org/src/contrib/Archive/dummies/dummies_1.5.6.tar.gz', type="source", repos=NULL)
 # Loading the required libraries
 lapply(list.of.packages, library, character.only = T)
 
