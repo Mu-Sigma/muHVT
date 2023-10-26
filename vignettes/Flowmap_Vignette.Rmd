@@ -1,0 +1,656 @@
+---
+title: "Flow Map"
+author: "Pon Anu Reka"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_vignette:
+    number_sections: true
+    toc: true
+    toc_depth : 2
+vignette: >
+  %\VignetteIndexEntry{Collection of functions used to create Flowmap visualizations"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{css, echo=FALSE}
+/* CSS for floating TOC on the left side */
+#TOC {
+    /* float: left; */
+    position: fixed;
+    margin-left: -22vw;
+    width: 18vw;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -12em; 
+}
+
+.main-container {
+  margin-left: 222px; /* Adjust this value to match the width of the TOC + some margin */
+}
+
+li {
+  padding-bottom: 5px;
+}
+
+ul {
+  margin-bottom: 0px !important;
+}
+```
+
+
+
+
+```{r, warning=FALSE,message=FALSE,include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  out.width = "672px",
+  out.height = "480px",
+  fig.width = 7,
+  fig.height = 5,
+  fig.align = "center",
+  fig.retina = 1,
+  dpi = 150
+)
+
+# installing all required packages
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr")
+
+new.packages <-
+  list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages))
+  install.packages(new.packages, dependencies = TRUE)
+
+# Loading the required libraries
+lapply(list.of.packages, library, character.only = T)
+
+source("./source/flowmap_vig.R")
+
+options(expressions = 10000)
+
+global_var <- nzchar(Sys.getenv("RUN_VIGNETTE"))
+global_var <- TRUE
+scrolLimit <- function(noOfRows){
+  if(noOfRows<10){
+    
+    swe = paste(as.character(noOfRows*50),"px")
+  }
+  else{
+    swe = "400px"
+  }
+  return(swe)
+}
+
+Table <- function(data,scroll = F, limit = NULL){
+  
+  if(!is.null(limit)){
+    data <- head(data,limit)
+  }
+  
+  kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+  
+  scroll <- scroll
+  
+  if(scroll == T){
+  kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
+  }
+  
+ return(kable_table)
+  
+}
+
+summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limit=NULL){
+  
+  scroll <- scroll
+  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
+  
+  return(Table(summaryTable,scroll = scroll,limit = limit))
+  
+}
+
+compressionSummaryTable <- function(data,scroll = T,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
+  
+  
+summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
+  
+return(Table(summaryTable,scroll = scroll))
+  
+}
+set.seed(240)
+```
+
+# Objective
+
+The objective of this notebook is to use the Lorenz attractor to determine the dynamics of the system and to gain insights into the behavior and characteristics of a chaotic system.
+
+# Experimental setup
+
+In this section we aim to investigate how the Lorenz system's state transitions from one state to another at each time stamp. By studying these state transitions, we seek to identify patterns, trends, and potential underlying dynamics within the system. This analysis can provide valuable insights into the behavior and evolution of the system, enabling us to understand its characteristics and potentially make predictions or interpretations based on the observed patterns.
+
+We follow the following steps to perform this experiment:
+
+* We have selected the `Lorenz attractor dataset` to explore the complex behaviour of the lorenz attractor. We have imported the dataset from the csv.
+
+* We have divided 80% of the data (containing 160,000) as training dataset and rest 20% as Validation dataset (containing 40,000)
+
+* Next, we tried to visualize the Lorenz attractor (overlapping spirals) in  3D Space.
+
+* In order to visualize the Lorenz attractor in 2D Space, we used HVT algorithm to compress the data.We started with a certain   number of cells and gradually increases it until the desired compression percentage of 80% was achieved and we are clearly able to visualize the overlapping spirals in 2D Space.
+
+* So, Finally we had our model ready. we tried to predict using our validation dataset (200,000 data points to avoiud unexplores Cell IDs) as to which cell and which level each point belongs to.
+
+
+# Data understanding
+
+The Lorenz attractor is a three-dimensional figure that is generated by a set of differential equations that model a simple chaotic dynamic system of convective flow. Lorenz Attractor arises from a simplified set of equations that describe the behavior of a system involving three variables. These variables represent the state of the system at any given time and are typically denoted by (x, y, z). The equations are as follows:
+
+  $$ dx/dt = σ*(y-x) $$
+  $$ dy/dt = x*(r -z)-y $$
+  $$ dz/dt = x*y-β*z $$
+where dx/dt, dy/dt, and dz/dt represent the rates of change of x, y, and z respectively over time (t). σ, r, and β are constant parameters of the system, with σ(σ = 10) controlling the rate of convection, r(r=28) controlling the difference in temperature between the convective and stable regions, and β(β = 8/3) representing the ratio of the width to the height of the convective layer. When these equations are plotted in three-dimensional space, they produce a chaotic trajectory that never repeats. The Lorenz attractor exhibits sensitive dependence on initial conditions, meaning even small differences in the starting conditions can lead to drastically different trajectories over time. This sensitivity to initial conditions is a defining characteristic of chaotic systems.
+
+
+In this section, we will use the `Lorenz Attractor Dataset`. This dataset contains 200 thousand observations and 5 columns.The dataset can be downloaded from [here](https://www.kaggle.com/datasets/henrychibueze/lorenz-attractor-dataset)
+
+The dataset includes the following columns:
+
+* X: The X-coordinate of a point in the Lorenz attractor. It represents the measure of strength of the circulation of fluid in the convective flow
+* Y: The Y-coordinate of a point in the Lorenz attractor. It represents the measure of the temperature of the fluid at a given point in space, but it is the horizontal temperature distribution
+* Z: The Z-coordinate of a point in the Lorenz attractor. It represents the measure of the temperature of the fluid at a given point in space, but it is the vertical temperature distribution
+* U: U represents the velocity or speed of the system at a particular point in the attractor 
+* t: The time variable (discrete time steps which is incremented by approximately 0.0002500012500062 units of time) associated with each point in the Lorenz attractor. It indicates how much time has elapsed since the beginning of the simulation. Each value represents a specific point in time, and they are spaced apart by a fixed time interval.
+
+
+Here, we load the data. Let's explore the Lorenz Attractor Dataset. For the sake of brevity we are displaying first ten rows.
+
+```{r,warning=FALSE,message=FALSE}
+dataset <- read.csv("./source/lorenze_attractor.csv")
+dataset <- dataset %>% dplyr::select(X,Y,Z,U,t)
+dataset$t <- round(dataset$t, 5)
+DT::datatable(head(dataset,10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+```
+
+## Training dataset
+
+Let's have a look at the Training dataset containing 160,000 data points. For the sake of brevity we are displaying first 10 rows.
+
+```{r,warning=FALSE,message=FALSE}
+noOfPoints <- dim(dataset)[1]
+trainLength <- as.integer(noOfPoints * 0.8)
+trainDataset <- dataset[1:trainLength,]
+trainData <- trainDataset %>% select(X,Y,Z)
+DT::datatable(head(trainDataset,10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+```
+
+Now, let us analyse the summary of training dataset.
+
+```{r data summary computer,warning=FALSE,message=FALSE,eval = global_var}
+
+df <- do.call(cbind, lapply(trainDataset, summary)) %>% 
+  data.frame() %>%
+  tibble::rownames_to_column("Metrics")
+
+DT::datatable(df %>% 
+                mutate_if(is.numeric, round,4) %>% 
+                head(),
+    options  = options,
+    rownames = FALSE)
+
+```
+
+## Test dataset
+
+Let's have a look at the Test dataset containing 40,000 data points. For the sake of brevity we are displaying first 10 rows.
+
+```{r, warning=FALSE,message=FALSE}
+testDataset <- dataset[(trainLength+1):noOfPoints,]
+DT::datatable(head(testDataset, 10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+
+```
+
+Now let us analyse the Summary of test dataset.
+
+
+
+```{r ,warning=FALSE,message=FALSE,eval = global_var}
+df_test <- do.call(cbind, lapply(testDataset, summary)) %>% 
+  data.frame() %>%
+  tibble::rownames_to_column("Metrics")
+
+DT::datatable(df_test %>% 
+                mutate_if(is.numeric, round,4) %>% 
+                head(),
+    options  = options,
+    rownames = FALSE)
+```
+
+# Lorenz attractor (3D Space)
+
+When the Lorenz attractor is visualized in a three-dimensional space, it forms a complex and intricate structure. It consists of a set of looping and spiraling curves that are confined within a specific region. The attractor has a butterfly-like shape, with two large wings and a narrow body connecting them.
+
+Now let's try to visualize the Lorenz attractor (overlapping spirals) in  3D Space.
+
+```{r, eval=TRUE,fig.cap='Figure 1: Lorenz attractor in 3D space'}
+
+data_3d <- dataset[sample(1:nrow(dataset), 1000), ]
+plot_3d <- plotly::plot_ly(data_3d, x= ~X, y= ~Y, z = ~Z) %>% add_markers( marker = list(
+                          size = 2,
+                          symbol = "circle",
+                          color = ~Z,
+                          colorscale = "Bluered",
+                          colorbar = (list(title = 'z_var'))))
+plot_3d
+```
+
+# Lorenz attractor (2D Space)
+
+We will use the `HVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the HVT function again.
+
+We will pass the below mentioned model parameters along with torus dataset to `HVT` function and see if the desired compression percentage is achieved.
+
+
+**Model Parameters**
+
+* Number of Cells at each Level = 100
+* Maximum Depth = 1
+* Quantization Error Threshold = 0.1
+* Error Metric = Max
+* Distance Metric = Manhattan
+
+Let’s have a look at the Train dataset containing 160,000 data points. For the sake of brevity we are displaying first 10 rows. Here, we are not including the U and t column from the entire dataset, so that compression takes place only for the X, Y, Z coordinates and not for U(velocity) and t(Timestamp). After training, we merge back the U and t column with the dataset for prediction
+
+```{r, warning=FALSE,message=FALSE}
+DT::datatable(head(trainData, 10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+```
+
+Now, let us analyse the structure of training dataset.
+
+```{r, warning=FALSE,message=FALSE}
+str(trainData)
+```
+
+</br>
+
+```{r ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
+set.seed(240)
+hvt.results <- muHVT::HVT(
+  trainData,
+  n_cells = 100,
+  depth = 1,
+  quant.err = 0.1,
+  projection.scale = 10,
+  normalize = T,
+  distance_metric = "L1_Norm",
+  error_metric = "max",
+  quant_method = "kmeans"
+)
+
+```
+
+
+Let's checkout the compression summary . 
+
+```{r compression summary torus first,warning=FALSE,eval = global_var}
+compressionSummaryTable(hvt.results[[3]]$compression_summary)
+```
+
+
+For better visualisation, let's plot the Voronoi tessellation for 100 cells.
+
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’lorenz attractor’', echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='90%', results='asis', warning=FALSE}
+hvt.plot <- muHVT::plotHVT(
+  hvt.results,
+  line.width = c(0.4),
+  color.vec = c("#141B41"),
+  centroid.size = 0.6,
+  maxDepth = 1
+)
+hvt.plot
+```
+
+
+# Prediction
+
+Let's have a look at the dataset we use for prediction which contains 200,000 data points. For the sake of brevity we are displaying first 10 rows.
+```{r, warning=FALSE,message=FALSE}
+DT::datatable(head(dataset, 10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+```
+
+Now, let us analyse the structure of dataset we use for prediction.
+
+```{r, warning=FALSE,message=FALSE}
+str(dataset)
+```
+
+Now once we have built the model, let us try to predict using our validation dataset which cell and which level each point belongs to.
+
+```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
+set.seed(240)
+predictions <- muHVT::predictHVT(
+  dataset,
+  hvt.results,
+  child.level = 1,
+  line.width = c(1.2),
+  color.vec = c("#141B41"),
+  quant.error.hmap = 0.1,
+  n_cells.hmap = 100
+)
+```
+
+**The Flow Map functions mentioned in the next section requires Cell ID from prediction output and sorted Tiemstamp  from the dataset we used for prediction. So we merge them both to get a modified data frame that pairs cell IDs with their respective timestamps.**
+
+Let's see which cell and level each point belongs to with the sorted Tiemstamp. For the sake of brevity, we will only show the first 10 rows
+
+```{r predictHVT pred computers,warning=FALSE,eval = global_var}
+
+scored_data <- predictions[["scoredPredictedData"]] %>%
+  round(2) %>% cbind(dataset) %>% 
+  as.data.frame()
+colnames(scored_data) <- c("Segment.Level", "Segment.Parent", "Segment.Child", "n", "Cell.ID", "Quant.Error", "pred_X", "pred_Y", "pred_Z", "centroidRadius", "diff", "anomalyFlag", "X", "Y", "Z", "U", "t")
+DT::datatable(head(scored_data, 10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
+```
+
+```{r,echo=TRUE}
+cat("\n")
+```
+
+
+# Functions for flow map visualizations
+
+
+## Function to create timeseries plot
+
+</br>
+
+
+
+```{r state_plot1, out.width='100%', results='asis', warning=FALSE,message=FALSE}
+
+# **Description - It serves as a tool for exploring and understanding temporal patterns and transitions in the data**
+# 
+# This state_transition_plot function is designed to visualize and analyze sequential data representing state transitions. It takes as input a dataset with state information over time and generates different types of plots based on user preferences. Users can choose to create a timeseries plot of state transitions or a timeseries with lines connecting the state transitions. Additionally, the function allows for data sampling to focus on specific time periods.
+# 
+# **Usage**
+# 
+# > state_transition_plot(df, sample_size = 0.2, line_plot = FALSE, cellid_column = "Cell.ID", time_column = "t")
+# 
+# **Arguments**
+#
+# * @param **df** (dataframe) - A dataframe with prediction output and along with the dataset we used for predictHVT function
+# * @param **sample_size** (numeric) - Need to specify the sampling value which ranges between 0.1 to 1. The highest value 1, outputs a plot with the entire dataset. Sampling of data takes place from the last
+# * @param **line_plot** (logical) - If TRUE, the output will be a timeseries plot with a line connecting the states according to the sample_size otherwise, a timeseries plot but without a line based on the sample_size will be the output
+# * @param **cellid_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+# * @param **time_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+
+
+state_time_plot_result <- state_transition_plot(df = scored_data, cellid_column = "Cell.ID", time_column = "t")
+state_time_plot_result
+
+```
+
+</br>
+
+
+
+
+## Function to create transition probability tables
+
+**This function displays probability with Tplus1 states for all every cell ID in the form of table. For the sake of brevity we are displaying the probability table for the Cell ID 1**
+
+
+
+
+```{r, results='asis'}
+
+# **Description - It is useful for analyzing and visualizing state transition patterns in a dataset**
+# 
+# The get_transition_probability_table function calculates transition probabilities for distinct states within a specified column of a dataframe (df). It computes the likelihood of transitioning from one state to another in sequential rows and presents the results as data frames in a list. Each data frame contains information about the next state (Tplus1_States), the frequency of this transition (Frequency), and the calculated transition probability (Probability). Additionally, the function displays these probability tables for each unique state and stores them in a global variable named trans_prob_df
+# 
+# **Usage**
+# 
+# > get_transition_probability_table(df, cellid_column = "Cell.ID", time_column = "t")
+# 
+# **Arguments**
+# 
+# * @param **df** (dataframe) - A dataframe with prediction output and along with the dataset we used for predictHVT function
+# * @param **cellid_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+# * @param **time_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+get_transition_probability_table(df = scored_data, cellid_column = "Cell.ID", time_column = "t")
+
+```
+
+
+## Function to reconcile transition probability using markovchain package {.tabset}
+
+
+
+
+```{r, warning=FALSE, message=FALSE}
+
+# **Description - It is used to generate and visualize transition probability matrices for state data**
+# 
+# The reconcile_transition_probability function computes and visualizes transition probabilities for state data, it calculates transition probabilities between consecutive states in the input dataset, both with and without self-transitions. The function generates heatmap visualizations for these transition probabilities, providing insights into state transitions over time. It performs Markov Chain analysis on the data, producing transition matrices with and without self-transitions, along with corresponding heatmaps.
+# 
+# **Usage**
+# 
+# > reconcile_transition_probability(df, hmap_type = "All", cellid_column = "Cell.ID", time_column = "Timestamp")
+# 
+# **Arguments**
+# 
+# * @param **df** (dataframe) - A dataframe with prediction output and along with the dataset we used for predictHVT function
+# * @param **hmap_type** (character) - If set to without_self_state, reconciliation plots for manual and Markovchain for highest transition probability excluding the self-state is given as output, if set to with_self_state, reconciliation plots for manual and Markovchain for highest transition probability considering the self-state is given as output and if set to All, plots including and excluding self-state is given as output
+# * @param **cellid_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+# * @param **time_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+
+reconcile_plots <- reconcile_transition_probability(df = scored_data, hmap_type = "All", cellid_column = "Cell.ID", time_column = "t")
+
+```
+
+
+
+### Manual reconciliation of transition probability with self-state
+
+The darker diagonal cells indicate higher probabilities of staying in the same state. These transitions represent situations where there is no change from the current state to the next state. Such states might be attractors in a dynamic system, where the system naturally tends to return to these states even after minor perturbations.
+</br>
+  
+```{r hmap1, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[1]]
+```
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+</br>
+
+
+</br>
+
+
+### Manual reconciliation of transition probability without self-state
+  
+In this plot, the transitions suggest that the states tend to move to neighboring states more frequently. Proximity might not only refer to physical distance but also to similarities in attributes or conditions.
+
+</br>
+```{r hmap2, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[2]]
+```
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+</br>
+
+
+</br>
+
+
+### Markovchain reconciliation of transition probability with self-state
+
+This heatmap uses the same data from the manual reconciliation process to determine the probability using self-state using the *markovchainFit* function.
+
+</br>
+  
+```{r hmap3, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[3]]
+```
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+### Markovchain reconciliation of transition probability without self-state
+
+This heatmap uses the same data from the manual reconciliation process to determine the probability using self-state using the *markovchainFit* function.
+</br>
+  
+```{r hmap4, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[4]]
+```
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+
+</br>
+
+## Function to create flowmap visualizations {.tabset}
+
+
+```{r flow_map_fn, warning=FALSE,message=FALSE}
+# **Description - It is designed for creating and visualizing flow maps based on input data**
+# 
+# The generate_flow_maps function in R extracts centroid coordinates and probability data from input. It generates two types of flow maps, one based on the second-highest probability and another on the highest probability, using arrows to represent state transitions. Additionally, it offers optional animations to visualize transitions over time, either sorted by timestamps or based on the next state. Users can customize the type of maps and animations they want to create for exploring state transitions in their data.
+# 
+# **Usage**
+# 
+# > generate_flow_maps(hvt_model_output, transition_probability_df, hvt_plot_output, df, animation = "All", flow_map = "All", animation_speed = 2, threshold = 0.6, cellid_column = "Cell.ID", time_column = "t")
+# 
+# 
+# **Arguments**
+# 
+# * @param **hvt_model_output** (list) - It is an output list in hierarchy from hvt model training. To get the centroid coordinates, we retrieve the second element, then within the second element, obtain the 1st element's `1`. And to get the Cell IDs, we retrieve the third element, then within the third element, obtain the Cell.ID from summary
+# * @param **transition_probability_df** (dataframe) - A list of dataframes which is the output from the get_transition_probability_table function
+# * @param **hvt_plot_output** (list) - Base plot for the flow maps
+# * @param **df** (dataframe) - A dataframe with prediction output and along with the dataset we used for predictHVT function
+# * @param **animation** (character) - If set to time_based, dot animation for state transition with sorted Timestamp is the output. If set to state_based, arrow animation based on highest state excluding self-state will be the output. If set to All, both the animation will be resulted
+# * @param **flow_map** (character) - If set to self_state, dot flowmap for next state based on highest transition probability will be the output. If set to without_self_state, arrow flowmap with arrow-size based on the distance between the two states pointing to next state based on highest transition probability excluding self-state probability will be the output. If set to probability, arrow flowmap with arrow-size based on their probability pointing to next state based on highest transition probability excluding self-state will be the output. If set to All, all three flowmaps will be resulted
+# * @param **animation_speed** (numeric) - Must be numeric value and a factor of 100
+# * @param **threshold** (numeric) - It ranges between 0.1 to 1. This numeric variable is used to control the categorization of probability values into "High Probability" and "Low Probability" for the flow map type "Probability"
+# * @param **cellid_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+# * @param **time_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
+
+source("./source/flowmap_vig.R")
+plots <- generate_flow_maps(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df, hvt_plot_output = hvt.plot, df = scored_data, animation = "All", flow_map = "All", animation_speed = 2, threshold = 0.7, cellid_column = "Cell.ID", time_column = "t")
+
+```
+
+
+
+
+</br>
+  
+  
+### Flow map: Highest transition probability without considering self-state
+  
+**Arrow lengths on the below Flow map is based on the distance between current and next state. The metric used to calculate the distance is Euclidean Distance**
+  
+  
+```{r arrow_flow, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%',out.height='70%', results='asis', warning=FALSE}
+
+plots[[1]]
+```
+
+### Flow map: Highest transition probability considering self-state
+
+**Circle around the centroid represents self-state Probability**
+  
+```{r dot_flow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%', out.height='70%', results='asis', warning=FALSE}
+plots[[2]]
+
+```
+
+
+
+### Flow Map: Highest transition probability excluding self-states - Arrow size represents transition probability
+
+**Arrow segment length based on Probability**
+  
+```{r arrow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%',out.height='70%', results='asis', warning=FALSE}
+
+plots[[3]]
+```
+
+
+### Flow map animation: Highest state transition probabilities (Including self-states)
+
+
+![](./source/time_animation.gif){width=100%}
+
+
+
+### Flow Map animation: Highest state transition probabilities (Excluding self-states)
+
+![](./source/next_state_animation.gif){width=100%}
