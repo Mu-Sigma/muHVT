@@ -1,6 +1,9 @@
 ^.*\.Rproj$
 ^\.Rproj\.user$
-^vignettes/Testing.Rmd
+^vignettes/HVT_model_diagnostics_vignette.*
+^vignettes/HVT_vignette.*
+^vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.*
+^vignettes/Testing.*
 ^..Rcheck/
 ^.git/
 .gitignore
