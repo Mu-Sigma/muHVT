@@ -61,17 +61,17 @@ knitr::opts_chunk$set(
 )
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "muHVT", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "HVT", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages, dependencies = TRUE)
+  install.packages(new.packages, dependencies = TRUE, repos = "https://cloud.r-project.org/")
 
 # Loading the required libraries
 lapply(list.of.packages, library, character.only = T)
 
-source("./source/flowmap_vig.R")
+source("../R/flowmap.R")
 
 options(expressions = 10000)
 
@@ -171,7 +171,7 @@ The dataset includes the following columns:
 Here, we load the data. Let's explore the Lorenz Attractor Dataset. For the sake of brevity we are displaying first ten rows.
 
 ```{r,warning=FALSE,message=FALSE}
-dataset <- read.csv("./source/lorenze_attractor.csv")
+dataset <- read.csv("./sample_dataset/lorenze_attractor.csv")
 dataset <- dataset %>% dplyr::select(X,Y,Z,U,t)
 dataset$t <- round(dataset$t, 5)
 DT::datatable(head(dataset,10),options = list(pageLength = 10, scrollX = TRUE), class = 'cell-border stripe')
@@ -280,7 +280,7 @@ str(trainData)
 
 ```{r ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
-hvt.results <- muHVT::HVT(
+hvt.results <- HVT::HVT(
   trainData,
   n_cells = 100,
   depth = 1,
@@ -305,7 +305,7 @@ compressionSummaryTable(hvt.results[[3]]$compression_summary)
 For better visualisation, let's plot the Voronoi tessellation for 100 cells.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’lorenz attractor’', echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='90%', results='asis', warning=FALSE}
-hvt.plot <- muHVT::plotHVT(
+hvt.plot <- HVT::plotHVT(
   hvt.results,
   line.width = c(0.4),
   color.vec = c("#141B41"),
@@ -333,7 +333,7 @@ Now once we have built the model, let us try to predict using our validation dat
 
 ```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions <- muHVT::predictHVT(
+predictions <- HVT::predictHVT(
   dataset,
   hvt.results,
   child.level = 1,
@@ -602,7 +602,7 @@ reconcile_plots[[4]]
 # * @param **cellid_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
 # * @param **time_column** (character) - Specify the column name of Cell ID from the dataframe you pass to this function
 
-source("./source/flowmap_vig.R")
+source("../R/flowmap.R")
 plots <- generate_flow_maps(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df, hvt_plot_output = hvt.plot, df = scored_data, animation = "All", flow_map = "All", animation_speed = 2, threshold = 0.7, cellid_column = "Cell.ID", time_column = "t")
 
 ```
@@ -647,10 +647,10 @@ plots[[3]]
 ### Flow map animation: Highest state transition probabilities (Including self-states)
 
 
-![](./source/time_animation.gif){width=100%}
+![](./time_animation.gif){width=100%}
 
 
 
 ### Flow Map animation: Highest state transition probabilities (Excluding self-states)
 
-![](./source/next_state_animation.gif){width=100%}
+![](./next_state_animation.gif){width=100%}

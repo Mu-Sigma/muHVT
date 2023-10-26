@@ -311,7 +311,7 @@ reconcile_transition_probability <- function(df, hmap_type = NULL, cellid_column
 #   - A list of plot objects representing flow maps and animations
 
 generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_plot_output, df, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column, time_column) {
-  
+
   # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL
   if (is.null(animation))animation <- "state_based"
   if (is.null(flow_map))flow_map <- "without_self_state"
@@ -400,11 +400,11 @@ generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_
     select(-x1.y, -y1.y)
   colnames(merged_df2) <- c("x1", "y1", "Cell.ID", "Tplus1_States", "Probability", "x2", "y2")
   merged_df2$Probability <- round(merged_df2$Probability, digits = 3)
-  
+
   # Non-self state PLOT
   merged_df1 <- merged_df1 %>%
     mutate(distance = round(sqrt((x2 - x1)^2 + (y2 - y1)^2), 0))
-  
+
   next_state_arrow_plot <- ggplot() +
     geom_segment(data = merged_df1, mapping = aes(x = x1, y = y1, 
                                                   xend = x1 + (x2 - x1) * 0.09 * sqrt((x2 - x1)^2 + (y2 - y1)^2), 
@@ -420,23 +420,23 @@ generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_
     guides(color = guide_legend(title = "Euclidean\nDistance")) + theme_minimal()
   
   # Self-state Plot
-  prob1 <- merged_df2$Probability
-  cellID_coordinates$prob1 <- prob1
-  
-  min_prob <- min(merged_df2$Probability)
-  custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
-  custom_breaks[1] <- min_prob - 1e-6
-  merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
-  merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), 3, merged_df2$CircleSize)
-  self_state_plot <- ggplot() + 
-    geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
-    geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize)) +
-    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue", 
-                         name = "Probability",
-                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) + 
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2, 3, 4))), fill = guide_legend(title = "Probability")) + 
-    theme_minimal()
+    prob1 <- merged_df2$Probability
+    cellID_coordinates$prob1 <- prob1
+    
+    min_prob <- min(merged_df2$Probability)
+    custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
+    custom_breaks[1] <- min_prob - 1e-6
+    merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
+    merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), 3, merged_df2$CircleSize)
+    self_state_plot <- ggplot() + 
+      geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
+      geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize)) +
+      geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
+      scale_color_gradient(low = "blue", high = "blue", 
+                           name = "Probability",
+                           breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) + 
+      guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2, 3, 4))), fill = guide_legend(title = "Probability")) + 
+      theme_minimal()
   
   
   # Create a new column "threshold" based on the mean
@@ -482,7 +482,7 @@ generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_
   merged_df3 <- merged_df3 %>%
     mutate(threshold_label = ifelse(Probability > threshold, "High", "Low"))
   merged_df3$Probability <- round(merged_df3$Probability, digits = 1)
-  
+
   arrow_flow_map <- ggplot() +
     geom_segment(data = merged_df3, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), yend = y1 + (y2 - y1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), color = Probability),
                  arrow = arrow(length = unit(0.2, "cm")), size = 1, linewidth = 1 ) +
@@ -523,7 +523,7 @@ generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_
   anime_df <- merged_df1[order, ]
   anime_df$order_map <- 1:nrow(anime_df)
   anime_df$label <- rep("State\nTransition", nrow(anime_df))
-  
+
   arrow_anim <- ggplot(anime_df, aes(x = x1, y = y1)) +
     geom_segment(data = anime_df, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.5, yend = y1 + (y2 - y1) * 0.5, color = label),
                  arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +

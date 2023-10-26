@@ -4,6 +4,7 @@
 ^vignettes/HVT_vignette.*
 ^vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.*
 ^vignettes/Testing.*
+^vignettes/Flowmap*
 ^..Rcheck/
 ^.git/
 .gitignore
