@@ -64,7 +64,6 @@ predictHVT <- function(data,
   }
   hvt.results.model[[3]]$summary = cbind(hvt.results.model[[3]]$summary,centroidRadius=unlist( hvt.results.model[[3]]$max_QE))
   
-  options(warn = -1)
   
   # distance_metric <-
   #   ifelse(distance_metric == "L1_Norm", "manhattan", "euclidean")

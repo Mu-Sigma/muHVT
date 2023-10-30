@@ -49,7 +49,6 @@ getOptimalCentroids <-
     # browser()
     if(quant_method == "kmeans"){
       
-      options(warn = -1)
       # Start with splitting data into three clusters
       nclust_iter <- 3
       outkinit <- list(centers = numeric(),maxQE = numeric(),meanQE = numeric(), values = logical() , nsize = numeric())
@@ -90,7 +89,6 @@ getOptimalCentroids <-
       # return centroids, datapoints and size of each cluster
       return(outkinit)
     }else if(quant_method == "kmedoids"){
-      options(warn = -1)
       # Start with splitting data into three clusters
       # browser()
       nclust_iter <- 3
