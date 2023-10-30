@@ -14,6 +14,7 @@
 #' @param color.vec Vector. A color vector
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
+#' @param seed Numeric. Random Seed.
 #' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
 #' @param yVar character. Name of the dependent variable(s)
@@ -61,6 +62,7 @@ mlayerHVT <- function(data,
                        hvt_mapC,
                        mad.threshold = 0.2,
                        normalize = TRUE, 
+                       seed = 300,
                        distance_metric="L1_Norm",
                        error_metric="max",
                        child.level = 1, 
@@ -70,7 +72,7 @@ mlayerHVT <- function(data,
                        ...){
   # browser()
   
-  set.seed(300)
+  set.seed(seed)
   requireNamespace("dplyr")
   requireNamespace("purrr")
  

@@ -267,7 +267,7 @@ exploded_hmap <-
     
    temp_hvtVolcanoMatrix= lapply(Level_list, depth_wise_surface) 
     number_of_layers = length(temp_hvtVolcanoMatrix)
-    p = plotly::plot_ly(showscale=F)
+    p = plotly::plot_ly(showscale = FALSE)
     
     temp=lapply(1: number_of_layers, function(i){
       hvtVolcanoMatrix=temp_hvtVolcanoMatrix[[i]] - ((i-1) * sepration_width)

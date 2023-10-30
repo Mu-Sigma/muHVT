@@ -27,6 +27,7 @@
 #' the tesselations so as to visualize the sub-tesselations well enough.
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
+#' @param seed Numeric. Random Seed.
 #' @param scale_summary List. A list with mean and standard deviation values for all the features in the dataset. 
 #' Pass the scale summary when the input dataset is already scaled or normalize is set to False.
 #' @param distance_metric character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.
@@ -53,7 +54,7 @@
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE,
+#'                    projection.scale = 10, normalize = TRUE, seed = 279,
 #'                    quant_method="kmeans")
 #' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
 #'         maxDepth = 1)
@@ -61,7 +62,7 @@
 #' hvt.results <- list()
 #' hvt.results <- HVT(USArrests, n_cells = 15, depth = 3, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE,
+#'                    projection.scale = 10, normalize = TRUE, seed = 279,
 #'                    quant_method="kmeans")
 #' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
 #'         maxDepth = 3)
@@ -76,6 +77,7 @@ HVT <-
               quant.err = 0.2,
               projection.scale = 10,
               normalize = FALSE,
+              seed = 279,
               distance_metric = c("L1_Norm", "L2_Norm"),
               error_metric = c("mean", "max"),
               quant_method=c("kmeans","kmedoids"),
@@ -108,7 +110,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       if(train_validation_split_ratio >1 | train_validation_split_ratio <0){stop("The train_validation_split_ratio should be in range 0-1 ")}
       message(paste0("Check MAD parameter has been set to TRUE, the train data will be randomly split by the ratio of  ",train_validation_split_ratio*100,":",(1-train_validation_split_ratio)*100))
 
-      set.seed(279)
+      set.seed(seed)
       smp_size <- floor(train_validation_split_ratio * nrow(dataset))
       train_ind <- sample(seq_len(nrow(dataset)), size = smp_size)
 

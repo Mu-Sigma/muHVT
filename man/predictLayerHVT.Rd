@@ -11,6 +11,7 @@ predictLayerHVT(
   hvt_mapC,
   mad.threshold = 0.2,
   normalize = TRUE,
+  seed = 300,
   distance_metric = "L1_Norm",
   error_metric = "max",
   child.level = 1,
@@ -34,6 +35,8 @@ this dataset can also be used to overlay as heatmap}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
+
+\item{seed}{Numeric. Random Seed.}
 
 \item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
 

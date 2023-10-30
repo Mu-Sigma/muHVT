@@ -12,6 +12,7 @@
 #' @param color.vec Vector. A color vector
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
+#' @param seed Numeric. Random Seed.
 #' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
 #' @param yVar character. Name of the dependent variable(s)
@@ -44,14 +45,15 @@ predictHVT <- function(data,
                        mad.threshold = 0.2,
                        line.width = c(0.6, 0.4, 0.2),
                        color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
-                       normalize = TRUE, 
+                       normalize = TRUE,
+                       seed = 300, 
                        distance_metric="L1_Norm",
                        error_metric="max",
                        yVar= NULL,
                        ...){
   # browser()
   
-  set.seed(300)
+  set.seed(seed)
   requireNamespace("dplyr")
   requireNamespace("purrr")
   # require("plotly")

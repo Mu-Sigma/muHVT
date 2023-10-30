@@ -12,6 +12,7 @@ HVT(
   quant.err = 0.2,
   projection.scale = 10,
   normalize = FALSE,
+  seed = 279,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
@@ -42,6 +43,8 @@ the tesselations so as to visualize the sub-tesselations well enough.}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
+
+\item{seed}{Numeric. Random Seed.}
 
 \item{distance_metric}{character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.}
 
@@ -88,7 +91,7 @@ data(USArrests)
 hvt.results <- list()
 hvt.results <- HVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
+                   projection.scale = 10, normalize = TRUE, seed = 279,
                    quant_method="kmeans")
 plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
         maxDepth = 1)
@@ -96,7 +99,7 @@ plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'),
 hvt.results <- list()
 hvt.results <- HVT(USArrests, n_cells = 15, depth = 3, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
+                   projection.scale = 10, normalize = TRUE, seed = 279,
                    quant_method="kmeans")
 plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
         maxDepth = 3)

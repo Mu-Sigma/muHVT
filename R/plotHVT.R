@@ -195,7 +195,7 @@ plotHVT <-
       ggplot2::scale_y_continuous(expand = c(0, 0)) +
       ggplot2::geom_label(label = centroidDataframe$outlier_cell,
                  nudge_x=0.45, nudge_y=0.1,
-                 check_overlap=T,
+                 check_overlap=TRUE,
                  label.padding=unit(0.55, "lines"),
                  label.size=0.4,
                  color="white",

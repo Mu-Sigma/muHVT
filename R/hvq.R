@@ -27,6 +27,7 @@
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
+#' @param seed Numeric. Random Seed.
 #' @param distance_metric character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @param quant_method character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default
@@ -57,6 +58,7 @@ hvq <-
             n_cells = NA,
             depth = 3,
             quant.err = 10,
+            seed = 300,
             algorithm = "Hartigan-Wong",
             distance_metric = c("L1_Norm", "L2_Norm"),
             error_metric = c("mean", "max"),
@@ -82,7 +84,7 @@ hvq <-
       std<-matrix(0, nrow = ncol(x), n_cells)
     }
     
-    set.seed(300)
+    set.seed(seed)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
     # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, n_cells,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
@@ -228,7 +230,7 @@ hvq <-
             z = data.frame(initclust[[j]])
             # try(
             # outk <- getOptimalCentroids_new(z, iter.max = 10^5, algorithm = algorithm, n_cells, n_min_points, function_to_calculate_distance_metric, function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method=quant_method)
-            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, n_cells, function_to_calculate_distance_metric, function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method=quant_method)
+            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, n_cells = n_cells, function_to_calculate_distance_metric = function_to_calculate_distance_metric, function_to_calculate_error_metric = function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method = quant_method)
             # )
             
             # outk$centers <- outk$centers[-which(sapply(outk$centers, is.na))]

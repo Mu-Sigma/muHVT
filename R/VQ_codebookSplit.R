@@ -56,7 +56,7 @@ findMembers <- function(dataset, centroid){
   err <- do.call(rbind, err)
   
   # Allocate the membership of a datum to its closest centroid
-  clust.list <- apply(err, MARGIN=2, FUN = function(X) { return(which(X==min(X), arr.ind=T))})
+  clust.list <- apply(err, MARGIN=2, FUN = function(X) { return(which(X==min(X), arr.ind = TRUE ))})
   
   return(clust.list)
 }
@@ -130,7 +130,7 @@ lbgVQ = function(dataset,quant.err,epsilon){
              finally={})
     
     # split the codebooks
-    tryCatch({cSplit <- unlist(split_codevec(codesToSplit,epsilon), recursive=F)}, 
+    tryCatch({cSplit <- unlist(split_codevec(codesToSplit,epsilon), recursive = FALSE)}, 
              error=function(err){print(err)}, 
              finally={})
     
