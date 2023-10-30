@@ -10,7 +10,7 @@ mlayerHVT(
   hvt_mapB,
   hvt_mapC,
   mad.threshold = 0.2,
-  normalize = T,
+  normalize = TRUE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   child.level = 1,

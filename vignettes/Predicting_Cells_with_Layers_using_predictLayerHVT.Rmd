@@ -64,7 +64,7 @@ if (length(new.packages))
   install.packages(new.packages, dependencies = TRUE, repos='https://cloud.r-project.org/')
 
 # Loading the required libraries
-lapply(list.of.packages, library, character.only = T)
+lapply(list.of.packages, library, character.only = TRUE)
 
 # Sourcing the modified files for HVT
 ## Do this if HVT is unavailable on CRAN
@@ -112,22 +112,22 @@ scrolLimit <- function(noOfRows){
   return(swe)
 }
 
-Table <- function(data,scroll = T, limit = NULL){
+Table <- function(data,scroll = TRUE, limit = NULL){
   
   if(!is.null(limit)){
     data <- head(data,limit)
   }
 
-  kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+  kable_table <- data %>% kable(escape = FALSE,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
   scroll <- scroll
   
-  if(scroll == T){
+  if(scroll == TRUE){
   kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
   }
   return(kable_table)
 }
 
-summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limit=NULL){
+summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.2,limit=NULL){
   
   scroll <- scroll
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
@@ -135,7 +135,7 @@ summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limi
   return(Table(summaryTable,scroll = scroll,limit = limit))
 }
 
-compressionSummaryTable <- function(data,scroll = T,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
+compressionSummaryTable <- function(data,scroll = TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
 
   return(Table(summaryTable,scroll = scroll))
@@ -164,7 +164,7 @@ In this vignette, we will use the **`Prices of Personal Computers`** dataset. Th
 
 Here, we load the data and store into a variable `computers`.
 
-```{r load data computer,warning=FALSE,message=FALSE,eval = T}
+```{r load data computer,warning=FALSE,message=FALSE,eval = TRUE}
 set.seed(240)
 # Load data from csv files
 computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/sample_dataset/Computers.csv")
@@ -184,7 +184,7 @@ The Computers dataset includes the following columns:
 Let's explore the **Personal Computers Dataset containing (6259 points)**. For the shake of brevity we are displaying first six rows.
 
 ```{r}
-Table(head(computers), scroll = T, limit = 20)
+Table(head(computers), scroll = TRUE, limit = 20)
 ```
 
 Now, let us check the **structure** of the data and analyse its **summary**.
@@ -349,7 +349,7 @@ map_A  <- HVT::HVT(
   depth = 1,
   quant.err = 0.2,
   projection.scale = 10,
-  normalize = T,
+  normalize = TRUE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   quant_method = "kmeans"
@@ -386,7 +386,7 @@ map_A <-HVT::HVT(trainComputers,
                 distance_metric = "L1_Norm",
                 error_metric = "max",
                 quant_method = "kmeans",
-                normalize = T)
+                normalize = TRUE)
 ```
 
 As per the manual, **`map_A[[3]]`** gives us detailed information about the hierarchical vector quantized data. **`map_A[[3]][['summary']]`** gives a nice tabular data containing no of points, Quantization Error and the codebook.
@@ -394,7 +394,7 @@ As per the manual, **`map_A[[3]]`** gives us detailed information about the hier
 The datatable displayed below is the **summary from map A** showing Cell.ID, Centroids and Quantization Error for each of the 440 cells.
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
-summaryTable(map_A[[3]]$summary,scroll = T,limit = 500)
+summaryTable(map_A[[3]]$summary,scroll = TRUE,limit = 500)
 
 ```
 
@@ -494,7 +494,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -512,7 +512,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -530,7 +530,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -548,7 +548,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -566,7 +566,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -584,7 +584,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -602,7 +602,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 440,
 ) 
@@ -645,7 +645,7 @@ novelty_data <- novelty_data %>% dplyr::select("Row.No","Cell.ID","Cell.Number",
 colnames(novelty_data) <- c("Row.No","Cell.ID","Segment.Child","price","speed","hd","ram","screen","ads")
 novelty_data %>% head(100) %>% 
   as.data.frame() %>%
-  Table(scroll = T, limit = 20)
+  Table(scroll = TRUE, limit = 20)
 ```
 
 ```{=html}
@@ -684,11 +684,11 @@ map_B <- HVT::HVT(dataset_with_novelty,
                   depth = 1,
                   quant.err = 0.2,
                   projection.scale = 10,
-                  normalize = F,
+                  normalize = FALSE,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
                   quant_method = "kmeans",
-                  diagnose = F
+                  diagnose = FALSE
                   )
 
 ```
@@ -696,7 +696,7 @@ map_B <- HVT::HVT(dataset_with_novelty,
 The datatable displayed below is the **summary from map B (layer 2)** showing Cell.ID, Centroids and Quantization Error for each of the 12 cells.
 
 ```{r, message=FALSE,warning=FALSE}
-summaryTable(map_B[[3]]$summary,scroll = T,limit = 500)
+summaryTable(map_B[[3]]$summary,scroll = TRUE,limit = 500)
 
 ```
 
@@ -737,11 +737,11 @@ map_C <- HVT::HVT(dataset_without_novelty,
                   depth = 2,
                   quant.err = 0.2,
                   projection.scale = 10,
-                  normalize = F,
+                  normalize = FALSE,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
                   quant_method = "kmeans",
-                  diagnose = F,
+                  diagnose = FALSE,
                   scale_summary = mapA_scale_summary)
 
 ```
@@ -774,11 +774,11 @@ map_C <- HVT::HVT(dataset_without_novelty,
                   depth = 2,
                   quant.err = 0.2,
                   projection.scale = 10,
-                  normalize = F,
+                  normalize = FALSE,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
                   quant_method = "kmeans",
-                  diagnose = F,
+                  diagnose = FALSE,
                   scale_summary = mapA_scale_summary)
 
 ```
@@ -786,7 +786,7 @@ map_C <- HVT::HVT(dataset_without_novelty,
 The datatable displayed below is the **summary from map C (layer2)**. showing Cell.ID, Centroids and Quantization Error for each of the 531 cells.
 
 ```{r,message=FALSE,warning=FALSE}
-summaryTable(map_C[[3]]$summary,scroll = T,limit = 500)
+summaryTable(map_C[[3]]$summary,scroll = TRUE,limit = 500)
 
 ```
 
@@ -826,7 +826,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -844,7 +844,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -862,7 +862,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -880,7 +880,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -898,7 +898,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -916,7 +916,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -934,7 +934,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   color.vec = c("#141B41","#0582CA"),
   palette.color = 6,
   centroid.size = 0.1,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 100,
 ) 
@@ -960,7 +960,7 @@ The testing dataset includes the following columns:
 
 Let's have a look at our randomly selected **test dataset** containing 1252 datapoints.
 
-```{r sample test data computer,warning=FALSE,message=FALSE,eval = T}
+```{r sample test data computer,warning=FALSE,message=FALSE,eval = TRUE}
 Table(head(testComputers_data))
 ```
 
@@ -974,7 +974,7 @@ predictLayerHVT(data,
                 map_B,
                 map_C,
                 mad.threshold = 0.2,
-                normalize = T, 
+                normalize = TRUE, 
                 distance_metric="L1_Norm",
                 error_metric="max",
                 child.level = 1, 
@@ -1031,7 +1031,7 @@ new_predict <- predictLayerHVT(
     map_A,
     map_B,
     map_C,
-    normalize = T
+    normalize = TRUE
   )
 
 
@@ -1043,7 +1043,7 @@ Let's see which cell and layer each point belongs to and check the Mean Absolute
 
 act_pred <- new_predict[["actual_predictedTable"]]
 rownames(act_pred) <- NULL
-act_pred %>% head(1000) %>%as.data.frame() %>%Table(scroll = T)
+act_pred %>% head(1000) %>%as.data.frame() %>%Table(scroll = TRUE)
 
 
 ```

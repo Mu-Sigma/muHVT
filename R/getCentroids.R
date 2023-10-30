@@ -64,7 +64,7 @@ getCentroids <-
           x = cluster::daisy(x, metric = distance_metric),
           k = n_cells,
           diss = TRUE,
-          keep.data = F
+          keep.data = FALSE
         )
       
       centl <- nout <- outl <- list()

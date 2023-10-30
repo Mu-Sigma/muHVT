@@ -44,7 +44,7 @@ predictHVT <- function(data,
                        mad.threshold = 0.2,
                        line.width = c(0.6, 0.4, 0.2),
                        color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
-                       normalize = T, 
+                       normalize = TRUE, 
                        distance_metric="L1_Norm",
                        error_metric="max",
                        yVar= NULL,
@@ -78,7 +78,7 @@ predictHVT <- function(data,
     stop('Not all training columns are part of test dataset')
   }
   
-  if (!all(is.na(summary_list$scale_summary)) && normalize == T) {
+  if (!all(is.na(summary_list$scale_summary)) && normalize == TRUE) {
     scaled_test_data <- scale(
       data[, train_colnames],
       center = summary_list$scale_summary$mean_data[train_colnames],
@@ -221,7 +221,7 @@ predictHVT <- function(data,
     select(-c("Quant.Error.x", "sumOriginal" ,"n.y"))
   
   plotList <- hvt.results.model[[2]] %>% 
-    unlist(., recursive = F) %>% unlist(., recursive = F) 
+    unlist(., recursive = FALSE) %>% unlist(., recursive = FALSE) 
   
   boundaryCoords2 <-
     lapply(plotList, function(x) {
@@ -331,13 +331,13 @@ predictHVT <- function(data,
     plotly::layout(hoverlabel = list(bgcolor = 'rgba(255,255,0,0.2)'),
                    legend = list(
                      title = list(text = "Level"),
-                     itemdoubleclick = F,
+                     itemdoubleclick = FALSE,
                      itemclick = "toggleothers",
                      traceorder = "reversed"
                    )
     ) %>% 
     plotly::style(plotlyPredict, hoverinfo = "none", traces = trace_vec) %>%
-    plotly::config(displayModeBar = F)
+    plotly::config(displayModeBar = FALSE)
   
   predict_test_data3 <- predict_test_data3 %>% mutate_if(is.numeric, round, digits = 4) # Rounding decimal columns using dplyr function
   predict_test_dataRaw <- predict_test_data3

@@ -103,7 +103,7 @@ lengthChange = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = "_all"
       )),
-      autowidth = T
+      autowidth = TRUE
     )
 
 # use where you need to show more than 10 rows of dataset
@@ -237,7 +237,7 @@ lengthChange = FALSE,
       columnDefs = list(list(
         className = 'dt-center', targets = "_all"
       )),
-      autowidth = T
+      autowidth = TRUE
     )
 
 
@@ -251,7 +251,7 @@ if (length(new.packages))
 
 install.packages('https://cran.r-project.org/src/contrib/Archive/dummies/dummies_1.5.6.tar.gz', type="source", repos=NULL)
 # Loading the required libraries
-lapply(list.of.packages, library, character.only = T)
+lapply(list.of.packages, library, character.only = TRUE)
 
 options(expressions = 10000)
 
@@ -271,17 +271,17 @@ scrolLimit <- function(noOfRows){
   return(swe)
 }
 
-Table <- function(data,scroll = F, limit = NULL){
+Table <- function(data,scroll = FALSE, limit = NULL){
   
   if(!is.null(limit)){
     data <- head(data,limit)
   }
   
-  kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+  kable_table <- data %>% kable(escape = FALSE,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
   
   scroll <- scroll
   
-  if(scroll == T){
+  if(scroll == TRUE){
   kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
   }
   
@@ -291,7 +291,7 @@ Table <- function(data,scroll = F, limit = NULL){
   
 }
 
-summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limit=NULL){
+summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.2,limit=NULL){
   
   scroll <- scroll
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
@@ -304,7 +304,7 @@ summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limi
 
 compressionSummaryTable <-
   function(data,
-           scroll = T,
+           scroll = TRUE,
            columnName = 'percentOfCellsBelowQuantizationErrorThreshold',...) {
   
         table_out=  DT::datatable(
@@ -613,7 +613,7 @@ names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
     # Display imported dataset
     dataset_updated %>% head(100) %>% 
       as.data.frame() %>%
-      Table(scroll = T, limit = 20)
+      Table(scroll = TRUE, limit = 20)
   }
 
 ```
@@ -635,7 +635,7 @@ df <- do.call(cbind, lapply(dataset_updated, summary)) %>%
   tibble::rownames_to_column("Metrics")
 
 df %>% head(100) %>% as.data.frame() %>%
-Table(scroll = T, limit = 20)
+Table(scroll = TRUE, limit = 20)
 
 # DT::datatable(df %>% 
 #                 mutate_if(is.numeric, round,4) %>% 
@@ -1058,7 +1058,7 @@ data <- dataset_updated %>% dplyr::summarise_if(is.numeric, var) %>% t() %>%
   data.frame() %>% round(3) #%>% DT::datatable(colnames = "Variance")
 
 colnames(data) <- c("Variance")
-Table(data,scroll = T, limit = 20)
+Table(data,scroll = TRUE, limit = 20)
 
 ```
 
@@ -1083,7 +1083,7 @@ dataset_updated <-  dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
 
 dataset_updated %>% head(10) %>%
   as.data.frame() %>%
-  Table(scroll = T, limit = 20)
+  Table(scroll = TRUE, limit = 20)
 
 ```
 
@@ -1139,7 +1139,7 @@ dataset_updated %>% head(10) %>%
            n_missing = rowSums(is.na(.))
            # ,n_non_missing = n_row - n_missing
            )
-Table(aa,scroll = T, limit = 20)
+Table(aa,scroll = TRUE, limit = 20)
 #)
 ```
 
@@ -1227,10 +1227,10 @@ Quartile Range of each column at a panel level.
 ## the below function helps plotting quantile outlier plot for multiple variables
 quantile_outlier_plots_fn <- function(data, outlier_check_var, data_cat = dataset_updated[, cat_cols], numeric_cols = numeric_cols){
     # lower threshold
-    lower_threshold <- stats::quantile(data[, outlier_check_var], .25,na.rm = T) - 1.5*(stats::IQR(data[, outlier_check_var], na.rm = T))
+    lower_threshold <- stats::quantile(data[, outlier_check_var], .25,na.rm = TRUE) - 1.5*(stats::IQR(data[, outlier_check_var], na.rm = TRUE))
     
     # upper threshold
-    upper_threshold <- stats::quantile(data[,outlier_check_var],.75,na.rm = T) + 1.5*(stats::IQR(data[,outlier_check_var],na.rm = T))
+    upper_threshold <- stats::quantile(data[,outlier_check_var],.75,na.rm = TRUE) + 1.5*(stats::IQR(data[,outlier_check_var],na.rm = TRUE))
     
     # Look for outliers based on thresholds
     data$QuantileOutlier <- data[,outlier_check_var] > upper_threshold | data[,outlier_check_var] < lower_threshold
@@ -1269,7 +1269,7 @@ numeric columns. The output shown is a matrix.
 
 corrplot::corrplot(cor(dataset_updated), 
                             method = "color", 
-                            outline = T, 
+                            outline = TRUE, 
                             addgrid.col = "darkgray",
                             # order="hclust", 
                             addrect = 4,
@@ -1359,7 +1359,7 @@ HVT::HVT(
   depth,
   quant.err,
   projection.scale,
-  normalize = T,
+  normalize = TRUE,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
@@ -1431,7 +1431,7 @@ hvt.results <- HVT::HVT(dataset_updated_train,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
-                          normalize = T,
+                          normalize = TRUE,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",
@@ -1454,7 +1454,7 @@ threshold and percentage of cells having quantization error below
 threshold.
 
 ```{r}
-Table(hvt.results[[3]]$compression_summary,scroll = T, limit = 10)
+Table(hvt.results[[3]]$compression_summary,scroll = TRUE, limit = 10)
 #compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
@@ -1794,7 +1794,7 @@ Quant.Error.Actual <- QEdata %>%
 
 # predictions[["predictPlot"]]
 # 
-# Table(predictions$predictions %>% dplyr::relocate(Cell_path), scroll = T, limit = 10)
+# Table(predictions$predictions %>% dplyr::relocate(Cell_path), scroll = TRUE, limit = 10)
 ```
 
 ### Quantization Error Comparison (Train vs. Test)
@@ -1917,7 +1917,7 @@ df1 <-  QECompareDf1 %>%
     mutate_if(is.numeric, ~ round(., 4)) %>%
     select(-c(`Quant.Error.Diff (%)`)) %>%
     rename(No.Of.Points = n)
-Table(df1,scroll = T, limit = 10)
+Table(df1,scroll = TRUE, limit = 10)
 #)
 ```
 
@@ -1951,7 +1951,7 @@ folder.
 predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
-      Table(scroll = T, limit = 20)
+      Table(scroll = TRUE, limit = 20)
 ```
 
 # Applications

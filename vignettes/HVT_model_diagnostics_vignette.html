@@ -5367,7 +5367,7 @@ the parent polygon. This is done for all the subsequent levels.</p>
   depth,
   quant.err,
   projection.scale,
-  normalize = T,
+  normalize = TRUE,
   distance_metric = c(&quot;L1_Norm&quot;, &quot;L2_Norm&quot;),
   error_metric = c(&quot;mean&quot;, &quot;max&quot;),
   quant_method = c(&quot;kmeans&quot;, &quot;kmedoids&quot;),
@@ -42043,7 +42043,7 @@ validation and test data.</p>
 <span id="cb82-9"><a href="#cb82-9" tabindex="-1"></a></span>
 <span id="cb82-10"><a href="#cb82-10" tabindex="-1"></a><span class="co"># predictions[[&quot;predictPlot&quot;]]</span></span>
 <span id="cb82-11"><a href="#cb82-11" tabindex="-1"></a><span class="co"># </span></span>
-<span id="cb82-12"><a href="#cb82-12" tabindex="-1"></a><span class="co"># Table(predictions$predictions %&gt;% dplyr::relocate(Cell_path), scroll = T, limit = 10)</span></span></code></pre></div>
+<span id="cb82-12"><a href="#cb82-12" tabindex="-1"></a><span class="co"># Table(predictions$predictions %&gt;% dplyr::relocate(Cell_path), scroll = TRUE, limit = 10)</span></span></code></pre></div>
 <div id="quantization-error-comparison-train-vs.-test" class="section level3" number="11.3.1">
 <h3><span class="header-section-number">11.3.1</span> Quantization Error
 Comparison (Train vs. Test)</h3>

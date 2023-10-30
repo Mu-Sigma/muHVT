@@ -98,7 +98,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
     # dataset <- as.data.frame(sapply(dataset[,1:length(dataset[1,])], as.numeric))
     dataset=data.frame(
       lapply(dataset, as.numeric),
-      check.names = F,
+      check.names = FALSE,
       row.names = rownames(dataset)
     )
 
@@ -119,7 +119,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
 
 
     if (normalize) {
-      scaledata <- scale(dataset, scale = T, center = T)
+      scaledata <- scale(dataset, scale = TRUE, center = TRUE)
       rownames(scaledata) <- rownames(dataset)
 
       mean_data <- attr(scaledata, "scaled:center")

@@ -4,7 +4,7 @@ context("hvq package")
 ## Load data 
 
 USArrests <- datasets::USArrests
-USArrests <- scale(USArrests,center = T,scale = T)
+USArrests <- scale(USArrests,center = TRUE,scale = TRUE)
 set.seed(420)
 
 test_that("getCentroids give correct results for L1_Norm and mean",{

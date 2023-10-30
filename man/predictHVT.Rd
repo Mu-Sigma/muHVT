@@ -11,7 +11,7 @@ predictHVT(
   mad.threshold = 0.2,
   line.width = c(0.6, 0.4, 0.2),
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
-  normalize = T,
+  normalize = TRUE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   yVar = NULL,

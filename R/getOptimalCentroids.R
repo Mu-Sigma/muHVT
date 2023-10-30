@@ -56,7 +56,7 @@ getOptimalCentroids <-
       quantok <- rep(T, n_cells)
       
       # Check if 3 <= No of clusters AND No of cells in a cluster > 3 AND flag to check QE for all clusters
-      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = TRUE) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
         set.seed(100)
@@ -102,7 +102,7 @@ getOptimalCentroids <-
         distance_metric = "euclidean"
       }
       kout=list()
-      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = TRUE) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
         set.seed(100)
@@ -112,7 +112,7 @@ getOptimalCentroids <-
             x = cluster::daisy(x, metric = distance_metric),
             k = nclust_iter,
             diss = TRUE,
-            keep.data = F
+            keep.data = FALSE
           )
         kout$cluster=kmedoids_model[["clustering"]]
         result<- getCentroids_for_opti(x,kout, nclust_iter,function_to_calculate_distance_metric,function_to_calculate_error_metric)

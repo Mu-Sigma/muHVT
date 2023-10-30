@@ -90,11 +90,11 @@ hvq <-
     colSd <- function (x, na.rm=FALSE) apply(X=x, MARGIN=2, FUN=stats::sd, na.rm=na.rm)
     
     calculate_euclidean_distance_for_each_cluster <- function(x){
-      sqrt(rowSums(scale(x,center = T,scale = F)^2))/ncol(x)
+      sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
     }
     
     calculate_manhattan_distance_for_each_cluster <- function(x){
-      rowSums(abs(scale(x,center = T,scale = F)))/ncol(x)
+      rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
     }
     
     
@@ -342,15 +342,15 @@ hvq <-
       ztab[1:n_cells, 4] <- unlist(outkinit$nsize)
       #Centroid/Quantization error of the cluster
       ztab[1:n_cells, 5] <- unlist(outkinit$cent)
-      # ztab3upc <- sapply(outkinit$val, mean, na.rm = T)
+      # ztab3upc <- sapply(outkinit$val, mean, na.rm = TRUE)
       # ztab3upc<-matrix(0, nrow = ncol(x), n_cells)
       # std<-matrix(0, nrow = ncol(x), n_cells)
       for(a in 1: n_cells){
         for(b in 1: ncol(x)){
-          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
+          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = TRUE))
           rownames(ztab3upc) <- colnames(x)
           # Calculating sd
-          std[b, a] <- as.matrix(stats::sd(outkinit$val[[a]][, b], na.rm = T))
+          std[b, a] <- as.matrix(stats::sd(outkinit$val[[a]][, b], na.rm = TRUE))
           rownames(std) <- colnames(x)
         }
       }
@@ -377,9 +377,9 @@ hvq <-
       ztab[, 4] <- unlist(outkinit$nsize)
       ztab[, 5] <- unlist(outkinit$cent)
       ztab_mean <- t(sapply(outkinit$val, colMeans, 
-                            na.rm = T))
+                            na.rm = TRUE))
       std <- t(sapply(outkinit$val, colSd, 
-                      na.rm = T))
+                      na.rm = TRUE))
       if(quant_method == "kmeans"){
         ztab[, 6:ncol(ztab)] <- ztab_mean # mean values
       } else {

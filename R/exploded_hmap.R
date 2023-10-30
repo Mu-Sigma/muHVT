@@ -272,11 +272,11 @@ exploded_hmap <-
     temp=lapply(1: number_of_layers, function(i){
       hvtVolcanoMatrix=temp_hvtVolcanoMatrix[[i]] - ((i-1) * sepration_width)
       p <<- p %>%
-        plotly::add_surface(z = ~ hvtVolcanoMatrix,opacity = layer_opacity[i] ,name=paste("Layer_",i), showlegend = T) 
+        plotly::add_surface(z = ~ hvtVolcanoMatrix,opacity = layer_opacity[i] ,name=paste("Layer_",i), showlegend = TRUE) 
     })
 
     p<-p %>%
-      plotly::config( displaylogo = F) %>%
+      plotly::config( displaylogo = FALSE) %>%
       plotly::layout(
         zaxis = list(title = hmap.cols),
         title = paste(

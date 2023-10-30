@@ -68,7 +68,7 @@ if (length(new.packages))
   install.packages(new.packages, dependencies = TRUE, repos='https://cloud.r-project.org/')
 
 # Loading the required libraries
-lapply(list.of.packages, library, character.only = T)
+lapply(list.of.packages, library, character.only = TRUE)
 
 # Sourcing the modified files for HVT
 ## Do this if HVT is unavailable on CRAN
@@ -115,17 +115,17 @@ scrolLimit <- function(noOfRows){
   return(swe)
 }
 
-Table <- function(data,scroll = F, limit = NULL){
+Table <- function(data,scroll = FALSE, limit = NULL){
   
   if(!is.null(limit)){
     data <- head(data,limit)
   }
   
-  kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+  kable_table <- data %>% kable(escape = FALSE,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
   
   scroll <- scroll
   
-  if(scroll == T){
+  if(scroll == TRUE){
   kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
   }
   
@@ -133,7 +133,7 @@ Table <- function(data,scroll = F, limit = NULL){
   
 }
 
-summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limit=NULL){
+summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.2,limit=NULL){
   
   scroll <- scroll
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
@@ -142,7 +142,7 @@ summaryTable <- function(data,scroll = T,columnName='Quant.Error',value=0.2,limi
   
 }
 
-compressionSummaryTable <- function(data,scroll = T,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
+compressionSummaryTable <- function(data,scroll = TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
   
   
 summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
@@ -439,7 +439,7 @@ HVT(
   depth,
   quant.err,
   projection.scale,
-  normalize = T,
+  normalize = TRUE,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
@@ -520,7 +520,7 @@ hvt.torus <- HVT::HVT(
   depth = 1,
   quant.err = 0.1,
   projection.scale = 10,
-  normalize = F,
+  normalize = FALSE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   quant_method = "kmeans"
@@ -558,7 +558,7 @@ hvt.torus2 <- HVT::HVT(
   depth = 1,
   quant.err = 0.1,
   projection.scale = 10,
-  normalize = F,
+  normalize = FALSE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   quant_method = "kmeans"
@@ -595,7 +595,7 @@ hvt.torus3 <- HVT::HVT(
   depth = 1,
   quant.err = 0.1,
   projection.scale = 10,
-  normalize = F,
+  normalize = FALSE,
   distance_metric = "L1_Norm",
   error_metric = "max",
   quant_method = "kmeans"
@@ -637,7 +637,7 @@ colnames(centroid_coordinates) <- c("x_coord","y_coord")
 centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
 centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x_coord,y_coord)
 centroid_coordinates1 <- centroid_coordinates %>% data.frame() %>% round(4)
-Table(head(centroid_coordinates1), scroll = T, limit = 20)
+Table(head(centroid_coordinates1), scroll = TRUE, limit = 20)
 
 ```
 
@@ -669,7 +669,7 @@ colnames(centroid_coordinates) <- c("x_coord","y_coord")
 centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
 centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x_coord,y_coord)
 centroid_coordinates2 <- centroid_coordinates %>% data.frame() %>% round(4)
-Table(head(centroid_coordinates2), scroll = T, limit = 20)
+Table(head(centroid_coordinates2), scroll = TRUE, limit = 20)
 
 ```
 
@@ -699,7 +699,7 @@ colnames(centroid_coordinates) <- c("x_coord","y_coord")
 centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
 centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x_coord,y_coord)
 centroid_coordinates3 <- centroid_coordinates %>% data.frame() %>% round(4)
-Table(head(centroid_coordinates3), scroll = T, limit = 20)
+Table(head(centroid_coordinates3), scroll = TRUE, limit = 20)
 
 ```
 
@@ -828,7 +828,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.8,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15
 )
@@ -844,7 +844,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.8,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15
 )
@@ -860,7 +860,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.8,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15
 )
@@ -876,7 +876,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.8,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15
 )
@@ -939,7 +939,7 @@ predictions_torus <- predictHVT(
   color.vec = c("#141B41"),
   quant.error.hmap = 0.1,
   n_cells.hmap = 900,
-  normalize = F
+  normalize = FALSE
 )
 ```
 
@@ -951,7 +951,7 @@ Let's see which cell and level each point belongs to and check the mean absolute
 ```{r}
 Act_pred_Table <- predictions_torus[["actual_predictedTable"]]
 rownames(Act_pred_Table) <- NULL
-Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
+Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 10)
 ```
 
 
@@ -971,7 +971,7 @@ In this example, we will compress this dataset by using hierarchical VQ via k-me
 
 Here, we load the data and store into a variable `computers`.
 
-```{r load data computer,warning=FALSE,message=FALSE,eval = T}
+```{r load data computer,warning=FALSE,message=FALSE,eval = TRUE}
 set.seed(240)
 # Load data from csv files
 computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/sample_dataset/Computers.csv")
@@ -991,9 +991,9 @@ The Computers dataset includes the following columns:
 Let's explore the **Personal Computers Dataset containing (6259 points)**. For the sake of brevity we are displaying first six rows.
 
 
-```{r sample data computer,warning=FALSE,message=FALSE,eval = T}
+```{r sample data computer,warning=FALSE,message=FALSE,eval = TRUE}
 # Quick peek
-Table(head(computers), scroll = T, limit = 20)
+Table(head(computers), scroll = TRUE, limit = 20)
 ```
 
 Now, let us check the **structure** of the data and analyse its **summary**.
@@ -1083,11 +1083,11 @@ hvt.results <- HVT::HVT(trainComputers,
                           depth = 1,
                           quant.err = 0.2,
                           projection.scale = 10,
-                          normalize = T,
+                          normalize = TRUE,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",
-                          diagnose = F)
+                          diagnose = FALSE)
 
 ```
 
@@ -1201,7 +1201,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1218,7 +1218,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1235,7 +1235,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1252,7 +1252,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1268,7 +1268,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1286,7 +1286,7 @@ HVT::hvtHmap(
   color.vec = c("#141B41"),
   palette.color = 6,
   centroid.size = 0.01,
-  show.points = T,
+  show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15
 )
@@ -1366,14 +1366,14 @@ Let's see which cell and level each point belongs to and check the mean absolute
 predictions[["scoredPredictedData"]] %>% head(100) %>% 
   round(2) %>%
   as.data.frame() %>%
-  Table(scroll = T, limit = 10)
+  Table(scroll = TRUE, limit = 10)
 ```
 
 
 ```{r}
 Act_pred_Table <- predictions[["actual_predictedTable"]]
 rownames(Act_pred_Table) <- NULL
-Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = T, limit = 10)
+Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 10)
 
 ```
 

@@ -125,7 +125,7 @@ function(current_dirsgs, current_tile, current_polygon){
         # j<-2
         xy <- splancs::as.points(x[j], y[j])
         if(
-          # (nrow(splancs::pip(xy, xy.poly, out = F, bound = TRUE)) != 0) ||  obsolete code
+          # (nrow(splancs::pip(xy, xy.poly, out = FALSE, bound = TRUE)) != 0) ||  obsolete code
              (sp::point.in.polygon(x[j], y[j], offset_polygon[, 1], offset_polygon[, 2]) !=0) ||
              (sp::point.in.polygon(as.character(x[j]), as.character(y[j]), offset_polygon[, 1], offset_polygon[, 2]) != 0)){
           pt_intersect[j, ] <- xy
