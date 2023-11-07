@@ -45,7 +45,7 @@ removeNovelty <-
     remove_outlier_cells <- as.vector(outlier_cells)
     
     if (length(remove_outlier_cells) == 0){
-      print("No outlier cells were removed from the dataset.")
+      message("No outlier cells were removed from the dataset.")
       
       hvt_results_cells <- hvt_results[[3]]$clusters
       scaled_data <- data.frame()
@@ -93,7 +93,7 @@ removeNovelty <-
     dataset_without_outliers_scaled <- select(dataset_without_outliers_scaled, -c(Row.Number, Cell.Number, Cell.ID))
     dataset_without_outliers_scaled <- dataset_without_outliers_scaled[ order(as.numeric(row.names(dataset_without_outliers_scaled))), ]
     
-    print(paste0(c("The following cell(s) have been removed as novelties from the dataset: ", remove_outlier_cells), collapse = " "))
+    message(paste0(c("The following cell(s) have been removed as novelties from the dataset: ", remove_outlier_cells), collapse = " "))
 
     
     return(list(

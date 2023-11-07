@@ -42,10 +42,10 @@ done iteratively until all the clusters meet the quantization criteria.
 \examples{
 
 
-data("iris",package="datasets")
-iris <- iris[,1:2]
+data("iris", package = "datasets")
+iris <- iris[, 1:2]
 
-vqOutput = VQ_codebookSplit(iris, quant.err = 0.5)
+vqOutput <- VQ_codebookSplit(iris, quant.err = 0.5)
 
 }
 \seealso{
