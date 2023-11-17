@@ -37,6 +37,9 @@ hierarchy (level)}
 
 \item{...}{color.vec and line.width can be passed from here}
 }
+\value{
+Plot object containing Hierarchical Voronoi Tessellation 3D Surface plot with Heatmap Overlay
+}
 \description{
 Function to construct an interactive 3D heatmap overlay for each HVT Level
 }

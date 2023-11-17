@@ -7,10 +7,12 @@
 get_cell_id(hvt.results, seed = 123)
 }
 \arguments{
-\item{hvt.results}{List. A list of hvt.results obtained from the HVT}
+\item{hvt.results}{List. A list of hvt.results obtained from the HVT function.}
 
-\item{seed}{Numeric. Random Seed
-function.}
+\item{seed}{Numeric. Random Seed}
+}
+\value{
+Object containing Cell.ID mappings for the given hvt.results list.
 }
 \description{
 To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 

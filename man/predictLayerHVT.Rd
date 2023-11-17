@@ -52,44 +52,53 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{...}{color.vec and line.width can be passed from here}
 }
+\value{
+Dataframe containing scored predicted layer output
+}
 \description{
 Predict which cell and what level each point in the test dataset belongs to
 }
 \examples{
 data(USArrests)
-library('dplyr')
+library("dplyr")
 
-#Split in train and test
-train <- USArrests[1:40,]
-test <- USArrests[41:50,] 
+# Split in train and test
+train <- USArrests[1:40, ]
+test <- USArrests[41:50, ]
 
 hvt_mapA <- list()
-hvt_mapA <- HVT(train, min_compression_perc = 70, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans")
+hvt_mapA <- HVT(train,
+  min_compression_perc = 70, quant.err = 0.2,
+  distance_metric = "L1_Norm", error_metric = "mean",
+  projection.scale = 10, normalize = TRUE,
+  quant_method = "kmeans"
+)
 
 
 identified_Novelty_cells <<- c(2, 10)
 output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 
-data_with_novelty <- output_list[[1]] \%>\% dplyr::select(!c("Cell.ID","Cell.Number"))
+data_with_novelty <- output_list[[1]] \%>\% dplyr::select(!c("Cell.ID", "Cell.Number"))
 
 
-hvt_mapB <- HVT(data_with_novelty ,n_cells = 3, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans")
-                   
-dataset_without_novelty <- output_list[[2]] 
+hvt_mapB <- HVT(data_with_novelty,
+  n_cells = 3, quant.err = 0.2,
+  distance_metric = "L1_Norm", error_metric = "mean",
+  projection.scale = 10, normalize = TRUE,
+  quant_method = "kmeans"
+)
+
+dataset_without_novelty <- output_list[[2]]
 
 
-mapA_scale_summary = hvt_mapA[[3]]$scale_summary
+mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
 hvt_mapC <- list()
-hvt_mapC <- HVT(dataset_without_novelty, n_cells = 15, 
-                 depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
-                 error_metric = "max", quant_method = "kmeans",
-                 projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary)
+hvt_mapC <- HVT(dataset_without_novelty,
+  n_cells = 15,
+  depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
+  error_metric = "max", quant_method = "kmeans",
+  projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary
+)
 
 predictions <- list()
 predictions <- predictLayerHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)

@@ -25,6 +25,9 @@ tessellations. (default = 3)}
 
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
+\value{
+ggplot object containing the main HVT plot for the given HVT results
+}
 \description{
 Plot the hierarchical tesselations.
 
@@ -32,15 +35,19 @@ Main plotting function to construct hierarchical voronoi tessellations.
 }
 \examples{
 
-data("USArrests",package="datasets")
+data("USArrests", package = "datasets")
 
 hvt.results <- list()
-hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
-plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
-        maxDepth = 1)
+hvt.results <- HVT(USArrests,
+  n_cells = 15, depth = 1, quant.err = 0.2,
+  distance_metric = "L1_Norm", error_metric = "mean",
+  projection.scale = 10, normalize = TRUE,
+  quant_method = "kmeans", diagnose = TRUE
+)
+plotHVT(hvt.results,
+  line.width = c(0.8), color.vec = c("#141B41"),
+  maxDepth = 1
+)
 
 }
 \seealso{

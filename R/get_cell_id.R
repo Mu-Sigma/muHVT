@@ -6,9 +6,9 @@
 #' and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output CellID gets
 #' appended to the HVT model. 
 #'
-#' @param hvt.results List. A list of hvt.results obtained from the HVT
+#' @param hvt.results List. A list of hvt.results obtained from the HVT function.
 #' @param seed Numeric. Random Seed
-#' function.
+#' @returns Object containing Cell.ID mappings for the given hvt.results list.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @importFrom magrittr %>%
 #' @examples

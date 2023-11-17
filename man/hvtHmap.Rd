@@ -54,7 +54,9 @@ level. (default = 3)}
 rainbow, 2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 -
 cm.colors, 6 - seas color. (default = 6)}
 
-\item{previous_level_heatmap}{Logical. If TRUE, the heatmap of previous level will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap of only selected level will be plotted}
+\item{previous_level_heatmap}{Logical. If TRUE, the heatmap of previous level
+will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap
+of only selected level will be plotted}
 
 \item{show.points}{Logical. Indicating if the centroids should
 be plotted on the tessellations. (default = FALSE)}
@@ -71,13 +73,17 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 \item{quant.error.hmap}{Numeric. A number indicating the quantization error
 threshold.}
 
-\item{n_cells.hmap}{Numeric. An integer indicating the number of cells/clusters per
-hierarchy (level)}
+\item{n_cells.hmap}{Numeric. An integer indicating the number of
+cells/clusters per hierarchy (level)}
 
 \item{label.size}{Numeric. The size by which the tessellation labels should
 be scaled. (default = 0.5)}
 
 \item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
+}
+\value{
+Returns the ggplot object containing scatter plot for the selected
+depth level containing the centroids of each cell
 }
 \description{
 Main function to construct heatmap overlay for hierarchical voronoi tessellations.
@@ -106,13 +112,17 @@ the desired variables.
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
-hvtHmap(hvt.results, USArrests, child.level = 1,hmap.cols = 'Murder', 
-        line.width = c(0.2), color.vec = c('#141B41'),palette.color = 6,
-        quant.error.hmap = 0.2, n_cells.hmap = 6)
+hvt.results <- HVT(USArrests,
+  n_cells = 15, depth = 1, quant.err = 0.2,
+  distance_metric = "L1_Norm", error_metric = "mean",
+  projection.scale = 10, normalize = TRUE,
+  quant_method = "kmeans", diagnose = TRUE
+)
+hvtHmap(hvt.results, USArrests,
+  child.level = 1, hmap.cols = "Murder",
+  line.width = c(0.2), color.vec = c("#141B41"), palette.color = 6,
+  quant.error.hmap = 0.2, n_cells.hmap = 6
+)
 }
 \seealso{
 \code{\link{plotHVT}}

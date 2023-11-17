@@ -15,6 +15,9 @@ function.}
 \item{hvt.predictions}{List. A list of hvt.predictions obtained from the Predict
 function.}
 }
+\value{
+Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and predictions
+}
 \description{
 plotDiag
 
