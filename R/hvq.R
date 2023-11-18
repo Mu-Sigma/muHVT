@@ -144,7 +144,7 @@ hvq <-
       n_cells_compress_perc <- n_cells_compress_perc + 1
     }
     n_cells_optimal <- n_cells_compress_perc - 1
-    print(paste0("For the given dataset ",min_compression_perc,"% compression rate is achieved at n_cells : ", n_cells_optimal))
+    message(paste0("For the given dataset ",min_compression_perc,"% compression rate is achieved at n_cells : ", n_cells_optimal))
 
     }else{
 

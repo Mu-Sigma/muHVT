@@ -47,7 +47,7 @@ dataset should be normalized. Default value is TRUE.}
 \item{...}{color.vec and line.width can be passed from here}
 }
 \value{
-Dataframe containing scored predicted data and prediction plots
+Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
 }
 \description{
 Predict which cell and what level each point in the test dataset belongs to

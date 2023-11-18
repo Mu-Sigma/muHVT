@@ -17,7 +17,7 @@
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
 #' @param yVar character. Name of the dependent variable(s)
 #' @param ...  color.vec and line.width can be passed from here
-#' @returns Dataframe containing scored predicted data and prediction plots
+#' @returns Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{HVT}} \cr \code{\link{hvtHmap}}
 #' @keywords predict

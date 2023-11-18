@@ -2,15 +2,15 @@
 
 #### Zubin Dowlaty
 
-#### 2023-10-15
+#### 2023-11-17
 
 <div id="TOC">
 
 *   [<span class="toc-section-number">1</span> Abstract](#abstract)
 *   [<span class="toc-section-number">2</span> Version History](#version-history)
-    *   [<span class="toc-section-number">2.1</span> HVT (v23.10.15) | What’s New?](#hvt-(v23.10.15)-whats-new)
+    *   [<span class="toc-section-number">2.1</span> HVT (v23.11.01) | What’s New?](#hvt-(v23.11.01)-whats-new)
     *   [<span class="toc-section-number">2.2</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">3</span> Installation of HVT (v23.10.15)](#installation-of-hvt-(v23.10.15))
+*   [<span class="toc-section-number">3</span> Installation of HVT (v23.11.01)](#installation-of-hvt-(v23.11.01))
 *   [<span class="toc-section-number">4</span> Vignettes](#vignettes)
     *   [<span class="toc-section-number">4.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">4.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
@@ -47,11 +47,11 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 # <span class="header-section-number">2</span> Version History 
 
-<div id="hvt-(v23.10.15)-whats-new" class="section level2" number="2.1">
+<div id="hvt-(v23.11.01)-whats-new" class="section level2" number="2.1">
 
-## <span class="header-section-number">2.1</span> HVT (v23.10.15) | What’s New? 
+## <span class="header-section-number">2.1</span> HVT (v23.11.01) | What’s New? 
 
-15th October, 2023
+17th November, 2023
 
 In this version of HVT package, the following new features have been introduced:
 
@@ -82,9 +82,9 @@ Figure 2: Flow diagram for predicting based on a sequence of maps using predictL
 
 
 
-<div id="installation-of-hvt-(v23.10.15)" class="section level2" number="3">
+<div id="installation-of-hvt-(v23.11.01)" class="section level2" number="3">
 
-# <span class="header-section-number">3</span> Installation of HVT (v23.10.15)
+# <span class="header-section-number">3</span> Installation of HVT (v23.11.01)
 
 <div class="sourceCode" id="cb1">
 
