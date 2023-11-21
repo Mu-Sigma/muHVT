@@ -78,16 +78,16 @@ knitr::include_graphics('./torus2.png')
 
 # Version History
 
-## HVT (v23.10.11) | What's New?
+## HVT (v23.11.02) | What's New? {-}
 
-10th October, 2023
+17th November, 2023
 
 In this version of HVT package, the following new features have been introduced:
 
 This package provides functionality to predict cells with layers based on a sequence of maps using `predictLayerHVT`. 
 
 
-## HVT (v22.12.06)
+## HVT (v22.12.06) {-}
 
 06th December, 2022
 
@@ -109,7 +109,7 @@ knitr::include_graphics('./predictLayerHVT_function.png')
 
 
 
-# Installation of HVT (v23.10.11)
+# Installation of HVT (v23.11.02)
 
 ``` r
 library(devtools)

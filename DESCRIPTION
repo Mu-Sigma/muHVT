@@ -3,11 +3,11 @@ Type: Package
 Date: 2023-11-17
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
-Version: 23.11.1
+Version: 23.11.2
 Authors@R: c(
 	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: Facilitates building topology preserving maps for rich multivariate data. See <https://en.wikipedia.org/wiki/Voronoi_diagram> for more information. Credits to Mu Sigma for their continuous support throughout the development of the package.
+Description: Facilitates building topology preserving maps for rich multivariate data. Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
