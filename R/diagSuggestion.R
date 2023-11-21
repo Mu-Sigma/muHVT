@@ -27,7 +27,7 @@ diagSuggestion <- function(hvt.results,
   df <- reshape2::melt(as.matrix(d), varnames = c("row", "col"))
   df <- df[df$value!=0,]
   df$value <- df$value/ncol(x)
-  df_cent <- df %>% dplyr::group_by(row) %>% dplyr::summarise(min_dist = min(value, na.rm = T))
+  df_cent <- df %>% dplyr::group_by(row) %>% dplyr::summarise(min_dist = min(value, na.rm = TRUE))
   
   
   mean_cent_train=mean(df_cent$min_dist)
@@ -40,7 +40,7 @@ diagSuggestion <- function(hvt.results,
   df <- reshape2::melt(as.matrix(d), varnames = c("row", "col"))
   df=df[df$value!=0,]
   df$value=df$value/ncol(data)
-  df_data = df %>% dplyr::group_by(row) %>% dplyr::summarise(min_dist = min(value, na.rm = T))
+  df_data = df %>% dplyr::group_by(row) %>% dplyr::summarise(min_dist = min(value, na.rm = TRUE))
   
   mean_dist_train=mean(df_data$min_dist)
 

@@ -11,7 +11,8 @@ predictHVT(
   mad.threshold = 0.2,
   line.width = c(0.6, 0.4, 0.2),
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
-  normalize = T,
+  normalize = TRUE,
+  seed = 300,
   distance_metric = "L1_Norm",
   error_metric = "max",
   yVar = NULL,
@@ -35,6 +36,8 @@ this dataset can also be used to overlay as heatmap}
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
 
+\item{seed}{Numeric. Random Seed.}
+
 \item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
 
 \item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
@@ -43,23 +46,28 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{...}{color.vec and line.width can be passed from here}
 }
+\value{
+Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
+}
 \description{
 Predict which cell and what level each point in the test dataset belongs to
 }
 \examples{
 data(USArrests)
-#Split in train and test
+# Split in train and test
 
-train <- USArrests[1:40,]
-test <- USArrests[41:50,]
+train <- USArrests[1:40, ]
+test <- USArrests[41:50, ]
 
 hvt.results <- list()
-hvt.results <- HVT(train, n_cells = 15, depth = 1, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
+hvt.results <- HVT(train,
+  n_cells = 15, depth = 1, quant.err = 0.2,
+  distance_metric = "L1_Norm", error_metric = "mean",
+  projection.scale = 10, normalize = TRUE,
+  quant_method = "kmeans", diagnose = TRUE
+)
 
-predictions <- predictHVT(test,hvt.results, child.level=2,mad.threshold = 0.2)
+predictions <- predictHVT(test, hvt.results, child.level = 2, mad.threshold = 0.2)
 print(predictions$scoredPredictedData)
 }
 \seealso{

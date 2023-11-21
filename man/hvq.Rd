@@ -10,6 +10,7 @@ hvq(
   n_cells = NA,
   depth = 3,
   quant.err = 10,
+  seed = 300,
   algorithm = "Hartigan-Wong",
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
@@ -30,6 +31,8 @@ be achieved for the dataset}
 tree (1 = no hierarchy, 2 = 2 levels, etc..)}
 
 \item{quant.err}{Numeric. The quantization error for the algorithm.}
+
+\item{seed}{Numeric. Random Seed.}
 
 \item{algorithm}{String. The type of algorithm used for quantization.
 Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".

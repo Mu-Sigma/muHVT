@@ -10,6 +10,13 @@ plotDiag(model_obj)
 \item{model_obj}{List. A list of model_obj obtained from the HVT
 function or prediction object}
 }
+\value{
+plot object containing Diagnostics plots for the HVT model or HVT predictions.
+for HVT model, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
+Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
+Mean Absolute Deviation Plot for Validation Data are plotted.
+for HVT Predictions, "Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
+}
 \description{
 Make the diagnostic plots for hierarchical voronoi tessellations model.
 }

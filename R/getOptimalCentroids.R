@@ -23,6 +23,7 @@
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
+#' @param seed Numeric. Random Seed.
 #' @param distance_metric Character. The distance metric to calculate inter point distance. It can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
 #' @param function_to_calculate_distance_metric Function. The function is to find 'L1_Norm" or "L2_Norm" distances. L1_Norm is selected by default.
 #' @param function_to_calculate_error_metric Character. The error metric can be "mean" or "max". mean is selected by default
@@ -39,7 +40,8 @@ getOptimalCentroids <-
   function (x, 
             iter.max, 
             algorithm, 
-            n_cells, 
+            n_cells,
+            seed = 100, 
             function_to_calculate_distance_metric, 
             function_to_calculate_error_metric=c("mean","max"), 
             quant.err,
@@ -49,17 +51,16 @@ getOptimalCentroids <-
     # browser()
     if(quant_method == "kmeans"){
       
-      options(warn = -1)
       # Start with splitting data into three clusters
       nclust_iter <- 3
       outkinit <- list(centers = numeric(),maxQE = numeric(),meanQE = numeric(), values = logical() , nsize = numeric())
       quantok <- rep(T, n_cells)
       
       # Check if 3 <= No of clusters AND No of cells in a cluster > 3 AND flag to check QE for all clusters
-      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = TRUE) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
-        set.seed(100)
+        set.seed(seed)
         kout<-stats::kmeans(x, nclust_iter, iter.max=10^5, algorithm=algorithm)
         result <- getCentroids_for_opti(x,kout, nclust_iter,function_to_calculate_distance_metric,function_to_calculate_error_metric)
         
@@ -90,7 +91,6 @@ getOptimalCentroids <-
       # return centroids, datapoints and size of each cluster
       return(outkinit)
     }else if(quant_method == "kmedoids"){
-      options(warn = -1)
       # Start with splitting data into three clusters
       # browser()
       nclust_iter <- 3
@@ -102,17 +102,17 @@ getOptimalCentroids <-
         distance_metric = "euclidean"
       }
       kout=list()
-      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = T) > 0)) {
+      while(nclust_iter <= n_cells & nrow(x) > nclust_iter & (sum(quantok,na.rm = TRUE) > 0)) {
         resplt <- list()
         #outkinit will have centroids and datapoints and size of the cluster
-        set.seed(100)
+        set.seed(seed)
         
         kmedoids_model <-
           cluster::pam(
             x = cluster::daisy(x, metric = distance_metric),
             k = nclust_iter,
             diss = TRUE,
-            keep.data = F
+            keep.data = FALSE
           )
         kout$cluster=kmedoids_model[["clustering"]]
         result<- getCentroids_for_opti(x,kout, nclust_iter,function_to_calculate_distance_metric,function_to_calculate_error_metric)

@@ -4,11 +4,15 @@
 \alias{get_cell_id}
 \title{Function to generate cell ID based on 1D sammons projection}
 \usage{
-get_cell_id(hvt.results)
+get_cell_id(hvt.results, seed = 123)
 }
 \arguments{
-\item{hvt.results}{List. A list of hvt.results obtained from the HVT
-function.}
+\item{hvt.results}{List. A list of hvt.results obtained from the HVT function.}
+
+\item{seed}{Numeric. Random Seed}
+}
+\value{
+Object containing Cell.ID mappings for the given hvt.results list.
 }
 \description{
 To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
@@ -23,7 +27,7 @@ data(USArrests)
 hvt.results <- list()
 hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
+                   projection.scale = 10, normalize = TRUE, seed = 123,
                    quant_method="kmeans",diagnose=TRUE)
 plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
         maxDepth = 1)

@@ -27,6 +27,7 @@
 #' @param algorithm String. The type of algorithm used for quantization.
 #' Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 #' (default is "Hartigan-Wong")
+#' @param seed Numeric. Random Seed.
 #' @param distance_metric character. The distance metric can be 'L1_Norm" or "L2_Norm". L1_Norm is selected by default.
 #' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default 
 #' @param quant_method character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default
@@ -57,6 +58,7 @@ hvq <-
             n_cells = NA,
             depth = 3,
             quant.err = 10,
+            seed = 300,
             algorithm = "Hartigan-Wong",
             distance_metric = c("L1_Norm", "L2_Norm"),
             error_metric = c("mean", "max"),
@@ -82,7 +84,7 @@ hvq <-
       std<-matrix(0, nrow = ncol(x), n_cells)
     }
     
-    set.seed(300)
+    set.seed(seed)
     # flog.info("Parameters are initialized")
     #outkinit will have centroids and datapoints and size of the cluster
     # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, n_cells,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
@@ -90,11 +92,11 @@ hvq <-
     colSd <- function (x, na.rm=FALSE) apply(X=x, MARGIN=2, FUN=stats::sd, na.rm=na.rm)
     
     calculate_euclidean_distance_for_each_cluster <- function(x){
-      sqrt(rowSums(scale(x,center = T,scale = F)^2))/ncol(x)
+      sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
     }
     
     calculate_manhattan_distance_for_each_cluster <- function(x){
-      rowSums(abs(scale(x,center = T,scale = F)))/ncol(x)
+      rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
     }
     
     
@@ -142,7 +144,7 @@ hvq <-
       n_cells_compress_perc <- n_cells_compress_perc + 1
     }
     n_cells_optimal <- n_cells_compress_perc - 1
-    print(paste0("For the given dataset ",min_compression_perc,"% compression rate is achieved at n_cells : ", n_cells_optimal))
+    message(paste0("For the given dataset ",min_compression_perc,"% compression rate is achieved at n_cells : ", n_cells_optimal))
 
     }else{
 
@@ -228,7 +230,7 @@ hvq <-
             z = data.frame(initclust[[j]])
             # try(
             # outk <- getOptimalCentroids_new(z, iter.max = 10^5, algorithm = algorithm, n_cells, n_min_points, function_to_calculate_distance_metric, function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method=quant_method)
-            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, n_cells, function_to_calculate_distance_metric, function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method=quant_method)
+            outk <- getOptimalCentroids(z, iter.max = 10^5, algorithm = algorithm, n_cells = n_cells, function_to_calculate_distance_metric = function_to_calculate_distance_metric, function_to_calculate_error_metric = function_to_calculate_error_metric, quant.err = quant.err, distance_metric = distance_metric, quant_method = quant_method)
             # )
             
             # outk$centers <- outk$centers[-which(sapply(outk$centers, is.na))]
@@ -342,15 +344,15 @@ hvq <-
       ztab[1:n_cells, 4] <- unlist(outkinit$nsize)
       #Centroid/Quantization error of the cluster
       ztab[1:n_cells, 5] <- unlist(outkinit$cent)
-      # ztab3upc <- sapply(outkinit$val, mean, na.rm = T)
+      # ztab3upc <- sapply(outkinit$val, mean, na.rm = TRUE)
       # ztab3upc<-matrix(0, nrow = ncol(x), n_cells)
       # std<-matrix(0, nrow = ncol(x), n_cells)
       for(a in 1: n_cells){
         for(b in 1: ncol(x)){
-          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = T))
+          ztab3upc[b, a] <- as.matrix(mean(outkinit$val[[a]][, b], na.rm = TRUE))
           rownames(ztab3upc) <- colnames(x)
           # Calculating sd
-          std[b, a] <- as.matrix(stats::sd(outkinit$val[[a]][, b], na.rm = T))
+          std[b, a] <- as.matrix(stats::sd(outkinit$val[[a]][, b], na.rm = TRUE))
           rownames(std) <- colnames(x)
         }
       }
@@ -377,9 +379,9 @@ hvq <-
       ztab[, 4] <- unlist(outkinit$nsize)
       ztab[, 5] <- unlist(outkinit$cent)
       ztab_mean <- t(sapply(outkinit$val, colMeans, 
-                            na.rm = T))
+                            na.rm = TRUE))
       std <- t(sapply(outkinit$val, colSd, 
-                      na.rm = T))
+                      na.rm = TRUE))
       if(quant_method == "kmeans"){
         ztab[, 6:ncol(ztab)] <- ztab_mean # mean values
       } else {

@@ -9,6 +9,7 @@ getOptimalCentroids(
   iter.max,
   algorithm,
   n_cells,
+  seed = 100,
   function_to_calculate_distance_metric,
   function_to_calculate_error_metric = c("mean", "max"),
   quant.err,
@@ -27,6 +28,8 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 (default is "Hartigan-Wong")}
 
 \item{n_cells}{Numeric. Indicating the number of nodes per hierarchy.}
+
+\item{seed}{Numeric. Random Seed.}
 
 \item{function_to_calculate_distance_metric}{Function. The function is to find 'L1_Norm" or "L2_Norm" distances. L1_Norm is selected by default.}
 

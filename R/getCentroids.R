@@ -16,7 +16,6 @@ getCentroids <-
     # browser()
     if (quant_method == "kmeans") {
       centl <- nout <- outl <- list()
-      options(warn = -1)
       x <- data.frame(x)
       # calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
       calculate_error <-
@@ -64,11 +63,10 @@ getCentroids <-
           x = cluster::daisy(x, metric = distance_metric),
           k = n_cells,
           diss = TRUE,
-          keep.data = F
+          keep.data = FALSE
         )
       
       centl <- nout <- outl <- list()
-      options(warn = -1)
       x <- data.frame(x)
       # calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
       calculate_error <-

@@ -4,7 +4,7 @@
 \alias{plotCells}
 \title{Plot the identified outlier cell(s) in the voronoi tessellations map.
 
-Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the 
+Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
 compressed HVT map.}
 \usage{
 plotCells(
@@ -40,10 +40,14 @@ tessellations. (default = 3)}
 
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
+\value{
+ggplot object containing hierarchical voronoi tessellations plot
+highlighting the outlier cells in the map
+}
 \description{
 Plot the identified outlier cell(s) in the voronoi tessellations map.
 
-Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the 
+Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
 compressed HVT map.
 }
 \seealso{
