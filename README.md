@@ -15,6 +15,7 @@
     *   [<span class="toc-section-number">4.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">4.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">4.3</span> HVT : Predicting Cells with Layers using predictLayerHVT ](#hvt---predicting-cells-with-layers-using-predictLayerHVT)
+    *   [<span class="toc-section-number">4.4</span> HVT - Time Series data visualization using Flowmap ](#hvt---timeseries-data-visualization-using-flowmap)
 
 </div>
 
@@ -125,3 +126,10 @@ Following are the links to the vignettes for the HVT package:
 ## <span class="header-section-number">4.3</span> HVT - Predicting Cells with Layers using predictLayerHVT
 
 [**HVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
+
+
+<div id="hvt---timeseries-data-visualization-using-flowmap" class="section level2" number="4.4">
+
+## <span class="header-section-number">4.4</span> HVT - Time Series data visualization using Flowmap
+
+[**HVT : Time Series data visualization using Flowmap :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/flowmap/vignettes/Flowmap_Vignette.html) Contains descriptions of the functions used for analysing timeseries data using the flowmap functions.
