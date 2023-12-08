@@ -7,6 +7,9 @@
 #' @param cellid_column: Name of the column containing cell IDs
 #' @param time_column: Name of the column containing timestamps
 #' @return A plotly plot object representing the state transition plot
+#' @example
+#' state_transition_plot(df, sample_size = 0.2, line_plot = FALSE, cellid_column = "Cell.ID", time_column = "t")
+#' @export state_transition_plot
 
 
 state_transition_plot <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
@@ -311,7 +314,6 @@ reconcile_transition_probability <- function(df, hmap_type = NULL, cellid_column
 #' @param cellid_column: Name of the column containing cell IDs
 #' @param time_column: Name of the column containing timestamps
 #' @return A list of plot objects representing flow maps and animations
-
 generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_plot_output, df, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column, time_column) {
   # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL
   if (is.null(animation)) animation <- "state_based"
@@ -512,7 +514,7 @@ generate_flow_maps <- function(hvt_model_output, transition_probability_df, hvt_
   df <- df %>%
     group_by(Cell.ID) %>%
     mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
-  state_data <<- df %>%
+  state_data <- df %>%
     group_by(grp = cumsum(c(TRUE, diff(Cell.ID) != 0))) %>%
     slice(n())
 

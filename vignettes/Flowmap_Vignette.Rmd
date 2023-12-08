@@ -1,5 +1,5 @@
 ---
-title: "Flow Map"
+title: "HVT: Analyzing and Visualizing Timeseries data using Flowmap"
 author: "Pon Anu Reka"
 date: "`r Sys.Date()`"
 output:
@@ -128,7 +128,7 @@ set.seed(240)
 
 # Objective
 
-The objective of this notebook is to use the Lorenz attractor to determine the dynamics of the system and to gain insights into the behavior and characteristics of a chaotic system.
+The objective of this notebook is to use the Lorenz attractor dataset to determine the dynamics of the system and to gain insights into the behavior and characteristics of a chaotic system.
 
 # Experimental setup
 
@@ -407,7 +407,7 @@ state_time_plot_result
 
 
 
-```{r, results='asis'}
+```{r, results='hide'}
 
 # **Description - It is useful for analyzing and visualizing state transition patterns in a dataset**
 # 
