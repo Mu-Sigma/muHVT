@@ -1,0 +1,128 @@
+\usepackage[utf8]{inputenc}
+\HeaderA{trainHVT}{Constructing Hierarchical Voronoi Tessellations}{trainHVT}
+\keyword{/}{trainHVT}
+\keyword{Compression}{trainHVT}
+\keyword{Training}{trainHVT}
+%
+\begin{Description}
+Main function to construct hierarchical voronoi tessellations.
+\end{Description}
+%
+\begin{Usage}
+\begin{verbatim}
+trainHVT(
+  dataset,
+  min_compression_perc = NA,
+  n_cells = NA,
+  depth = 1,
+  quant.err = 0.2,
+  projection.scale = 10,
+  normalize = FALSE,
+  seed = 279,
+  distance_metric = c("L1_Norm", "L2_Norm"),
+  error_metric = c("mean", "max"),
+  quant_method = c("kmeans", "kmedoids"),
+  scale_summary = NA,
+  diagnose = FALSE,
+  hvt_validation = FALSE,
+  train_validation_split_ratio = 0.8
+)
+\end{verbatim}
+\end{Usage}
+%
+\begin{Arguments}
+\begin{ldescription}
+\item[\code{dataset}] Data frame. A data frame with different columns is given as
+input.
+
+\item[\code{min\_compression\_perc}] Numeric. An integer indicating the minimum percent compression rate to
+be achieved for the dataset
+
+\item[\code{n\_cells}] Numeric. An integer indicating the number of cells per
+hierarchy (level)
+
+\item[\code{depth}] Numeric. An integer indicating the number of levels. (1 = No
+hierarchy, 2 = 2 levels, etc ...)
+
+\item[\code{quant.err}] Numeric. A number indicating the quantization error
+treshold.
+
+\item[\code{projection.scale}] Numeric. A number indicating the scale factor for
+the tesselations so as to visualize the sub-tesselations well enough.
+
+\item[\code{normalize}] Logical. A logical value indicating if the columns in your
+dataset should be normalized. Default value is TRUE.
+
+\item[\code{seed}] Numeric. Random Seed.
+
+\item[\code{distance\_metric}] character. The distance metric can be "L1\_Norm" or "Manhattan". L1\_Norm is selected by default.
+
+\item[\code{error\_metric}] character. The error metric can be "mean" or "max". mean is selected by default
+
+\item[\code{quant\_method}] character. The quant\_method can be "kmeans" or "kmedoids". kmeans is selected by default
+
+\item[\code{scale\_summary}] List. A list with mean and standard deviation values for all the features in the dataset. 
+Pass the scale summary when the input dataset is already scaled or normalize is set to False.
+
+\item[\code{diagnose}] Logical. A logical value indicating if the diagnose is required. Default value is TRUE.
+
+\item[\code{hvt\_validation}] Logical. A logical value indicating if the MAD values are to tested for validation set. Default value is FALSE.
+
+\item[\code{train\_validation\_split\_ratio}] Numeric. A numeric value indicating the train and validation split ratio.
+\end{ldescription}
+\end{Arguments}
+%
+\begin{Details}
+This is the main function to construct hierarchical voronoi tessellations.
+The \code{hvq} function is called from this function. The output of the
+\code{hvq} function is hierarchical clustered data which will be the input
+for constructing tessellations. The data is then represented in 2d
+coordinates and the tessellations are plotted using these coordinates as
+centroids. For subsequent levels, transformation is performed on the 2d
+coordinates to get all the points within its parent tile. Tessellations are
+plotted using these transformed points as centroids. The lines in the
+tessellations are chopped in places so that they do not protrude outside the
+parent polygon. This is done for all the subsequent levels.
+\end{Details}
+%
+\begin{Value}
+A list that contains the hierarchical tesselation information. This
+list has to be given as input argument to plot the tessellations.
+\begin{ldescription}
+\item[\code{[[1]] }] List. Information about the tesselation co-ordinates - level
+wise\item[\code{[[2]] }] List. Information about the polygon co-ordinates - level
+wise
+\item[\code{[[3]] }] List. Information about the hierarchical vector quantized data - level wise
+\item[\code{[[4]] }] List. Information about the model diagnosis- selected level
+\item[\code{[[5]] }] List. Information about the MAD values and percentage anomalies for validation dataset
+\end{ldescription}
+\end{Value}
+%
+\begin{Author}
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
+\end{Author}
+%
+\begin{SeeAlso}
+\code{\LinkA{plotHVT}{plotHVT}} \\{} \code{\LinkA{plot2DHeatmap}{plot2DHeatmap}}
+\end{SeeAlso}
+%
+\begin{Examples}
+\begin{ExampleCode}
+data(USArrests)
+hvt.results <- list()
+hvt.results <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE, seed = 279,
+                   quant_method="kmeans")
+plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
+        maxDepth = 1)
+
+hvt.results <- list()
+hvt.results <- trainHVT(USArrests, n_cells = 15, depth = 3, quant.err = 0.2, 
+                   distance_metric = "L1_Norm", error_metric = "mean",
+                   projection.scale = 10, normalize = TRUE, seed = 279,
+                   quant_method="kmeans")
+plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
+        maxDepth = 3)
+\end{ExampleCode}
+\end{Examples}

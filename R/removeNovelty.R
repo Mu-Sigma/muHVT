@@ -3,27 +3,27 @@
 #' Remove identified outlier cell(s) from the dataset
 #'
 #' This function is used to remove the identified outlier cell(s) from the dataset.
-#' It is recommended to run the \code{HVT} function before running this function. It takes input in the form 
-#' of cell number of the outlier cell(s) identified using the output of the \code{HVT} function and
-#' the compressed map (hvt_mapA) generated using the \code{HVT} function. The output of this function is
+#' It is recommended to run the \code{trainHVT} function before running this function. It takes input in the form 
+#' of cell number of the outlier cell(s) identified using the output of the \code{trainHVT} function and
+#' the compressed map (hvt_mapA) generated using the \code{trainHVT} function. The output of this function is
 #' a list of two items: a new map having the data of removed outlier cell(s) and the subset of dataset without outliers.
 #' 
 #' @param outlier_cells Vector. A vector with the cell number of the identified outliers
-#' @param hvt_results List. A list having the results of the compressed map i.e. output of \code{HVT} function
+#' @param hvt_results List. A list having the results of the compressed map i.e. output of \code{trainHVT} function
 #' 
 #' @return A list of two items: a map having the data of removed outlier cells and the subset of  the dataset without outlier(s) which
-#' has to be passed as input argument to \code{HVT} function to generate another map
+#' has to be passed as input argument to \code{trainHVT} function to generate another map
 #' \item{[[1]] }{Dataframe. Information about the removed outlier cell(s)}
 #' \item{[[2]] }{Dataframe. Subset of dataset without the outlier cell(s)}
 #' 
 #' @author Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
-#' @seealso \code{\link{HVT}} \cr \code{\link{predictLayerHVT}}
+#' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreLayeredHVT}}
 #' @importFrom magrittr %>%
 #' @importFrom plyr rbind.fill
 #' @examples
 #' data(USArrests)
 #' hvt_mapA <- list()
-#' hvt_mapA <- HVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
+#' hvt_mapA <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans")
@@ -34,7 +34,7 @@
 #' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' hvt_mapB <- output_list[[1]]
 #' dataset_without_novelty <- output_list[[2]]
-#'
+#' @keywords Novelty / Outliers
 #' @export removeNovelty
 
 

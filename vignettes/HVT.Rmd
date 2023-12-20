@@ -129,5 +129,3 @@ Following are the links to the vignettes for the HVT package:
 
 3. [**HVT : Predicting Cells with Layers using predictLayerHVT:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
 
-4. [**HVT : Time Series data visualization using Flowmap:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/flowmap/vignettes/Flowmap_Vignette.html) Contains descriptions of the functions used for analysing timeseries data using the flowmap functions.
-

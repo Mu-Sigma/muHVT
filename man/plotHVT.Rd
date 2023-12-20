@@ -4,56 +4,123 @@
 \alias{plotHVT}
 \title{Plot the hierarchical tesselations.
 
-Main plotting function to construct hierarchical voronoi tessellations.}
+Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.}
+\usage{
+plotHVT(
+  hvt.results,
+  line.width,
+  color.vec,
+  pch1 = 21,
+  centroid.size = 1.5,
+  title = NULL,
+  maxDepth = NULL,
+  dataset,
+  child.level,
+  hmap.cols,
+  previous_level_heatmap = TRUE,
+  show.points = FALSE,
+  asp = 1,
+  ask = TRUE,
+  tess.label = NULL,
+  quant.error.hmap = NULL,
+  n_cells.hmap = NULL,
+  label.size = 0.5,
+  sepration_width = 7,
+  layer_opacity = c(0.5, 0.75, 0.99),
+  dim_size = 1000,
+  heatmap = "1D"
+)
+}
 \arguments{
-\item{hvt.results}{List. A list containing the ouput of \code{HVT} function
+\item{hvt.results}{(1D/2D/3D) List. A list containing the ouput of \code{trainHVT} function
 which has the details of the tessellations to be plotted.}
 
-\item{line.width}{Numeric Vector. A vector indicating the line widths of the
+\item{line.width}{(1D/2D) Numeric Vector. A vector indicating the line widths of the
 tessellation boundaries for each level.}
 
-\item{color.vec}{Vector. A vector indicating the colors of the boundaries of
+\item{color.vec}{(1D/2D) Vector. A vector indicating the colors of the boundaries of
 the tessellations at each level.}
 
-\item{pch1}{Numeric. Symbol type of the centroids of the tessellations
-(parent levels). Refer \code{\link{points}}. (default = 21)}
+\item{pch1}{(1D/2D) Numeric. Symbol type of the centroids of the tessellations
+(parent levels). Refer \code{\link{points}}.}
 
-\item{centroid.size}{Numeric. Size of centroids of first level
-tessellations. (default = 3)}
+\item{centroid.size}{(1D/2D) Numeric. Size of centroids of first level
+tessellations.}
 
-\item{title}{String. Set a title for the plot. (default = NULL)}
+\item{title}{(1D) String. Set a title for the plot. (default = NULL)}
 
-\item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
+\item{maxDepth}{(1D) Numeric. An integer indicating the number of levels. (default = NULL)}
+
+\item{dataset}{(2D) Data frame. The input data set.}
+
+\item{child.level}{(2D/3D) Numeric. Indicating the level for which the heat map is
+to be plotted.}
+
+\item{hmap.cols}{(2D/3D) Numeric or Character. The column number of column name from
+the dataset indicating the variables for which the heat map is to be
+plotted.}
+
+\item{previous_level_heatmap}{(2D) Logical. If TRUE, the heatmap of previous level
+will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap
+of only selected level will be plotted}
+
+\item{show.points}{(2D) Logical. Indicating if the centroids should
+be plotted on the tessellations. (default = FALSE)}
+
+\item{asp}{(2D) Numeric. Indicating the aspect ratio type. For flexible aspect
+ratio set, asp = NA. (default = 1)}
+
+\item{ask}{(2D) Logical. If TRUE (and the R session is interactive) the user is
+asked for input, before a new figure is drawn. (default = TRUE)}
+
+\item{tess.label}{(2D) Vector. A vector for labelling the tessellations. (default
+= NULL)}
+
+\item{quant.error.hmap}{(2D) Numeric. A number indicating the quantization error
+threshold.}
+
+\item{n_cells.hmap}{(2D) Numeric. An integer indicating the number of
+cells/clusters per hierarchy (level)}
+
+\item{label.size}{(2D) Numeric. The size by which the tessellation labels should
+be scaled. (default = 0.5)}
+
+\item{sepration_width}{(3D) Numeric. An integer indicating the width between two Levels}
+
+\item{layer_opacity}{(3D) Numeric. A vector indicating the opacity of each layer/ level}
+
+\item{dim_size}{(3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 }
 \value{
-ggplot object containing the main HVT plot for the given HVT results
+plot object containing the main HVT plot for the given HVT results and heatmap type.
 }
 \description{
 Plot the hierarchical tesselations.
 
-Main plotting function to construct hierarchical voronoi tessellations.
+Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
 }
 \examples{
-
-data("USArrests", package = "datasets")
-
+data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests,
-  n_cells = 15, depth = 1, quant.err = 0.2,
-  distance_metric = "L1_Norm", error_metric = "mean",
-  projection.scale = 10, normalize = TRUE,
-  quant_method = "kmeans", diagnose = TRUE
-)
-plotHVT(hvt.results,
-  line.width = c(0.8), color.vec = c("#141B41"),
-  maxDepth = 1
-)
-
+hvt.results <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2,
+                  distance_metric = "L1_Norm", error_metric = "mean",
+                  projection.scale = 10, normalize = TRUE, seed = 279,
+                  quant_method="kmeans")
+plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 2, 
+       maxDepth = 1,heatmap = '1D')
+plotHVT(hvt.results, USArrests, centroid.size = 1,
+       child.level = 1, hmap.cols = "Assault",
+       line.width = c(0.6), color.vec = ('#000000') , 
+       pch1 = 21, heatmap = '2D')
+plotHVT( hvt.results, child.level = 1, hmap.cols = "Murder", n_cells.hmap = 15, 
+        layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
 }
 \seealso{
-\code{\link{HVT}} \cr \code{\link{hvtHmap}}
+\code{\link{trainHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
-\keyword{hplot}
+\keyword{&}
+\keyword{Heatmap}
+\keyword{Tessellation}
