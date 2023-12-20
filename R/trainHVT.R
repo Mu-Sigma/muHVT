@@ -342,7 +342,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
         ####### MAD Plot ################
         
         predictions_validation = list()
-        predictions_validation <- predictHVT(
+        predictions_validation <- scoreHVT(
           data = validation_data,
           hvt.results.model=fin_out,
           child.level = depth,
@@ -622,7 +622,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
         
         ####### MAD Plot ################
         predictions_validation = list()
-        predictions_validation <- predictHVT(
+        predictions_validation <- scoreHVT(
           data = validation_data,
           hvt.results.model=fin_out,
           child.level = depth,

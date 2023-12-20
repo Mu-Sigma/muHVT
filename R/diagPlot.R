@@ -20,7 +20,7 @@
 #' \item{singleton_count}{Numeric. Count of singletons(segments with single observation)}
 
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
-#' @seealso \code{\link{predictHVT}}
+#' @seealso \code{\link{scoreHVT}}
 #' @keywords hplot
 #' @importFrom magrittr %>%
 #' @import ggplot2
@@ -166,7 +166,7 @@ diagPlot <- function(hvt.results,
   # browser()
   ####### MAD Plot ################
   predictions_train = list()
-  predictions_train <- predictHVT(
+  predictions_train <- scoreHVT(
     data = data,
     hvt.results.model=hvt.results,
     child.level = level,

@@ -35,7 +35,7 @@ plotModelDiagnostics <-
       p4 <- model_obj[[4]]$number_plot + ggplot2::ggtitle("Distribution of Number of Observations in Cells: HVT Model | Train Data")
       p5 <- model_obj[[4]]$singleton_piechart
       if (model_obj[["model_info"]][["input_parameters"]][["hvt_validation"]]) {
-        p6 <- hvt.results[[5]][["mad_plot"]] + ggplot2::ggtitle("Mean Absolute Deviation Plot:Validation")
+        p6 <- model_obj[[5]][["mad_plot"]] + ggplot2::ggtitle("Mean Absolute Deviation Plot:Validation")
 
         plotDiag <- (p3 / (p1 | p2) / (p4 | p5) / p6)
       } else {

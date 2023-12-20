@@ -10,7 +10,7 @@
 #' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
 #' @param hvt_plot_output List. Base plot for the flow maps.
 #' @param animation character. Type of animation ('state_based', 'time_based', or 'All').
-#' @param flow_map character. Type of flow map ('with_self_state', 'without_self_state', 'self_state', 'probability', or 'All').
+#' @param flow_map character. Type of flow map ('with_self_state', 'without_self_state', 'probability', or 'All').
 #' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
 #' @param threshold Numeric. An Integer representing the Probability threshold for flow map arrows.
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
@@ -39,9 +39,8 @@
 #' dataset <- data.frame(cell_id, time_stamp)
 #' getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_stamp")
 #' plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df,  df = dataset, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL,  cellid_column = "cell_id", time_column = "time_stamp") 
-#' gif <- magick::image_read(plot[[2]])
 #' print(plot[[1]])
-#' print(gif)
+#' print(plot[[2]])
 #' @export plotAnimatedFlowmap
 
 
@@ -158,20 +157,20 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   # Self-state Plot
   prob1 <- merged_df2$Probability
   cellID_coordinates$prob1 <- prob1
-  
+ #browser()
   min_prob <- min(merged_df2$Probability)
   custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
   custom_breaks[1] <- min_prob - 1e-6
-  merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
-  merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), 3, merged_df2$CircleSize)
-  self_state_plot <- ggplot2::ggplot() + 
+  CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
+  CircleSize <- ifelse(is.na(CircleSize), 3, CircleSize)
+  self_state_plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
-    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize)) +
+    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * CircleSize)) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue", 
+    scale_color_gradient(low = "blue", high = "blue",
                          name = "Probability",
-                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) + 
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2, 3, 4))), fill = guide_legend(title = "Probability")) + 
+                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
+    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2,3,4,5,6,7,8,9,8,7,4,3,2,1))), fill = guide_legend(title = "Probability")) +
     theme_minimal()
   
   
@@ -227,6 +226,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     scale_color_gradient(low = "blue", high = "blue", 
                          name = "Probability",
                          breaks = seq(0, max(merged_df3$Probability), by = 0.2))  + 
+       labs(title = "Flow map: Arrow size based on Probability") +
     guides(color = guide_legend(title = "Transition\nProbability")) + theme_minimal()
   
   # Flow map Animation based on Timestamp
@@ -273,9 +273,9 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     labs(title = "Animation showing state transition excluding self-state")
   
   state_animation <- gganimate::animate(animation1, fps = animation_speed, duration = 2)
-   #state_animation <- animate(animation1, fps = animation_speed)
-   #anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
-  
+   # state_animation <- animate(animation1, fps = animation_speed)
+   # anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
+   # 
   plots <- list()
   
   if (flow_map == "without_self_state" || flow_map == "All") {

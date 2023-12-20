@@ -65,7 +65,7 @@ scoreHVT <- function(data,
 
   # browser()
   if (!("Cell.ID" %in% colnames(hvt.results.model[[3]]$summary))) {
-    hvt.results.model[[3]]$summary <- get_cell_id(hvt.results = hvt.results.model)
+    hvt.results.model[[3]]$summary <- getCellId(hvt.results = hvt.results.model)
   }
   hvt.results.model[[3]]$summary <- cbind(hvt.results.model[[3]]$summary, centroidRadius = unlist(hvt.results.model[[3]]$max_QE))
 
