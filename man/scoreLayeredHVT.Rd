@@ -105,7 +105,7 @@ predictions <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)
 
 }
 \seealso{
-\code{\link{trainHVT}} \cr \code{\link{plot2DHeatmap}}
+\code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>,Somya Shambhawi <somya.shambhawi@mu-sigma.com>

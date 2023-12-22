@@ -45,7 +45,7 @@ Distribution of number of cells and count of singletons(segments with single obs
 \examples{
 data(USArrests)
 hvt.results <- list()
-hvt.results <- HVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
+hvt.results <- trainHVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,
                    quant_method="kmeans",diagnose=TRUE)

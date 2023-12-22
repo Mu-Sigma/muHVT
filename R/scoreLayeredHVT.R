@@ -21,7 +21,7 @@
 #' @param ...  color.vec and line.width can be passed from here
 #' @return Dataframe containing scored predicted layer output
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>,Somya Shambhawi <somya.shambhawi@@mu-sigma.com>
-#' @seealso \code{\link{trainHVT}} \cr \code{\link{plot2DHeatmap}}
+#' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 #' @importFrom magrittr %>%
 #' @examples
 #'data("EuStockMarkets")

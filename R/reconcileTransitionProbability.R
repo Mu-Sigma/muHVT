@@ -1,4 +1,6 @@
-#' Reconciliation of Transition Probability - Model Diagnostics
+#' @name reconcileTransitionProbability
+#' 
+#' @title Reconciliation of Transition Probability - Model Diagnostics
 #'
 #' Main function for creating transition probability heatmaps and reconcilation of the same.
 #'
@@ -37,6 +39,7 @@
 #' reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell_id", time_column = "time_stamp") 
 #' @export reconcileTransitionProbability
 
+requireNamespace("markovchain")
 
 reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, time_column) {
   

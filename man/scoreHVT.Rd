@@ -71,7 +71,7 @@ predictions <- scoreHVT(test, hvt.results, child.level = 2, mad.threshold = 0.2)
 print(predictions$scoredPredictedData)
 }
 \seealso{
-\code{\link{trainHVT}} \cr \code{\link{plot2DHeatmap}}
+\code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>

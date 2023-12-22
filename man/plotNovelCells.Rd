@@ -51,7 +51,7 @@ Plotting function to construct hierarchical voronoi tessellations and highlight 
 compressed HVT map.
 }
 \seealso{
-\code{\link{trainHVT}} \cr \code{\link{plot2DHeatmap}}
+\code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 }
 \author{
 Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>

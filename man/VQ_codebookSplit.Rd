@@ -49,7 +49,7 @@ vqOutput <- VQ_codebookSplit(iris, quant.err = 0.5)
 
 }
 \seealso{
-\code{\link{hvtHmap}}
+\code{\link{plotHVT}}
 }
 \author{
 Sangeet Moy Das <sangeet.das@mu-sigma.com>

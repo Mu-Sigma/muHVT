@@ -5361,7 +5361,7 @@ using these transformed points as centroids. The lines in the
 tessellations are chopped in places so that they do not protrude outside
 the parent polygon. This is done for all the subsequent levels.</p>
 <p>Let us try to understand the HVT function first.</p>
-<pre><code>HVT::HVT(
+<pre><code>HVT::trainHVT(
   dataset,
   n_cells,
   depth,
@@ -41973,20 +41973,20 @@ Dataset</h3>
 <p>In this section we will subset the test data based on numeric columns
 present in train data.</p>
 <div class="sourceCode" id="cb78"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" tabindex="-1"></a>dataset_updated_test<span class="ot">=</span>dataset_updated_test <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(nums)</span></code></pre></div>
-<p>Now once we have the test data ready, lets look at how the predictHVT
+<p>Now once we have the test data ready, lets look at how the scoreHVT
 function looks like.</p>
 </div>
 </div>
 <div id="prediction-on-test-data" class="section level2" number="11.3">
 <h2><span class="header-section-number">11.3</span> Prediction on Test
 Data</h2>
-<pre><code>predictHVT(data,
+<pre><code>scoreHVT(data,
                   hvt.results,
                   hmap.cols = NULL,
                   child.level = 1,
                   mad.threshold
                   ...)</code></pre>
-<p>The important parameters for the function <code>predictHVT</code> are
+<p>The important parameters for the function <code>scoreHVT</code> are
 as below</p>
 <ul>
 <li><p><strong><code>data</code></strong> - A dataframe containing the
@@ -42015,7 +42015,7 @@ Absolute Deviation Plot</p>
 </p>
 <div class="sourceCode" id="cb80"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" tabindex="-1"></a>hvt.prediction <span class="ot">=</span> <span class="fu">list</span>()</span>
 <span id="cb80-2"><a href="#cb80-2" tabindex="-1"></a>mad_threshold<span class="ot">=</span> <span class="fl">0.6</span> <span class="co">#Mean of Minimum Intra-Centroid Distance</span></span>
-<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>hvt.prediction <span class="ot">&lt;-</span> HVT<span class="sc">::</span><span class="fu">predictHVT</span>(</span>
+<span id="cb80-3"><a href="#cb80-3" tabindex="-1"></a>hvt.prediction <span class="ot">&lt;-</span> HVT<span class="sc">::</span><span class="fu">scoreHVT</span>(</span>
 <span id="cb80-4"><a href="#cb80-4" tabindex="-1"></a>  <span class="at">data =</span> dataset_updated_test,</span>
 <span id="cb80-5"><a href="#cb80-5" tabindex="-1"></a>  <span class="at">hvt.results.model=</span>hvt.results,</span>
 <span id="cb80-6"><a href="#cb80-6" tabindex="-1"></a>  <span class="at">child.level =</span> <span class="dv">1</span>,</span>

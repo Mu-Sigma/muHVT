@@ -81,10 +81,10 @@ source("../R/getCentroids.R")
 source("../R/getOptimalCentroids.R")
 source("../R/hvq.R")
 source("../R/HVT.R")
-source("../R/hvtHmap.R")
+source("../R/plotHVT.R")
 source("../R/plotCells.R")
 source("../R/plotHVT.R")
-source("../R/predictHVT.R")
+source("../R/scoreHVT.R")
 source("../R/ScaleMat.R")
 source("../R/Transform_Coordinates.R")
 source("../R/madPlot.R")
@@ -304,7 +304,7 @@ In this package, we use `sammons` from the package `MASS` to project higher dime
 
 Prediction basically refers to the process of making predictions or estimating future values or outcomes based on existing data patterns.In data prediction, a model is developed based on historical data or a training dataset, and this model is then used to make predictions on new, unseen data. The model captures the underlying patterns, trends, and relationships present in the training data, allowing it to make informed predictions on similar or related data points.
 
-In this package, we use `predictHVT` function to predict each point in the test dataset.
+In this package, we use `scoreHVT` function to predict each point in the test dataset.
 
 **Prediction Algorithm**
 
@@ -420,7 +420,7 @@ knitr::include_graphics('torus_donut.png')
 
 ```
 
-**Note: The steps of compression, projection, and tessellation are iteratively performed until a minimum compression rate of 80% is achieved. Once the desired compression is attained, the resulting model object is used for scoring using the predictHVT() function**
+**Note: The steps of compression, projection, and tessellation are iteratively performed until a minimum compression rate of 80% is achieved. Once the desired compression is attained, the resulting model object is used for scoring using the scoreHVT() function**
 
 In this section all the outlined workflow steps provided in the abstract section (Compression, Projection, Tessellation and Prediction) are executed at level 1.
 
@@ -432,7 +432,7 @@ However, let's try to comprehend the **HVT function** first before moving on.
 
  
 ```{r HVT function, echo = TRUE, eval= FALSE}
-HVT(
+trainHVT(
   dataset,
   min_compression_perc,
   n_cells,
@@ -514,7 +514,7 @@ We will pass the below mentioned model parameters along with torus training data
 
 ```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus <- HVT::HVT(
+hvt.torus <- HVT::trainHVT(
   torus_df,
   n_cells = 100,
   depth = 1,
@@ -552,7 +552,7 @@ Let's retry by increasing the n_cells parameter to 300 along with torus training
 
 ```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus2 <- HVT::HVT(
+hvt.torus2 <- HVT::trainHVT(
   torus_df,
   n_cells = 300,
   depth = 1,
@@ -589,7 +589,7 @@ Since we are yet to achieve the compression of atleast 80%, lets try again by in
 
 ```{r torus hvt third ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’',eval = global_var}
 set.seed(240)
-hvt.torus3 <- HVT::HVT(
+hvt.torus3 <- HVT::trainHVT(
   torus_df,
   n_cells = 900,
   depth = 1,
@@ -788,10 +788,10 @@ We will now overlay all the features as heatmap over the Voronoi Tessellation pl
 **Heat Maps**
 
 
-Let's have look at the `hvtHmap` function which we will use to overlay a variable as heatmap.
+Let's have look at the `plotHVT` function which we will use to overlay a variable as heatmap.
 
-```{r hvtHmap function demo,echo = TRUE, eval= FALSE}
-hvtHmap(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
+```{r plotHVT function demo,echo = TRUE, eval= FALSE}
+plotHVT(hvt.results, dataset, child.level, hmap.cols, color.vec ,line.width, palette.color = 6)
 ```
 
 * __`hvt.results`__ - A list (hvt.result) obtained from the HVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
@@ -819,7 +819,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 
 ```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for No. of entities in each cell in the ’torus’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -835,7 +835,7 @@ HVT::hvtHmap(
 ```
 
 ```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable x in the ’torus’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -851,7 +851,7 @@ HVT::hvtHmap(
 ```
 
 ```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable y in the ’torus’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -867,7 +867,7 @@ HVT::hvtHmap(
 ```
 
 ```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z in the ’torus’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.torus3,
   torus_df,
   child.level = 1,
@@ -882,27 +882,27 @@ HVT::hvtHmap(
 )
 ```
 
-## Step 4: Prediction(predictHVT)
+## Step 4: Prediction(scoreHVT)
 
 **Raw Testing Dataset**
 
-Lets have a look at our randomly selected test dataset containing (3000 points) before we pass it to predictHVT function for scoring.
+Lets have a look at our randomly selected test dataset containing (3000 points) before we pass it to scoreHVT function for scoring.
 
 ```{r}
 Table(head(test_dataset1))
 ```
 
-However, let's try to comprehend the **predictHVT function** first before moving on
+However, let's try to comprehend the **scoreHVT function** first before moving on
 
-```{r predictHVT function1,echo = TRUE, eval= FALSE}
-predictHVT(data,
+```{r scoreHVT function1,echo = TRUE, eval= FALSE}
+scoreHVT(data,
                   hvt.results,
                   hmap.cols = NULL,
                   child.level = 1,
                   ...)
 ```
 
-The important parameters for the function `predictHVT` are as below:
+The important parameters for the function `scoreHVT` are as below:
 
 * __`data`__ - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
@@ -929,9 +929,9 @@ The important parameters for the function `predictHVT` are as below:
 
 Now once we have built the model, let us try to predict using our test dataset (containing 3000 data points) which cell and which level each point belongs to.
 
-```{r predictHVT torus,warning=FALSE,message=FALSE,eval = global_var}
+```{r scoreHVT torus,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions_torus <- predictHVT(
+predictions_torus <- scoreHVT(
   testTorus,
   hvt.torus3,
   child.level = 1,
@@ -1078,7 +1078,7 @@ We will pass the below mentioned model parameters along with computers training 
 ```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- HVT::HVT(trainComputers,   
+hvt.results <- HVT::trainHVT(trainComputers,   
                           n_cells = 440,
                           depth = 1,
                           quant.err = 0.2,
@@ -1192,7 +1192,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 ```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid over the No. of entities in each cell in the ’computers’ dataset',eval = global_var}
 
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1209,7 +1209,7 @@ HVT::hvtHmap(
 
 ```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid over the variable price in the ’computers’ dataset',eval = global_var}
 
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1226,7 +1226,7 @@ HVT::hvtHmap(
 
 ```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid over the variable hd in the ’computers’ dataset',eval = global_var}
 
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1243,7 +1243,7 @@ HVT::hvtHmap(
 ```
 
 ```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation with the heat map overlaid over the variable ram in the ’computers’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1259,7 +1259,7 @@ HVT::hvtHmap(
 ```
 
 ```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid over the variable screen in the ’computers’ dataset',eval = global_var}
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1277,7 +1277,7 @@ HVT::hvtHmap(
 
 ```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the variable ads in the ’computers’ dataset',eval = global_var}
 
-HVT::hvtHmap(
+HVT::plotHVT(
   hvt.results,
   trainComputers,
   child.level = 1,
@@ -1293,7 +1293,7 @@ HVT::hvtHmap(
 
 ```
 
-## Step 4: Prediction(predictHVT)
+## Step 4: Prediction(scoreHVT)
 
 For more detailed information on prediction please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#prediction) of this vignette.
 
@@ -1301,7 +1301,7 @@ For more detailed information on prediction please refer to [section 5](https://
 **Raw Testing Dataset**
 
 
-Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to predictHVT function for scoring. For the sake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to scoreHVT function for scoring. For the sake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1311,19 +1311,19 @@ Table(head(testComputers_data))
 Now once we have built the model, let us try to predict using our test dataset containing(1252 data points) which cell and which level each point belongs to.
 
 
-```{r predictHVT function,echo = TRUE, eval= FALSE}
-predictHVT(data,
+```{r scoreHVT function,echo = TRUE, eval= FALSE}
+scoreHVT(data,
                   hvt.results,
                   hmap.cols = NULL,
                   child.level = 1,
                   ...)
 ```
 
-The important parameters for the function `predictHVT` are as below:
+The important parameters for the function `scoreHVT` are as below:
 
 * __`data`__ - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
-* __`hvt.results`__ - A list (hvt.result) obtained from the HVT function while performing hierarchical vector quantization on training data. The list containes detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell, as per the n_cells given to the HVT() function.
+* __`hvt.results`__ - A list (hvt.result) obtained from the HVT function while performing hierarchical vector quantization on training data. The list containes detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell, as per the n_cells given to the trainHVT() function.
 
 * __`hmap.cols`__ - A feature (string) or a set of features(vector) from the dataset for which the heat map is to be plotted. A heatmap won’t be plotted if NULL is passed (Default = NULL)
 
@@ -1344,9 +1344,9 @@ The important parameters for the function `predictHVT` are as below:
 
 
 
-```{r predictHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
+```{r scoreHVT hmap computers,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-predictions <-predictHVT(
+predictions <-scoreHVT(
   testComputers,
   hvt.results,
   child.level = 1,
@@ -1361,7 +1361,7 @@ predictions <-predictHVT(
 
 Let's see which cell and level each point belongs to and check the mean absolute difference of each of the **1252 records**. For the sake of brevity, we will only show the first 10 rows
 
-```{r predictHVT pred computers,warning=FALSE,eval = FALSE,echo=FALSE}
+```{r scoreHVT pred computers,warning=FALSE,eval = FALSE,echo=FALSE}
 
 predictions[["scoredPredictedData"]] %>% head(100) %>% 
   round(2) %>%
@@ -1392,11 +1392,11 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
-* We constructed a compressed HVT map (hvt.torus) by applying the HVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
+* We constructed a compressed HVT map (hvt.torus) by applying the trainHVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
 
-* We created another compressed HVT map (hvt.torus2) using the HVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 2% of the cells have reached the quantization threshold error.
+* We created another compressed HVT map (hvt.torus2) using the trainHVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 2% of the cells have reached the quantization threshold error.
 
-* Once again, we generated a compressed HVT map (hvt.torus3) using the HVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 85% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
+* Once again, we generated a compressed HVT map (hvt.torus3) using the trainHVT() algorithm on the torus dataset. The parameters     for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 85% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
 * **Example II: HVT with the Personal Computer dataset**
 
@@ -1406,11 +1406,11 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
-*  We construct a compressed HVT map using the HVT() on the training dataset by setting __`n_cells`__ to 440 and  __`quant.error`__ to 0.2, and we were able to attain a compression of 81%
+*  We construct a compressed HVT map using the trainHVT() on the training dataset by setting __`n_cells`__ to 440 and  __`quant.error`__ to 0.2, and we were able to attain a compression of 81%
 
 * We then plot the Voronoi Tessellation with the heatmap overlaid for all the features in the computers dataset for better visualization
 
-* Next, we pass the validation dataset along with the HVT map obtained from `HVT()` to `predictHVT()`  to see which cell and level each   point belongs to
+* Next, we pass the validation dataset along with the HVT map obtained from `trainHVT()` to `scoreHVT()`  to see which cell and level each   point belongs to
 
 # Applications 
 

@@ -90,6 +90,8 @@ be scaled. (default = 0.5)}
 \item{layer_opacity}{(3D) Numeric. A vector indicating the opacity of each layer/ level}
 
 \item{dim_size}{(3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
+
+\item{heatmap}{String. String indicating the dimensionality of the plot to be rendered in}
 }
 \value{
 plot object containing the main HVT plot for the given HVT results and heatmap type.

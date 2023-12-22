@@ -46,7 +46,7 @@
 #' \item{[[5]] }{List. Information about the MAD values and percentage anomalies for validation dataset}
 #' 
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
-#' @seealso \code{\link{plotHVT}} \cr \code{\link{plot2DHeatmap}}
+#' @seealso \code{\link{plotHVT}} \cr \code{\link{plotHVT}}
 #' @keywords Training / Compression
 #' @importFrom magrittr %>%
 #' @examples

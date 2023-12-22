@@ -1,4 +1,5 @@
-#' Generating flow maps and animations based on transition probabilities
+#' @name plotAnimatedFlowmap
+#' @title Generating flow maps and animations based on transition probabilities
 #'
 #' Main function for generating flow maps and animations based on transition probabilities.
 #'
@@ -44,7 +45,7 @@
 #' @export plotAnimatedFlowmap
 
 
-
+requireNamespace("ggforce")
 plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt_plot_output, df, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column, time_column) {
   
   # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL

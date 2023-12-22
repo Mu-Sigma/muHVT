@@ -2,29 +2,19 @@
 % Please edit documentation in R/plotAnimatedFlowmap.R
 \name{plotAnimatedFlowmap}
 \alias{plotAnimatedFlowmap}
-\title{Generating flow maps and animations based on transition probabilities}
-\usage{
-plotAnimatedFlowmap(
-  hvt_model_output,
-  transition_probability_df,
-  hvt_plot_output,
-  df,
-  animation = NULL,
-  flow_map = NULL,
-  animation_speed = NULL,
-  threshold = NULL,
-  cellid_column,
-  time_column
-)
-}
+\title{Generating flow maps and animations based on transition probabilities
+
+Main function for generating flow maps and animations based on transition probabilities.
+
+Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
+They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
+These maps help in understanding the dynamics of the system being studied by visually representing the direction and magnitude of flows or transitions.}
 \arguments{
 \item{hvt_model_output}{List. Output from a trainHVT function.}
 
 \item{transition_probability_df}{Data frame. Output Dataframe from getTransitionProbability function}
 
 \item{hvt_plot_output}{List. Base plot for the flow maps.}
-
-\item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
 
 \item{animation}{character. Type of animation ('state_based', 'time_based', or 'All').}
 
@@ -34,6 +24,8 @@ plotAnimatedFlowmap(
 
 \item{threshold}{Numeric. An Integer representing the Probability threshold for flow map arrows.}
 
+\item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
+
 \item{cellid_column}{character. Name of the column containing cell IDs.}
 
 \item{time_column}{character. Name of the column containing timestamps}
@@ -42,9 +34,10 @@ plotAnimatedFlowmap(
 A list of plot objects representing flow maps and animations.
 }
 \description{
+Generating flow maps and animations based on transition probabilities
+
 Main function for generating flow maps and animations based on transition probabilities.
-}
-\details{
+
 Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
 They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
 These maps help in understanding the dynamics of the system being studied by visually representing the direction and magnitude of flows or transitions.

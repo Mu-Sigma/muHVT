@@ -6,13 +6,13 @@
 #' deciding an optimal MAD value for the use case.
 #'
 #'
-#' @param hvt.prediction List. A list of hvt.prediction obtained from the predictHVT
+#' @param hvt.prediction List. A list of hvt.prediction obtained from the scoreHVT
 #' function.
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)
 #' @return Mean Absolute Deviation Plot
 #' \item{mad_plot}{ggplot plot. A plot with percentage anomalies on y axis and mean absolute deviation values on xaxis. }
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
-#' @seealso \code{\link{predictHVT}}
+#' @seealso \code{\link{scoreHVT}}
 #' @importFrom magrittr %>%
 #' @import ggplot2
 #' @examples
@@ -23,12 +23,12 @@
 #' test <- USArrests[41:50,]
 #'
 #' hvt.results <- list()
-#' hvt.results <- HVT(train, n_cells = 15, depth = 1, quant.err = 0.2,
+#' hvt.results <- trainHVT(train, n_cells = 15, depth = 1, quant.err = 0.2,
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE,
 #'                    quant_method="kmeans",diagnose=TRUE)
 #'
-#' predictions <- predictHVT(test,hvt.results, child.level=2,mad.threshold = 0.2)
+#' predictions <- scoreHVT(test,hvt.results, child.level=2,mad.threshold = 0.2)
 #' print(predictions$scoredPredictedData)
 #' madPlot(hvt.prediction=predictions)
 #' @export madPlot

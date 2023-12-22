@@ -105,7 +105,7 @@ plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582
         maxDepth = 3)
 }
 \seealso{
-\code{\link{plotHVT}} \cr \code{\link{plot2DHeatmap}}
+\code{\link{plotHVT}} \cr \code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>

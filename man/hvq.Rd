@@ -79,7 +79,7 @@ distance_metric='L1_Norm',error_metric='mean',quant_method="kmeans")
 
 }
 \seealso{
-\code{\link{hvtHmap}}
+\code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>

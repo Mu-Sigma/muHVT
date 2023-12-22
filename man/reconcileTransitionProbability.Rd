@@ -2,31 +2,33 @@
 % Please edit documentation in R/reconcileTransitionProbability.R
 \name{reconcileTransitionProbability}
 \alias{reconcileTransitionProbability}
-\title{Reconciliation of Transition Probability - Model Diagnostics}
-\usage{
-reconcileTransitionProbability(
-  df,
-  hmap_type = NULL,
-  cellid_column,
-  time_column
-)
-}
+\title{Reconciliation of Transition Probability - Model Diagnostics
+
+Main function for creating transition probability heatmaps and reconcilation of the same.
+
+This is the main function to creating transition probability heatmaps and reconcilation of the same.
+The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
+It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
+removing unlikely transitions, and comparing different models. 
+The function described creates heatmaps to visually represent these probabilities,
+aiding in the understanding and analysis of state transitions within the model.}
 \arguments{
 \item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
-
-\item{hmap_type}{character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')}
 
 \item{cellid_column}{character. Name of the column containing cell IDs.}
 
 \item{time_column}{character. Name of the column containing timestamps}
+
+\item{hmap_type}{character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')}
 }
 \value{
 A list of plotly heatmap objects representing the transition probability heatmaps.
 }
 \description{
+Reconciliation of Transition Probability - Model Diagnostics
+
 Main function for creating transition probability heatmaps and reconcilation of the same.
-}
-\details{
+
 This is the main function to creating transition probability heatmaps and reconcilation of the same.
 The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
 It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,

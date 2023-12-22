@@ -68,9 +68,9 @@ This package provides functionality to predict based on a sequence of maps.
 
 The creation of a predictive set of maps involves three steps -
 
-1.  **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the HVT() function (Map A).
+1.  **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the trainHVT() function (Map A).
 2.  **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function (Map B).
-3.  **Compress the dataset without novelty:** Again, compress the dataset without novelty using n_cells, depth and a quantization threshold using the HVT() function (Map C).
+3.  **Compress the dataset without novelty:** Again, compress the dataset without novelty using n_cells, depth and a quantization threshold using the trainHVT() function (Map C).
 
 
 Let us try to understand the steps with the help of the diagram below -
