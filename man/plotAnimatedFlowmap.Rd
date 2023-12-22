@@ -28,7 +28,7 @@ plotAnimatedFlowmap(
 
 \item{animation}{character. Type of animation ('state_based', 'time_based', or 'All').}
 
-\item{flow_map}{character. Type of flow map ('with_self_state', 'without_self_state', 'self_state', 'probability', or 'All').}
+\item{flow_map}{character. Type of flow map ('with_self_state', 'without_self_state', 'probability', or 'All').}
 
 \item{animation_speed}{Numeric. An Integer representing the Speed of animation (frames per second).}
 
@@ -67,9 +67,8 @@ time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
 getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_stamp")
 plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df,  df = dataset, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL,  cellid_column = "cell_id", time_column = "time_stamp") 
-gif <- magick::image_read(plot[[2]])
 print(plot[[1]])
-print(gif)
+print(plot[[2]])
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}

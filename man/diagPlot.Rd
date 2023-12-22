@@ -56,7 +56,7 @@ quant.err = 0.2)
 
 }
 \seealso{
-\code{\link{predictHVT}}
+\code{\link{scoreHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>

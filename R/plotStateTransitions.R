@@ -39,11 +39,11 @@
 #' cell_id <- predictions$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' plotStateTransition(dataset, sample_size = NULL, line_plot = FALSE, cellid_column = "cell_id", time_column = "time_stamp")
-#' @export plotStateTransition
+#' plotStateTransitions(dataset, sample_size = NULL, line_plot = FALSE, cellid_column = "cell_id", time_column = "time_stamp")
+#' @export plotStateTransitions
 
 
-plotStateTransition <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
+plotStateTransitions <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
   
   # Rename column names for Time and Cell for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
