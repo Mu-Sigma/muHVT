@@ -53,6 +53,7 @@
 
 
 plotStateTransitions <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
+
   # Rename column names for Time and Cell for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
   colnames(df)[colnames(df) == cellid_column] <- "Cell.ID"
