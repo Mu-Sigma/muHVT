@@ -12,9 +12,9 @@
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @importFrom magrittr %>%
 #' @examples
-#' data(USArrests)
+#' data("EuStockMarkets")
 #' hvt.results <- list()
-#' hvt.results <- trainHVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
+#' hvt.results <- trainHVT(EuStockMarkets, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE, seed = 123,
 #'                    quant_method="kmeans",diagnose=TRUE)

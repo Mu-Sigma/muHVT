@@ -50,22 +50,17 @@
 #' @keywords Training / Compression
 #' @importFrom magrittr %>%
 #' @examples
-#' data(USArrests)
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 279,
-#'                    quant_method="kmeans")
-#' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
-#'         maxDepth = 1)
-#'
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(USArrests, n_cells = 15, depth = 3, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 279,
-#'                    quant_method="kmeans")
-#' plotHVT(hvt.results, line.width = c(1.2,0.8,0.4), color.vec = c('#141B41','#0582CA','#8BA0B4'), 
-#'         maxDepth = 3)
+#'dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+#'                      DAX = EuStockMarkets[, "DAX"],
+#'                      SMI = EuStockMarkets[, "SMI"],
+#'                      CAC = EuStockMarkets[, "CAC"],
+#'                      FTSE = EuStockMarkets[, "FTSE"])
+#'dataset_hvt <- dataset[,-c(1)]
+#'hvt.results <- list()
+#'hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
+#'                        distance_metric = "L1_Norm", error_metric = "mean",
+#'                        projection.scale = 10, normalize = TRUE, seed = 123,
+#'                        quant_method="kmeans")
 #' @export trainHVT
 
 

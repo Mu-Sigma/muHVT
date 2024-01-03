@@ -9,7 +9,7 @@
 #'
 #' @param sample.size Numeric. Indicating the sample size for distribution
 #' @param ncol Numeric. Indicating the number of columns
-#' @return Datafrakme containing multinomial distribution with the given sample size and number of columns
+#' @return Dataframe containing multinomial distribution with the given sample size and number of columns
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @importFrom magrittr %>%
 #' @examples

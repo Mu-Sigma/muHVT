@@ -12,7 +12,7 @@
 #' 
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
 #' @param sample_size Numeric. An integer indicating the Fraction of the dataframe to sample.
-#' Default value is 0.2.
+#' Default value is 0.2
 #' @param line_plot Logical. A logical value indicating to create a line plot.
 #' Default value is NULL.
 #' @param cellid_column character. Name of the column containing cell IDs.
@@ -39,11 +39,11 @@
 #' cell_id <- predictions$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' state_transition_plot(dataset, sample_size = NULL, line_plot = FALSE, cellid_column = "cell_id", time_column = "time_stamp")
-#' @export state_transition_plot
+#' plotStateTransition(dataset, sample_size = NULL, line_plot = FALSE, cellid_column = "cell_id", time_column = "time_stamp")
+#' @export plotStateTransition
 
 
-state_transition_plot <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
+plotStateTransition <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
   
   # Rename column names for Time and Cell for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"

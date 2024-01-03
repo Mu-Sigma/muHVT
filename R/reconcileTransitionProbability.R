@@ -49,6 +49,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   
   # Heatmap 1: Transition probability with self-state
   raw_data <- df %>% dplyr::select("Cell.ID", "Timestamp")
+ # browser()
   transition_values <- table(raw_data$Cell.ID[-nrow(raw_data)], raw_data$Cell.ID[-1])
   mat <- unclass(transition_values)
   normalized_value <- mat / rowSums(mat)
@@ -78,19 +79,20 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     )
   
   # Heatmap 2: Transition probability without self-state
+
   raw_data1 <- df
   transition_values1 <- table(raw_data1$Cell.ID[-nrow(raw_data1)], raw_data1$Cell.ID[-1])
   mat1 <- unclass(transition_values1)
   normalized_value1 <- mat1 / rowSums(mat1)
   
+
+  # browser()  
+  # Normalize again after setting self-transitions to 0
+  normalized_value1 <- normalized_value1 / rowSums(normalized_value1)
   # Set probability to 0 for transitions to the same state
   for (i in 1:nrow(normalized_value1)) {
     normalized_value1[i, i] <- 0
   }
-  
-  # Normalize again after setting self-transitions to 0
-  normalized_value1 <- normalized_value1 / rowSums(normalized_value1)
-  
   melted_matrix1 <- reshape2::melt(normalized_value1)
   a_df1 <- melted_matrix1 %>% as.data.frame()
   colnames(a_df1) <- c("StateFrom", "StateTo", "Probabilty")
@@ -117,7 +119,10 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     )
   
   # Heatmap 3: Markov Chain state transition Probability
-  mc_data <- df$Cell.ID
+  # browser()
+  #old code: mc_data  <- df$Cell.ID
+  mc_data  <- df$Cell.ID[-c(1, nrow(df))]
+
   mc <- markovchain::markovchainFit(data = mc_data)
   trans_matrix <- mc$estimate
   trans_plot <- as(trans_matrix, "matrix")
@@ -144,7 +149,9 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
       width = 750,
       height = 600
     )
+
   
+  #without self - state
   trans_matrix_no_self <- trans_plot
   diag(trans_matrix_no_self) <- 0  # Set self-transitions to 0
   

@@ -19,7 +19,7 @@
 #' @return A list of plot objects representing flow maps and animations.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
-#' @keywords Transition / Outliers
+#' @keywords Transition / Prediction
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -136,7 +136,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   colnames(merged_df2) <- c("x1", "y1", "Cell.ID", "Tplus1_States", "Probability", "x2", "y2")
   merged_df2$Probability <- round(merged_df2$Probability, digits = 3)
   
-  # Non-self state PLOT
+  # Non-self state PLOT - 1
   merged_df1 <- merged_df1 %>%
     dplyr::mutate(distance = round(sqrt((x2 - x1)^2 + (y2 - y1)^2), 0))
   
@@ -154,24 +154,35 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     labs(title = "Flow map: Distance based on Euclidean Distance") + 
     guides(color = guide_legend(title = "Euclidean\nDistance")) + theme_minimal()
   
-  # Self-state Plot
+  # Self-state Plot - 2
   prob1 <- merged_df2$Probability
   cellID_coordinates$prob1 <- prob1
- #browser()
+#browser()
   min_prob <- min(merged_df2$Probability)
   custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
   custom_breaks[1] <- min_prob - 1e-6
   CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
   CircleSize <- ifelse(is.na(CircleSize), 3, CircleSize)
+  ##newly added
+  n_values <- seq(min(cellID_coordinates$prob1), max(cellID_coordinates$prob1), by = 0.005)
+  size_roll <- seq(from = 1,length.out = length(n_values) , by = 0.5)
+  # xlim_l <- max(merged_df2$x1)
+  # rounded_number <- ifelse(xlim_l >= 0, ceiling(xlim_l / 10) * 10, -ceiling(abs(xlim_l) / 10) * 10)
+  # ylim_l <- max(merged_df2$y1)
+  # rounded_number1 <- ifelse(ylim_l >= 0, ceiling(ylim_l / 10) * 10, -ceiling(abs(ylim_l) / 10) * 10)
+
   self_state_plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
-    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * CircleSize)) +
+    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.4 * CircleSize)) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
     scale_color_gradient(low = "blue", high = "blue",
                          name = "Probability",
                          breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2,3,4,5,6,7,8,9,8,7,4,3,2,1))), fill = guide_legend(title = "Probability")) +
-    theme_minimal()
+    labs(title = " Flow map: Highest transition probability considering self-state") +
+    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = size_roll)), fill = guide_legend(title = "Probability")) +
+    theme_minimal() 
+   #coord_fixed(ratio = 1, xlim = c(-(rounded_number), abs(rounded_number)), ylim = c(-(rounded_number), abs(rounded_number)))
+
   
   
   # Create a new column "threshold" based on the mean
@@ -205,7 +216,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   probability_without_selfstate_list <- lapply(transition_probability_df, prob_with_no_selfstate)
   
   
-  # Combine the results into a single data frame
+  # Combine the results into a single data frame - 3
   third_df <- do.call(rbind, probability_without_selfstate_list)
   # Dataframe for second_highest state
   merged_df3 <- cbind(current_state_data, third_df)
@@ -229,7 +240,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
        labs(title = "Flow map: Arrow size based on Probability") +
     guides(color = guide_legend(title = "Transition\nProbability")) + theme_minimal()
   
-  # Flow map Animation based on Timestamp
+  # Flow map Animation based on Timestamp - 4
   df <- df %>%
     group_by(Cell.ID) %>%
     dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
@@ -253,7 +264,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   # time_animation <- animate(dot_anim, fps = animation_speed, duration = 100)
   # anim_save("./source/time_animation.gif", animation = time_animation, width = 800, height = 400)
   
-  ### Animation based on next state
+  ### Animation based on next state -5
   
   order <- unique(state_data$Cell.ID)
   anime_df <- merged_df1[order, ]

@@ -31,7 +31,6 @@
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE, seed = 123,
 #'                    quant_method="kmeans")
-#' 
 #' predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold = 0.2) 
 #' cell_id <- predictions$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
