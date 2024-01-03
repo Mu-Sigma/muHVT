@@ -47,7 +47,7 @@ Available algorithms are Hartigan and Wong, "Lloyd", "Forgy", "MacQueen".
 \value{
 \item{clusters}{ List. A list showing each ID assigned to a cluster.
 } \item{nodes.clust}{ List. A list corresponding to nodes' details. }
-\item{idnodes}{ List. A list of ID and segments similar to
+\item{idnodes}{ List. A list of ID and segments similar to 
 \code{nodes.clust} with additional columns for nodes ID. }
 \item{error.quant}{ List. A list of quantization error for all levels and
 nodes. } \item{plt.clust}{ List. A list of logical values indicating if the
@@ -72,14 +72,12 @@ threshold quantization error is met. The output of this technique will be
 hierarchically arranged vector quantized data.
 }
 \examples{
-
-data("USArrests",package="datasets")
-hvqOutput = hvq(USArrests, n_cells = 5, depth = 2, quant.err = 0.2,
+data("EuStockMarkets")
+hvqOutput = hvq("EuStockMarkets", n_cells = 5, depth = 2, quant.err = 0.2,
 distance_metric='L1_Norm',error_metric='mean',quant_method="kmeans")
-
 }
 \seealso{
-\code{\link{plotHVT}}
+\code{\link{plotHVT(2D heatmap)}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>

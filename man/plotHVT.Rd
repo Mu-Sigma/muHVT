@@ -102,20 +102,28 @@ Plot the hierarchical tesselations.
 Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
 }
 \examples{
-data(USArrests)
+dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+                     DAX = EuStockMarkets[, "DAX"],
+                     SMI = EuStockMarkets[, "SMI"],
+                     CAC = EuStockMarkets[, "CAC"],
+                     FTSE = EuStockMarkets[, "FTSE"])
+dataset_hvt <- dataset[,-c(1)]
 hvt.results <- list()
-hvt.results <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2,
-                  distance_metric = "L1_Norm", error_metric = "mean",
-                  projection.scale = 10, normalize = TRUE, seed = 279,
-                  quant_method="kmeans")
-plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 2, 
-       maxDepth = 1,heatmap = '1D')
-plotHVT(hvt.results, USArrests, centroid.size = 1,
-       child.level = 1, hmap.cols = "Assault",
-       line.width = c(0.6), color.vec = ('#000000') , 
-       pch1 = 21, heatmap = '2D')
-plotHVT( hvt.results, child.level = 1, hmap.cols = "Murder", n_cells.hmap = 15, 
-        layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
+hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
+                       distance_metric = "L1_Norm", error_metric = "mean",
+                       projection.scale = 10, normalize = TRUE, seed = 123,
+                       quant_method="kmeans")
+#1D - Plot
+plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
+maxDepth = 1,heatmap = '1D')
+#2D - Plot
+plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
+child.level = 1, hmap.cols = "DAX",
+line.width = c(0.6), color.vec = ('#000000') , 
+pch1 = 21, heatmap = '2D')
+#3D - Plot
+plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
+layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
 }
 \seealso{
 \code{\link{trainHVT}}

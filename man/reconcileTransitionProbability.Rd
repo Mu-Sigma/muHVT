@@ -52,7 +52,8 @@ predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold
 cell_id <- predictions$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
-reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell_id", time_column = "time_stamp") 
+reconcileTransitionProbability(dataset, hmap_type = 'All', 
+cellid_column = "cell_id", time_column = "time_stamp") 
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}

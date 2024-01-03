@@ -47,7 +47,6 @@ hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 3, quant.err = 0.2,
                    distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE, seed = 123,
                    quant_method="kmeans")
-
 predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold = 0.2) 
 cell_id <- predictions$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date

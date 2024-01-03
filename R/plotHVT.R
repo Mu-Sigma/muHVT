@@ -68,7 +68,7 @@
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
 #' pch1 = 21, heatmap = '2D')
-#' 3D - Plot
+#' #3D - Plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
 #' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
 #' @export plotHVT

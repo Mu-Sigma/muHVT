@@ -15,7 +15,7 @@ diagPlot(
 )
 }
 \arguments{
-\item{hvt.results}{A list of hvt.results obtained from HVT function while performing hierarchical vector quantization on train data}
+\item{hvt.results}{A list of hvt.results obtained from trainHVT function while performing hierarchical vector quantization on train data}
 
 \item{data}{Data frame. A data frame with different columns is given as input. The dataframe should be the same dataframe used to train the HVT Model}
 
@@ -32,6 +32,7 @@ Distribution of number of cells and count of singletons(segments with single obs
 \item{cent_plot }{Plot. a Minimum Intra-Centroid distance plot}
  \item{datapoint_plot }{Plot. a Minimum Intra-Datapoints distance plot} 
  \item{number_plot }{Plot. a Distribution of number of cells} 
+ \item{mad_plot}{Plot. Mean Absolute Deviation Plot}
 \item{singleton_count}{Numeric. Count of singletons(segments with single observation)}
 }
 \description{
@@ -43,14 +44,19 @@ Distribution of number of cells,  a Minimum Intra-DataPoint Distance Plot,
 Distribution of number of cells and count of singletons(segments with single observation)
 }
 \examples{
-data(USArrests)
+data <- data.frame(date = as.numeric(time(EuStockMarkets)),
+                  DAX = EuStockMarkets[, "DAX"],
+                  SMI = EuStockMarkets[, "SMI"],
+                  CAC = EuStockMarkets[, "CAC"],
+                  FTSE = EuStockMarkets[, "FTSE"])
+dataset <- data[,-c(1)]
 hvt.results <- list()
-hvt.results <- trainHVT(USArrests, n_cells = 15, depth = 1, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans",diagnose=TRUE)
+hvt.results <- trainHVT(dataset, n_cells = 15, depth = 1, quant.err = 0.2, 
+                            distance_metric = "L1_Norm", error_metric = "mean",
+                            projection.scale = 10, normalize = TRUE, seed = 123,
+                            quant_method="kmeans")
 diagPlot(hvt.results = hvt.results,
-data = USArrests,
+data = dataset,
 level = 1,
 quant.err = 0.2)
 
@@ -61,5 +67,7 @@ quant.err = 0.2)
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>
 }
-\keyword{hplot}
+\keyword{/}
+\keyword{Diagnostics}
+\keyword{Validation}
 \keyword{internal}

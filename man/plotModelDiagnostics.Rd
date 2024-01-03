@@ -20,6 +20,20 @@ for HVT Predictions, "Mean Absolute Deviation Plot for Training Data and Validat
 \description{
 Make the diagnostic plots for hierarchical voronoi tessellations model.
 }
+\examples{
+dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+                      DAX = EuStockMarkets[, "DAX"],
+                      SMI = EuStockMarkets[, "SMI"],
+                      CAC = EuStockMarkets[, "CAC"],
+                      FTSE = EuStockMarkets[, "FTSE"])
+dataset_hvt <- dataset[,-c(1)]
+hvt_results <- list()
+hvt_results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
+                       distance_metric = "L1_Norm", error_metric = "mean",
+                       projection.scale = 10, normalize = TRUE, seed = 123,
+                       quant_method="kmeans", hvt_validation = TRUE, diagnose = TRUE)
+plot_diag <- plotModelDiagnostics(hvt_results)
+}
 \seealso{
 \code{\link{plotHVT}}
 }

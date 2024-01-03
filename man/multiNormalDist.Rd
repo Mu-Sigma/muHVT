@@ -12,7 +12,7 @@ multiNormalDist(sample.size = 2500, ncol = 5)
 \item{ncol}{Numeric. Indicating the number of columns}
 }
 \value{
-Datafrakme containing multinomial distribution with the given sample size and number of columns
+Dataframe containing multinomial distribution with the given sample size and number of columns
 }
 \description{
 Function to generate multivariate normal distribution where each variable has a standard normal distribution N(0,1)

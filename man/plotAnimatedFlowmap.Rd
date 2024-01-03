@@ -59,7 +59,12 @@ cell_id <- predictions$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
 getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_stamp")
-plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df,  df = dataset, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL,  cellid_column = "cell_id", time_column = "time_stamp") 
+plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, 
+transition_probability_df = trans_prob_df,  
+df = dataset, animation = NULL, 
+flow_map = NULL, animation_speed = NULL, 
+threshold = NULL,  cellid_column = "cell_id", 
+time_column = "time_stamp") 
 print(plot[[1]])
 print(plot[[2]])
 }
@@ -70,5 +75,5 @@ print(plot[[2]])
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
 \keyword{/}
-\keyword{Outliers}
+\keyword{Prediction}
 \keyword{Transition}

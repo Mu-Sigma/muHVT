@@ -16,7 +16,7 @@ plotStateTransitions(
 \item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
 
 \item{sample_size}{Numeric. An integer indicating the Fraction of the dataframe to sample.
-Default value is 0.2.}
+Default value is 0.2}
 
 \item{line_plot}{Logical. A logical value indicating to create a line plot.
 Default value is NULL.}

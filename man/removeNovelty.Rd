@@ -28,18 +28,23 @@ the compressed map (hvt_mapA) generated using the \code{trainHVT} function. The 
 a list of two items: a new map having the data of removed outlier cell(s) and the subset of dataset without outliers.
 }
 \examples{
-data(USArrests)
+data("EuStockMarkets")
+dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+                     DAX = EuStockMarkets[, "DAX"],
+                     SMI = EuStockMarkets[, "SMI"],
+                     CAC = EuStockMarkets[, "CAC"],
+                     FTSE = EuStockMarkets[, "FTSE"])
+#adding this step especially for this function
+rownames(EuStockMarkets) <- dataset$date
+dataset_hvt <- dataset[,-c(1)]
 hvt_mapA <- list()
-hvt_mapA <- trainHVT(USArrests, min_compression_perc = 70, quant.err = 0.2, 
-                   distance_metric = "L1_Norm", error_metric = "mean",
-                   projection.scale = 10, normalize = TRUE,
-                   quant_method="kmeans")
-plotHVT(hvt_mapA, line.width = c(0.8), color.vec = c('#141B41'), 
-        maxDepth = 1)
-        
+hvt_mapA <- trainHVT(dataset_hvt, min_compression_perc = 70, quant.err = 0.2,
+                    distance_metric = "L1_Norm", error_metric = "mean",
+                    projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
 identified_Novelty_cells <<- c(2, 10)
 output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 hvt_mapB <- output_list[[1]]
+##output is the dataset after removing the novelty cells
 dataset_without_novelty <- output_list[[2]]
 }
 \seealso{

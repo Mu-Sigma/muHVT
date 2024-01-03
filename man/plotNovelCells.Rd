@@ -50,6 +50,11 @@ Plot the identified outlier cell(s) in the voronoi tessellations map.
 Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
 compressed HVT map.
 }
+\examples{
+#the cells selected are random
+plotNovelCells(c(2,4,5,10),hvt.results,line.width = c(0.6),color.vec = c("#000000"),pch1 = 21,
+              centroid.size = 0.5,title = NULL, maxDepth = 1)
+}
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 }
