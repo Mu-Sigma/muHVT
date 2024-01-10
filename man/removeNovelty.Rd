@@ -2,7 +2,7 @@
 % Please edit documentation in R/removeNovelty.R
 \name{removeNovelty}
 \alias{removeNovelty}
-\title{removeNovelty}
+\title{Remove identified outlier cell(s) from the dataset}
 \usage{
 removeNovelty(outlier_cells, hvt_results)
 }
@@ -18,9 +18,6 @@ has to be passed as input argument to \code{trainHVT} function to generate anoth
 \item{[[2]] }{Dataframe. Subset of dataset without the outlier cell(s)}
 }
 \description{
-Remove identified outlier cell(s) from the dataset
-}
-\details{
 This function is used to remove the identified outlier cell(s) from the dataset.
 It is recommended to run the \code{trainHVT} function before running this function. It takes input in the form 
 of cell number of the outlier cell(s) identified using the output of the \code{trainHVT} function and
@@ -34,7 +31,6 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      SMI = EuStockMarkets[, "SMI"],
                      CAC = EuStockMarkets[, "CAC"],
                      FTSE = EuStockMarkets[, "FTSE"])
-#adding this step especially for this function
 rownames(EuStockMarkets) <- dataset$date
 dataset_hvt <- dataset[,-c(1)]
 hvt_mapA <- list()
@@ -44,7 +40,6 @@ hvt_mapA <- trainHVT(dataset_hvt, min_compression_perc = 70, quant.err = 0.2,
 identified_Novelty_cells <<- c(2, 10)
 output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 hvt_mapB <- output_list[[1]]
-##output is the dataset after removing the novelty cells
 dataset_without_novelty <- output_list[[2]]
 }
 \seealso{
@@ -53,6 +48,4 @@ dataset_without_novelty <- output_list[[2]]
 \author{
 Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Novelty}
-\keyword{Outliers}
+\keyword{Novelty_or_Outliers}

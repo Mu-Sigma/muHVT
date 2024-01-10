@@ -1,8 +1,8 @@
-#' removeNovelty
+#' @name removeNovelty
 #'
-#' Remove identified outlier cell(s) from the dataset
+#' @title Remove identified outlier cell(s) from the dataset
 #'
-#' This function is used to remove the identified outlier cell(s) from the dataset.
+#' @description This function is used to remove the identified outlier cell(s) from the dataset.
 #' It is recommended to run the \code{trainHVT} function before running this function. It takes input in the form 
 #' of cell number of the outlier cell(s) identified using the output of the \code{trainHVT} function and
 #' the compressed map (hvt_mapA) generated using the \code{trainHVT} function. The output of this function is
@@ -27,7 +27,6 @@
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'#adding this step especially for this function
 #'rownames(EuStockMarkets) <- dataset$date
 #'dataset_hvt <- dataset[,-c(1)]
 #'hvt_mapA <- list()
@@ -37,9 +36,8 @@
 #' identified_Novelty_cells <<- c(2, 10)
 #' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' hvt_mapB <- output_list[[1]]
-#'##output is the dataset after removing the novelty cells
 #'dataset_without_novelty <- output_list[[2]]
-#' @keywords Novelty / Outliers
+#' @keywords Novelty_or_Outliers
 #' @export removeNovelty
 
 

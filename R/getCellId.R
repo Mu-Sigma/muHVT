@@ -1,9 +1,9 @@
 #' Cell ID
 #'
-#' @title Function to generate cell ID based on 1D sammons projection
+#' Function to generate cell ID based on 1D sammons projection
 #'
-#' @description To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
-#' and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output CellID gets
+#' To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
+#' and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output Cell id gets
 #' appended to the HVT model. 
 #'
 #' @param hvt.results List. A list of hvt.results obtained from the trainHVT function.
@@ -22,6 +22,7 @@
 #'         maxDepth = 1, heatmap ='1D')
 #'getCellId (hvt.results)
 #' @export getCellId
+#' @keywords internal
 
 
 getCellId <-  function(hvt.results, seed = 123) {

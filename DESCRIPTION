@@ -1,25 +1,26 @@
 Package: HVT
 Type: Package
-Date: 2023-11-17
+Date: 2024-01-10
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
-Version: 23.11.2
+Version: 24.1.1
 Authors@R: c(
 	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
-Description: Facilitates building topology preserving maps for rich multivariate data. Credits to Mu Sigma for their continuous support throughout the development of the package.
+Description: Facilitates building topology preserving maps for rich multivariate data. 
+             Credits to Mu Sigma for their continuous support throughout the development of the package.
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr,
-        scales, cluster, reshape2, plyr, data.table, ggforce, markovchain
+        stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr, gganimate,
+        scales, cluster, reshape2, plyr, data.table, patchwork, ggforce,markovchain
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.2.3
 Suggests: knitr, rmarkdown, testthat, geozoo, kableExtra, plotly, DT,
         gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools,
-        tidyverse, DataExplorer, htmltools, corrplot, gganimate
+        tidyverse, DataExplorer, htmltools, corrplot
 VignetteBuilder: knitr
 NeedsCompilation: no
 Packaged: 2023-11-17 12:35:23 UTC;
@@ -27,4 +28,5 @@ Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2023-11-17 20:10:03 UTC
+Date/Publication: 2024-01-10 17:50:00 UTC
+

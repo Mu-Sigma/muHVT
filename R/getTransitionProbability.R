@@ -1,23 +1,20 @@
-#' Creating Transition Probability table
-#'
-#' Main function to create transition probabilities for each Cell.ID in a dataframe
-#'
-#' This is the main function to create transition probability table.
+#' @name getTransitionProbability
+#' @title Creating Transition Probability table
+#' @description This is the main function to create transition probability table.
 #' The transition probability table quantifies the likelihood of transitioning from one state to another. 
 #' It is derived from historical data and provides a statistical basis for predicting future state changes.
 #' States: The table includes the current states and the possible next states.
 #' Probabilities: For each current state, it lists the probability of transitioning to each of the next possible states. 
 #' Frequency: It often includes the frequency of these transitions, which helps in understanding the commonness of certain state changes.
-#' 
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
-#' @param cellid_column character. Name of the column containing cell IDs.
-#' @param time_column character. Name of the column containing timestamps.
+#' @param cellid_column Character. Name of the column containing cell IDs.
+#' @param time_column Character. Name of the column containing timestamps.
 #' @param all_prob_results Logical. A Logical value indicating the facility to print the results. TRUE in R script saves the list of dataframe as environment variable and print the results only.
 #' FALSE in rmd file by giving chunk option as {result = 'asis'} prints the probability table as dropdown. 
 #' @return Prints and stores a list of dataframes with transition probabilities.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
-#' @keywords Transition / Prediction
+#' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

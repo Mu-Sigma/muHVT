@@ -1,10 +1,10 @@
-#' @name plotHVT
-#' @title Plot the hierarchical tesselations.
-#'
-#' Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
-#'
+#' @name plotHVT 
+#' @title Plot the hierarchical tessellations.
+#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
 #' @param hvt.results (1D/2D/3D) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
+#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
+#' '2D', '3D'. Default value is 1D.
 #' @param line.width (1D/2D) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
 #' @param color.vec (1D/2D) Vector. A vector indicating the colors of the boundaries of
@@ -41,11 +41,10 @@
 #' @param sepration_width (3D) Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity (3D) Numeric. A vector indicating the opacity of each layer/ level
 #' @param dim_size  (3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot
-#' @param heatmap String. String indicating the dimensionality of the plot to be rendered in
 #' @returns plot object containing the main HVT plot for the given HVT results and heatmap type.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} 
-#' @keywords Tessellation & Heatmap
+#' @keywords Tessellation_and_Heatmap
 #' @importFrom magrittr %>%
 #' @import ggplot2
 #' @examples

@@ -22,7 +22,6 @@
 
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{scoreHVT}}
-#' @keywords Diagnostics / Validation
 #' @importFrom magrittr %>%
 #' @import ggplot2
 #' @import dplyr

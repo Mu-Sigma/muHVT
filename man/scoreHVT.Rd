@@ -2,7 +2,7 @@
 % Please edit documentation in R/scoreHVT.R
 \name{scoreHVT}
 \alias{scoreHVT}
-\title{Predict which cell and what level each point in the test dataset belongs to}
+\title{Predict which cell and what level each point in the test dataset belongs to.}
 \usage{
 scoreHVT(
   data,
@@ -38,11 +38,11 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+\item{distance_metric}{Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
 
-\item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
-\item{yVar}{character. Name of the dependent variable(s)}
+\item{yVar}{Character. Name of the dependent variable(s)}
 
 \item{...}{color.vec and line.width can be passed from here}
 }
@@ -50,7 +50,8 @@ dataset should be normalized. Default value is TRUE.}
 Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
 }
 \description{
-Predict which cell and what level each point in the test dataset belongs to
+This is the function predicts the cell and level for each point in the test dataset based on a hierarchical Voronoi tessellations model. 
+It provides scored predicted data, prediction plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
 }
 \examples{
 data("EuStockMarkets")
@@ -59,7 +60,6 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      SMI = EuStockMarkets[, "SMI"],
                      CAC = EuStockMarkets[, "CAC"],
                      FTSE = EuStockMarkets[, "FTSE"])
-#adding this step especially for this function
 rownames(EuStockMarkets) <- dataset$date
 # Split in train and test
 train <- EuStockMarkets[1:1302, ]

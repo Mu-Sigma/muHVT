@@ -1,8 +1,8 @@
 #' @name scoreLayeredHVT
-#'
 #' @title Predict which cell and what level each point in the test dataset belongs to
-#'
-#'
+#' @description
+#' This is a function that predicts the cell and corresponding level for each point in a test dataset using three hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and
+#' returns a dataframe containing the scored predicted layer output. The function incorporates the predictions from each map and merges them to provide a comprehensive result.
 #' @param data Data Frame. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 #' this dataset can also be used to overlay as heatmap
 #' @param hvt_mapA A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data
@@ -15,30 +15,32 @@
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
 #' @param seed Numeric. Random Seed.
-#' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
-#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
-#' @param yVar character. Name of the dependent variable(s)
+#' @param distance_metric Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+#' @param error_metric Character. The error metric can be "mean" or "max". mean is selected by default
+#' @param yVar Character. Name of the dependent variable(s)
 #' @param ...  color.vec and line.width can be passed from here
 #' @return Dataframe containing scored predicted layer output
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>,Somya Shambhawi <somya.shambhawi@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 #' @importFrom magrittr %>%
 #' @examples
+#' library(magrittr)
 #'data("EuStockMarkets")
 #'dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                      DAX = EuStockMarkets[, "DAX"],
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'#adding this step especially for this function
 #'rownames(EuStockMarkets) <- dataset$date
-#'dataset_hvt <- dataset[,-c(1)]
+# Split in train and test
+#' train <- EuStockMarkets[1:1302, ]
+#' test <- EuStockMarkets[1303:1860, ]
 #'hvt_mapA <- list()
-#'hvt_mapA <- trainHVT(dataset_hvt, min_compression_perc = 70, quant.err = 0.2,
+#'hvt_mapA <- trainHVT(train, min_compression_perc = 70, quant.err = 0.2,
 #'                     distance_metric = "L1_Norm", error_metric = "mean",
 #'                     projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
 #'identified_Novelty_cells <<- c(2, 10)
-#'output_list <- removeNovelty(identified_Novelty_cells, hvt_summary)
+#'output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #'data_with_novelty <- output_list[[1]] %>% dplyr::select(!c("Cell.ID", "Cell.Number"))
 #'hvt_mapB <- trainHVT(data_with_novelty,n_cells = 3, quant.err = 0.2,
 #'                     distance_metric = "L1_Norm", error_metric = "mean",

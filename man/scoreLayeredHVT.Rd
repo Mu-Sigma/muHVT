@@ -38,9 +38,9 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+\item{distance_metric}{Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
 
-\item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
 \item{child.level}{A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)}
 
@@ -48,7 +48,7 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{color.vec}{Vector. A color vector}
 
-\item{yVar}{character. Name of the dependent variable(s)}
+\item{yVar}{Character. Name of the dependent variable(s)}
 
 \item{...}{color.vec and line.width can be passed from here}
 }
@@ -56,24 +56,26 @@ dataset should be normalized. Default value is TRUE.}
 Dataframe containing scored predicted layer output
 }
 \description{
-Predict which cell and what level each point in the test dataset belongs to
+This is a function that predicts the cell and corresponding level for each point in a test dataset using three hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and
+returns a dataframe containing the scored predicted layer output. The function incorporates the predictions from each map and merges them to provide a comprehensive result.
 }
 \examples{
+library(magrittr)
 data("EuStockMarkets")
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      DAX = EuStockMarkets[, "DAX"],
                      SMI = EuStockMarkets[, "SMI"],
                      CAC = EuStockMarkets[, "CAC"],
                      FTSE = EuStockMarkets[, "FTSE"])
-#adding this step especially for this function
 rownames(EuStockMarkets) <- dataset$date
-dataset_hvt <- dataset[,-c(1)]
+train <- EuStockMarkets[1:1302, ]
+test <- EuStockMarkets[1303:1860, ]
 hvt_mapA <- list()
-hvt_mapA <- trainHVT(dataset_hvt, min_compression_perc = 70, quant.err = 0.2,
+hvt_mapA <- trainHVT(train, min_compression_perc = 70, quant.err = 0.2,
                     distance_metric = "L1_Norm", error_metric = "mean",
                     projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
 identified_Novelty_cells <<- c(2, 10)
-output_list <- removeNovelty(identified_Novelty_cells, hvt_summary)
+output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 data_with_novelty <- output_list[[1]] \%>\% dplyr::select(!c("Cell.ID", "Cell.Number"))
 hvt_mapB <- trainHVT(data_with_novelty,n_cells = 3, quant.err = 0.2,
                     distance_metric = "L1_Norm", error_metric = "mean",

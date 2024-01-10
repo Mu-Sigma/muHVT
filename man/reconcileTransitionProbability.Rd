@@ -2,33 +2,28 @@
 % Please edit documentation in R/reconcileTransitionProbability.R
 \name{reconcileTransitionProbability}
 \alias{reconcileTransitionProbability}
-\title{Reconciliation of Transition Probability - Model Diagnostics
-
-Main function for creating transition probability heatmaps and reconcilation of the same.
-
-This is the main function to creating transition probability heatmaps and reconcilation of the same.
-The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
-It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
-removing unlikely transitions, and comparing different models. 
-The function described creates heatmaps to visually represent these probabilities,
-aiding in the understanding and analysis of state transitions within the model.}
+\title{Reconciliation of Transition Probability - Model Diagnostics}
+\usage{
+reconcileTransitionProbability(
+  df,
+  hmap_type = NULL,
+  cellid_column,
+  time_column
+)
+}
 \arguments{
 \item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
 
-\item{cellid_column}{character. Name of the column containing cell IDs.}
+\item{hmap_type}{Character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')}
 
-\item{time_column}{character. Name of the column containing timestamps}
+\item{cellid_column}{Character. Name of the column containing cell IDs.}
 
-\item{hmap_type}{character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')}
+\item{time_column}{Character. Name of the column containing timestamps}
 }
 \value{
 A list of plotly heatmap objects representing the transition probability heatmaps.
 }
 \description{
-Reconciliation of Transition Probability - Model Diagnostics
-
-Main function for creating transition probability heatmaps and reconcilation of the same.
-
 This is the main function to creating transition probability heatmaps and reconcilation of the same.
 The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
 It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
@@ -52,8 +47,8 @@ predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold
 cell_id <- predictions$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
-reconcileTransitionProbability(dataset, hmap_type = 'All', 
-cellid_column = "cell_id", time_column = "time_stamp") 
+reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell_id",
+                               time_column = "time_stamp") 
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
@@ -61,6 +56,4 @@ cellid_column = "cell_id", time_column = "time_stamp")
 \author{
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Diagnostics}
-\keyword{Validation}
+\keyword{Diagnostics_or_Validation}

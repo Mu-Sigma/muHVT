@@ -60,28 +60,11 @@ li {
 ```
 ```{r, warning = FALSE, include = FALSE,echo=FALSE}
 # Sourcing required code modules for HVT
-source("../R/Add_boundary_points.R")
-source("../R/Corrected_Tessellations.R")
-source("../R/DelaunayInfo.R")
-source("../R/Delete_Outpoints.R")
-source("../R/getCentroids.R")
-source("../R/getOptimalCentroids.R")
-source("../R/hvq.R")
-source("../R/HVT.R")
-source("../R/plotHVT.R")
-source("../R/plotHVT.R")
-source("../R/scoreHVT.R")
-source("../R/ScaleMat.R")
-source("../R/Transform_Coordinates.R")
-source("../R/madPlot.R")
-source("../R/diagPlot.R")
-source("../R/get_cell_id.R")
-source("../R/getCentroids_for_opti.R")
-source("../R/multiNormalDist.R")
-source("../R/plotDiag.R")
-source("../R/qeHistPlot.R")
-source("../R/diagSuggestion.R")
-
+script_dir <- "../R"
+r_files <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
+for (file in r_files) {
+  source(file)
+}
 
 
 ```
@@ -525,7 +508,7 @@ are called Voronoi cells. It is complementary to Delaunay triangulation.
 
 In this package, we use `sammons` from the package `MASS` to project
 higher dimensional data to a 2D space. The function `hvq` called from
-the `HVT` function returns hierarchical quantized data which will be the
+the `trainHVT` function returns hierarchical quantized data which will be the
 input for construction of the tessellations. The data is then
 represented in 2D coordinates and the tessellations are plotted using
 these coordinates as centroids. We use the package `deldir` for this
@@ -1336,7 +1319,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
 # Model Training
 
 In HVT, we use `sammons` from the package `MASS` to project higher
-dimensional data to a 2D space. The function `hvq` called from the `HVT`
+dimensional data to a 2D space. The function `hvq` called from the `trainHVT`
 function returns hierarchical quantized data which will be the input for
 construction of the tessellations. The data is then represented in 2D
 coordinates and the tessellations are plotted using these coordinates as
@@ -1446,7 +1429,7 @@ HVT::plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
-        maxDepth = 1)
+        maxDepth = 1, heatmap = '1D')
 ```
 
 The table below shows number of cells having quantization error below
@@ -1514,10 +1497,10 @@ an object to itself. This minimum distance value gives the
 **proximity(distance to nearest neighbour)** of other object in the
 datatable.
 
-plotDiag() function can be used to print diagnostic plots for HVT model
+plotModelDiagnostics() function can be used to print diagnostic plots for HVT model
 or HVT prediction.
 
-The plotDiag() function for HVT Model provides 5 diagnostic plots which
+The plotModelDiagnostics() function for HVT Model provides 5 diagnostic plots which
 are as follows:
 
 -   Mean Absolute Deviation Plot: Calibration: HVT Model \| Train Data
@@ -1527,12 +1510,12 @@ are as follows:
     Data
 -   Singletons Pie Chart: HVT Model \| Train Data
 
-Let's have look at the function `plotDiag` which we will use to print
+Let's have look at the function `plotModelDiagnostics` which we will use to print
 the diagnostic plots.
 
 ::: superbigimage
 ```{r diagplot function1,echo = TRUE, eval= TRUE, fig.height=12, fig.width=14,class.source = 'fold-show'}
-plotDiag(hvt.results)
+plotModelDiagnostics(hvt.results)
 ```
 :::
 
@@ -1711,7 +1694,7 @@ dataset_updated_test=dataset_updated_test %>% dplyr::select(nums)
 
 ```
 
-Now once we have the test data ready, lets look at how the scoreHVT
+Now once we have the test data ready, lets look at how the predictHVT
 function looks like.
 
 ## Prediction on Test Data
@@ -1731,7 +1714,7 @@ The important parameters for the function `scoreHVT` are as below
     should have atleast one variable used for training. The variables
     from this dataset can also be used to overlay as heatmap
 
--   **`hvt.results`** - A list of hvt.results obtained from the HVT
+-   **`hvt.results`** - A list of hvt.results obtained from the trainHVT
     function while performing hierarchical vector quantization on
     training data
 
@@ -1770,18 +1753,18 @@ hvt.prediction <- HVT::scoreHVT(
 )
 ```
 
-The plotDiag() function can be called for prediction object as well.
+The plotModelDiagnostics() function can be called for prediction object as well.
 Shown below is the comparison of Mean Absolute Deviation Plot for train
 validation and test data.
 
 ::: superbigimage
 ```{r, fig.width=8,fig.height=10,class.source = 'fold-show'}
 
-plotDiag(hvt.prediction)
+plotModelDiagnostics(hvt.prediction)
 ```
 :::
 
-```{r scoreHVT2 hotel,warning=FALSE,message=FALSE,eval=global_var}
+```{r predictHVT2 hotel,warning=FALSE,message=FALSE,eval=global_var}
 
 QEdata=hvt.results[[3]]$summary
 
@@ -1820,7 +1803,7 @@ data points: `r percentageAnomalies`** <br> **Mean QE for fitted data:
 `r abs(Quant.Error.Actual%>%round(digits = 4)-hvt.prediction[["scoredPredictedData"]]$Quant.Error%>%mean() %>%round(digits = 4))`**
 
 ```{r fig.height=7.5, fig.width=6}
-qeHistPlot(hvt.results,hvt.prediction)
+plotQuantErrorHistogram(hvt.results,hvt.prediction)
 ```
 
 ### Anomalous Observations

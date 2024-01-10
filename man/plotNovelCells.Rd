@@ -2,10 +2,7 @@
 % Please edit documentation in R/plotNovelCells.R
 \name{plotNovelCells}
 \alias{plotNovelCells}
-\title{Plot the identified outlier cell(s) in the voronoi tessellations map.
-
-Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
-compressed HVT map.}
+\title{Plot the identified outlier cell(s) in the voronoi tessellations map.}
 \usage{
 plotNovelCells(
   plot.cells,
@@ -41,18 +38,27 @@ tessellations. (default = 3)}
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
 \value{
-ggplot object containing hierarchical voronoi tessellations plot
+Returns a ggplot object containing hierarchical voronoi tessellations plot
 highlighting the outlier cells in the map
 }
 \description{
-Plot the identified outlier cell(s) in the voronoi tessellations map.
-
-Plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
+This is the main plotting function to construct hierarchical voronoi tessellations and highlight the cells using the
 compressed HVT map.
 }
 \examples{
-#the cells selected are random
-plotNovelCells(c(2,4,5,10),hvt.results,line.width = c(0.6),color.vec = c("#000000"),pch1 = 21,
+data("EuStockMarkets")
+dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+                      DAX = EuStockMarkets[, "DAX"],
+                      SMI = EuStockMarkets[, "SMI"],
+                      CAC = EuStockMarkets[, "CAC"],
+                      FTSE = EuStockMarkets[, "FTSE"])
+dataset_hvt <- dataset[,-c(1)]
+hvt.results <- list()
+hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
+                        distance_metric = "L1_Norm", error_metric = "mean",
+                        projection.scale = 10, normalize = TRUE, seed = 123,
+                        quant_method="kmeans")
+plotNovelCells(c(2,10),hvt.results,line.width = c(0.6),color.vec = c("#000000"),pch1 = 21,
               centroid.size = 0.5,title = NULL, maxDepth = 1)
 }
 \seealso{
@@ -61,6 +67,4 @@ plotNovelCells(c(2,4,5,10),hvt.results,line.width = c(0.6),color.vec = c("#00000
 \author{
 Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Novelty}
-\keyword{Outliers}
+\keyword{Novelty_or_Outliers}

@@ -73,11 +73,17 @@ hierarchically arranged vector quantized data.
 }
 \examples{
 data("EuStockMarkets")
-hvqOutput = hvq("EuStockMarkets", n_cells = 5, depth = 2, quant.err = 0.2,
+dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+DAX = EuStockMarkets[, "DAX"],
+SMI = EuStockMarkets[, "SMI"],
+CAC = EuStockMarkets[, "CAC"],
+FTSE = EuStockMarkets[, "FTSE"])
+dataset_hvt <- dataset[,-c(1)]
+hvqOutput = hvq(dataset_hvt, n_cells = 5, depth = 2, quant.err = 0.2,
 distance_metric='L1_Norm',error_metric='mean',quant_method="kmeans")
 }
 \seealso{
-\code{\link{plotHVT(2D heatmap)}}
+\code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>

@@ -1,5 +1,5 @@
 #' @importFrom magrittr %>%
-
+#' @export getCentroids
 # The function should take dataframe having m rows and n dimension as input. It should return distance from the center for each row or should return 0 if nrow(df) < 1
 # distance_metric=c("L1_Norm","L2_Norm")
 # quant_method=c("kmeans","kmedoids")

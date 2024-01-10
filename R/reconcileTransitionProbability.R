@@ -1,10 +1,6 @@
 #' @name reconcileTransitionProbability
-#' 
 #' @title Reconciliation of Transition Probability - Model Diagnostics
-#'
-#' Main function for creating transition probability heatmaps and reconcilation of the same.
-#'
-#' This is the main function to creating transition probability heatmaps and reconcilation of the same.
+#' @description This is the main function to creating transition probability heatmaps and reconcilation of the same.
 #' The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
 #' It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
 #' removing unlikely transitions, and comparing different models. 
@@ -12,14 +8,16 @@
 #' aiding in the understanding and analysis of state transitions within the model.
 #' 
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
-#' @param cellid_column character. Name of the column containing cell IDs.
-#' @param time_column character. Name of the column containing timestamps
-#' @param  hmap_type character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')
+#' @param cellid_column Character. Name of the column containing cell IDs.
+#' @param time_column Character. Name of the column containing timestamps
+#' @param  hmap_type Character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')
 #' @return A list of plotly heatmap objects representing the transition probability heatmaps.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
-#' @keywords Diagnostics / Validation
+#' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
+#' @import ggforce 
+#' @import markovchain
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #' DAX = EuStockMarkets[, "DAX"],
@@ -36,11 +34,10 @@
 #' cell_id <- predictions$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' reconcileTransitionProbability(dataset, hmap_type = 'All', 
-#' cellid_column = "cell_id", time_column = "time_stamp") 
+#' reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell_id",
+#'                                time_column = "time_stamp") 
 #' @export reconcileTransitionProbability
 
-requireNamespace("markovchain")
 
 reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, time_column) {
   
@@ -142,7 +139,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     y = ~State_To,
     z = ~Probability,
     type = "heatmap",
-    colors = colorRampPalette(c("white", "blue"))(100),
+    colors = grDevices::colorRampPalette(c("white", "blue"))(100),
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
@@ -171,7 +168,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     y = ~State_To,
     z = ~Probability,
     type = "heatmap",
-    colors = colorRampPalette(c("white", "blue"))(100),
+    colors = grDevices::colorRampPalette(c("white", "blue"))(100),
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(

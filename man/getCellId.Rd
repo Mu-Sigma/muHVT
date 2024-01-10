@@ -2,7 +2,7 @@
 % Please edit documentation in R/getCellId.R
 \name{getCellId}
 \alias{getCellId}
-\title{Function to generate cell ID based on 1D sammons projection}
+\title{Cell ID}
 \usage{
 getCellId(hvt.results, seed = 123)
 }
@@ -15,12 +15,12 @@ getCellId(hvt.results, seed = 123)
 Object containing Cell.ID mappings for the given hvt.results list.
 }
 \description{
-To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
-and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output CellID gets
-appended to the HVT model.
+Function to generate cell ID based on 1D sammons projection
 }
 \details{
-Cell ID
+To generate cell id for the multivariate data, the data is being projected from n-dimensions to 1-dimension 
+and the cell id is being assigned by ordering these values and finding the corresponding indexes. The output Cell id gets
+appended to the HVT model.
 }
 \examples{
 data("EuStockMarkets")
@@ -36,3 +36,4 @@ getCellId (hvt.results)
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>
 }
+\keyword{internal}

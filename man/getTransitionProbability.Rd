@@ -14,9 +14,9 @@ getTransitionProbability(
 \arguments{
 \item{df}{Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.}
 
-\item{cellid_column}{character. Name of the column containing cell IDs.}
+\item{cellid_column}{Character. Name of the column containing cell IDs.}
 
-\item{time_column}{character. Name of the column containing timestamps.}
+\item{time_column}{Character. Name of the column containing timestamps.}
 
 \item{all_prob_results}{Logical. A Logical value indicating the facility to print the results. TRUE in R script saves the list of dataframe as environment variable and print the results only.
 FALSE in rmd file by giving chunk option as {result = 'asis'} prints the probability table as dropdown.}
@@ -25,9 +25,6 @@ FALSE in rmd file by giving chunk option as {result = 'asis'} prints the probabi
 Prints and stores a list of dataframes with transition probabilities.
 }
 \description{
-Main function to create transition probabilities for each Cell.ID in a dataframe
-}
-\details{
 This is the main function to create transition probability table.
 The transition probability table quantifies the likelihood of transitioning from one state to another. 
 It is derived from historical data and provides a statistical basis for predicting future state changes.
@@ -59,6 +56,4 @@ getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_
 \author{
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Prediction}
-\keyword{Transition}
+\keyword{Transition_or_Prediction}

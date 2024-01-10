@@ -1,20 +1,21 @@
 #' @name plotModelDiagnostics
 #'
 #' @title Make the diagnostic plots for hierarchical voronoi tessellations model.
-#'
+#' @description This is the main function that generates diagnostic plots for hierarchical Voronoi tessellations models and predictions. 
 #' @param model_obj List. A list of model_obj obtained from the trainHVT
 #' function or prediction object
 #' @returns plot object containing Diagnostics plots for the HVT model or HVT predictions.
-#' for HVT model, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
+#' For HVT model, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
 #' Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
 #' Mean Absolute Deviation Plot for Validation Data are plotted.
-#' for HVT Predictions, "Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
+#' For HVT Predictions Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
 #'
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
-#' @keywords Diagnostics / Validation
+#' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
-#' @import ggplot2
+#' @import ggplot2 
+#' @import patchwork
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                       DAX = EuStockMarkets[, "DAX"],
@@ -30,7 +31,7 @@
 #'plot_diag <- plotModelDiagnostics(hvt_results)
 #' @export plotModelDiagnostics
 
-
+library(patchwork)
 plotModelDiagnostics <-
   function(model_obj) {
     # browser()

@@ -2,9 +2,7 @@
 % Please edit documentation in R/plotHVT.R
 \name{plotHVT}
 \alias{plotHVT}
-\title{Plot the hierarchical tesselations.
-
-Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.}
+\title{Plot the hierarchical tessellations.}
 \usage{
 plotHVT(
   hvt.results,
@@ -91,15 +89,14 @@ be scaled. (default = 0.5)}
 
 \item{dim_size}{(3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 
-\item{heatmap}{String. String indicating the dimensionality of the plot to be rendered in}
+\item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
+'2D', '3D'. Default value is 1D.}
 }
 \value{
 plot object containing the main HVT plot for the given HVT results and heatmap type.
 }
 \description{
-Plot the hierarchical tesselations.
-
-Main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
+This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -131,6 +128,4 @@ layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>
 }
-\keyword{&}
-\keyword{Heatmap}
-\keyword{Tessellation}
+\keyword{Tessellation_and_Heatmap}

@@ -1,7 +1,6 @@
-#' Constructing Hierarchical Voronoi Tessellations
-#'
-#' Main function to construct hierarchical voronoi tessellations.
-#'
+#' @name trainHVT
+#' @title Constructing Hierarchical Voronoi Tessellations
+#' @description
 #' This is the main function to construct hierarchical voronoi tessellations.
 #' The \code{hvq} function is called from this function. The output of the
 #' \code{hvq} function is hierarchical clustered data which will be the input
@@ -30,9 +29,9 @@
 #' @param seed Numeric. Random Seed.
 #' @param scale_summary List. A list with mean and standard deviation values for all the features in the dataset. 
 #' Pass the scale summary when the input dataset is already scaled or normalize is set to False.
-#' @param distance_metric character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.
-#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
-#' @param quant_method character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default
+#' @param distance_metric Character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.
+#' @param error_metric Character. The error metric can be "mean" or "max". mean is selected by default
+#' @param quant_method Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default
 #' @param diagnose Logical. A logical value indicating if the diagnose is required. Default value is TRUE.
 #' @param hvt_validation Logical. A logical value indicating if the MAD values are to tested for validation set. Default value is FALSE.
 #' @param train_validation_split_ratio Numeric. A numeric value indicating the train and validation split ratio.
@@ -46,21 +45,24 @@
 #' \item{[[5]] }{List. Information about the MAD values and percentage anomalies for validation dataset}
 #' 
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
-#' @seealso \code{\link{plotHVT}} \cr \code{\link{plotHVT}}
-#' @keywords Training / Compression
+#' @seealso \code{\link{plotHVT}}
+#' @keywords Training_or_Compression
 #' @importFrom magrittr %>%
 #' @examples
-#'dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+#' data("EuStockMarkets")
+#' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                      DAX = EuStockMarkets[, "DAX"],
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'dataset_hvt <- dataset[,-c(1)]
-#'hvt.results <- list()
-#'hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
+#' dataset_hvt <- dataset[,-c(1)]
+#' hvt.results <- list()
+#' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,
 #'                        quant_method="kmeans")
+#' @include hvq.R getCellId.R madPlot.R
+#' @include Add_boundary_points.R  Corrected_Tessellations.R  DelaunayInfo.R  Delete_Outpoints.R diagPlot.R
 #' @export trainHVT
 
 

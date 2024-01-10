@@ -46,11 +46,11 @@ dataset should be normalized. Default value is TRUE.}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.}
+\item{distance_metric}{Character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.}
 
-\item{error_metric}{character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
-\item{quant_method}{character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
+\item{quant_method}{Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
 
 \item{scale_summary}{List. A list with mean and standard deviation values for all the features in the dataset. 
 Pass the scale summary when the input dataset is already scaled or normalize is set to False.}
@@ -72,9 +72,6 @@ wise}
 \item{[[5]] }{List. Information about the MAD values and percentage anomalies for validation dataset}
 }
 \description{
-Main function to construct hierarchical voronoi tessellations.
-}
-\details{
 This is the main function to construct hierarchical voronoi tessellations.
 The \code{hvq} function is called from this function. The output of the
 \code{hvq} function is hierarchical clustered data which will be the input
@@ -87,6 +84,7 @@ tessellations are chopped in places so that they do not protrude outside the
 parent polygon. This is done for all the subsequent levels.
 }
 \examples{
+data("EuStockMarkets")
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      DAX = EuStockMarkets[, "DAX"],
                      SMI = EuStockMarkets[, "SMI"],
@@ -100,11 +98,9 @@ hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
                        quant_method="kmeans")
 }
 \seealso{
-\code{\link{plotHVT}} \cr \code{\link{plotHVT}}
+\code{\link{plotHVT}}
 }
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Compression}
-\keyword{Training}
+\keyword{Training_or_Compression}

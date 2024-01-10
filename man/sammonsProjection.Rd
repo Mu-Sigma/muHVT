@@ -11,7 +11,7 @@ sammonsProjection(
   niter = 100,
   trace = TRUE,
   magic = 0.2,
-  tol = 1e-04
+  tol = 0.0001
 )
 }
 \arguments{

@@ -1,8 +1,8 @@
 #' @name scoreHVT
-#'
-#' @title Predict which cell and what level each point in the test dataset belongs to
-#'
-#'
+#' @title Predict which cell and what level each point in the test dataset belongs to.
+#' @description
+#' This is the function predicts the cell and level for each point in the test dataset based on a hierarchical Voronoi tessellations model. 
+#' It provides scored predicted data, prediction plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
 #' @param data List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 #' this dataset can also be used to overlay as heatmap
 #' @param hvt.results.model A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data
@@ -13,9 +13,9 @@
 #' @param normalize Logical. A logical value indicating if the columns in your
 #' dataset should be normalized. Default value is TRUE.
 #' @param seed Numeric. Random Seed.
-#' @param distance_metric character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
-#' @param error_metric character. The error metric can be "mean" or "max". mean is selected by default
-#' @param yVar character. Name of the dependent variable(s)
+#' @param distance_metric Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
+#' @param error_metric Character. The error metric can be "mean" or "max". mean is selected by default
+#' @param yVar Character. Name of the dependent variable(s)
 #' @param ...  color.vec and line.width can be passed from here
 #' @returns Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
@@ -29,7 +29,6 @@
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'#adding this step especially for this function
 #'rownames(EuStockMarkets) <- dataset$date
 #'# Split in train and test
 #'train <- EuStockMarkets[1:1302, ]

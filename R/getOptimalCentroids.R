@@ -34,6 +34,7 @@
 #' \item{centers}{ List. A list of quantization error for all levels and nodes. } 
 #' \item{nsize}{ List. A list corresponding to number of observations in respective groups. } 
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
+#' @include getCentroids_for_opti.R
 #' @keywords internal
 
 getOptimalCentroids <-

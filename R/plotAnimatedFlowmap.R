@@ -1,26 +1,22 @@
 #' @name plotAnimatedFlowmap
 #' @title Generating flow maps and animations based on transition probabilities
-#'
-#' Main function for generating flow maps and animations based on transition probabilities.
-#'
-#' Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
+#' @description This is the main function for generating flow maps and animations based on transition probabilities.Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
 #' They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
 #' These maps help in understanding the dynamics of the system being studied by visually representing the direction and magnitude of flows or transitions. 
-#' 
 #' @param hvt_model_output List. Output from a trainHVT function.
 #' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
 #' @param hvt_plot_output List. Base plot for the flow maps.
-#' @param animation character. Type of animation ('state_based', 'time_based', or 'All').
-#' @param flow_map character. Type of flow map ('with_self_state', 'without_self_state', 'probability', or 'All').
+#' @param animation Character. Type of animation ('state_based', 'time_based', or 'All').
+#' @param flow_map Character. Type of flow map ('with_self_state', 'without_self_state', 'probability', or 'All').
 #' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
 #' @param threshold Numeric. An Integer representing the Probability threshold for flow map arrows.
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
-#' @param cellid_column character. Name of the column containing cell IDs.
-#' @param time_column character. Name of the column containing timestamps
+#' @param cellid_column Character. Name of the column containing cell IDs.
+#' @param time_column Character. Name of the column containing timestamps
 #' @return A list of plot objects representing flow maps and animations.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
-#' @keywords Transition / Prediction
+#' @keywords Transition_or_Outliers
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -39,18 +35,13 @@
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
 #' getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_stamp")
-#' plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, 
-#' transition_probability_df = trans_prob_df,  
-#' df = dataset, animation = NULL, 
-#' flow_map = NULL, animation_speed = NULL, 
-#' threshold = NULL,  cellid_column = "cell_id", 
-#' time_column = "time_stamp") 
+#' plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df,  df = dataset,animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column = "cell_id", time_column = "time_stamp") 
 #' print(plot[[1]])
 #' print(plot[[2]])
 #' @export plotAnimatedFlowmap
 
 
-requireNamespace("ggforce")
+
 plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt_plot_output, df, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column, time_column) {
   
   # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL
@@ -263,9 +254,9 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     scale_color_manual() + theme_minimal() + 
     labs(x = "x-coordinates", y = "y-coordinates")
   
-  dot_anim <- dot_anim + transition_time(Timestamp) +
+  dot_anim <- dot_anim + gganimate::transition_time(Timestamp) +
     labs(title = "Animation showing state transition") +
-    shadow_wake(wake_length = 0.03, alpha = FALSE)
+    gganimate::shadow_wake(wake_length = 0.03, alpha = FALSE)
   time_animation <- gganimate::animate(dot_anim, fps = animation_speed, duration = 2)
   # time_animation <- animate(dot_anim, fps = animation_speed, duration = 100)
   # anim_save("./source/time_animation.gif", animation = time_animation, width = 800, height = 400)
@@ -286,7 +277,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     labs(x = "x-coordinates", y = "y-coordinates", color = "Transition\nProbability") + theme_minimal()
   
   
-  animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + shadow_mark() +
+  animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + gganimate::shadow_mark() +
     labs(title = "Animation showing state transition excluding self-state")
   
   state_animation <- gganimate::animate(animation1, fps = animation_speed, duration = 2)

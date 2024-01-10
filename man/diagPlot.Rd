@@ -67,7 +67,4 @@ quant.err = 0.2)
 \author{
 Shubhra Prakash <shubhra.prakash@mu-sigma.com>
 }
-\keyword{/}
-\keyword{Diagnostics}
-\keyword{Validation}
 \keyword{internal}
