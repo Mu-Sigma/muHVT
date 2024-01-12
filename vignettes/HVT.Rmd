@@ -1,6 +1,6 @@
 ---
 title: "HVT: Collection of functions used to build hierarchical topology preserving maps"
-author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi,PonAnureka seenivasan"
+author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi"
 date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
@@ -78,7 +78,19 @@ knitr::include_graphics('./torus2.png')
 
 # Version History
 
-## HVT (v23.11.02) | What's New? {-}
+## HVT (v24.1.1) | What's New? {-}
+
+12th January, 2024
+
+In this version of HVT package, the following new features have been introduced:
+
+1. **Rename:** Renamed the functions.
+2. **Reorganise:** Reorganised the functions into new sections.
+3. **Modification:** Merged the HVT plots and Heatmap generation functions for 1D,2D and 3D.
+
+
+
+## HVT (v23.11.02) {-}
 
 17th November, 2023
 
@@ -102,14 +114,14 @@ The creation of a predictive set of maps involves three steps -
 
 Let us try to understand the steps with the help of the diagram below-
 
-```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 2: Flow diagram for predicting based on a sequence of maps using predictLayerHVT()'}
+```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 2: Flow diagram for predicting based on a sequence of maps using scoreLayeredHVT()'}
 #knitr::include_graphics('./mlayer1.png')
-knitr::include_graphics('./predictLayerHVT_function.png')
+knitr::include_graphics('./scoreLayeredHVT_function.png')
 ```
 
 
 
-# Installation of HVT (v23.11.02)
+# Installation of HVT (v24.1.1)
 
 ``` r
 library(devtools)

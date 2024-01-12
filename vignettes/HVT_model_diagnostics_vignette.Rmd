@@ -1409,7 +1409,7 @@ clusters `n_cells` is set to 1035 to achieve 95% compression.
 ```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
 set.seed(240)
 hvt.results <- list()
-hvt.results <- HVT::trainHVT(dataset_updated_train,
+hvt.results <-trainHVT(dataset_updated_train,
                           n_cells = 1035,
                           depth = 1,
                           quant.err = 0.2,
@@ -1425,11 +1425,11 @@ hvt.results <- HVT::trainHVT(dataset_updated_train,
 
 ```{r fig.height=4, fig.width=6}
 # Voronoi tessellation plot for level one
-HVT::plotHVT(hvt.results,
+plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
-        maxDepth = 1, heatmap = '1D')
+        maxDepth = 1, heatmap = '2DHVT')
 ```
 
 The table below shows number of cells having quantization error below
@@ -1741,7 +1741,7 @@ Absolute Deviation Plot
 ```{r,class.source = 'fold-show'}
 hvt.prediction = list()
 mad_threshold= 0.6 #Mean of Minimum Intra-Centroid Distance
-hvt.prediction <- HVT::scoreHVT(
+hvt.prediction <- scoreHVT(
   data = dataset_updated_test,
   hvt.results.model=hvt.results,
   child.level = 1,

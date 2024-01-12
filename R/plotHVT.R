@@ -1,42 +1,45 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
-#' @param hvt.results (1D/2D/3D) List. A list containing the ouput of \code{trainHVT} function
+#' @param hvt.results (2D/3D) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
-#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
-#' '2D', '3D'. Default value is 1D.
-#' @param line.width (1D/2D) Numeric Vector. A vector indicating the line widths of the
+#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
+#' '2DHVT','2DHEATMAP', '3D'. Default value is 2DHVT.
+#' @param line.width (2D) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
-#' @param color.vec (1D/2D) Vector. A vector indicating the colors of the boundaries of
+#' @param color.vec (2D) Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level.
-#' @param pch1 (1D/2D) Numeric. Symbol type of the centroids of the tessellations
-#' (parent levels). Refer \code{\link{points}}.
-#' @param centroid.size (1D/2D) Numeric. Size of centroids of first level
+#' @param pch1 (2D) Numeric. Symbol type of the centroids of the tessellations
+#' (parent levels). Default value is 21.
+#' @param centroid.size (2D) Numeric. Size of centroids of first level
 #' tessellations. 
-#' @param title (1D) String. Set a title for the plot. (default = NULL)
-#' @param maxDepth (1D) Numeric. An integer indicating the number of levels. (default = NULL)
-#' @param dataset (2D) Data frame. The input data set.
-#' @param child.level (2D/3D) Numeric. Indicating the level for which the heat map is
+#' @param title (2DHVT) String. Set a title for the plot. (default = NULL)
+#' @param maxDepth (2DHVT) Numeric. An integer indicating the number of levels. (default = NULL)
+#' @param  palette.color (2DHEATMAP) Numeric. A number indicating the heat map color palette. 1 - rainbow,
+#'  2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
+#'  6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
+#' @param dataset (2DHEATMAP) Data frame. The input data set.
+#' @param child.level (2DHEATMAP/3D) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols (2D/3D) Numeric or Character. The column number of column name from
+#' @param hmap.cols (2DHEATMAP/3D) Numeric or Character. The column number of column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
-#' @param previous_level_heatmap (2D) Logical. If TRUE, the heatmap of previous level
+#' @param previous_level_heatmap (2DHEATMAP) Logical. If TRUE, the heatmap of previous level
 #' will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap
 #' of only selected level will be plotted
-#' @param show.points (2D) Logical. Indicating if the centroids should
+#' @param show.points (2DHEATMAP) Logical. Indicating if the centroids should
 #' be plotted on the tessellations. (default = FALSE)
-#' @param asp (2D) Numeric. Indicating the aspect ratio type. For flexible aspect
+#' @param asp (2DHEATMAP) Numeric. Indicating the aspect ratio type. For flexible aspect
 #' ratio set, asp = NA. (default = 1)
-#' @param ask (2D) Logical. If TRUE (and the R session is interactive) the user is
+#' @param ask (2DHEATMAP) Logical. If TRUE (and the R session is interactive) the user is
 #' asked for input, before a new figure is drawn. (default = TRUE)
-#' @param tess.label (2D) Vector. A vector for labelling the tessellations. (default
+#' @param tess.label (2DHEATMAP) Vector. A vector for labelling the tessellations. (default
 #' = NULL)
-#' @param label.size (2D) Numeric. The size by which the tessellation labels should
+#' @param label.size (2DHEATMAP) Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
-#' @param quant.error.hmap (2D) Numeric. A number indicating the quantization error
+#' @param quant.error.hmap (2DHEATMAP) Numeric. A number indicating the quantization error
 #' threshold.
-#' @param n_cells.hmap (2D) Numeric. An integer indicating the number of
+#' @param n_cells.hmap (2DHEATMAP) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
 #' @param sepration_width (3D) Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity (3D) Numeric. A vector indicating the opacity of each layer/ level
@@ -59,26 +62,26 @@
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,
 #'                        quant_method="kmeans")
-#' #1D - Plot
+#' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
-#' maxDepth = 1,heatmap = '1D')
-#' #2D - Plot
+#' maxDepth = 1,heatmap = '2DHVT')
+#' #2D - HEATMAP
 #' plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
-#' pch1 = 21, heatmap = '2D')
+#' pch1 = 21, heatmap = '2DHEATMAP')
 #' #3D - Plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
 #' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '1D') {
+plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') {
   if (is.null(heatmap)) {
-    heatmap <- '1D'
+    heatmap <- '2DHVT'
   }
   
-  if (heatmap == '1D') {
+  if (heatmap == '2DHVT') {
     
     hvt_list <- hvt.results
     
@@ -245,7 +248,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
     return(suppressMessages(p))
     
     
-  } else if (heatmap == '2D') {
+  } else if (heatmap == '2DHEATMAP') {
     hvt_list <- hvt.results
     # maxDepth <- child.level
     maxDepth <- min(child.level, max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
@@ -268,7 +271,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
     )
     
     centroidDataframe <- data.frame(x = 0, y = 0, lev = 0)
-    #  browser()
+    
     for (depth in 1:maxDepth) {
       if (depth < 3) {
         for (clusterNo in names(hvt_list[[2]][[depth]])) {
@@ -489,7 +492,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
         data = centroidDataframe[centroidDataframe["lev"] == depth, ],
         ggplot2::aes(x = x, y = y),
         size = (centroid.size / (2^(depth - 1))),
-        pch =pch1,
         fill = color.vec[depth],
         color = color.vec[depth]
       ) + ggplot2::theme(
@@ -776,6 +778,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
     return(suppressMessages(p))
     
   } else {
-    stop("Invalid value for 'heatmap'. Expected '1D', '2D', or '3D'.")
+    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or '3D'.")
   }
 }

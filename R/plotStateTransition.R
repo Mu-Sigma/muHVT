@@ -7,7 +7,6 @@
 #' This could be related to various attributes like a phase in a cycle, or any other measurable characteristic.
 #' Transition refers to the change of state for a cell from one condition to another over time. 
 #' This could represent processes like progression through stages, changes in activity, or other dynamic characteristics.
-#' 
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
 #' @param sample_size Numeric. An integer indicating the Fraction of the dataframe to sample.
 #' Default value is 0.2
@@ -18,7 +17,7 @@
 #' @return A plotly object representing the state transition plot for the given dataframe.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
-#' @keywords Transition_or_Outliers
+#' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

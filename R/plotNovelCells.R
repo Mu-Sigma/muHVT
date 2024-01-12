@@ -10,7 +10,7 @@
 #' @param color.vec Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level.
 #' @param pch1 Numeric. Symbol type of the centroids of the tessellations
-#' (parent levels). Refer \code{\link{points}}. (default = 21)
+#' (parent levels) Default value is 21.
 #' @param centroid.size Numeric. Size of centroids of first level
 #' tessellations. (default = 3)
 #' @param title String. Set a title for the plot. (default = NULL)

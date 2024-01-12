@@ -28,7 +28,7 @@ tessellation boundaries for each level.}
 the tessellations at each level.}
 
 \item{pch1}{Numeric. Symbol type of the centroids of the tessellations
-(parent levels). Refer \code{\link{points}}. (default = 21)}
+(parent levels) Default value is 21.}
 
 \item{centroid.size}{Numeric. Size of centroids of first level
 tessellations. (default = 3)}

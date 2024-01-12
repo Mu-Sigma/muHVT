@@ -38,9 +38,9 @@
 #'                             projection.scale = 10, normalize = TRUE, seed = 123,
 #'                             quant_method="kmeans")
 #'diagPlot(hvt.results = hvt.results,
-#'data = dataset,
-#'level = 1,
-#'quant.err = 0.2)
+#'         data = dataset,
+#'         level = 1,
+#'         quant.err = 0.2)
 #'
 #' @export diagPlot
 #' @keywords internal
