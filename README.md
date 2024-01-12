@@ -2,19 +2,20 @@
 
 #### Zubin Dowlaty
 
-#### 2023-11-17
+#### 2024-01-12
 
 <div id="TOC">
 
 *   [<span class="toc-section-number">1</span> Abstract](#abstract)
 *   [<span class="toc-section-number">2</span> Version History](#version-history)
-    *   [<span class="toc-section-number">2.1</span> HVT (v23.11.02) | What’s New?](#hvt-(v23.11.02)-whats-new)
+    *   [<span class="toc-section-number">2.1</span> HVT (v24.1.1) | What’s New?](#hvt-(v24.1.1)-whats-new)
+    *   [<span class="toc-section-number">2.1</span> HVT (v23.11.02)](#hvt-(v23.11.02))
     *   [<span class="toc-section-number">2.2</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">3</span> Installation of HVT (v23.11.02)](#installation-of-hvt-(v23.11.02))
+*   [<span class="toc-section-number">3</span> Installation of HVT (v24.1.1)](#installation-of-hvt-(v24.1.1))
 *   [<span class="toc-section-number">4</span> Vignettes](#vignettes)
     *   [<span class="toc-section-number">4.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">4.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
-    *   [<span class="toc-section-number">4.3</span> HVT : Predicting Cells with Layers using predictLayerHVT ](#hvt---predicting-cells-with-layers-using-predictLayerHVT)
+    *   [<span class="toc-section-number">4.3</span> HVT : Predicting Cells with Layers using scoreLayeredHVT ](#hvt---predicting-cells-with-layers-using-scoreLayeredHVT)
 
 </div>
 
@@ -47,9 +48,26 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 # <span class="header-section-number">2</span> Version History 
 
-<div id="hvt-(v23.11.02)-whats-new" class="section level2" number="2.1">
 
-## HVT (v23.11.02) | What’s New? 
+<div id="hvt-(v24.1.1)-whats-new" class="section level2" number="2.1">
+
+## HVT (v24.1.1) 
+
+12th January, 2024
+
+In this version of HVT package, the following new features have been introduced:
+
+1. **Rename:** Renamed the functions.
+2. **Reorganise:** Reorganised the functions into new sections.
+3. **Modification:** Merged the HVT plots and Heatmap generation functions for 1D,2D and 3D.
+
+</div>
+
+
+
+<div id="hvt-(v23.11.02)" class="section level2" number="2.1">
+
+## HVT (v23.11.02) 
 
 17th November, 2023
 
@@ -75,16 +93,16 @@ The creation of a predictive set of maps involves three steps -
 
 Let us try to understand the steps with the help of the diagram below -
 
-<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
+<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/scoreLayeredHVT_function.png" width="672px" height="480px" />
 <p class="caption">
 Figure 2: Flow diagram for predicting based on a sequence of maps using predictLayerHVT()
 </p>
 
 
 
-<div id="installation-of-hvt-(v23.11.02)" class="section level2" number="3">
+<div id="installation-of-hvt-(v24.1.1)" class="section level2" number="3">
 
-# <span class="header-section-number">3</span> Installation of HVT (v23.11.02)
+# <span class="header-section-number">3</span> Installation of HVT (v24.1.1)
 
 <div class="sourceCode" id="cb1">
 
@@ -120,8 +138,8 @@ Following are the links to the vignettes for the HVT package:
 
 </div>
 
-<div id="hvt---predicting-cells-with-layers-using-predictLayerHVT" class="section level2" number="4.3">
+<div id="hvt---predicting-cells-with-layers-using-HVT" class="section level2" number="4.3">
 
-## <span class="header-section-number">4.3</span> HVT - Predicting Cells with Layers using predictLayerHVT
+## <span class="header-section-number">4.3</span> scoreLayeredHVT - Predicting Cells with Layers using scoreLayeredHVT
 
-[**HVT : Predicting Cells with Layers using predictLayerHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_predictLayerHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using predictLayerHVT.
+[**HVT : Predicting Cells with Layers using scoreLayeredHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Predicting_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for predicting cells with layers based on a sequence of maps using scoreLayeredHVT.

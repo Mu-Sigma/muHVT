@@ -707,7 +707,7 @@ Now let's try to understand **plotHVT** function. The parameters have been expla
 plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') 
 ```
 
-* __`hvt.results`__ - (2D/3D)  A list (hvt.result) obtained from the HVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+* __`hvt.results`__ - (2D/3D)  A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
 * __`line.width`__	- (2D) A vector indicating the line widths of the tessellation boundaries for each layer.
 
@@ -811,9 +811,9 @@ plotHVT(
 We will now overlay all the features as heatmap over the Voronoi Tessellation plot for better visualization and identification of patterns, trends, and variations in the data.
 
 **Heat Maps**
+We will now overlay all the features as heatmap over the Voronoi Tessellation plot for better visualization and identification of patterns, trends, and variations in the data.
 
 Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the features in the torus data for better visualization and interpretation of data patterns and distributions.
-
 
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (n,X,Y and Z). The sheer green shades highlight regions with higher coordinate values in each of the heatmaps, while the indigo  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure.
 
