@@ -27,7 +27,8 @@ plotHVT(
   sepration_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
-  heatmap = "2DHVT"
+  heatmap = "2DHVT",
+  data
 )
 }
 \arguments{
@@ -96,6 +97,9 @@ be scaled. (default = 0.5)}
 
 \item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
 '2DHVT','2DHEATMAP', '3D'. Default value is 2DHVT.}
+
+\item{data}{(1D) Dataframe/Matrix. A processed dataset for calculating distance matrix and further 1D sammon mapping. Missing
+values are not accepted.}
 }
 \value{
 plot object containing the main HVT plot for the given HVT results and heatmap type.
@@ -115,6 +119,9 @@ hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
                        distance_metric = "L1_Norm", error_metric = "mean",
                        projection.scale = 10, normalize = TRUE, seed = 123,
                        quant_method="kmeans")
+                       
+#1D - Plot                        
+plotHVT(data = dataset, heatmap='1D')                       
 #2D - HVT Plot
 plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
 maxDepth = 1,heatmap = '2DHVT')

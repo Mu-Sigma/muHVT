@@ -14,7 +14,7 @@
 #' @return A list of plotly heatmap objects representing the transition probability heatmaps.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
-#' @keywords Diagnostics_or_Validation
+#' @keywords internal
 #' @importFrom magrittr %>%
 #' @import ggforce 
 #' @import markovchain

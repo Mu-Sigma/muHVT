@@ -63,4 +63,4 @@ plotStateTransition(dataset, sample_size = NULL, line_plot = FALSE, cellid_colum
 \author{
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
-\keyword{Transition_or_Prediction}
+\keyword{internal}

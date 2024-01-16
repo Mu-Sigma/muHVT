@@ -1,6 +1,8 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
+#' @param data (1D) Dataframe/Matrix. A processed dataset for calculating distance matrix and further 1D sammon mapping. Missing
+#' values are not accepted.
 #' @param hvt.results (2D/3D) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
@@ -62,6 +64,9 @@
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,
 #'                        quant_method="kmeans")
+#'                        
+#' #1D - Plot                        
+#' plotHVT(data = dataset, heatmap='1D')                       
 #' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
 #' maxDepth = 1,heatmap = '2DHVT')
@@ -76,12 +81,24 @@
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') {
+plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT', data) {
   if (is.null(heatmap)) {
     heatmap <- '2DHVT'
   }
-  
-  if (heatmap == '2DHVT') {
+  if (heatmap == '1D') {
+    
+    sammon_result <- MASS::sammon(
+      d = stats::dist(data),
+      niter = 10^2,
+      trace = FALSE,
+      k = 1
+    )
+    # Extracting the first dimension from the Sammon's mapping result
+    data_1d_sammon <- sammon_result$points[, 1]
+    # Plotting the 1D Sammon's mapping using stripchart
+    stripchart(data_1d_sammon, method = "stack", main = "plot-1D", xlab = "Co-ordinates", pch = 20, col = "blue")
+    
+  } else if (heatmap == '2DHVT') {
     
     hvt_list <- hvt.results
     

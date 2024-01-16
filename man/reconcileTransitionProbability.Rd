@@ -56,4 +56,4 @@ reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell
 \author{
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
-\keyword{Diagnostics_or_Validation}
+\keyword{internal}

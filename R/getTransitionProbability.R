@@ -14,7 +14,7 @@
 #' @return Prints and stores a list of dataframes with transition probabilities.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
-#' @keywords Transition_or_Prediction
+#' @keywords internal
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

@@ -28,35 +28,5 @@ Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-01-10 17:50:00 UTC
-Collate: 
-    'Add_boundary_points.R'
-    'Corrected_Tessellations.R'
-    'Transform_Coordinates.R'
-    'ScaleMat.R'
-    'DelaunayInfo.R'
-    'Delete_Outpoints.R'
-    'VQ_codebookSplit.R'
-    'diagPlot.R'
-    'diagSuggestion.R'
-    'getCellId.R'
-    'getCentroids.R'
-    'getCentroids_for_opti.R'
-    'getOptimalCentroids.R'
-    'getTransitionProbability.R'
-    'global.R'
-    'hvq.R'
-    'madPlot.R'
-    'multiNormalDist.R'
-    'plotAnimatedFlowmap.R'
-    'plotHVT.R'
-    'plotModelDiagnostics.R'
-    'plotNovelCells.R'
-    'plotQuantErrorHistogram.R'
-    'plotStateTransition.R'
-    'reconcileTransitionProbability.R'
-    'removeNovelty.R'
-    'sammonsProjection.R'
-    'scoreHVT.R'
-    'scoreLayeredHVT.R'
-    'trainHVT.R'
+Date/Publication: 2024-01-15 18:50:00 UTC
+

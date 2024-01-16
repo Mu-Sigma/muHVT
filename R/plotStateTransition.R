@@ -17,7 +17,7 @@
 #' @return A plotly object representing the state transition plot for the given dataframe.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
-#' @keywords Transition_or_Prediction
+#' @keywords internal
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

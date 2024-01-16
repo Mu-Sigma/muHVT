@@ -56,4 +56,4 @@ getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_
 \author{
 PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
 }
-\keyword{Transition_or_Prediction}
+\keyword{internal}
