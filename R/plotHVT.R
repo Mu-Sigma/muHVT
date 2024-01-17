@@ -41,7 +41,7 @@
 #' be scaled. (default = 0.5)
 #' @param quant.error.hmap (2DHEATMAP) Numeric. A number indicating the quantization error
 #' threshold.
-#' @param n_cells.hmap (2DHEATMAP) Numeric. An integer indicating the number of
+#' @param n_cells.hmap (2DHEATMAP/3D) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
 #' @param sepration_width (3D) Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity (3D) Numeric. A vector indicating the opacity of each layer/ level
@@ -86,17 +86,26 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     heatmap <- '2DHVT'
   }
   if (heatmap == '1D') {
+    # Assuming we want to create a 1D heatmap based on one of the summary metrics
+    # For example, using 'Quant.Error' as the metric for the 1D heatmap
     
-    sammon_result <- MASS::sammon(
-      d = stats::dist(data),
-      niter = 10^2,
-      trace = FALSE,
-      k = 1
-    )
-    # Extracting the first dimension from the Sammon's mapping result
-    data_1d_sammon <- sammon_result$points[, 1]
-    # Plotting the 1D Sammon's mapping using stripchart
-    stripchart(data_1d_sammon, method = "stack", main = "plot-1D", xlab = "Co-ordinates", pch = 20, col = "blue")
+    summaryDF <- hvt.results[[3]][["summary"]]
+    depthLevels <- unique(summaryDF$Segment.Level)
+    metric <- "Quant.Error" # Example metric
+    
+    # Preparing data for 1D heatmap
+    heatmapData <- summaryDF %>%
+      dplyr::filter(Segment.Level %in% depthLevels) %>%
+      dplyr::group_by(Segment.Level) %>%
+      dplyr::summarize(AverageMetric = mean(get(metric), na.rm = TRUE))
+    
+    # Plotting
+    p <- ggplot2::ggplot(heatmapData, ggplot2::aes(x = Segment.Level, y = AverageMetric)) +
+      ggplot2::geom_bar(stat = "identity", fill = "blue") +
+      ggplot2::theme_minimal() +
+      ggplot2::labs(x = "Segment Level", y = "Average Quant.Error", title = "1D Heatmap of Quant.Error across Levels")
+    
+    return(suppressMessages(p))
     
   } else if (heatmap == '2DHVT') {
     

@@ -64,7 +64,7 @@ plotStateTransition <- function(df, sample_size = NULL, line_plot = NULL, cellid
   ### Sampled Plot - Create a heatmap plot for sampled data
   timeseries_plot <- sampled_data %>%
     plotly::plot_ly(x = ~Timestamp, y = ~Cell.ID, z = ~Frequency,
-            type = "heatmap", hovertemplate = "Timestamp: %{x}<br> Cell.ID : %{y}<br>Frequency: %{z}") %>%
+            type = "heatmap", hovertemplate = "Timestamp: %{x}<br> Cell.ID : %{y}<br> Frequency: %{z}") %>%
     plotly::colorbar(title = "Frequency") %>%
     plotly::layout(title = "Flow Map for Sampled Data",
            xaxis = list(title = "Timestamp"),

@@ -177,7 +177,8 @@ plotNovelCells <-
         ) +
         ggplot2::scale_colour_manual(values = color.vec) +
         ggplot2::scale_size_manual(values = line.width, guide = "none") +
-        ggplot2::labs(color = "Level")
+        ggplot2::labs(color = "Level") +
+        ggplot2::ggtitle(title)
     }
 
     for (depth in 1:maxDepth) {

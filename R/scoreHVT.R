@@ -5,7 +5,7 @@
 #' It provides scored predicted data, prediction plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
 #' @param data List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 #' this dataset can also be used to overlay as heatmap
-#' @param hvt.results.model A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data
+#' @param hvt.results.model A list of hvt results  obtained from trainHVT function while performing hierarchical vector quantization on train data
 #' @param child.level A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
 #' @param mad.threshold A numeric values indicating the permissible Mean Absolute Deviation
 #' @param line.width Vector. A line width vector
@@ -16,7 +16,6 @@
 #' @param distance_metric Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.
 #' @param error_metric Character. The error metric can be "mean" or "max". mean is selected by default
 #' @param yVar Character. Name of the dependent variable(s)
-#' @param ...  color.vec and line.width can be passed from here
 #' @returns Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
@@ -53,8 +52,8 @@ scoreHVT <- function(data,
                        seed = 300,
                        distance_metric = "L1_Norm",
                        error_metric = "max",
-                       yVar = NULL,
-                       ...) {
+                       yVar = NULL
+                       ) {
   # browser()
 
   set.seed(seed)
