@@ -10,7 +10,7 @@
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps.
 #' @param all_prob_results Logical. A Logical value indicating the facility to print the results. TRUE in R script saves the list of dataframe as environment variable and print the results only.
-#' FALSE in rmd file by giving chunk option as {result = 'asis'} prints the probability table as dropdown. 
+#' FALSE in rmd file by giving chunk option as {result = 'asis'} and '{.tabset  .tabset-dropdown}' in the title will print the probability table as dropdown. 
 #' @return Prints and stores a list of dataframes with transition probabilities.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
@@ -37,17 +37,18 @@
 
 
 getTransitionProbability <- function(df, cellid_column, time_column, all_prob_results=NULL) {
-  
+ # browser()  
   # Rename columns for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
   colnames(df)[colnames(df) == cellid_column] <- "Cell.ID"
   if (is.null(all_prob_results)) all_prob_results <- TRUE
+  #browser()
   # Get a sorted list of unique Cell.ID values
   cell_id_list <- unique(df$Cell.ID) %>% sort()
   # browser()
   # Initialize an empty list to store probability results for each Cell.ID
   prob_results <- lapply(cell_id_list, function(state) {
-    # browser()
+
     # Find row numbers where the Cell.ID matches the current state
     row_numbers <- which(df$Cell.ID == state) + 1
     
@@ -77,7 +78,7 @@ getTransitionProbability <- function(df, cellid_column, time_column, all_prob_re
   names(prob_results) <- cell_id_list
   
   trans_prob_df <<- prob_results
-  
+
   if (all_prob_results) {
     return(trans_prob_df)
     
@@ -90,5 +91,7 @@ getTransitionProbability <- function(df, cellid_column, time_column, all_prob_re
       print(htmltools::tagList(DT::datatable(tab, rownames = FALSE, width = '70%')))
       cat("\n\n")
     })
+    
   }
 }
+

@@ -81,33 +81,36 @@
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT', data) {
+plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') {
   if (is.null(heatmap)) {
     heatmap <- '2DHVT'
   }
   if (heatmap == '1D') {
-    # Assuming we want to create a 1D heatmap based on one of the summary metrics
-    # For example, using 'Quant.Error' as the metric for the 1D heatmap
+    hvt_list <- hvt.results
+    depthData <- hvt_list[[3]][["summary"]]
+    depthData <- depthData %>% dplyr::filter(Segment.Level == 1)
     
-    summaryDF <- hvt.results[[3]][["summary"]]
-    depthLevels <- unique(summaryDF$Segment.Level)
-    metric <- "Quant.Error" # Example metric
+    # Create a 1D plot
+    p <- ggplot2::ggplot(depthData, ggplot2::aes(x = hvt_mapA[[3]][["summary"]][["Cell.ID"]], y = hvt_mapA[[3]][["summary"]][["X"]])) +
+      ggplot2::geom_line(size = line.width, color = color.vec[1]) +
+      ggplot2::geom_point(size = centroid.size, shape = pch1, color = color.vec[1]) +
+      ggplot2::labs(title = title, x = "Cell.ID", y = "Value") +
+      ggplot2::theme_minimal()
     
-    # Preparing data for 1D heatmap
-    heatmapData <- summaryDF %>%
-      dplyr::filter(Segment.Level %in% depthLevels) %>%
-      dplyr::group_by(Segment.Level) %>%
-      dplyr::summarize(AverageMetric = mean(get(metric), na.rm = TRUE))
+    fig <- ggplotly(p, tooltip = "text")
     
-    # Plotting
-    p <- ggplot2::ggplot(heatmapData, ggplot2::aes(x = Segment.Level, y = AverageMetric)) +
-      ggplot2::geom_bar(stat = "identity", fill = "blue") +
-      ggplot2::theme_minimal() +
-      ggplot2::labs(x = "Segment Level", y = "Average Quant.Error", title = "1D Heatmap of Quant.Error across Levels")
+    fig <- add_trace(fig,
+                     x = hvt_mapA[[3]][["summary"]][["Cell.ID"]],
+                     y = hvt_mapA[[3]][["summary"]][["X"]],
+                     text = paste("Cell Id:", depthData$Cell.ID, "<br>Value:", round(depthData$X,5)),
+                     hoverinfo = 'text',
+                     mode = 'markers',
+                     marker = list(color = 'black'),
+                     showlegend = FALSE
+    )
     
-    return(suppressMessages(p))
-    
-  } else if (heatmap == '2DHVT') {
+    return(suppressMessages(fig))
+  }  else if (heatmap == '2DHVT') {
     
     hvt_list <- hvt.results
     

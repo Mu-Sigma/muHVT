@@ -1,11 +1,13 @@
 #' @name plotAnimatedFlowmap
 #' @title Generating flow maps and animations based on transition probabilities
-#' @description This is the main function for generating flow maps and animations based on transition probabilities.Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
+#' @description This is the main function for generating flow maps and animations based on transition probabilities.
+#' Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
 #' They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
-#' These maps help in understanding the dynamics of the system being studied by visually representing the direction and magnitude of flows or transitions. 
+#' These maps help in understanding the dynamics of the system being studied by visually representing the direction 
+#' and magnitude of flows or transitions. 
 #' @param hvt_model_output List. Output from a trainHVT function.
 #' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
-#' @param hvt_plot_output List. Base plot for the flow maps.
+#' @param hvt_plot_output List. Base plot for the flow maps. (optional)
 #' @param animation Character. Type of animation ('state_based', 'time_based', or 'All').
 #' @param flow_map Character. Type of flow map ('with_self_state', 'without_self_state', 'probability', or 'All').
 #' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
@@ -134,53 +136,86 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   merged_df2$Probability <- round(merged_df2$Probability, digits = 3)
   
   # Non-self state PLOT - 1
+
   merged_df1 <- merged_df1 %>%
     dplyr::mutate(distance = round(sqrt((x2 - x1)^2 + (y2 - y1)^2), 0))
-  
+  #newly added
+  x <- merged_df1$x1
+  y <- merged_df1$y1
+  xend <- merged_df1$x1 + (merged_df1$x2 - merged_df1$x1) * 0.09 * sqrt((merged_df1$x2 - merged_df1$x1)^2 + (merged_df1$y2 - merged_df1$y1)^2) 
+  yend <- merged_df1$y1 + (merged_df1$y2 - merged_df1$y1) * 0.09 * sqrt((merged_df1$x2 - merged_df1$x1)^2 + (merged_df1$y2 - merged_df1$y1)^2)
+  arrow_head_length <- sqrt((xend - x)^2 + (yend - y)^2)
+
+   # xlim_l <- max(merged_df1$x1)
+   # rounded_number <- ifelse(xlim_l >= 0, ceiling(xlim_l / 10) * 10, -ceiling(abs(xlim_l) / 10) * 10)
+   # ylim_l <- max(merged_df1$y1)
+   # rounded_number1 <- ifelse(ylim_l >= 0, ceiling(ylim_l / 10) * 10, -ceiling(abs(ylim_l) / 10) * 10)
+   
   next_state_arrow_plot <- ggplot2::ggplot() +
     geom_segment(data = merged_df1, mapping = aes(x = x1, y = y1, 
                                                   xend = x1 + (x2 - x1) * 0.09 * sqrt((x2 - x1)^2 + (y2 - y1)^2), 
                                                   yend = y1 + (y2 - y1) * 0.09 * sqrt((x2 - x1)^2 + (y2 - y1)^2), 
-                                                  color = distance),
-                 arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
+                                                  color = distance), show.legend = FALSE,
+                 arrow = arrow(length = unit(arrow_head_length, "mm"), type = "open")) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1, show.legend = FALSE) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue", 
-                         name = "Distance",
-                         breaks = seq(0, max(merged_df1$distance), by = 1))  +
-    labs(title = "Flow map: Distance based on Euclidean Distance") + 
-    guides(color = guide_legend(title = "Euclidean\nDistance")) + theme_minimal()
+    scale_color_gradient(low = "blue", high = "blue") + 
+                        # name = "size",
+                        # breaks = seq(0, max(merged_df1$distance), by = 1))  +
+    labs(title = "State Transitions: Arrow size based on Euclidean Distance",
+         subtitle = "without considering self state transitions") + 
+   # guides(color = guide_legend(title = "Euclidean\nDistance")) 
+     theme_minimal() 
+   # coord_fixed(ratio = 1, xlim = c(-(rounded_number), abs(rounded_number)), ylim = c(-(rounded_number), abs(rounded_number)))
   
   # Self-state Plot - 2
   prob1 <- merged_df2$Probability
   cellID_coordinates$prob1 <- prob1
-#browser()
+  #browser()
   min_prob <- min(merged_df2$Probability)
   custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
   custom_breaks[1] <- min_prob - 1e-6
   CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
   CircleSize <- ifelse(is.na(CircleSize), 3, CircleSize)
+  radius <- (0.4 * CircleSize)
+  circle_sizes <- sort(unique(radius))
+  custom_breaks <- round(as.numeric(custom_breaks),4)
+  convert_breaks_to_labels <- function(breaks) {
+        n <- length(breaks) - 1
+         labels <- character(n)
+         for (i in 1:n) {
+               if(i == 1) {
+                     labels[i] <- paste0(format(breaks[i], nsmall = 4), " to ", format(breaks[i+1], nsmall = 4))
+                 } else {
+                       labels[i] <- paste0(format(breaks[i] + 0.0001, nsmall = 4), " to ", format(breaks[i+1], nsmall = 4))
+                   }
+           }
+         return(labels)
+     }
+   circle_labels <- convert_breaks_to_labels(custom_breaks)
   ##newly added
   n_values <- seq(min(cellID_coordinates$prob1), max(cellID_coordinates$prob1), by = 0.005)
-  size_roll <- seq(from = 1,length.out = length(n_values) , by = 0.5)
+  size_roll <- seq(from = 1,length.out = (length(n_values)-1) , by = 0.5)
   # xlim_l <- max(merged_df2$x1)
   # rounded_number <- ifelse(xlim_l >= 0, ceiling(xlim_l / 10) * 10, -ceiling(abs(xlim_l) / 10) * 10)
   # ylim_l <- max(merged_df2$y1)
   # rounded_number1 <- ifelse(ylim_l >= 0, ceiling(ylim_l / 10) * 10, -ceiling(abs(ylim_l) / 10) * 10)
 
   self_state_plot <- ggplot2::ggplot() +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
-    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.4 * CircleSize)) +
-    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue",
-                         name = "Probability",
-                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
-    labs(title = " Flow map: Highest transition probability considering self-state") +
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = size_roll)), fill = guide_legend(title = "Probability")) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1, show.legend = FALSE) +
+    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = radius,show.legend = FALSE)) +
+    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3,show.legend = FALSE) +
+    scale_color_gradient(low = "blue", high = "blue")+
+                       #  name = "Probability",
+                       #  breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
+    labs(title = "State Transitions: Circle size based on Transition Probability",
+         subtitle = "considering self state transitions") +
+   # guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = size_roll)), fill = guide_legend(title = "Probability")) +
     theme_minimal() 
-   #coord_fixed(ratio = 1, xlim = c(-(rounded_number), abs(rounded_number)), ylim = c(-(rounded_number), abs(rounded_number)))
-
+    #coord_fixed(ratio = 1, xlim = c(-(rounded_number), abs(rounded_number)), ylim = c(-(rounded_number), abs(rounded_number)))
   
+  
+   
   
   # Create a new column "threshold" based on the mean
   
@@ -226,18 +261,27 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   dplyr::mutate(threshold_label = ifelse(Probability > threshold, "High", "Low"))
   merged_df3$Probability <- round(merged_df3$Probability, digits = 1)
   
+  x <- merged_df3$x1
+  y <- merged_df3$y1
+  xend <- merged_df3$x1 + (merged_df3$x2 - merged_df3$x1) * 0.8 * (merged_df3$Probability) * ifelse(merged_df3$threshold_label == "High Probability", 1.3, 0.9)
+  yend <- merged_df3$y1 + (merged_df3$y2 - merged_df3$y1) * 0.8 * (merged_df3$Probability) * ifelse(merged_df3$threshold_label == "High Probability", 1.3, 0.9)
+  arrow_head_length <- sqrt((xend - x)^2 + (yend - y)^2)
+  
   arrow_flow_map <- ggplot2::ggplot() +
     geom_segment(data = merged_df3, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), yend = y1 + (y2 - y1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), color = Probability),
-                 arrow = arrow(length = unit(0.2, "cm")), size = 1, linewidth = 1 ) +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
+                 show.legend = FALSE, arrow = arrow(length = unit(arrow_head_length, "mm")), type = "open" ) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1, show.legend = FALSE) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3)  +
-    scale_color_gradient(low = "blue", high = "blue", 
-                         name = "Probability",
-                         breaks = seq(0, max(merged_df3$Probability), by = 0.2))  + 
-       labs(title = "Flow map: Arrow size based on Probability") +
-    guides(color = guide_legend(title = "Transition\nProbability")) + theme_minimal()
+    scale_color_gradient(low = "blue", high = "blue") + 
+                       #  name = "Probability",
+                       #  breaks = seq(0, max(merged_df3$Probability), by = 0.2))  + 
+       labs(title = "State Transitions: Arrow size based on Transition Probability",
+            subtitle = "without considering self state transitions") +
+    #guides(color = guide_legend(title = "Transition\nProbability")) + 
+    theme_minimal()
   
   # Flow map Animation based on Timestamp - 4
+#browser()
   df <- df %>%
     group_by(Cell.ID) %>%
     dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
@@ -255,7 +299,8 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
     labs(x = "x-coordinates", y = "y-coordinates")
   
   dot_anim <- dot_anim + gganimate::transition_time(Timestamp) +
-    labs(title = "Animation showing state transition") +
+    labs(title = "Animation showing state transitions",
+         subtitle = "considering self state transitions") +
     gganimate::shadow_wake(wake_length = 0.03, alpha = FALSE)
   time_animation <- gganimate::animate(dot_anim, fps = animation_speed, duration = 2)
   # time_animation <- animate(dot_anim, fps = animation_speed, duration = 100)
@@ -268,17 +313,24 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, hvt
   anime_df$order_map <- 1:nrow(anime_df)
   anime_df$label <- rep("State\nTransition", nrow(anime_df))
   
+  x <- anime_df$x1
+  y <- anime_df$y1
+  xend <- anime_df$x1 + (anime_df$x2 - anime_df$x1) * 0.5
+  yend <- anime_df$y1 + (anime_df$y2 - anime_df$y1) * 0.5
+  arrow_head_length <- sqrt((xend - x)^2 + (yend - y)^2)
+  
   arrow_anim <- ggplot2::ggplot(anime_df, aes(x = x1, y = y1)) +
     geom_segment(data = anime_df, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.5, yend = y1 + (y2 - y1) * 0.5, color = label),
-                 arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
-    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
+                 arrow = arrow(length = unit(arrow_head_length, "mm")), show.legend = FALSE) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1, show.legend = FALSE) +
+    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3, show.legend = FALSE) +
     scale_color_manual(values = c("State\nTransition" = "blue")) + 
     labs(x = "x-coordinates", y = "y-coordinates", color = "Transition\nProbability") + theme_minimal()
   
   
   animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + gganimate::shadow_mark() +
-    labs(title = "Animation showing state transition excluding self-state")
+    labs(title = "Animation showing state transitions",
+         subtitle = "without considering self-state transitions")
   
   state_animation <- gganimate::animate(animation1, fps = animation_speed, duration = 2)
    # state_animation <- animate(animation1, fps = animation_speed)
