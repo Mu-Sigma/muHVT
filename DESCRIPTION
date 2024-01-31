@@ -1,6 +1,6 @@
 Package: HVT
 Type: Package
-Date: 2024-01-10
+Date: 2024-01-30
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
 Version: 24.1.1
@@ -12,8 +12,8 @@ Description: Facilitates building topology preserving maps for rich multivariate
 License: Apache License 2.0
 Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
-        stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr, gganimate,
-        scales, cluster, reshape2, plyr, data.table, patchwork, ggforce,markovchain
+        stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr,
+        scales, cluster, reshape2, plyr, data.table, patchwork
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
@@ -28,5 +28,4 @@ Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-01-15 18:50:00 UTC
-
+Date/Publication: 2024-01-30 13:50:00 UTC

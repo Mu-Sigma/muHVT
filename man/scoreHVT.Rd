@@ -15,15 +15,14 @@ scoreHVT(
   seed = 300,
   distance_metric = "L1_Norm",
   error_metric = "max",
-  yVar = NULL,
-  ...
+  yVar = NULL
 )
 }
 \arguments{
 \item{data}{List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
 this dataset can also be used to overlay as heatmap}
 
-\item{hvt.results.model}{A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data}
+\item{hvt.results.model}{A list of hvt results  obtained from trainHVT function while performing hierarchical vector quantization on train data}
 
 \item{child.level}{A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)}
 
@@ -43,8 +42,6 @@ dataset should be normalized. Default value is TRUE.}
 \item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
 
 \item{yVar}{Character. Name of the dependent variable(s)}
-
-\item{...}{color.vec and line.width can be passed from here}
 }
 \value{
 Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots

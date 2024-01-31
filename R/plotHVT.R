@@ -1,12 +1,10 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
-#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or 3D.
-#' @param data (1D) Dataframe/Matrix. A processed dataset for calculating distance matrix and further 1D sammon mapping. Missing
-#' values are not accepted.
-#' @param hvt.results (2D/3D) List. A list containing the ouput of \code{trainHVT} function
+#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or Interactive Surface Plot.
+#' @param hvt.results (2D/Surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
-#' '2DHVT','2DHEATMAP', '3D'. Default value is 2DHVT.
+#' '2DHVT','2DHEATMAP', 'Surface_plot'. Default value is 2DHVT.
 #' @param line.width (2D) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
 #' @param color.vec (2D) Vector. A vector indicating the colors of the boundaries of
@@ -21,9 +19,9 @@
 #'  2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
 #'  6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
 #' @param dataset (2DHEATMAP) Data frame. The input data set.
-#' @param child.level (2DHEATMAP/3D) Numeric. Indicating the level for which the heat map is
+#' @param child.level (2DHEATMAP/Surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols (2DHEATMAP/3D) Numeric or Character. The column number of column name from
+#' @param hmap.cols (2DHEATMAP/Surface_plot) Numeric or Character. The column number of column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
 #' @param previous_level_heatmap (2DHEATMAP) Logical. If TRUE, the heatmap of previous level
@@ -41,11 +39,11 @@
 #' be scaled. (default = 0.5)
 #' @param quant.error.hmap (2DHEATMAP) Numeric. A number indicating the quantization error
 #' threshold.
-#' @param n_cells.hmap (2DHEATMAP/3D) Numeric. An integer indicating the number of
+#' @param n_cells.hmap (2DHEATMAP/Surface_plot) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
-#' @param sepration_width (3D) Numeric. An integer indicating the width between two Levels
-#' @param layer_opacity (3D) Numeric. A vector indicating the opacity of each layer/ level
-#' @param dim_size  (3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot
+#' @param sepration_width (Surface_plot) Numeric. An integer indicating the width between two Levels
+#' @param layer_opacity (Surface_plot) Numeric. A vector indicating the opacity of each layer/ level
+#' @param dim_size  (Surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot
 #' @returns plot object containing the main HVT plot for the given HVT results and heatmap type.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} 
@@ -66,7 +64,7 @@
 #'                        quant_method="kmeans")
 #'                        
 #' #1D - Plot                        
-#' plotHVT(data = dataset, heatmap='1D')                       
+#' plotHVT(hvt.results, heatmap='1D')                       
 #' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
 #' maxDepth = 1,heatmap = '2DHVT')
@@ -75,9 +73,9 @@
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
 #' pch1 = 21, heatmap = '2DHEATMAP')
-#' #3D - Plot
+#' #Interactive Surface - Plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
-#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = '3D' )
+#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'Surface_plot' )
 #' @export plotHVT
 
 
@@ -86,31 +84,25 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     heatmap <- '2DHVT'
   }
   if (heatmap == '1D') {
+   # browser()
     hvt_list <- hvt.results
-    depthData <- hvt_list[[3]][["summary"]]
-    depthData <- depthData %>% dplyr::filter(Segment.Level == 1)
+    cell_ID <- hvt_list[[3]][["summary"]][["Cell.ID"]]
+    datapoints <- hvt_list[[3]][["summary"]][["n"]]
     
-    # Create a 1D plot
-    p <- ggplot2::ggplot(depthData, ggplot2::aes(x = hvt_mapA[[3]][["summary"]][["Cell.ID"]], y = hvt_mapA[[3]][["summary"]][["X"]])) +
-      ggplot2::geom_line(size = line.width, color = color.vec[1]) +
-      ggplot2::geom_point(size = centroid.size, shape = pch1, color = color.vec[1]) +
-      ggplot2::labs(title = title, x = "Cell.ID", y = "Value") +
-      ggplot2::theme_minimal()
+    sum_datapoints <- sum(datapoints)
+    size_param <- (datapoints / sum_datapoints) * 500
     
-    fig <- ggplotly(p, tooltip = "text")
+    gg_plot <- ggplot(data.frame(cell_ID, size_param), aes(x =cell_ID, y = 0, text = paste("Datapoints:", datapoints))) +
+      geom_point(size = (size_param)  , color = "blue", alpha= 0.5) +
+      theme_minimal() +
+      labs(title = "1D plot", x = "Cell ID", y = " ")+
+      scale_y_continuous(limits = c(-0.025,0.025))
     
-    fig <- add_trace(fig,
-                     x = hvt_mapA[[3]][["summary"]][["Cell.ID"]],
-                     y = hvt_mapA[[3]][["summary"]][["X"]],
-                     text = paste("Cell Id:", depthData$Cell.ID, "<br>Value:", round(depthData$X,5)),
-                     hoverinfo = 'text',
-                     mode = 'markers',
-                     marker = list(color = 'black'),
-                     showlegend = FALSE
-    )
+    plotly_plot <- plotly::ggplotly(gg_plot)
     
-    return(suppressMessages(fig))
-  }  else if (heatmap == '2DHVT') {
+    return(suppressMessages(plotly_plot))
+    
+     } else if (heatmap == '2DHVT') {
     
     hvt_list <- hvt.results
     
@@ -543,7 +535,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     
     return(suppressMessages(p))
     
-  } else if (heatmap == '3D') {
+  } else if (heatmap == 'Surface_plot') {
     
     maxDepth <- min(child.level, max(hvt.results[[3]][["summary"]]
                                      %>% stats::na.omit()
@@ -795,7 +787,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
       plotly::layout(
         zaxis = list(title = hmap.cols),
         title = paste(
-          "Hierarchical Voronoi Tessellation 3D Surface plot with",
+          "Hierarchical Voronoi Tessellation Interactive Surface plot with",
           hmap.cols,
           "Heatmap Overlay"
         ),
@@ -807,6 +799,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
   } else {
-    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or '3D'.")
+    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or 'Surface_plot'.")
   }
 }

@@ -27,12 +27,11 @@ plotHVT(
   sepration_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
-  heatmap = "2DHVT",
-  data
+  heatmap = "2DHVT"
 )
 }
 \arguments{
-\item{hvt.results}{(2D/3D) List. A list containing the ouput of \code{trainHVT} function
+\item{hvt.results}{(1D/2D/3D) List. A list containing the ouput of \code{trainHVT} function
 which has the details of the tessellations to be plotted.}
 
 \item{line.width}{(2D) Numeric Vector. A vector indicating the line widths of the
@@ -83,7 +82,7 @@ asked for input, before a new figure is drawn. (default = TRUE)}
 \item{quant.error.hmap}{(2DHEATMAP) Numeric. A number indicating the quantization error
 threshold.}
 
-\item{n_cells.hmap}{(2DHEATMAP) Numeric. An integer indicating the number of
+\item{n_cells.hmap}{(2DHEATMAP/3D) Numeric. An integer indicating the number of
 cells/clusters per hierarchy (level)}
 
 \item{label.size}{(2DHEATMAP) Numeric. The size by which the tessellation labels should
@@ -96,10 +95,7 @@ be scaled. (default = 0.5)}
 \item{dim_size}{(3D) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 
 \item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
-'2DHVT','2DHEATMAP', '3D'. Default value is 2DHVT.}
-
-\item{data}{(1D) Dataframe/Matrix. A processed dataset for calculating distance matrix and further 1D sammon mapping. Missing
-values are not accepted.}
+'1D', '2DHVT','2DHEATMAP', '3D'. Default value is 2DHVT.}
 }
 \value{
 plot object containing the main HVT plot for the given HVT results and heatmap type.
@@ -121,7 +117,7 @@ hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
                        quant_method="kmeans")
                        
 #1D - Plot                        
-plotHVT(data = dataset, heatmap='1D')                       
+plotHVT(hvt.results, heatmap='1D')                       
 #2D - HVT Plot
 plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
 maxDepth = 1,heatmap = '2DHVT')

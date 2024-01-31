@@ -180,6 +180,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
     #contains the vertices of the parent polygon
     pol_info <- polygon_info <- list()
     #number of levels
+    #browser()
     nlevel <- length(unique(gdata[, "Segment.Level"]))
     #verify if the transformed points are correct
     transpoints <- list()
