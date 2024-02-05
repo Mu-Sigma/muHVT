@@ -579,10 +579,13 @@ Here, we load the data and store into a variable `dataset_updated`.
 simulate_dataset= TRUE
 
 set.seed(257)
-dataset_updated <- multiNormalDist(2500,5) 
-
-names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
-
+#dataset_updated <- multiNormalDist(2500,5) 
+#names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
+torus <- geozoo::torus(p = 3,n = 10000)
+dataset_updated <- data.frame(torus()$points)
+colnames(dataset_updated) <- c("x","y","z")
+dataset_updated <- dataset_updated %>% round(4)
+dataset_updated <- as.data.frame(scale(dataset_updated))
 
   if(nrow(dataset_updated) > 0){
 
@@ -1410,11 +1413,11 @@ clusters `n_cells` is set to 1035 to achieve 95% compression.
 set.seed(240)
 hvt.results <- list()
 hvt.results <-trainHVT(dataset_updated_train,
-                          n_cells = 1035,
+                          n_cells = 900,
                           depth = 1,
-                          quant.err = 0.2,
+                          quant.err = 0.1,
                           projection.scale = 10,
-                          normalize = TRUE,
+                          normalize = FALSE,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",

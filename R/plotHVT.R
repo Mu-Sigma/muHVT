@@ -1,10 +1,10 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
-#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or Interactive Surface Plot.
-#' @param hvt.results (2D/Surface_plot) List. A list containing the ouput of \code{trainHVT} function
+#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or Interactive surface Plot.
+#' @param hvt.results (2D/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
-#' '2DHVT','2DHEATMAP', 'Surface_plot'. Default value is 2DHVT.
+#' '2DHVT','2DHEATMAP', 'surface_plot'. Default value is 2DHVT.
 #' @param line.width (2D) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
 #' @param color.vec (2D) Vector. A vector indicating the colors of the boundaries of
@@ -19,9 +19,9 @@
 #'  2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
 #'  6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
 #' @param dataset (2DHEATMAP) Data frame. The input data set.
-#' @param child.level (2DHEATMAP/Surface_plot) Numeric. Indicating the level for which the heat map is
+#' @param child.level (2DHEATMAP/surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols (2DHEATMAP/Surface_plot) Numeric or Character. The column number of column name from
+#' @param hmap.cols (2DHEATMAP/surface_plot) Numeric or Character. The column number of column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
 #' @param previous_level_heatmap (2DHEATMAP) Logical. If TRUE, the heatmap of previous level
@@ -39,11 +39,11 @@
 #' be scaled. (default = 0.5)
 #' @param quant.error.hmap (2DHEATMAP) Numeric. A number indicating the quantization error
 #' threshold.
-#' @param n_cells.hmap (2DHEATMAP/Surface_plot) Numeric. An integer indicating the number of
+#' @param n_cells.hmap (2DHEATMAP/surface_plot) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
-#' @param sepration_width (Surface_plot) Numeric. An integer indicating the width between two Levels
-#' @param layer_opacity (Surface_plot) Numeric. A vector indicating the opacity of each layer/ level
-#' @param dim_size  (Surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot
+#' @param sepration_width (surface_plot) Numeric. An integer indicating the width between two Levels
+#' @param layer_opacity (surface_plot) Numeric. A vector indicating the opacity of each layer/ level
+#' @param dim_size  (surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot
 #' @returns plot object containing the main HVT plot for the given HVT results and heatmap type.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} 
@@ -73,9 +73,9 @@
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
 #' pch1 = 21, heatmap = '2DHEATMAP')
-#' #Interactive Surface - Plot
+#' #Interactive surface - Plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
-#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'Surface_plot' )
+#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'surface_plot' )
 #' @export plotHVT
 
 
@@ -85,22 +85,41 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
   }
   if (heatmap == '1D') {
    # browser()
-    hvt_list <- hvt.results
-    cell_ID <- hvt_list[[3]][["summary"]][["Cell.ID"]]
-    datapoints <- hvt_list[[3]][["summary"]][["n"]]
+    ####hvq output as global vaiable
+    generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")  
+    temp_summary=hvq_k[["summary"]] %>% dplyr::select(!generic_col) %>% dplyr::mutate(id=row_number())
+    cent_val= temp_summary %>% subset(.,complete.cases(.)) 
+    set.seed(123)
+    sammon_1d_cord <- MASS::sammon(
+      d = stats::dist(cent_val %>% dplyr::select(!id),method = "manhattan"),
+      niter = 10 ^ 5,
+      trace = FALSE,
+      k=1
+    )$points
+    temp_df=data.frame(sammon_1d_cord,id=cent_val$id)%>%dplyr::arrange(sammon_1d_cord) %>% dplyr::mutate(Cell.ID=row_number()) %>% dplyr::select(!sammon_1d_cord)
+    temp_summary = dplyr::left_join(temp_summary,temp_df,by="id") %>% select(!"id")
+    hvq_k[["summary"]]$Cell.ID=temp_summary$Cell.ID
     
-    sum_datapoints <- sum(datapoints)
-    size_param <- (datapoints / sum_datapoints) * 500
+    x <-sammon_1d_cord
+    y <- hvq_k[["summary"]][["Cell.ID"]]
+    data_plot <- data.frame(x,y)
     
-    gg_plot <- ggplot(data.frame(cell_ID, size_param), aes(x =cell_ID, y = 0, text = paste("Datapoints:", datapoints))) +
-      geom_point(size = (size_param)  , color = "blue", alpha= 0.5) +
+    # gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("sammon's points: ", round(x,4), "<br>Cell ID: ", y))) +
+    #   geom_point(color = "blue", alpha= 0.5) +
+    #   theme_minimal() +
+    #   labs(title = "1D plot", x = " ", y = "sammon's points")
+    # gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
+    
+    # Create a ggplot object with two y-axes
+   gg_plot <-  ggplot(data.frame(x = sammon_1d_cord, y1 = hvq_k[["summary"]][["Cell.ID"]], y2 = sammon_1d_cord), aes(x = 0)) +
+      geom_point(aes(y = y1), color = "red", alpha = 0.5) +
+      geom_point(aes(y = y2), color = "blue", alpha = 0.5) +
+      scale_y_continuous(name = "Cell ID", sec.axis = sec_axis(~., name = "Sammon's points")) +
       theme_minimal() +
-      labs(title = "1D plot", x = "Cell ID", y = " ")+
-      scale_y_continuous(limits = c(-0.025,0.025))
+      labs(title = "1D plot")
+   # gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
     
-    plotly_plot <- plotly::ggplotly(gg_plot)
-    
-    return(suppressMessages(plotly_plot))
+    return(suppressMessages(gg_plot))
     
      } else if (heatmap == '2DHVT') {
     
@@ -535,7 +554,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     
     return(suppressMessages(p))
     
-  } else if (heatmap == 'Surface_plot') {
+  } else if (heatmap == 'surface_plot') {
     
     maxDepth <- min(child.level, max(hvt.results[[3]][["summary"]]
                                      %>% stats::na.omit()
@@ -787,7 +806,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
       plotly::layout(
         zaxis = list(title = hmap.cols),
         title = paste(
-          "Hierarchical Voronoi Tessellation Interactive Surface plot with",
+          "Hierarchical Voronoi Tessellation Interactive surface plot with",
           hmap.cols,
           "Heatmap Overlay"
         ),
@@ -799,6 +818,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
   } else {
-    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or 'Surface_plot'.")
+    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or 'surface_plot'.")
   }
 }

@@ -430,4 +430,6 @@ hvq <-
                 error.quant = resm, max_QE = maxqe, plt.clust = resplt, summary = ztab, compression_summary = compression_summary,
                 meanClust = meanCol, sdClust = std,mean_QE = meanqe ))
     
+  
+    
   }

@@ -17,7 +17,7 @@
 #' hvt.results <- trainHVT(EuStockMarkets, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                    distance_metric = "L1_Norm", error_metric = "mean",
 #'                    projection.scale = 10, normalize = TRUE, seed = 123,
-#'                    quant_method="kmeans",diagnose=TRUE)
+#'                    quant_method="kmeans")
 #' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
 #'         maxDepth = 1, heatmap ='2DHVT')
 #'getCellId (hvt.results)

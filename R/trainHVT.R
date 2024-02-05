@@ -142,7 +142,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
     
     polinfo <- hvqdata <- list()
     # browser()
-    hvq_k <-
+    hvq_k <<-
       hvq(
         scaledata,
         min_compression_perc = min_compression_perc,
