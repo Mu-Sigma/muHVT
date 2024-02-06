@@ -1,5 +1,5 @@
 ---
-title: "Model diagnostics and validation for HVT model"
+title: "HVT Model diagnostics and validation"
 author: "Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi"
 date: "Built on: `r format(Sys.Date(), '%m/%d/%Y')`"
 fig.height: 4
@@ -329,7 +329,7 @@ organized below :
     the rows (long data frame) using a compression objective
 
 2.  **Data Projection**: Dimension projection of the compressed cells to
-    1D,2D and 3D with the Sammons Nonlinear Algorithm. This step creates
+    1D,2D and INteractive surface plot with the Sammons Nonlinear Algorithm. This step creates
     topology preserving map(also called as
     [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates
     into the desired output dimension.
@@ -340,7 +340,7 @@ organized below :
     enables data insights, visualization, and interaction with the
     topology preserving map. Useful for semi-supervised tasks
 
-4.  **Prediction**: Scoring new data sets and recording their assignment
+4.  **Scoring**: Scoring new data sets and recording their assignment
     using the map objects from the above steps, in a sequence of maps if
     required
 
@@ -534,8 +534,8 @@ FALSE as we are simulating a dataset in next section.**
 ```{r loading csv, message=FALSE, warning=FALSE}
 import_data_from_local = FALSE # expects logical input
 
-  file_name <- "hotel_data_train.csv" ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
-  file_path <- "./sample_dataset/"
+  file_name <- " " ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
+  file_path <- " "
 
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
@@ -567,11 +567,11 @@ if(import_data_from_local){
 
 In this section, we will use a simulated dataset. If you are not using
 this option set `simulate_dataset` to FALSE. Given below is a simulated
-dataset that contains 2500 observations and 5 features. In this step, a
-Normal Multivariate cross-sectional dataset is simulated with 5 features
-using the rnorm() function (N=2500,mean=0,sd=1) such that every feature
-has normal distribution and linear combination of its k components also
-has a univariate normal distribution.
+dataset called torus that contains 12000 observations and 3 features. 
+
+Let us see how to generate data for torus. We are using a library `geozoo` for this purpose. 
+Geo Zoo (stands for Geometric Zoo) is a compilation of geometric objects ranging from 
+three to 10 dimensions. Geo Zoo contains regular or well-known objects, eg cube and sphere, and some abstract objects, e.g. Boy's surface, Torus and Hyper-Torus.
 
 Here, we load the data and store into a variable `dataset_updated`.
 
@@ -579,18 +579,17 @@ Here, we load the data and store into a variable `dataset_updated`.
 simulate_dataset= TRUE
 
 set.seed(257)
-#dataset_updated <- multiNormalDist(2500,5) 
-#names(dataset_updated) <- paste0("Variable",1:ncol(dataset_updated))
-torus <- geozoo::torus(p = 3,n = 10000)
-dataset_updated <- data.frame(torus()$points)
+
+####torus data generation
+torus <- geozoo::torus(p = 3,n = 12000)
+dataset_updated <- data.frame(torus$points)
 colnames(dataset_updated) <- c("x","y","z")
-dataset_updated <- dataset_updated %>% round(4)
-dataset_updated <- as.data.frame(scale(dataset_updated))
+dataset_updated <- round(dataset_updated,4)
+
 
   if(nrow(dataset_updated) > 0){
 
-
-    paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  " simulated successfully. ") %>% cat("\n")
+paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  "simulated successfully. ") %>% cat("\n")
     
     # Round only the numeric columns in dataset
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
@@ -613,7 +612,7 @@ dataset_updated <- as.data.frame(scale(dataset_updated))
 **Summary of Dataset**
 
 The table below shows summary of all (numeric & categorical) columns of
-Data set
+Dataset
 
 ```{r sum_test,  message=FALSE, warning=FALSE}
 df <- do.call(cbind, lapply(dataset_updated, summary)) %>% 
@@ -705,7 +704,7 @@ str( dataset_updated) ## showing summary for updated
 
 ## Changing Data Type of Columns
 
-The section allows the user to change the data type of columns of his
+The section allows the user to change the data type of columns of his/her
 choice.
 
 ```{r column type, purl = FALSE}
@@ -744,7 +743,7 @@ str( dataset_updated)
 ## Checking and Removing Duplicates
 
 Presence of duplicate observations can be misleading, this sections
-helps get rid of such rows in the datasets.
+helps get rid of such rows in the dataset.
 
 ```{r,  message=FALSE, warning=FALSE, purl = FALSE}
 
@@ -1413,11 +1412,11 @@ clusters `n_cells` is set to 1035 to achieve 95% compression.
 set.seed(240)
 hvt.results <- list()
 hvt.results <-trainHVT(dataset_updated_train,
-                          n_cells = 900,
+                          n_cells = 600,
                           depth = 1,
-                          quant.err = 0.1,
+                          quant.err = 0.2,
                           projection.scale = 10,
-                          normalize = FALSE,
+                          normalize = TRUE,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",
@@ -1432,7 +1431,7 @@ plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
-        maxDepth = 1, heatmap = '2DHVT')
+        maxDepth = 1, heatmap = '2Dhvt')
 ```
 
 The table below shows number of cells having quantization error below
@@ -1501,7 +1500,7 @@ an object to itself. This minimum distance value gives the
 datatable.
 
 plotModelDiagnostics() function can be used to print diagnostic plots for HVT model
-or HVT prediction.
+or HVT scoring.
 
 The plotModelDiagnostics() function for HVT Model provides 5 diagnostic plots which
 are as follows:
@@ -1525,10 +1524,10 @@ plotModelDiagnostics(hvt.results)
 ### Mean Absolute Deviation based Calibration: HVT Model \| Train Data
 
 The first diagnostic plot is a calibration plot for HVT Model run on
-train data. This plot is obtained by scoring(predicting) the train data
+train data. This plot is obtained by scoring the train data
 itself on the HVT model. It is a comparison of Percentage_Anomalies with
 at varying Mean Absolute Deviation values. It can be seen from the plot
-that at **0.22** Mean Absolute Deviation value the percentage anomlaies
+that at **0.22** Mean Absolute Deviation value the percentage anomalies
 drop below one percent.
 
 ```{r fig.height=4, fig.width=6}
@@ -1606,16 +1605,16 @@ Mean of distribution obtained in Minimum Intra-Centroid Distance Plot
 section. Thus 0.6 (Mean of Minimum Intra-Centroid Distance) can be used
 as the mean absolute deviation threshold for prediction. </font>
 
-# Prediction
+# Scoring
 
-Now once we have built the model, let us try to predict using our test
+Now once we have built the model, let us try to score using our test
 dataset to see which cell each point belongs to.
 
-## Prediction Algorithm
+## Scoring Algorithm
 
-The prediction algorithm recursively calculates the distance between
+The Scoring algorithm recursively calculates the distance between
 each point in the test dataset and the cell centroids for each level.
-The following steps explain the prediction method for a single point in
+The following steps explain the scoring method for a single point in
 the test dataset :
 
 1.  Calculate the distance between the point and the centroid of all the
@@ -1697,10 +1696,10 @@ dataset_updated_test=dataset_updated_test %>% dplyr::select(nums)
 
 ```
 
-Now once we have the test data ready, lets look at how the predictHVT
+Now once we have the test data ready, lets look at how the scoreHVT
 function looks like.
 
-## Prediction on Test Data
+## Scoring on Test Data
 
 ```         
 scoreHVT(data,
@@ -1742,9 +1741,9 @@ Absolute Deviation Plot
 </p>
 
 ```{r,class.source = 'fold-show'}
-hvt.prediction = list()
+hvt.score = list()
 mad_threshold= 0.6 #Mean of Minimum Intra-Centroid Distance
-hvt.prediction <- scoreHVT(
+hvt.score <- scoreHVT(
   data = dataset_updated_test,
   hvt.results.model=hvt.results,
   child.level = 1,
@@ -1756,14 +1755,14 @@ hvt.prediction <- scoreHVT(
 )
 ```
 
-The plotModelDiagnostics() function can be called for prediction object as well.
+The plotModelDiagnostics() function can be called for scoring object as well.
 Shown below is the comparison of Mean Absolute Deviation Plot for train
-validation and test data.
+data and test data.
 
 ::: superbigimage
 ```{r, fig.width=8,fig.height=10,class.source = 'fold-show'}
 
-plotModelDiagnostics(hvt.prediction)
+plotModelDiagnostics(hvt.score)
 ```
 :::
 
@@ -1792,7 +1791,7 @@ Comparison between scored/test and fitted Quantization error of cell(s)
 is provided for further insights.
 
 ```{r out.width="100%"}
-QECompareDf <- hvt.prediction$QECompareDf %>% filter(anomalyFlag == 1)
+QECompareDf <- hvt.score$QECompareDf %>% filter(anomalyFlag == 1)
 percentageAnomalies = formatC((sum(QECompareDf$n) / nrow(dataset_updated_test)) *
                                 100, digits = 2, format = "f") %>% paste0("%")
 ```
@@ -1801,12 +1800,12 @@ percentageAnomalies = formatC((sum(QECompareDf$n) / nrow(dataset_updated_test)) 
 anomalous data points:`r sum(QECompareDf$n)` \| Percentage of anomalous
 data points: `r percentageAnomalies`** <br> **Mean QE for fitted data:
 `r Quant.Error.Actual %>% round(digits = 4)` \| Mean QE for test data:
-`r hvt.prediction[["scoredPredictedData"]]$Quant.Error %>%  mean() %>% round(digits = 4)`
+`r hvt.score[["scoredPredictedData"]]$Quant.Error %>%  mean() %>% round(digits = 4)`
 \| Difference in QE between fitted and test data:
-`r abs(Quant.Error.Actual%>%round(digits = 4)-hvt.prediction[["scoredPredictedData"]]$Quant.Error%>%mean() %>%round(digits = 4))`**
+`r abs(Quant.Error.Actual%>%round(digits = 4)-hvt.score[["scoredPredictedData"]]$Quant.Error%>%mean() %>%round(digits = 4))`**
 
 ```{r fig.height=7.5, fig.width=6}
-plotQuantErrorHistogram(hvt.results,hvt.prediction)
+plotQuantErrorHistogram(hvt.results,hvt.score)
 ```
 
 ### Anomalous Observations
@@ -1815,7 +1814,7 @@ The anomalous observations are shown below in the datatable.
 
 ```{r,echo=TRUE,eval=TRUE}
 
-QECompareDf <- hvt.prediction$QECompareDf %>% filter(anomalyFlag == 1)
+QECompareDf <- hvt.score$QECompareDf %>% filter(anomalyFlag == 1)
 # adding cell ID to table
 QECompareDf1 <-
   left_join(
@@ -1919,7 +1918,7 @@ Quantization Error after scoring.
 <!-- ``` -->
 
 ```{r,class.source = 'fold-show', fig.height=4, fig.width=6,eval=FALSE}
-hvt.prediction[["predictPlot"]]
+hvt.score[["predictPlot"]]
 
 ```
 
@@ -1927,14 +1926,14 @@ hvt.prediction[["predictPlot"]]
 knitr::include_graphics('./interactive.png')
 ```
 
-# Download Predictions
+# Download Scored data
 
-The predictions from the above sections can be downloaded in section
-below. The downloaded predictions can be found in the output(LOCAL)
+The scored data from the above sections can be downloaded in section
+below. The downloaded scored data can be found in the output(LOCAL)
 folder.
 
 ```{r}
-predictClusterData <- hvt.prediction[["scoredPredictedData"]]%>%as.data.frame()
+predictClusterData <- hvt.score[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
       Table(scroll = TRUE, limit = 20)
