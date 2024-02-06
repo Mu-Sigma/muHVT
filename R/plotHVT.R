@@ -1,45 +1,45 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or Interactive surface Plot.
-#' @param hvt.results (2D/surface_plot) List. A list containing the ouput of \code{trainHVT} function
+#' @param hvt.results (2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
-#' '2DHVT','2DHEATMAP', 'surface_plot'. Default value is 2DHVT.
-#' @param line.width (2D) Numeric Vector. A vector indicating the line widths of the
+#' '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.
+#' @param line.width (2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
-#' @param color.vec (2D) Vector. A vector indicating the colors of the boundaries of
+#' @param color.vec (2Dhvt/2Dheatmap) Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level.
-#' @param pch1 (2D) Numeric. Symbol type of the centroids of the tessellations
+#' @param pch1 (2Dhvt/2Dheatmap) Numeric. Symbol type of the centroids of the tessellations
 #' (parent levels). Default value is 21.
-#' @param centroid.size (2D) Numeric. Size of centroids of first level
+#' @param centroid.size (2Dhvt/2Dheatmap) Numeric. Size of centroids of first level
 #' tessellations. 
-#' @param title (2DHVT) String. Set a title for the plot. (default = NULL)
-#' @param maxDepth (2DHVT) Numeric. An integer indicating the number of levels. (default = NULL)
-#' @param  palette.color (2DHEATMAP) Numeric. A number indicating the heat map color palette. 1 - rainbow,
+#' @param title (2Dhvt) String. Set a title for the plot. (default = NULL)
+#' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)
+#' @param  palette.color (2Dheatmap) Numeric. A number indicating the heat map color palette. 1 - rainbow,
 #'  2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
 #'  6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
-#' @param dataset (2DHEATMAP) Data frame. The input data set.
-#' @param child.level (2DHEATMAP/surface_plot) Numeric. Indicating the level for which the heat map is
+#' @param dataset (2Dheatmap) Data frame. The input data set.
+#' @param child.level (2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols (2DHEATMAP/surface_plot) Numeric or Character. The column number of column name from
+#' @param hmap.cols (2Dheatmap/surface_plot) Numeric or Character. The column number of column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
-#' @param previous_level_heatmap (2DHEATMAP) Logical. If TRUE, the heatmap of previous level
+#' @param previous_level_heatmap (2Dheatmap) Logical. If TRUE, the heatmap of previous level
 #' will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap
 #' of only selected level will be plotted
-#' @param show.points (2DHEATMAP) Logical. Indicating if the centroids should
+#' @param show.points (2Dheatmap) Logical. Indicating if the centroids should
 #' be plotted on the tessellations. (default = FALSE)
-#' @param asp (2DHEATMAP) Numeric. Indicating the aspect ratio type. For flexible aspect
+#' @param asp (2Dheatmap) Numeric. Indicating the aspect ratio type. For flexible aspect
 #' ratio set, asp = NA. (default = 1)
-#' @param ask (2DHEATMAP) Logical. If TRUE (and the R session is interactive) the user is
+#' @param ask (2Dheatmap) Logical. If TRUE (and the R session is interactive) the user is
 #' asked for input, before a new figure is drawn. (default = TRUE)
-#' @param tess.label (2DHEATMAP) Vector. A vector for labelling the tessellations. (default
+#' @param tess.label (2Dheatmap) Vector. A vector for labelling the tessellations. (default
 #' = NULL)
-#' @param label.size (2DHEATMAP) Numeric. The size by which the tessellation labels should
+#' @param label.size (2Dheatmap) Numeric. The size by which the tessellation labels should
 #' be scaled. (default = 0.5)
-#' @param quant.error.hmap (2DHEATMAP) Numeric. A number indicating the quantization error
+#' @param quant.error.hmap (2Dheatmap) Numeric. A number indicating the quantization error
 #' threshold.
-#' @param n_cells.hmap (2DHEATMAP/surface_plot) Numeric. An integer indicating the number of
+#' @param n_cells.hmap (2Dheatmap/surface_plot) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
 #' @param sepration_width (surface_plot) Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity (surface_plot) Numeric. A vector indicating the opacity of each layer/ level
@@ -64,24 +64,24 @@
 #'                        quant_method="kmeans")
 #'                        
 #' #1D - Plot                        
-#' plotHVT(hvt.results, heatmap='1D')                       
+#' plotHVT(heatmap='1D')                       
 #' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
-#' maxDepth = 1,heatmap = '2DHVT')
+#' maxDepth = 1,heatmap = '2Dhvt')
 #' #2D - HEATMAP
 #' plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
-#' pch1 = 21, heatmap = '2DHEATMAP')
+#' pch1 = 21, heatmap = '2Dheatmap')
 #' #Interactive surface - Plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
 #' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'surface_plot' )
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') {
+plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2Dhvt') {
   if (is.null(heatmap)) {
-    heatmap <- '2DHVT'
+    heatmap <- '2Dhvt'
   }
   if (heatmap == '1D') {
    # browser()
@@ -104,24 +104,32 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     y <- hvq_k[["summary"]][["Cell.ID"]]
     data_plot <- data.frame(x,y)
     
-    # gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("sammon's points: ", round(x,4), "<br>Cell ID: ", y))) +
-    #   geom_point(color = "blue", alpha= 0.5) +
-    #   theme_minimal() +
-    #   labs(title = "1D plot", x = " ", y = "sammon's points")
-    # gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
-    
-    # Create a ggplot object with two y-axes
-   gg_plot <-  ggplot(data.frame(x = sammon_1d_cord, y1 = hvq_k[["summary"]][["Cell.ID"]], y2 = sammon_1d_cord), aes(x = 0)) +
-      geom_point(aes(y = y1), color = "red", alpha = 0.5) +
-      geom_point(aes(y = y2), color = "blue", alpha = 0.5) +
-      scale_y_continuous(name = "Cell ID", sec.axis = sec_axis(~., name = "Sammon's points")) +
+    #1ST VERSION
+    gg_plot_1 <- ggplot(data_plot, aes(x = y, y = x, text = paste("sammon's point: ", round(x,4), "<br>Cell ID: ", y))) +
+      geom_point(color = "blue", alpha= 0.5) +
       theme_minimal() +
-      labs(title = "1D plot")
-   # gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
+      labs(title = "1D plot", x = " ", y = "sammon's points")
+
     
-    return(suppressMessages(gg_plot))
-    
-     } else if (heatmap == '2DHVT') {
+    # 2ND VERSION
+    gg_plot_2 <- ggplot(data_plot, aes(x = 0, y = x, text = paste("sammon's point: ", round(x,4), "<br>Cell ID: ", y))) +
+      geom_point(color = "blue", alpha= 0.5) +
+      theme_minimal() +
+      labs(title = "1D plot", x = " ", y = "sammon's points")
+
+
+      gg_plot_1 <- plotly::ggplotly(gg_plot_1, tooltip = "text")
+      gg_plot_2 <- plotly::ggplotly(gg_plot_2, tooltip = "text")
+      
+    # return(suppressMessages(gg_plot_1))
+    # return(suppressMessages(gg_plot_2))
+      
+      # Wrap both plots into a list
+      plot_list <- list(plot1 = suppressMessages(gg_plot_1), plot2 = suppressMessages(gg_plot_2))
+      
+      return(plot_list)
+      
+     } else if (heatmap == '2Dhvt') {
     
     hvt_list <- hvt.results
     
@@ -288,7 +296,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
     
-  } else if (heatmap == '2DHEATMAP') {
+  } else if (heatmap == '2Dheatmap') {
     hvt_list <- hvt.results
     # maxDepth <- child.level
     maxDepth <- min(child.level, max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
@@ -818,6 +826,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
   } else {
-    stop("Invalid value for 'heatmap'. Expected '1D', '2DHVT','2DHEATMAP', or 'surface_plot'.")
+    stop("Invalid value for 'heatmap'. Expected '1D', '2Dhvt','2Dheatmap', or 'surface_plot'.")
   }
 }

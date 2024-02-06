@@ -141,7 +141,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive Surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map useful for semi-supervised tasks.
 
@@ -704,60 +704,60 @@ The `deldir` package computes the Delaunay triangulation (and hence the Dirichle
 Now let's try to understand **plotHVT** function. The parameters have been explained in detail below:
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
-plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2DHVT') 
+plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2Dhvt') 
 ```
 
-* __`hvt.results`__ - (1D/2D/Surface_plot)  A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+* __`hvt.results`__ - (2Dhvt/2Dheatmap/surface_plot)  A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
-* __`line.width`__	- (2D) A vector indicating the line widths of the tessellation boundaries for each layer.
+* __`line.width`__	- (2Dhvt/2Dheatmap) A vector indicating the line widths of the tessellation boundaries for each layer.
 
-* __`color.vec`__	- (2D) A vector indicating the colors of the tessellations boundaries at each layer.
+* __`color.vec`__	- (2Dhvt/2Dheatmap) A vector indicating the colors of the tessellations boundaries at each layer.
 
-* __`pch1`__	- (2D) Symbol, It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations.(default = 21 i.e filled circle).
+* __`pch1`__	- (2Dhvt/2Dheatmap) Symbol, It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations.(default = 21 i.e filled circle).
 
-* __`centroid.size`__	- (2D) Size of centroids for each level of tessellations (default = 3).
+* __`centroid.size`__	- (2Dhvt/2Dheatmap) Size of centroids for each level of tessellations (default = 3).
 
-* __`title`__	-  (2DHVT) Set a title for the plot (default = NULL).
+* __`title`__	-  (2Dhvt) Set a title for the plot (default = NULL).
 
-* __`maxDepth`__ -  (2DHVT) An integer indicating the number of levels. (default = NULL)
+* __`maxDepth`__ -  (2Dhvt) An integer indicating the number of levels. (default = NULL)
 
-* __`palette.color`__ - (2DHEATMAP) A number indicating the heat map color palette. 1 - rainbow,2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default= 6).
+* __`palette.color`__ - (2Dheatmap) A number indicating the heat map color palette. 1 - rainbow,2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default= 6).
 
-* __`dataset`__ - (2DHEATMAP) Data frame. The input dataset.
+* __`dataset`__ - (2Dheatmap) Data frame. The input dataset.
 
-* __`child.level`__ - (2DHEATMAP/Surface_plot) A Number indicating the level for which the heat map is to be plotted.
+* __`child.level`__ - (2Dheatmap/surface_plot) A Number indicating the level for which the heat map is to be plotted.
 
-* __`hmap.cols`__ - (2DHEATMAP/Surface_plot) A Number or a Character which is the column number of column name from
+* __`hmap.cols`__ - (2Dheatmap/surface_plot) A Number or a Character which is the column number of column name from
 the dataset indicating the variables for which the heat map is to be plotted.
 
-* __`previous_level_heatmap`__ -  (2DHEATMAP) A Logical value to indicate whether the heatmap of previous level
+* __`previous_level_heatmap`__ -  (2Dheatmap) A Logical value to indicate whether the heatmap of previous level
 will be overlayed on the heatmap of selected level.
 
-* __`show.points`__ - (2DHEATMAP) A Logical value indicating if the centroids should be plotted on the tessellations.
+* __`show.points`__ - (2Dheatmap) A Logical value indicating if the centroids should be plotted on the tessellations.
  (default = FALSE)
  
-* __`asp`__ - (2DHEATMAP) A Number indicating the aspect ratio type. For flexible aspect
+* __`asp`__ - (2Dheatmap) A Number indicating the aspect ratio type. For flexible aspect
 ratio set, asp = NA. (default = 1)
 
-* __`ask`__ - (2DHEATMAP) A Logical value to have interactive R session.(default = TRUE) 
+* __`ask`__ - (2Dheatmap) A Logical value to have interactive R session.(default = TRUE) 
 
-* __`tess.label`__ - (2DHEATMAP) A vector for labelling the tessellations. (default
+* __`tess.label`__ - (2Dheatmap) A vector for labelling the tessellations. (default
  = NULL)
 
-* __`label.size`__ - (2DHEATMAP) The size by which the tessellation labels should
+* __`label.size`__ - (2Dheatmap) The size by which the tessellation labels should
 be scaled.(default = 0.5)
 
-* __`quant.error.hmap`__ - (2DHEATMAP) A number indicating the quantization error threshold.
+* __`quant.error.hmap`__ - (2Dheatmap) A number indicating the quantization error threshold.
 
-* __`n_cells.hmap`__ - (2DHEATMAP) An integer indicating the number of cells/clusters per hierarchy 
+* __`n_cells.hmap`__ - (2Dheatmap) An integer indicating the number of cells/clusters per hierarchy 
 
-* __`sepration_width`__ - (Surface_plot) An integer indicating the width between two Levels.
+* __`sepration_width`__ - (surface_plot) An integer indicating the width between two Levels.
 
-* __`layer_opacity`__ - (Surface_plot) A vector indicating the opacity of each layer/ level.
+* __`layer_opacity`__ - (surface_plot) A vector indicating the opacity of each layer/ level.
 
-* __`dim_size`__ - (Surface_plot) An integer indicating the dimension size used to create the matrix for the plot.
+* __`dim_size`__ - (surface_plot) An integer indicating the dimension size used to create the matrix for the plot.
 
-* __`heatmap`__ -  A Character indicating which type of plot should be generated. Accepted entries are '1D','2DHVT','2DHEATMAP' & 'Surface_plot'. Default value is '2DHVT'.
+* __`heatmap`__ -  A Character indicating which type of plot should be generated. Accepted entries are '1D','2Dhvt','2Dheatmap' & 'surface_plot'. Default value is '2Dhvt'.
 
 
 
@@ -772,7 +772,7 @@ plotHVT(
   color.vec = c("#141B41"),
   centroid.size = 0.6,
   maxDepth = 1, 
-  heatmap = '2DHVT'
+  heatmap = '2Dhvt'
 )
 ```
 
@@ -787,7 +787,7 @@ plotHVT(
   color.vec = c("#141B41"),
   centroid.size = 0.6,
   maxDepth = 1,
-  heatmap = '2DHVT'
+  heatmap = '2Dhvt'
 )
 ```
 
@@ -802,7 +802,7 @@ plotHVT(
   color.vec = c("#141B41"),
   centroid.size = 0.6,
   maxDepth = 1,
-  heatmap = '2DHVT'
+  heatmap = '2Dhvt'
 )
 ```
 
@@ -831,7 +831,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -848,7 +848,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -865,7 +865,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -882,7 +882,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.1,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -1180,7 +1180,7 @@ plotHVT(hvt.results,
         color.vec = c("#141B41"),
         centroid.size = 0.01,  #1.5
         maxDepth = 1,
-        heatmap = '2DHVT')
+        heatmap = '2Dhvt')
 
 
 ```    
@@ -1207,7 +1207,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -1225,7 +1225,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -1243,7 +1243,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 
 ```
@@ -1261,7 +1261,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 ```
 
@@ -1278,7 +1278,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 
 ```
@@ -1297,7 +1297,7 @@ plotHVT(
   show.points = TRUE,
   quant.error.hmap = 0.2,
   n_cells.hmap = 15,
-  heatmap = '2DHEATMAP'
+  heatmap = '2Dheatmap'
 )
 
 ```

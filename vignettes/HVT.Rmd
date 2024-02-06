@@ -62,7 +62,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive Surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map useful for semi-supervised tasks.
 
@@ -96,7 +96,7 @@ In this version of HVT package, the following new features have been introduced:
 
 1. **Rename:** Renamed the functions.
 2. **Reorganise:** Reorganised the functions into new sections.
-3. **Modification:** Merged the HVT plots and Heatmap generation functions for 1D,2D and Interactive Surface plot.
+3. **Modification:** Merged the HVT plots and Heatmap generation functions for 1D,2D and Interactive surface plot.
 
 
 
