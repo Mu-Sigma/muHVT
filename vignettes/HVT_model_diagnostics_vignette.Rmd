@@ -274,7 +274,7 @@ Table <- function(data,scroll = FALSE, limit = NULL){
   
 }
 
-summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.2,limit=NULL){
+summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.1,limit=NULL){
   
   scroll <- scroll
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
@@ -329,7 +329,7 @@ organized below :
     the rows (long data frame) using a compression objective
 
 2.  **Data Projection**: Dimension projection of the compressed cells to
-    1D,2D and INteractive surface plot with the Sammons Nonlinear Algorithm. This step creates
+    1D,2D and Interactive surface plot with the Sammons Nonlinear Algorithm. This step creates
     topology preserving map(also called as
     [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates
     into the desired output dimension.
@@ -534,25 +534,18 @@ FALSE as we are simulating a dataset in next section.**
 ```{r loading csv, message=FALSE, warning=FALSE}
 import_data_from_local = FALSE # expects logical input
 
-  file_name <- " " ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
+  file_name <- " " 
   file_path <- " "
 
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
 if(import_data_from_local){
-
   file_load <- paste0(file_path, file_name)
-  
   dataset_updated <- as.data.frame(fread(file_load))
-  
   if(nrow(dataset_updated) > 0){
-
-
     paste0("File ", file_name, " having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  " imported successfully. ") %>% cat("\n")
-    
     # Round only the numeric columns in dataset
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
-    
     paste0("Code chunk executed successfully. Below table showing first 10 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
     dataset_updated %>% head(10) %>% 
@@ -571,7 +564,7 @@ dataset called torus that contains 12000 observations and 3 features.
 
 Let us see how to generate data for torus. We are using a library `geozoo` for this purpose. 
 Geo Zoo (stands for Geometric Zoo) is a compilation of geometric objects ranging from 
-three to 10 dimensions. Geo Zoo contains regular or well-known objects, eg cube and sphere, and some abstract objects, e.g. Boy's surface, Torus and Hyper-Torus.
+3 to 10 dimensions. Geo Zoo contains regular or well-known objects, eg cube and sphere, and some abstract objects, e.g. Boy's surface, Torus and Hyper-Torus.
 
 Here, we load the data and store into a variable `dataset_updated`.
 
@@ -579,21 +572,16 @@ Here, we load the data and store into a variable `dataset_updated`.
 simulate_dataset= TRUE
 
 set.seed(257)
-
-####torus data generation
+##torus data generation
 torus <- geozoo::torus(p = 3,n = 12000)
 dataset_updated <- data.frame(torus$points)
 colnames(dataset_updated) <- c("x","y","z")
-dataset_updated <- round(dataset_updated,4)
 
 
   if(nrow(dataset_updated) > 0){
-
-paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  "simulated successfully. ") %>% cat("\n")
-    
+paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  "simulated successfully. ") %>% cat("\n")  
     # Round only the numeric columns in dataset
-    dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
-    
+    dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4) 
     paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
     dataset_updated %>% head(100) %>% 
@@ -652,7 +640,7 @@ The cell below will allow user to drop irrelevant column.
 # Add column names which you want to remove
 want_to_delete_column <- "no"
 
-    del_col<-c("hotel_id")  
+    del_col<-c(" `column_name` ")  
 
 if(want_to_delete_column == "yes"){
    dataset_updated <-  dataset_updated[ , !(names(dataset_updated) %in% del_col)]
@@ -683,8 +671,8 @@ colnames( dataset_updated) <- colnames( dataset_updated) %>% casefold()
 want_to_rename_column <- "no" ## type "yes" if you want to rename a column
 
 ## renaming a column of a dataset 
-rename_col_name <- "fac_id" ## use small letters
-rename_col_name_to <- "unique_id"
+rename_col_name <- " 'column_name` " ## use small letters
+rename_col_name_to <- " `new_name` "
 
 if(want_to_rename_column == "yes"){
   names( dataset_updated)[names( dataset_updated) == rename_col_name] <- rename_col_name_to
@@ -735,7 +723,7 @@ if(want_to_change_column_type == "yes" && change_column_to_type == "character"){
 }else{
   paste0("Datatype of columns have not been changed.") %>% cat("\n")
 }
-dataset_updated<-do.call(data.frame, dataset_updated)
+dataset_updated <- do.call(data.frame, dataset_updated)
 str( dataset_updated)
 
 ```
@@ -799,8 +787,8 @@ further analysis.
 ```{r,  message=FALSE, warning=FALSE, purl = FALSE}
 
 want_to_filter_dataset <- "no" ## type "yes" in case you want to filter
-filter_col <- "building.type"  ## Enter Column name to filter
-filter_val <- "3"        ## Enter Value to exclude for the column selected
+filter_col <- " "  ## Enter Column name to filter
+filter_val <- " "        ## Enter Value to exclude for the column selected
 
 if(want_to_filter_dataset == "yes"){
    dataset_updated <- filter_at( dataset_updated
@@ -822,7 +810,7 @@ if(want_to_filter_dataset == "yes"){
 
 Missing values in the training data can lead to a biased model because
 we have not analyzed the behavior and relationship of those values with
-other variables correctly. It can lead to a wrong prediction or
+other variables correctly. It can lead to a wrong calculation or
 classification. Missing values can be of 3 types:
 
 -   **Missing Completely At Random (MCAR)**: When missing data are MCAR,
@@ -861,7 +849,7 @@ if(na_total == 0){
 The following code is to visualize the missing values (if any) using bar
 chart.
 
-gg_miss_upset function are using to visualize the patterns of
+`gg_miss_upset` function are using to visualize the patterns of
 missingness, or rather the combinations of missingness across cases.
 
 This function gives us(if any missing value present):
@@ -899,10 +887,8 @@ if(total_na > 0 && length(missing_col_names) > 1){
 
 In this section user can make decisions, how to tackle missing values in
 dataset. Both column(s) and row(s) can be removed in the following
-dataset should the user choose to do so.
+dataset based on the user choose to do so.
 
-**Note** for missing value imputation, please refer to data wrangling
-brick.
 
 **Drop Column(s) with Missing Values**
 
@@ -917,7 +903,7 @@ The below code accepts user input and deletes the specified column.
 # OR do you want to drop column specific column
 drop_cloumn_name_na <- "yes" ## type "yes" to drop column(s)
 # write column name that you want to drop
-drop_column_name <- c("building.type")
+drop_column_name <- c(" ") #enter column name
 if(drop_cloumn_name_na == "yes"){
   names_df=names( dataset_updated) %in% drop_column_name
   dataset_updated <-  dataset_updated[ , which(!names( dataset_updated) %in% drop_column_name)]
@@ -961,7 +947,7 @@ This technique bins all categorical values as either 1 or 0. It is used
 for categorical variables with 2 classes. This is done because
 classification models can only handle features that have numeric values.
 
-Shown below is the length of unique values in each categorical column
+Given below is the length of unique values in each categorical column
 
 ```{r}
 cat_cols <-
@@ -1125,7 +1111,6 @@ dataset_updated %>% head(10) %>%
            # ,n_non_missing = n_row - n_missing
            )
 Table(aa,scroll = TRUE, limit = 20)
-#)
 ```
 
 # Data distribution
@@ -1335,7 +1320,7 @@ transformed points as centroids. The lines in the tessellations are
 chopped in places so that they do not protrude outside the parent
 polygon. This is done for all the subsequent levels.
 
-Let us try to understand the HVT function first.
+Let us try to understand the trainHVT function first.
 
 ```         
 HVT::trainHVT(
@@ -1350,8 +1335,7 @@ HVT::trainHVT(
   quant_method = c("kmeans", "kmedoids"),
   diagnose = TRUE,
   hvt_validation = FALSE,
-  train_validation_split_ratio = 0.8,
-  ...
+  train_validation_split_ratio = 0.8
 )
 ```
 
@@ -1412,11 +1396,11 @@ clusters `n_cells` is set to 1035 to achieve 95% compression.
 set.seed(240)
 hvt.results <- list()
 hvt.results <-trainHVT(dataset_updated_train,
-                          n_cells = 600,
+                          n_cells = 1035,
                           depth = 1,
-                          quant.err = 0.2,
+                          quant.err = 0.1,
                           projection.scale = 10,
-                          normalize = TRUE,
+                          normalize = FALSE,
                           distance_metric = "L1_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",
@@ -1443,7 +1427,7 @@ Table(hvt.results[[3]]$compression_summary,scroll = TRUE, limit = 10)
 #compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
-As seen in the above table, 98% of the cells have a quantization error
+As seen in the above table, 95% of the cells have a quantization error
 below the threshold. Let's have a closer look at `Quant.Error` variable
 in the below table. The values for `Quant.Error` of the cells which have
 hit the Quantization Error threshold are shown in red. Here we are
@@ -1471,7 +1455,7 @@ The diagnosis can be enabled by setting the **`diagnose`** parameter to
 Measuring model fit is the key to iteratively improving the models. The
 relevant measure of model quality here is percentage of anomalous
 points. The percentage anomalies ideally should match with level of
-compression achieved during modeling, where PercentageAnomlies $\approx$
+compression achieved during modeling, where PercentageAnomalies $\approx$
 1-ModelCompression.
 
 Model Validation can be enabled by setting the **`hvt_validation`**
@@ -1524,10 +1508,10 @@ plotModelDiagnostics(hvt.results)
 ### Mean Absolute Deviation based Calibration: HVT Model \| Train Data
 
 The first diagnostic plot is a calibration plot for HVT Model run on
-train data. This plot is obtained by scoring the train data
+train data. This plot is obtained by executing the train data
 itself on the HVT model. It is a comparison of Percentage_Anomalies with
 at varying Mean Absolute Deviation values. It can be seen from the plot
-that at **0.22** Mean Absolute Deviation value the percentage anomalies
+that at **0.1** Mean Absolute Deviation value the percentage anomalies
 drop below one percent.
 
 ```{r fig.height=4, fig.width=6}
@@ -1546,8 +1530,7 @@ p1=hvt.results[[4]]$datapoint_plot+ggtitle("Minimum Intra-DataPoint Distance Plo
 p1
 ```
 
-As seen in the plot above the mean value is 0.23. While running our
-model we had also selected the QE value as 0.2 which is near this value.
+As seen in the plot above the mean value is **0.02**.
 
 ### Minimum Intra-Centroid Distance Plot: HVT Model \| Train Data
 
@@ -1560,9 +1543,9 @@ p2=hvt.results[[4]]$cent_plot+ggtitle("Minimum Intra-Centroid Distance Plot: HVT
 p2
 ```
 
-<font color="red"> As seen in the plot above the mean value is **0.6**.
+<font color="red"> As seen in the plot above the mean value is **0.72**.
 This value can be selected as the Mean Absolute Deviation Threshold for
-scoring data using predict function </font>
+scoring data using scoreHVT function </font>
 
 ### Distribution of Number of Observations in HVT Cells
 
@@ -1576,7 +1559,7 @@ p4
 ```
 
 As shown in the plot above the mean number of records in each HVT cell
-is **2**.
+is **7**.
 
 ### Singleton Count
 
@@ -1591,7 +1574,7 @@ p5
 **Validation**
 
 The Mean Absolute Deviation Plot for Validation Data has been shown in
-above section. Alternatively. to fetch it separately, we can use the
+above section. Alternatively to fetch it separately, we can use the
 following code:
 
 ```{r fig.height=4, fig.width=6}
@@ -1599,11 +1582,7 @@ m1=hvt.results[[5]][["mad_plot"]]+ggtitle("Mean Absolute Deviation Plot:Validati
 m1
 ```
 
-<font color="red"> As seen in the plot above the suggested threshold for
-scoring using Mean Absolute Deviation is 0.59 which is very close to
-Mean of distribution obtained in Minimum Intra-Centroid Distance Plot
-section. Thus 0.6 (Mean of Minimum Intra-Centroid Distance) can be used
-as the mean absolute deviation threshold for prediction. </font>
+As seen in the plot the mean absolute deviation for the validation data from the given `dataset_updated_train` is **0.13**.
 
 # Scoring
 
@@ -1627,15 +1606,15 @@ the test dataset :
 ## Load Test Data
 
 The user can provide an absolute or relative path in the cell below to
-access the data from his/her computer.
+access the test data from his/her computer.
 
 ```{r loading csv test, message=FALSE, warning=FALSE,class.source = 'fold-show'}
 load_test_data=FALSE
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
 if(load_test_data){
-  file_name <- "hotel_data_test.csv" ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
-  file_path <- "./sample_dataset/"
+  file_name <- " " ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
+  file_path <- " "
   file_load <- paste0(file_path, file_name)
   
   dataset_updated_test <- as.data.frame(fread(file_load))
@@ -1703,46 +1682,53 @@ function looks like.
 
 ```         
 scoreHVT(data,
-                  hvt.results,
-                  hmap.cols = NULL,
-                  child.level = 1,
-                  mad.threshold
-                  ...)
+         hvt.results,
+         child.level,
+         mad.threshold,
+         line.width,
+         color.vec,
+         normalize,
+         seed,
+         distance_metric,
+         error_metric,
+         yVar)
 ```
 
 The important parameters for the function `scoreHVT` are as below
 
--   **`data`** - A dataframe containing the test dataset. The dataframe
-    should have atleast one variable used for training. The variables
-    from this dataset can also be used to overlay as heatmap
+- **`data`** - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
--   **`hvt.results`** - A list of hvt.results obtained from the trainHVT
-    function while performing hierarchical vector quantization on
-    training data
+-  **`hvt.results.model`** - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
--   **`hmap.cols`** - The column number of column name from the dataset
-    indicating the variables for which the heat map is to be plotted. A
-    heatmap won't be plotted if NULL is passed (Default = NULL)
+-  **`child.level`** - A number indicating the depth for which the heat map is to be plotted. Each depth represents a different level of clustering or partitioning of the data.
 
--   **`child.level`** - A number indicating the level for which the heat
-    map is to be plotted (Only used if hmap.cols is not NULL)
+- **`mad.threshold`**  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot.
 
--   **`mad.threshold`** - A threshold indicating the level for which the
-    heat map is to be plotted
+- **`line.width`**	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
 
--   **`...`** - color.vec and line.width can be passed from here
+* **`color.vec`**	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
+
+* **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
+
+* **`seed`**  - A Random seed.
+
+* **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The distance metric can be different from the one used during training.
+
+* **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. The error metric can be different from the one used during training.
+
+
+* **`yVar`** - A character or a vector representing the name of the dependent variable(s)
+
 
 <p style="color:red;">
 
-Here the mad_threshold has been selected as 0.6 which is based on Mean
-of Minimum Intra-Centroid Distance, and verified by Validation Mean
-Absolute Deviation Plot
-
+Here the mad_threshold has been selected as 0.7 which is based on Mean
+of Minimum Intra-Centroid Distance plot from above.
 </p>
 
 ```{r,class.source = 'fold-show'}
 hvt.score = list()
-mad_threshold= 0.6 #Mean of Minimum Intra-Centroid Distance
+mad_threshold= 0.7 #Mean of Minimum Intra-Centroid Distance
 hvt.score <- scoreHVT(
   data = dataset_updated_test,
   hvt.results.model=hvt.results,
@@ -1812,6 +1798,7 @@ plotQuantErrorHistogram(hvt.results,hvt.score)
 
 The anomalous observations are shown below in the datatable.
 
+NOTE: **Since there are no anomaly found in torus dataset that we use, the table below will be empty**.
 ```{r,echo=TRUE,eval=TRUE}
 
 QECompareDf <- hvt.score$QECompareDf %>% filter(anomalyFlag == 1)
@@ -1906,25 +1893,8 @@ Table(df1,scroll = TRUE, limit = 10)
 #)
 ```
 
-### Anomalous Test Cells (highlighted) in Fitted HVT Map
 
-The plot below shows anomalous cell(s) with color indicating change in
-Quantization Error after scoring.
 
-<!-- ```{r, echo=FALSE} -->
-
-<!-- knitr::include_graphics('./interactive.png') -->
-
-<!-- ``` -->
-
-```{r,class.source = 'fold-show', fig.height=4, fig.width=6,eval=FALSE}
-hvt.score[["predictPlot"]]
-
-```
-
-```{r, echo=FALSE,fig.height=8, fig.width=12,out.width='80%'}
-knitr::include_graphics('./interactive.png')
-```
 
 # Download Scored data
 

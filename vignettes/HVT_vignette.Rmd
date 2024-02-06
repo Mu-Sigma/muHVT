@@ -900,23 +900,35 @@ However, let's try to comprehend the **scoreHVT function** first before moving o
 
 ```{r scoreHVT function1,echo = TRUE, eval= FALSE}
 scoreHVT(data,
-                  hvt.results,
-                  hmap.cols = NULL,
-                  child.level = 1,
-                  ...)
+         hvt.results.model,
+         child.level,
+         mad.threshold,
+         line.width,
+         color.vec,
+         normalize,
+         seed,
+         distance_metric,
+         error_metric,
+         yVar)
 ```
 
 The important parameters for the function `scoreHVT` are as below:
 
 * __`data`__ - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
-* __`hvt.results`__ - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+* __`hvt.results.model`__ - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
-* __`hmap.cols`__ - A feature (string) or a set of features(vector) from the dataset for which the heat map is to be plotted. A heatmap won’t be plotted if NULL is passed (Default = NULL)
+* __`child.level`__ - A number indicating the depth for which the heat map is to be plotted. Each depth represents a different level of clustering or partitioning of the data.
 
-* __`child.level`__ - A number indicating the depth for which the heat map is to be plotted (Only used if hmap.cols is not NULL), Each depth represents a different level of clustering or partitioning of the data. 
+* __`mad.threshold`__  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot.
+
+* __`line.width`__	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
+
+* __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
 * __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
+
+* __`seed`__  - A Random seed.
 
 * __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The distance metric can be different from the one used during training.
 
@@ -924,10 +936,6 @@ The important parameters for the function `scoreHVT` are as below:
 
 
 * __`yVar`__ - A character or a vector representing the name of the dependent variable(s)
-
-* __`line.width`__	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
-
-* __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
 
 
@@ -1322,23 +1330,35 @@ Now once we have built the model, let us try to score using our test dataset con
 
 ```{r scoreHVT function,echo = TRUE, eval= FALSE}
 scoreHVT(data,
-                  hvt.results,
-                  hmap.cols = NULL,
-                  child.level = 1,
-                  ...)
+         hvt.results.model,
+         child.level,
+         mad.threshold,
+         line.width,
+         color.vec,
+         normalize,
+         seed,
+         distance_metric,
+         error_metric,
+         yVar)
 ```
 
 The important parameters for the function `scoreHVT` are as below:
 
 * __`data`__ - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
-* __`hvt.results`__ - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+* __`hvt.results.model`__ - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
-* __`hmap.cols`__ - A feature (string) or a set of features(vector) from the dataset for which the heat map is to be plotted. A heatmap won’t be plotted if NULL is passed (Default = NULL)
+* __`child.level`__ - A number indicating the depth for which the heat map is to be plotted. Each depth represents a different level of clustering or partitioning of the data.
 
-* __`child.level`__ - A number indicating the depth for which the heat map is to be plotted (Only used if hmap.cols is not NULL), Each depth represents a different level of clustering or partitioning of the data. 
+* __`mad.threshold`__  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot.
+
+* __`line.width`__	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
+
+* __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
 * __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
+
+* __`seed`__  - A Random seed.
 
 * __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The distance metric can be different from the one used during training.
 
@@ -1346,10 +1366,6 @@ The important parameters for the function `scoreHVT` are as below:
 
 
 * __`yVar`__ - A character or a vector representing the name of the dependent variable(s)
-
-* __`line.width`__	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
-
-* __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
 
 
