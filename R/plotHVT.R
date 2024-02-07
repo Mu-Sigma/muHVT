@@ -107,9 +107,8 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     y <- hvq_k[["summary"]][["Cell.ID"]]
     data_plot <- data.frame(x,y)
     
-    #1ST VERSION
     gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("1D point: ", round(x,4), "<br>Cell ID: ", y))) +
-      geom_point(color = "blue", alpha= 0.6,size = 1.5) +
+      geom_point(color = "blue", alpha= 0.5,size = 1.5) +
       theme_minimal() +
       labs(title = "Sammons 1D x Cell ID", x = "Cell ID", y = "1D points")
     

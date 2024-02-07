@@ -494,7 +494,7 @@ We will pass the below mentioned model parameters along with torus training data
 * Error Metric = Max
 * Distance Metric = Manhattan
 
-```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus <- trainHVT(
   torus_df,
@@ -519,6 +519,13 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 
 **As it can be seen from the table above, none of the 100 cells have reached the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
+Let's take a look on the 1D projection of this iteration. The output of hvq from the above iteration is then passed to the plotHVT function, which applies Sammon's 1D using `MASS` package. The resulting 1D Sammon's points are used to determine their corresponding cell IDs and subsequently plotted in a plotly object.
+
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 3: Sammons 1D x Cell ID plot for layer 1 shown for the 100 cells in the dataset ’torus’'}
+plotHVT(heatmap = '1D')
+```
+
+
 ### <span style="color:blue">Iteration 2: </span>
 
 Let's retry by increasing the n_cells parameter to 300 along with torus training dataset (containing 9000 datapoints).
@@ -532,7 +539,7 @@ Let's retry by increasing the n_cells parameter to 300 along with torus training
 * Distance Metric = Manhattan
 
 
-```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 4: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus2 <- trainHVT(
   torus_df,
@@ -554,8 +561,12 @@ Let's checkout the compression summary again.
 ```{r compression summary torus second,warning=FALSE,eval = global_var}
 compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 ```
-
 **It can be observed from the table above that only 5 cells out of 300 i.e. `2%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
+
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 4: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the dataset ’torus’'}
+plotHVT(heatmap = '1D')
+```
+
 
 ### <span style="color:blue">Iteration 3: </span>
 
@@ -569,7 +580,7 @@ Since we are yet to achieve the compression of atleast 80%, lets try again by in
 * Error Metric = Max
 * Distance Metric = Manhattan
 
-```{r torus hvt third ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 5: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’',eval = global_var}
+```{r torus hvt third ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus3 <- trainHVT(
   torus_df,
@@ -596,6 +607,9 @@ compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 
 We successfully compressed 85% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
 
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the dataset ’torus’'}
+plotHVT(heatmap = '1D')
+```
 
 ## Step 2: Data Projection
 
@@ -626,7 +640,7 @@ Table(head(centroid_coordinates1), scroll = TRUE, limit = 20)
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 100 in first iteration.
 
-```{r, warning=FALSE,message=FALSE, fig.cap='Figure 3: Sammons 2D Plot for 100 cells'}
+```{r, warning=FALSE,message=FALSE, fig.cap='Figure 6: Sammons 2D Plot for 100 cells'}
 ggplot(centroid_coordinates1, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
   labs(x = "X", y = "Y")
@@ -658,7 +672,7 @@ Table(head(centroid_coordinates2), scroll = TRUE, limit = 20)
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 300 in second iteration.
 
-```{r, message=FALSE,warning=FALSE,fig.cap='Figure 4: Sammons 2D Plot for 300 cells'}
+```{r, message=FALSE,warning=FALSE,fig.cap='Figure 7: Sammons 2D Plot for 300 cells'}
 ggplot(centroid_coordinates2, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
   labs(x = "X", y = "Y")
@@ -688,7 +702,7 @@ Table(head(centroid_coordinates3), scroll = TRUE, limit = 20)
 Lets see the projected Sammons 2D onto a plane with n_cell set to 900 in third iteration.
 
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 5: Sammons 2D Plot for 900 cells'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 8: Sammons 2D Plot for 900 cells'}
 
 ggplot(centroid_coordinates3, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
@@ -760,12 +774,11 @@ be scaled.(default = 0.5)
 * __`heatmap`__ -  A Character indicating which type of plot should be generated. Accepted entries are '1D','2Dhvt','2Dheatmap' & 'surface_plot'. Default value is '2Dhvt'.
 
 
-
 ### <span style="color:blue">Iteration 1: </span>
 
 To enhance visualization, let's generate a plot of the Voronoi tessellation for the **first iteration** where we set **n_cells parameter as 100**. This plot will provide a visual representation of the Voronoi regions corresponding to the data points, aiding in the analysis and understanding of the data distribution.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 6: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 9: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus,
   line.width = c(0.4),
@@ -780,7 +793,7 @@ plotHVT(
 
 Now, let's plot the Voronoi tessellation for the **second iteration** where we set **n_cells parameter to 300**.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 7: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 10: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus2,
   line.width = c(0.4),
@@ -795,7 +808,7 @@ plotHVT(
 
 Now, let's plot the Voronoi tessellation again, for the **third iteration** where we set **n_cells parameter to 900**.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 8: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus3,
   line.width = c(0.4),
@@ -818,7 +831,7 @@ Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the 
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (n,X,Y and Z). The sheer green shades highlight regions with higher coordinate values in each of the heatmaps, while the indigo  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure.
 
 
-```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 9: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for No. of entities in each cell in the ’torus’ dataset',eval = global_var}
+```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for No. of entities in each cell in the ’torus’ dataset',eval = global_var}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -835,7 +848,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 10: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable x in the ’torus’ dataset',eval = global_var}
+```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable x in the ’torus’ dataset',eval = global_var}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -852,7 +865,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable y in the ’torus’ dataset',eval = global_var}
+```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable y in the ’torus’ dataset',eval = global_var}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -869,7 +882,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z in the ’torus’ dataset',eval = global_var}
+```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z in the ’torus’ dataset',eval = global_var}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -965,7 +978,7 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 ```
 
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 13: Mean Absolute Difference'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 16: Mean Absolute Difference'}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
 
 
@@ -1137,6 +1150,12 @@ Now let us understand what each column in the above summary table means:
 
 All the columns after this will contain centroids for each cell. They can also be called a codebook, which represents a collection of all centroids or codewords.
 
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 17: Sammons 1D x Cell ID plot for layer 1 shown for the 440 cells in the dataset ’computers’'}
+plotHVT(heatmap = '1D')
+```
+
+
+
 ## Step 2: Data Projection
 
 For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#data-projection) of this vignette.
@@ -1164,7 +1183,7 @@ Table(head(centroid_coordinates))
 
 Lets visualize the projected Sammons 2D for n_cell set to 440 onto a plane.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 14: Sammons 2D Plot for 440 cells'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 2D Plot for 440 cells'}
 # Assuming your sammons_data is a dataframe with columns "x" and "y"
 ggplot(centroid_coordinates, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
@@ -1180,7 +1199,7 @@ Now, we have obtained the centroid coordinates resulting from the application of
 
 For better visualisation, let's plot the Voronoi tessellation using the `plotHVT` function.
 
-```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation for layer 1 shown for the 440 cells in the dataset ’computers’',eval = global_var}
+```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation for layer 1 shown for the 440 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level one
 
 plotHVT(hvt.results,
@@ -1201,7 +1220,7 @@ Now let's plot the Voronoi Tessellation with the heatmap overlaid for all the fe
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (n,price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data
 
 
-```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi Tessellation with the heat map overlaid over the No. of entities in each cell in the ’computers’ dataset',eval = global_var}
+```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid over the No. of entities in each cell in the ’computers’ dataset',eval = global_var}
 
 plotHVT(
   hvt.results,
@@ -1219,7 +1238,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 17: The Voronoi Tessellation with the heat map overlaid over the variable price in the ’computers’ dataset',eval = global_var}
+```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the variable price in the ’computers’ dataset',eval = global_var}
 
 plotHVT(
   hvt.results,
@@ -1237,7 +1256,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 18: The Voronoi Tessellation with the heat map overlaid over the variable hd in the ’computers’ dataset',eval = global_var}
+```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi Tessellation with the heat map overlaid over the variable hd in the ’computers’ dataset',eval = global_var}
 
 plotHVT(
   hvt.results,
@@ -1256,7 +1275,7 @@ plotHVT(
 
 ```
 
-```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation with the heat map overlaid over the variable ram in the ’computers’ dataset',eval = global_var}
+```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi Tessellation with the heat map overlaid over the variable ram in the ’computers’ dataset',eval = global_var}
 plotHVT(
   hvt.results,
   trainComputers,
@@ -1273,7 +1292,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid over the variable screen in the ’computers’ dataset',eval = global_var}
+```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi Tessellation with the heat map overlaid over the variable screen in the ’computers’ dataset',eval = global_var}
 plotHVT(
   hvt.results,
   trainComputers,
@@ -1291,7 +1310,7 @@ plotHVT(
 
 ```
 
-```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the variable ads in the ’computers’ dataset',eval = global_var}
+```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi Tessellation with the heat map overlaid over the variable ads in the ’computers’ dataset',eval = global_var}
 
 plotHVT(
   hvt.results,
@@ -1401,7 +1420,7 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 ```
 
 
-```{r,message=FALSE,warning=FALSE,fig.cap='Figure 22: Mean Absolute Difference'}
+```{r,message=FALSE,warning=FALSE,fig.cap='Figure 26: Mean Absolute Difference'}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 
