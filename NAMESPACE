@@ -3,7 +3,6 @@
 export(VQ_codebookSplit)
 export(diagPlot)
 export(getCellId)
-export(getCentroids)
 export(hvq)
 export(madPlot)
 export(plotHVT)

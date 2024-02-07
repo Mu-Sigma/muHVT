@@ -5,17 +5,18 @@
 \title{Make the diagnostic plots for hierarchical voronoi tessellations model.}
 \arguments{
 \item{model_obj}{List. A list of model_obj obtained from the trainHVT
-function or prediction object}
+function or scoring object}
 }
 \value{
-plot object containing Diagnostics plots for the HVT model or HVT predictions.
-For HVT model, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
+plot object containing diagnostics plots for the hvt training or scoring
+For hvt training, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
 Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
 Mean Absolute Deviation Plot for Validation Data are plotted.
-For HVT Predictions Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
+For hvt scoring Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
 }
 \description{
-This is the main function that generates diagnostic plots for hierarchical Voronoi tessellations models and predictions.
+This is the main function that generates diagnostic plots for 
+hierarchical Voronoi tessellations models and scoring.
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -24,7 +25,6 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                       CAC = EuStockMarkets[, "CAC"],
                       FTSE = EuStockMarkets[, "FTSE"])
 dataset_hvt <- dataset[,-c(1)]
-hvt_results <- list()
 hvt_results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
                        distance_metric = "L1_Norm", error_metric = "mean",
                        projection.scale = 10, normalize = TRUE, seed = 123,

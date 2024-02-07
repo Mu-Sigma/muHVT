@@ -1,0 +1,335 @@
+---
+title: "HVT functions Notebook"
+subtitle: "Version: 24.02.01"
+author: "Vishwavani"
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+output: 
+  html_document:
+    html_document:
+    theme: flatly
+    code_folding: hide
+    toc: true
+    toc_float: true
+    toc_depth: 6
+    overflow: scroll
+    self_contained: true
+---
+
+# 1. Introduction
+The HVT package is a collection of R functions to facilitate building
+[topology preserving
+maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich
+multivariate data. Tending towards a big data preponderance, a large
+number of rows. A collection of R functions for this typical workflow is
+organized below :
+
+1.  **Data Compression**
+2.  **Data Projection**
+3.  **Tessellation**
+4.  **Scoring**
+
+
+# 2. Install necessary libraries
+
+This procedure includes installing all the necessary packages to smoothly execute this notebook without encountering any issues.
+
+```{r , warning=FALSE, message = FALSE}
+packages <- c("dplyr","magrittr", "ggplot2", "plyr", "patchwork", "plotly", "gganimate", "magick", "kableExtra", "DT", "htmltools") 
+
+pkgInstall <- function(x){
+  if(x %in% rownames(installed.packages()) == FALSE){
+    install.packages(x, dependencies = TRUE)
+    if(!require(x,character.only = TRUE)) stop(paste(x, "package not found"))
+  }
+  do.call("require", list(x))
+}
+packageStatus <- lapply(packages, FUN=pkgInstall)
+
+# sourcing the updated R scripts
+script_dir <- "./R"
+r_files <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
+for (file in r_files) {
+  source(file)
+}
+
+```
+
+# 3. About the dataset
+The Lorenz system serves as a notable example of a deterministic chaotic system. This means despite the system is governed by a set of equations and rules, even a slight alteration in the initial conditions can lead to a substantial divergence in its outcomes. The Lorenz Attractor which is the dataset used in this notebook represents the solution or graphical representation of the Lorenz system. A 3D simulation of this system can be observed [here](https://itp.uni-frankfurt.de/~gros/Vorlesungen/SO/simulation_example/). It takes the form of an overlapping set of spirals resembling a butterfly.
+
+## 3.1 Structure of the Dataset
+The Dataset has 200,000 rows and 5 columns which are explained below:
+
+1) **X**: x-axis coordinate of the particular point
+2) **Y**: y-axis coordinate of the particular point
+3) **Z**: z-axis coordinate of the particular point
+4) **U**: velocity of cell transitions
+5) **t**: time taken for the transition
+
+## 3.2 Importing the dataset
+
+The dataset is loaded from a CSV file, and for later function usage, only the first 15,000 rows are isolated and utilized. This segmentation is essential because executing the trainHVT() function with the parameters **hvt_validation** and **diagnose** set to TRUE results in excessive memory usage, and to avoid this issue, the dataset is segmented and the columns selected are X,Y & Z.
+
+```{r}
+data_raw <- read.csv("./lorenze_attractor.csv")
+data <- data_raw[1:15000,-c(1)]
+data_hvt <- data_raw[1:15000,-c(1,5,6)]
+######################PREVIEW###############
+data_preview <- data_raw[1:10,-1]
+datatable(data_preview, 
+          options = list(pageLength = 10, 
+                         dom = 'tp',  
+                         scrollX = TRUE,  
+                         scrollY = '400px'
+                        )
+         ) 
+```
+
+## 3.3 Train and Test Split
+
+The dataset is split into train and test with 60% and 40% respectively.
+
+1) Dimension of parent dataset: 15,000 rows * 3 columns
+2) Dimension of train dataset: 9,000 rows * 3 columns
+3) Dimension of test dataset: 6,000 rows * 3 columns
+
+```{r}
+##the train and test dataset is randomly shuffled split to examine the versatility.
+set.seed(123)
+##the split percentage considered here is 60-40.
+split_ratio <- 0.6
+##replace = FALSE to avoid duplicates
+#indices <- sample(1:nrow(data), size = nrow(data), replace = FALSE)
+split_point <- round(split_ratio * nrow(data))
+
+# Create train and test sets
+train_data <- data[(1:split_point), ]
+train_data <- train_data[,-c(4,5)]
+test_data_fm <- data[((split_point + 1):nrow(data)), ]
+test_data <- test_data_fm[,-c(4,5)]
+
+
+
+```
+
+# 4. Compression & Projection
+ This step compresses the rows (long data frame) using a compression objective which is Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians.
+
+## 4.1 trainHVT()
+The output of this function is a nested list objects. 
+
+1) List 1: Information about the tesselation co-ordinates - level wise
+2) List 2: Information about the polygon co-ordinates - level wise
+3) List 3: Information about the hierarchical vector quantized data - level wise
+4) List 4: Information about the model diagnosis- selected level
+5) List 5: Information about the MAD values and percentage anomalies for validation dataset
+6) List 6: Information about the model.
+
+```{r, warning=FALSE, message=FALSE}
+hvt_mapA <- trainHVT(train_data,n_cells = 100, depth = 1,quant.err = 0.2, distance_metric = "L1_Norm", error_metric =  "mean",projection.scale = 10,normalize = TRUE, seed = 123, quant_method="kmeans",hvt_validation = TRUE, diagnose = TRUE, train_validation_split_ratio=0.8)
+```
+NOTE: The output will be stored in the R environment.
+
+# 5. Tessellation & Heatmap
+* Dimension projection of the compressed cells to 1D,2D and Interactive surface plot with the Sammons Nonlinear Algorithm. This step creates topology preserving map(also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+* Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
+
+## 5.1 plotHVT()
+
+This function is used to construct hierarchical voronoi tessellations in 1D,2D and Interactive surface plot
+
+### 5.1.1 plotHVT - 1D 
+
+```{r, ,message=FALSE, warning=FALSE}
+plotHVT( heatmap = '1D')
+```
+
+
+### 5.1.2 plotHVT - 2D HVT MAP
+
+```{r , warning=FALSE,message=FALSE, out.width='80%'}
+plotHVT(hvt_mapA, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
+        maxDepth = 1,heatmap = '2Dhvt')
+```
+
+### 5.1.3 plotHVT - 2D HEATMAP 
+
+2D Heatmap with the column 'n' which is `no. of datapoints` inside each cell from the trainHVT results.
+
+```{r , warning=FALSE,message=FALSE,  out.width='80%'}
+plotHVT(hvt_mapA, data, centroid.size = 1,
+        child.level = 1, hmap.cols = "n",
+        line.width = c(0.6), color.vec = ('#000000') , 
+        pch1 = 21, heatmap = '2Dheatmap')
+```
+
+### 5.1.4 plotHVT - Interactive surface plot
+
+Interactive surface plot with the column 'n' which is `no. of datapoints` inside each cell from the trainHVT results on the z-axis.
+
+```{r , warning=FALSE,message=FALSE,  out.width='80%'}
+plotHVT( hvt_mapA, child.level = 1, hmap.cols = "n", n_cells.hmap = NULL, 
+         layer_opacity = c(0.7,0.8), dim_size = 1000, heatmap = 'surface_plot' )
+```
+
+# 6. Scoring  
+Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
+
+## 6.1 scoreHVT()
+
+```{r, warning=FALSE, message=FALSE}
+score_var <- scoreHVT(test_data, hvt_mapA, mad.threshold = 1.2, distance_metric = "L1_Norm", error_metric =  "mean",normalize = TRUE , seed = 249, child.level = 1)
+```
+
+Let’s see which cell and level each point belongs to, for each of the *6000* records. 
+
+
+```{r, warning=FALSE, message=FALSE}
+###########table display################
+data_scored <- score_var$actual_predictedTable
+rownames(data_scored) <- NULL 
+
+#kable(data_predictions, align = "lllllllllllll") %>% kable_styling(bootstrap_options = c("bordered"), full_width = F) #%>% scroll_box(width =   "800px")
+datatable(data_scored, 
+          options = list(pageLength = 10, 
+                         dom = 'tp',  
+                         scrollX = TRUE,  
+                         scrollY = '400px'
+                        )
+         ) 
+```
+
+## 6.2 Novelty/Outliers
+
+### 6.2.1 plotNovelCells()
+
+This function is used to plot the manually identified outlier cells in the 2D-hvt Plot. (Here the four cells whose `segment.child` values 9,35,58,95 are selected for the sake of function explaination)
+```{r, warning=FALSE,message=FALSE,  out.width='80%'}
+identified_Novelty_cells <<- c(9,35,58,95)
+
+plotNovelCells(identified_Novelty_cells,hvt_mapA,line.width = c(0.6),color.vec = c("#000000"),pch1 = 21,centroid.size = 0.5,title = "Identified Novelty Cells in 2D HVT plot", maxDepth = 1)
+```
+
+### 6.2.2 removeNovelty()
+
+This function is used to remove the manually identified outlier cells from the parent dataset. The output list of this function will have:
+
+1) **data_with_novelty** : Only the identified outlier cell's data
+2) **data_without_novelty** : parent dataset except data_with_novelty
+
+```{r, warning=FALSE,message=FALSE}
+output_list <- removeNovelty(identified_Novelty_cells,hvt_mapA)
+```
+
+
+## 6.3 scoreLayeredHVT()
+The scoreLayeredHVT function is used to score the test dataset using the predictive set of maps. This function takes an input - a test dataset and a set of maps (map A, map B, map C).
+
+1) **mapA:** The output of trianHVT() from the **parent dataset**.
+2) **mapB:** The output of trianHVT() from the **data_with_novelty**.
+3) **mapC:** The output of trianHVT() from the **data_without_novelty**.
+
+
+```{r, warning=FALSE,message=FALSE}
+############DATA WITH NOVELTY######################
+data_with_novelty <- output_list[[1]] %>% dplyr::select(!c("Cell.ID", "Cell.Number"))
+############DATA WITHOUT NOVELTY######################
+data_without_novelty <- output_list[[2]]
+
+####################HVT-MAP-B################################
+hvt_mapB <- trainHVT(data_with_novelty,n_cells = 50, depth = 1,quant.err = 0.2, distance_metric = "L1_Norm", error_metric =  "mean",normalize = TRUE, quant_method="kmeans",diagnose = FALSE)
+
+
+##########################HVT-MAP-C######################
+mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
+hvt_mapC <- trainHVT(data_without_novelty,n_cells = 70, depth = 1,quant.err = 0.2, distance_metric = "L1_Norm", error_metric =  "mean",normalize = TRUE, quant_method="kmeans", scale_summary = mapA_scale_summary)
+
+```
+
+
+
+```{r, warning=FALSE, message=FALSE}
+##output
+data_predictions_scored <- list()
+data_predictions_scored <- scoreLayeredHVT(test_data, hvt_mapA, hvt_mapB, hvt_mapC,normalize = TRUE)
+```
+
+Let’s see which cell and layer each point belongs to for the *6000* records.
+
+The output of scoreLayeredHVT will contain two columns Layer1.Cell.ID and Layer2.Cell.ID. Layer1.Cell.ID contains cell ids from map A in the form A1,A2,A3.... and Layer2.Cell.ID contains cell ids from map B as B1,B2... depending on the identified novelties and map C as C1,C2,C3.....
+
+```{r, warning=FALSE,message=FALSE}
+##########################TABLE DISPLAY########################
+data_scored_layer <- data_predictions_scored$actual_predictedTable
+rownames(data_scored_layer) <- NULL 
+
+#kable(data_predictions, align = "lllllllllllll") %>% kable_styling(bootstrap_options = c("bordered"), full_width = F) #%>% scroll_box(width =   "800px")
+datatable(data_scored_layer, 
+          options = list(pageLength = 10, 
+                         dom = 'tp',  
+                         scrollX = TRUE,  
+                         scrollY = '400px'
+                        )
+         ) 
+```
+
+
+# 7. Diagnostics/Validation
+
+HVT model diagnostics are used to evaluate the model fit and investigate the proximity between centroids.
+Model validation is used to measure the fit/quality of the model. Measuring model fit is the key to iteratively improving the models.
+
+## 7.1 plotModelDiagnostics()
+
+The plotModelDiagnostics() function for HVT Model provides 5 diagnostic plots when **diagnose = TRUE** which are as follows:
+
+1) Mean Absolute Deviation Plot: Calibration: HVT Model | Train Data
+2) Minimum Intra-DataPoint Distance Plot: Train Data
+3) Minimum Intra-Centroid Distance Plot: HVT Model | Train Data
+4) Distribution of Number of Observations in Cells: HVT Model | Train Data
+5) Singletons Pie Chart: HVT Model | Train Data
+
+```{r, warning=FALSE,message=FALSE, echo=FALSE, results='hide'}
+plot_diag <- plotModelDiagnostics(hvt_mapA)
+```
+
+```{r p1, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[1]]
+```
+
+```{r p2, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[2]][[1]]
+```
+
+```{r p3, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[2]][[2]]
+```
+
+
+```{r p4, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[3]][[1]]
+```
+
+```{r p5, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[3]][[2]]
+```
+
+
+Setting the **hvt.validation** parameter to TRUE will yield the Mean Absolute Deviation Plot for Validation (test) data.
+```{r p6, warning=FALSE, message=FALSE,  out.width='80%'}
+plot_diag[[4]]
+```
+
+## 7.2 plotQuantErrorHistogram()
+
+This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 
+for both training and test datasets, highlighting mean values with dashed lines for quick evaluation.
+
+
+```{r, warning=FALSE, message=FALSE,  out.width='80%'}
+plotQuantErrorHistogram(hvt_mapA, score_var)
+```
+
+
+
+

@@ -43,7 +43,7 @@
 #' \item{[[3]] }{List. Information about the hierarchical vector quantized data - level wise}
 #' \item{[[4]] }{List. Information about the model diagnosis- selected level}
 #' \item{[[5]] }{List. Information about the MAD values and percentage anomalies for validation dataset}
-#' 
+#' \item{[[6]] }{List. Information about the trained model}
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Training_or_Compression
@@ -56,7 +56,6 @@
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
 #' dataset_hvt <- dataset[,-c(1)]
-#' hvt.results <- list()
 #' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,

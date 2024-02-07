@@ -1,6 +1,7 @@
 #' @name plotHVT 
 #' @title Plot the hierarchical tessellations.
-#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D or 2D or Interactive surface Plot.
+#' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D,2D or
+#'  Interactive surface plot.
 #' @param hvt.results (2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
@@ -25,7 +26,7 @@
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
 #' @param previous_level_heatmap (2Dheatmap) Logical. If TRUE, the heatmap of previous level
-#' will be overlayed on the heatmap of selected level. If #' FALSE, the heatmap
+#' will be overlayed on the heatmap of selected level. If FALSE, the heatmap
 #' of only selected level will be plotted
 #' @param show.points (2Dheatmap) Logical. Indicating if the centroids should
 #' be plotted on the tessellations. (default = FALSE)
@@ -44,7 +45,7 @@
 #' @param sepration_width (surface_plot) Numeric. An integer indicating the width between two Levels
 #' @param layer_opacity (surface_plot) Numeric. A vector indicating the opacity of each layer/ level
 #' @param dim_size  (surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot
-#' @returns plot object containing the main HVT plot for the given HVT results and heatmap type.
+#' @returns plot object containing the hvt, heatmap or interactive surface plot for the given trainHVT results.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} 
 #' @keywords Tessellation_and_Heatmap
@@ -57,23 +58,25 @@
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
 #'dataset_hvt <- dataset[,-c(1)]
-#'hvt.results <- list()
 #'hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,
 #'                        quant_method="kmeans")
 #'                        
 #' #1D - Plot                        
-#' plotHVT(heatmap='1D')                       
+#' plotHVT(heatmap='1D')  
+#'                      
 #' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
 #' maxDepth = 1,heatmap = '2Dhvt')
+#' 
 #' #2D - HEATMAP
 #' plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
 #' pch1 = 21, heatmap = '2Dheatmap')
-#' #Interactive surface - Plot
+#' 
+#' #Interactive surface plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
 #' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'surface_plot' )
 #' @export plotHVT
@@ -105,29 +108,14 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     data_plot <- data.frame(x,y)
     
     #1ST VERSION
-    gg_plot_1 <- ggplot(data_plot, aes(x = y, y = x, text = paste("sammon's point: ", round(x,4), "<br>Cell ID: ", y))) +
-      geom_point(color = "blue", alpha= 0.5) +
+    gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("1D point: ", round(x,4), "<br>Cell ID: ", y))) +
+      geom_point(color = "blue", alpha= 0.6,size = 1.5) +
       theme_minimal() +
-      labs(title = "1D plot", x = " ", y = "sammon's points")
-
+      labs(title = "Sammons 1D x Cell ID", x = "Cell ID", y = "1D points")
     
-    # 2ND VERSION
-    gg_plot_2 <- ggplot(data_plot, aes(x = 0, y = x, text = paste("sammon's point: ", round(x,4), "<br>Cell ID: ", y))) +
-      geom_point(color = "blue", alpha= 0.5) +
-      theme_minimal() +
-      labs(title = "1D plot", x = " ", y = "sammon's points")
-
-
-      gg_plot_1 <- plotly::ggplotly(gg_plot_1, tooltip = "text")
-      gg_plot_2 <- plotly::ggplotly(gg_plot_2, tooltip = "text")
+      gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
       
-    # return(suppressMessages(gg_plot_1))
-    # return(suppressMessages(gg_plot_2))
-      
-      # Wrap both plots into a list
-      plot_list <- list(plot1 = suppressMessages(gg_plot_1), plot2 = suppressMessages(gg_plot_2))
-      
-      return(plot_list)
+     return(suppressMessages(gg_plot))  
       
      } else if (heatmap == '2Dhvt') {
     

@@ -2,7 +2,7 @@
 % Please edit documentation in R/scoreLayeredHVT.R
 \name{scoreLayeredHVT}
 \alias{scoreLayeredHVT}
-\title{Predict which cell and what level each point in the test dataset belongs to}
+\title{Score which cell and what level each point in the test dataset belongs to}
 \usage{
 scoreLayeredHVT(
   data,
@@ -17,8 +17,7 @@ scoreLayeredHVT(
   child.level = 1,
   line.width = c(0.6, 0.4, 0.2),
   color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
-  yVar = NULL,
-  ...
+  yVar = NULL
 )
 }
 \arguments{
@@ -31,33 +30,35 @@ this dataset can also be used to overlay as heatmap}
 
 \item{hvt_mapC}{A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data without novelty(s)}
 
-\item{mad.threshold}{A numeric values indicating the permissible Mean Absolute Deviation}
+\item{mad.threshold}{Numeric. A number indicating the permissible Mean Absolute Deviation}
 
 \item{normalize}{Logical. A logical value indicating if the columns in your
 dataset should be normalized. Default value is TRUE.}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+\item{distance_metric}{Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
+`L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
+`n` dimensional point and centroid. The distance metric can be different from the one used during training.}
 
-\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be `mean` or `max`. `max` is selected by default. 
+`max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance 
+between a point and centroid of the cell. The error metric can be different from the one used during training.}
 
-\item{child.level}{A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)}
+\item{child.level}{Numeric. A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)}
 
-\item{line.width}{Vector. A line width vector}
+\item{line.width}{Vector. A vector indicating the line widths of the tessellation boundaries for each layer.}
 
-\item{color.vec}{Vector. A color vector}
+\item{color.vec}{Vector. A vector indicating the colors of the tessellations boundaries at each layer.}
 
-\item{yVar}{Character. Name of the dependent variable(s)}
-
-\item{...}{color.vec and line.width can be passed from here}
+\item{yVar}{Character. A character or a vector representing the name of the dependent variable(s)}
 }
 \value{
-Dataframe containing scored predicted layer output
+Dataframe containing scored layer output
 }
 \description{
-This is a function that predicts the cell and corresponding level for each point in a test dataset using three hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and
-returns a dataframe containing the scored predicted layer output. The function incorporates the predictions from each map and merges them to provide a comprehensive result.
+This is a function that scores the cell and corresponding level for each point in a test dataset using three hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and
+returns a dataframe containing the scored layer output. The function incorporates the scored results from each map and merges them to provide a comprehensive result.
 }
 \examples{
 library(magrittr)
@@ -68,29 +69,33 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      CAC = EuStockMarkets[, "CAC"],
                      FTSE = EuStockMarkets[, "FTSE"])
 rownames(EuStockMarkets) <- dataset$date
+
 train <- EuStockMarkets[1:1302, ]
 test <- EuStockMarkets[1303:1860, ]
-hvt_mapA <- list()
+
+###MAP-A
 hvt_mapA <- trainHVT(train, min_compression_perc = 70, quant.err = 0.2,
                     distance_metric = "L1_Norm", error_metric = "mean",
                     projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
 identified_Novelty_cells <<- c(2, 10)
 output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 data_with_novelty <- output_list[[1]] \%>\% dplyr::select(!c("Cell.ID", "Cell.Number"))
+
+### MAP-B
 hvt_mapB <- trainHVT(data_with_novelty,n_cells = 3, quant.err = 0.2,
                     distance_metric = "L1_Norm", error_metric = "mean",
                    projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
-dataset_without_novelty <- output_list[[2]]
+data_without_novelty <- output_list[[2]]
 mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
-hvt_mapC <- list()
-hvt_mapC <- trainHVT(dataset_without_novelty,
-                    n_cells = 15,
+
+### MAP-C
+hvt_mapC <- trainHVT(data_without_novelty,n_cells = 15,
                     depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
                     error_metric = "max", quant_method = "kmeans",
                     projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary)
-##output
-data_predictions_scored <- list()
-data_predictions_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)
+                    
+##SCORE LAYERED
+data_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{plotHVT}}

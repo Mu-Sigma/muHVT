@@ -19,7 +19,7 @@
 #'                    projection.scale = 10, normalize = TRUE, seed = 123,
 #'                    quant_method="kmeans")
 #' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
-#'         maxDepth = 1, heatmap ='2DHVT')
+#'         maxDepth = 1, heatmap ='2Dhvt')
 #'getCellId (hvt.results)
 #' @export getCellId
 #' @keywords internal

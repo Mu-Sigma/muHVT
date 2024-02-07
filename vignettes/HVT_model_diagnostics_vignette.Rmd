@@ -1704,9 +1704,9 @@ The important parameters for the function `scoreHVT` are as below
 
 - **`mad.threshold`**  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot.
 
-- **`line.width`**	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
+- **`line.width`**	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameter)
 
-* **`color.vec`**	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
+* **`color.vec`**	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameter)
 
 * **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
 

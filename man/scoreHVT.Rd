@@ -2,7 +2,7 @@
 % Please edit documentation in R/scoreHVT.R
 \name{scoreHVT}
 \alias{scoreHVT}
-\title{Predict which cell and what level each point in the test dataset belongs to.}
+\title{Score which cell and what level each point in the test dataset belongs to.}
 \usage{
 scoreHVT(
   data,
@@ -19,36 +19,43 @@ scoreHVT(
 )
 }
 \arguments{
-\item{data}{List. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
-this dataset can also be used to overlay as heatmap}
+\item{data}{Dataframe. A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training.}
 
-\item{hvt.results.model}{A list of hvt results  obtained from trainHVT function while performing hierarchical vector quantization on train data}
+\item{hvt.results.model}{List. A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization 
+on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, 
+Sammon's projection coordinates, and model input information.}
 
-\item{child.level}{A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)}
+\item{child.level}{Numeric. A number indicating the depth for which the heat map is to be plotted. Each depth represents a
+different level of clustering or partitioning of the data.}
 
-\item{mad.threshold}{A numeric values indicating the permissible Mean Absolute Deviation}
+\item{mad.threshold}{Numeric. A numeric value indicating the permissible Mean Absolute Deviation which is obtained from
+Minimum Intra centroid plot.}
 
-\item{line.width}{Vector. A line width vector}
+\item{line.width}{Vector. A vector indicating the line widths of the tessellation boundaries for each layer.}
 
-\item{color.vec}{Vector. A color vector}
+\item{color.vec}{Vector. A vector indicating the colors of the tessellations boundaries at each layer.}
 
-\item{normalize}{Logical. A logical value indicating if the columns in your
-dataset should be normalized. Default value is TRUE.}
+\item{normalize}{Logical. A logical value indicating if the dataset should be normalized. 
+When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{Character. The distance metric can be 'Euclidean" or "Manhattan". Euclidean is selected by default.}
+\item{distance_metric}{Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
+`L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
+`n` dimensional point and centroid. The distance metric can be different from the one used during training.}
 
-\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be `mean` or `max`. `max` is selected by default. 
+`max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance 
+between a point and centroid of the cell. The error metric can be different from the one used during training.}
 
-\item{yVar}{Character. Name of the dependent variable(s)}
+\item{yVar}{Character. A character or a vector representing the name of the dependent variable(s)}
 }
 \value{
-Dataframe containing scored predicted data, prediction plots and mean absolute deviation plots
+Dataframe containing scored data, plots and mean absolute deviation plots
 }
 \description{
-This is the function predicts the cell and level for each point in the test dataset based on a hierarchical Voronoi tessellations model. 
-It provides scored predicted data, prediction plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
+This is the function scores the cell and level for each point in the test dataset based on a hierarchical Voronoi tessellations model. 
+It provides scored data, plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
 }
 \examples{
 data("EuStockMarkets")
@@ -61,13 +68,12 @@ rownames(EuStockMarkets) <- dataset$date
 # Split in train and test
 train <- EuStockMarkets[1:1302, ]
 test <- EuStockMarkets[1303:1860, ]
-hvt_summary <- list()
 hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
                       distance_metric = "L1_Norm", error_metric = "mean",
                       projection.scale = 10, normalize = TRUE,seed = 123,
                       quant_method = "kmeans")
-predictions <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-data_predictions <- predictions$scoredPredictedData
+scoring <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
+data_predictions <- scoring$scoredPredictedData
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{plotHVT}}

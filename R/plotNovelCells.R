@@ -30,7 +30,6 @@
 #'                       CAC = EuStockMarkets[, "CAC"],
 #'                       FTSE = EuStockMarkets[, "FTSE"])
 #' dataset_hvt <- dataset[,-c(1)]
-#' hvt.results <- list()
 #' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                         distance_metric = "L1_Norm", error_metric = "mean",
 #'                         projection.scale = 10, normalize = TRUE, seed = 123,
