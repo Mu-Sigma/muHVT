@@ -6,7 +6,7 @@
 #' deciding an optimal MAD value for the use case.
 #'
 #'
-#' @param hvt.prediction List. A list of hvt.prediction obtained from the predictHVT
+#' @param hvt.scoring List. A list of hvt.scoring obtained from the scoreHVT
 #' function.
 #' @param ... The ellipsis is passed to it as additional argument. (Used internally)
 #' @return Mean Absolute Deviation Plot
@@ -32,20 +32,19 @@
 #'                       distance_metric = "L1_Norm", error_metric = "mean",
 #'                       projection.scale = 10, normalize = TRUE,seed = 123,
 #'                       quant_method = "kmeans")
-#'predictions <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-#'data_predictions <- predictions$scoredPredictedData
-#'madPlot(hvt.prediction=predictions)
+#'score_var <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
+#'madPlot(hvt.scoring=score_var)
 #' @export madPlot
 #' @keywords internal
 
-madPlot = function(hvt.prediction,
+madPlot = function(hvt.scoring,
                    ...) {
   # browser()
   requireNamespace("ggplot2")       #deldir function
   requireNamespace("scales")       #deldir function
   
-  qe = hvt.prediction[["predictInput"]][["quant.err"]]
-  df_scored = hvt.prediction[["scoredPredictedData"]]
+  qe = hvt.scoring[["predictInput"]][["quant.err"]]
+  df_scored = hvt.scoring[["scoredPredictedData"]]
   qe_val = df_scored$Quant.Error
   
   

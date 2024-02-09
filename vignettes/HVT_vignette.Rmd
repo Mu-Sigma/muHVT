@@ -6,7 +6,6 @@ fig.height: 4
 fig.width: 15
 output:
   rmarkdown::html_vignette:
-    number_sections: true
     toc: true
     toc_depth : 2
 vignette: >
@@ -115,10 +114,10 @@ Table <- function(data,scroll = FALSE, limit = NULL){
   
 }
 
-summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.2,limit=NULL){
+summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value= 0.2,limit=NULL){
   
   scroll <- scroll
-  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
+  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) > value,"red","#333"))))  
   
   return(Table(summaryTable,scroll = scroll,limit = limit))
   
@@ -135,7 +134,7 @@ return(Table(summaryTable,scroll = scroll))
 set.seed(240)
 ```
 
-# Abstract
+# 1. Abstract
 
 The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
@@ -147,7 +146,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
-# Data Compression
+# 2. Data Compression
 
 Compression is a technique used to reduce the data size while preserving its essential information, allowing for efficient storage and decompression to reconstruct the original data. While Vector quantization (VQ) is a technique used in data compression to represent a set of data points with a smaller number of representative vectors. It achieves compression by exploiting redundancies or patterns in the data and replacing similar data points with representative vectors.
 
@@ -161,9 +160,9 @@ This package can perform vector quantization using the following algorithms-
 *  Hierarchical Vector Quantization using $k-medoids$
 
 
-## Hierarchical Vector Quantization
+## 2.1 Hierarchical Vector Quantization
 
-###  Using k-means
+###  2.1.1 Using k-means
 
 1. The k-means algorithm randomly selects *k* data points as initial means.
 1. *k* clusters are formed by assigning each data point to its closest cluster mean using the Euclidean distance.
@@ -171,7 +170,7 @@ This package can perform vector quantization using the following algorithms-
 
 The second and third steps are iterated until a predefined number of iterations is reached or the clusters converge. The runtime for the algorithm is O(n).
 
-###  Using k-medoids
+###  2.1.2 Using k-medoids
 
 1.  The k-medoids algorithm randomly selects *k* data points as initial
     means out of the n data points as the medoids.
@@ -221,7 +220,7 @@ where
 *  $m$ is the number of points in the cell
 *  $p$ is the $p$-norm metric. Here $p$ = 1 represents L1 Norm and $p$ = 2 represents L2 Norm
 
-###  Quantization Error
+###  2.1.3 Quantization Error
 
 Let us try to understand quantization error with an example.
 
@@ -252,7 +251,7 @@ If we select `mean` as the error metric, the above Quantization Error equation w
 
 $$QE  = \frac{1}{m}\sum_{i=1}^m||A-F_i||_{p}$$ 
 
-# Data Projection
+# 3. Data Projection
 
 Projection mainly involves converting data from its original form to a different space or coordinate system while preserving certain properties of it. By projecting data into a common coordinate system, spatial relationships, distances, areas, and other spatial attributes can be accurately measured and compared.
 
@@ -268,7 +267,7 @@ $$E=\frac{1}{\sum_{i<j} d_{ij}^*}\sum_{i<j}\frac{(d_{ij}^*-d_{ij})^2}{d_{ij}^*}$
 
 The minimization  of this can be performed either by gradient descent, as proposed initially, or by other means, usually involving iterative methods. The number of iterations need to be experimentally determined and convergent solutions are not always guaranteed. Many implementations prefer to use the first Principal Components as a starting configuration.
 
-# Tessellation
+# 4. Tessellation
 
 A Voronoi diagram is a way of dividing space into a number of regions. A set of points (called seeds, sites, or generators) is specified beforehand and for each seed, there will be a corresponding region consisting of all points within proximity of that seed. These regions are called `Voronoi cells`. It is complementary to `Delaunay triangulation` is a geometrical algorithm used to create a triangulated mesh from a set of points in a plane which has the property that no data point lies within the circumcircle of any triangle in the triangulation. This property guarantees that the resulting cells in the tessellation do not overlap with each other. 
 
@@ -281,7 +280,7 @@ The hierarchical structure reduces redundancy and enables more compact represent
 
 In this package, we use `sammons` from the package `MASS` to project higher dimensional data to a 2D space. The function `hvq` called from the `trainHVT` function returns hierarchical quantized data which will be the input for construction of the tessellations. The data is then represented in 2D coordinates and the tessellations are plotted using these coordinates as centroids. We use the package `deldir` for this purpose. The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids. The lines in the tessellations are chopped in places so that they do not protrude outside the parent polygon. This is done for all the subsequent levels.
 
-# Scoring
+# 5. Scoring
 
 
 Scoring basically refers to the process of chalking up or estimating future values or outcomes based on existing data patterns.In training process, a model is developed based on historical data or a training dataset, and this model is then used to score new, unseen data. The model captures the underlying patterns, trends, and relationships present in the training data, allowing it to pin point the cell of the similar or related data points.
@@ -297,7 +296,7 @@ The Scoring algorithm recursively calculates the distance between each point in 
 3. Check if the cell drills down further to form more cells.
 4. If it doesn’t, return the path. Or else repeat steps 1 to 4 till we reach a level at which the cell doesn’t drill down further.
 
-# Example I: HVT with the Torus dataset
+# 6. Example I: HVT with the Torus dataset
 
 **In this section, we will see how we can use the package to visualize multidimensional data by projecting them to two dimensions using Sammon's projection and further used for Scoring**
 
@@ -305,9 +304,9 @@ The Scoring algorithm recursively calculates the distance between each point in 
 
 First of all, let us see how to generate data for torus. We are using a library `geozoo` for this purpose. Geo Zoo (stands for Geometric Zoo) is a compilation of geometric objects ranging from three to 10 dimensions. Geo Zoo contains regular or well-known objects, eg cube and sphere, and some abstract objects, e.g. Boy's surface, Torus and Hyper-Torus. 
 
-Here, we will generate a 3D torus (a torus is a surface of revolution generated by revolving a circle in three-dimensional space one full revolution about an axis that is coplanar with the circle) with 9000 points.
+Here, we will generate a 3D torus (a torus is a surface of revolution generated by revolving a circle in three-dimensional space one full revolution about an axis that is coplanar with the circle) with 9600 points.
 
-**Raw Torus Dataset**
+**Torus Dataset**
 
 The torus dataset includes the following columns:
 
@@ -315,7 +314,7 @@ The torus dataset includes the following columns:
 * y: This column represents the Y-coordinate of each point in the torus.
 * z: This column represents the Z-coordinate of each point in the torus.
 
-Lets, explore the **raw torus dataset containing 12000 points**. For the sake of brevity we are displaying first 6 rows.
+Lets, explore the **torus dataset containing 12000 points**. For the sake of brevity we are displaying first 6 rows.
 
 ```{r torus generate,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
@@ -324,40 +323,40 @@ set.seed(240)
 torus <- geozoo::torus(p = 3,n = 12000)
 torus_df <- data.frame(torus$points)
 colnames(torus_df) <- c("x","y","z")
+torus_df <- torus_df %>% round(4)
+Table(head(torus_df))
+```
+Now, let us check the **structure** of the data and analyse its **summary**.
 
-torus_df1 <- torus_df %>% round(4)
-colnames(torus_df1) <- c("x","y","z")
-torus_df1$Row.No <- as.numeric(row.names(torus_df))
-torus_df1 <- torus_df1 %>% dplyr::select(Row.No,x,y,z)
-Table(head(torus_df1))
+```{r, message=FALSE, warning=FALSE}
+str(torus_df)
 ```
 
-We will first split the torus data into train and test. We will randomly select 9000 data points as training and remaining 3000 data points as testing data.
+Now, let us check the **structure** of the data and analyse its **summary**.
 
-```{r warning=FALSE,message=FALSE}
-set.seed(42)
-train_indices <- sample(1:nrow(torus_df), 9000)
-trainTorus <- torus_df[train_indices, ]
-trainTorus_data <- trainTorus %>% round(4)
-test_indices <- setdiff(1:nrow(torus_df), train_indices)
-testTorus <- torus_df[test_indices, ]
+```{r, message=FALSE, warning=FALSE}
+str(torus_df)
 ```
 
-```{r echo=FALSE,eval=TRUE}
-torus_df<-trainTorus
+Let us first split the data into train and test. We will select first 80% of the data for training and remaining as testing.
+
+```{r train-test torus,warning=FALSE,message=FALSE,eval = global_var}
+num_rows <- nrow(torus_df)
+num_train_rows <- round(0.8 * num_rows)
+num_test_rows <- num_rows - num_train_rows
+
+trainTorus_data <- torus_df[1:num_train_rows, ]
+testTorus_data <- torus_df[(num_train_rows + 1):(num_train_rows + num_test_rows), ]
 ```
 
-**Raw Training Dataset**
 
-First of all, we will see the randomly selected **training data containing (9000 data points)**. For the sake of brevity we are displaying first six rows.
+**Training Dataset**
+
+Now, lets have a look at the selected **training dataset** containing (9600 data points). For the sake of brevity we are displaying first six rows.
 
 ```{r torus head, warning=FALSE, eval = global_var}
-
-trainTorus_data$Row.No <- as.numeric(row.names(trainTorus_data))
-trainTorus_data <- trainTorus_data %>% dplyr::select(Row.No,x,y,z)
-row.names(trainTorus_data) <- NULL
+rownames(trainTorus_data) <- NULL
 Table(head(trainTorus_data))
-
 ```
 
 Now let's have a look at **structure** and **summary** of the training data.
@@ -370,28 +369,24 @@ str(trainTorus_data)
 summary(trainTorus_data)
 ```
 
-**Raw Testing Dataset**
+**Testing Dataset**
 
-Now, lets have a look at randomly selected **testing dataset containing(3000 data points)**.For the sake of brevity we are displaying first six rows.
+Now, lets have a look at randomly selected **testing dataset containing(2400 data points)**.For the sake of brevity we are displaying first six rows.
 
 
-```{r}
-test_dataset <- testTorus
-test_dataset1 <- round(test_dataset,4)
-test_dataset1$Row.No <- row.names(test_dataset)
-test_dataset1 <- test_dataset1 %>% dplyr::select(Row.No,x,y,z) 
-rownames(test_dataset1) <- NULL
-Table(head(test_dataset1))
+```{r torus 2 head, warning=FALSE, eval = global_var}
+rownames(testTorus_data) <- NULL
+Table(head(testTorus_data))
 ```
 
 Now let's have a look at **structure** and **summary** of the test data.
 
 ```{r torus structure, warning=FALSE, eval = global_var}
-str(test_dataset)
+str(testTorus_data)
 ```
 
 ```{r torus summary, warning=FALSE,eval = global_var}
-summary(test_dataset)
+summary(testTorus_data)
 ```
 
 Now let's try to visualize the torus (donut) in  3D Space.
@@ -406,7 +401,7 @@ knitr::include_graphics('torus_donut.png')
 
 In this section all the outlined workflow steps provided in the abstract section (Compression, Projection, Tessellation and Scoring) are executed at level 1.
 
-## Step 1: Data Compression
+## 6.1 Step 1: Data Compression
 
 The core function for compression in the workflow is `HVQ`, which is called within the `trainHVT` function. we have a parameter called quantization error. This parameter acts as a threshold and determines the number of levels in the hierarchy. It means that, if there are 'n' number of levels in the hierarchy, then all the clusters formed till this level will have quantization error equal or greater than the threshold quantization error. The user can define the number of clusters in the first level of hierarchy and then each cluster in first level is sub-divided into the same number of clusters as there are in the first level. This process continues and each group is divided into smaller clusters as long as the threshold quantization error is met. The output of this technique will be hierarchically arranged vector quantized data.
 
@@ -483,7 +478,7 @@ We will use the `trainHVT` function to compress our data while preserving essent
 
 ### <span style="color:blue">Iteration 1: </span>
 
-We will pass the below mentioned model parameters along with torus training dataset (containing 9000 datapoints) to `trainHVT` function.
+We will pass the below mentioned model parameters along with torus training dataset (containing 9600 datapoints) to `trainHVT` function.
 
 
 **Model Parameters**
@@ -497,7 +492,7 @@ We will pass the below mentioned model parameters along with torus training data
 ```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus <- trainHVT(
-  torus_df,
+  trainTorus_data,
   n_cells = 100,
   depth = 1,
   quant.err = 0.1,
@@ -528,11 +523,11 @@ plotHVT(heatmap = '1D')
 
 ### <span style="color:blue">Iteration 2: </span>
 
-Let's retry by increasing the n_cells parameter to 300 along with torus training dataset (containing 9000 datapoints).
+Let's retry by increasing the n_cells parameter to 300 along with torus training dataset (containing 9600 datapoints).
 
 **Model Parameters**
 
-* Number of Cells at each Level = 300
+* Number of Cells at each Level = 450
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.1
 * Error Metric = Max
@@ -542,8 +537,8 @@ Let's retry by increasing the n_cells parameter to 300 along with torus training
 ```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus2 <- trainHVT(
-  torus_df,
-  n_cells = 300,
+  trainTorus_data,
+  n_cells = 450,
   depth = 1,
   quant.err = 0.1,
   projection.scale = 10,
@@ -570,7 +565,7 @@ plotHVT(heatmap = '1D')
 
 ### <span style="color:blue">Iteration 3: </span>
 
-Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900 along with torus training dataset (containing 9000 datapoints) .
+Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900 along with torus training dataset (containing 9600 datapoints) .
 
 **Model Parameters**
 
@@ -583,7 +578,7 @@ Since we are yet to achieve the compression of atleast 80%, lets try again by in
 ```{r torus hvt third ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus3 <- trainHVT(
-  torus_df,
+  trainTorus_data,
   n_cells = 900,
   depth = 1,
   quant.err = 0.1,
@@ -603,15 +598,16 @@ Let's check the compression summary for torus.
 compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 ```
 
-**By increasing the number of cells to 900, we were successfully able to compress `85%` of the data, so we will not further subdivide the cells**
+**By increasing the number of cells to 900, we were successfully able to compress `84%` of the data, so we will not further subdivide the cells**
 
-We successfully compressed 85% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
+We successfully compressed 84% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
+
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the dataset ’torus’'}
 plotHVT(heatmap = '1D')
 ```
 
-## Step 2: Data Projection
+## 6.2 Step 2: Data Projection
 
 Sammon's projection is an algorithm that maps a high-dimensional space to a space of lower dimensionality while attempting to preserve the structure of inter-point distances in the projection.The centroids are plotted in 2D after performing Sammon’s projection at every level of the tessellation.
 
@@ -710,7 +706,7 @@ ggplot(centroid_coordinates3, aes(x_coord, y_coord)) +
 
 ```
 
-## Step 3: Tessellation
+## 6.3 Step 3: Tessellation
 
 The `deldir` package computes the Delaunay triangulation (and hence the Dirichlet or Voronoi tessellation) of a planar point set according to the second (iterative) algorithm of Lee and Schacter. For subsequent levels, transformation is performed on the 2D coordinates to get all the points within its parent tile. Tessellations are plotted using these transformed points as centroids.`plotHVT` is the main function to plot hierarchical voronoi tessellation.
 
@@ -899,14 +895,14 @@ plotHVT(
 )
 ```
 
-## Step 4: Scoring(scoreHVT)
+## 6.4 Step 4: Scoring(scoreHVT)
 
-**Raw Testing Dataset**
+**Testing Dataset**
 
-Lets have a look at our randomly selected test dataset containing (3000 points) before we pass it to scoreHVT function for scoring.
+Lets have a look at our randomly selected test dataset containing (2400 points) before we pass it to scoreHVT function for scoring.
 
 ```{r}
-Table(head(test_dataset1))
+Table(head(testTorus_data))
 ```
 
 However, let's try to comprehend the **scoreHVT function** first before moving on
@@ -952,12 +948,12 @@ The important parameters for the function `scoreHVT` are as below:
 
 
 
-Now once we have built the model, let us try to score using our test dataset (containing 3000 data points) which cell and which level each point belongs to.
+Now once we have built the model, let us try to score using our test dataset (containing 2400 data points) which cell and which level each point belongs to.
 
 ```{r scoreHVT torus,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
 scoring_torus <- scoreHVT(
-  testTorus,
+  testTorus_data,
   hvt.torus3,
   child.level = 1,
   line.width = c(1.2),
@@ -967,7 +963,7 @@ scoring_torus <- scoreHVT(
 ```
 
 
-Let's see which cell and level each point belongs to and check the mean absolute difference for each of the **3000 records**. For the sake of brevity, we will only show the first 10 rows
+Let's see which cell and level each point belongs to and check the mean absolute difference for each of the **2400 records**. For the sake of brevity, we will only show the first 10 rows
 
 
 
@@ -984,7 +980,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 ```
 
-# Example II: HVT with the Personal Computer dataset
+# 7. Example II: HVT with the Personal Computer dataset
 
 **Data Understanding**
 
@@ -1000,7 +996,7 @@ set.seed(240)
 computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/sample_dataset/Computers.csv")
 ```
 
-**Raw Personal Computers Dataset**
+**Personal Computers Dataset**
 
 The Computers dataset includes the following columns:
 
@@ -1050,9 +1046,9 @@ testComputers <-
   testComputers %>% dplyr::select(-c(X, cd, multi, premium, trend))
 ```
 
-**Raw Training Dataset**
+**Training Dataset**
 
-Now, lets have a look at the randomly selected **raw training dataset** containing (5007 data points). For the sake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **training dataset** containing (5007 data points). For the sake of brevity we are displaying first six rows.
 
 ```{r, warning=FALSE,message=FALSE}
 trainComputers_data <- trainComputers %>% as.data.frame() %>% round(4)
@@ -1062,9 +1058,9 @@ row.names(trainComputers_data) <- NULL
 Table(head(trainComputers_data))
 ```
 
-**Raw Testing Dataset**
+**Testing Dataset**
 
-Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points). For the sake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **testing dataset** containing (1252 data points). For the sake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1078,7 +1074,7 @@ Table(head(testComputers_data))
 
 As we are familiar with the structure of the computers data, we will now follow the following steps to get the scores using the Computers dataset.
 
-## Step 1: Data Compression
+## 7.1 Step 1: Data Compression
 
 For more detailed information on Data Compression please refer to [section 2](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#data-compression) of this vignette.
 
@@ -1156,7 +1152,7 @@ plotHVT(heatmap = '1D')
 
 
 
-## Step 2: Data Projection
+## 7.2 Step 2: Data Projection
 
 For more detailed information on Data Projection please refer to [section 3](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#data-projection) of this vignette.
 
@@ -1191,7 +1187,7 @@ ggplot(centroid_coordinates, aes(x_coord, y_coord)) +
 
 ```
 
-## Step 3: Tessellation
+## 7.3 Step 3: Tessellation
 
 For more detailed information on voronoi tessellation please refer to [section 4](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#tessellation) of this vignette.
 
@@ -1329,15 +1325,15 @@ plotHVT(
 
 ```
 
-## Step 4: Scoring(scoreHVT)
+## 7.4 Step 4: Scoring(scoreHVT)
 
 For more detailed information on scoring please refer to [section 5](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html#prediction) of this vignette.
 
 
-**Raw Testing Dataset**
+**Testing Dataset**
 
 
-Now, lets have a look at the randomly selected **raw testing dataset** containing (1252 data points) before we pass it to scoreHVT function for scoring. For the sake of brevity we are displaying first six rows.
+Now, lets have a look at the randomly selected **testing dataset** containing (1252 data points) before we pass it to scoreHVT function for scoring. For the sake of brevity we are displaying first six rows.
 
 
 ```{r,warning=FALSE,message=FALSE}
@@ -1424,13 +1420,13 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 
-# Executive Summary
+# 8. Executive Summary
 
 * **Example I: HVT with the Torus dataset**
 
 *  We have considered torus dataset for multidimensional data visualization using sammons projection.
 
-*  We have randomly selected 9000 datapoints for training and remaining datapoints for validation.
+*  We have randomly selected 9600 datapoints for training and remaining datapoints for validation.
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
@@ -1438,7 +1434,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 * We created another compressed HVT map (hvt.torus2) using the trainHVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 2% of the cells have reached the quantization threshold error.
 
-* Once again, we generated a compressed HVT map (hvt.torus3) using the trainHVT() algorithm on the torus dataset. The parameters for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 85% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
+* Once again, we generated a compressed HVT map (hvt.torus3) using the trainHVT() algorithm on the torus dataset. The parameters for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 81% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
 * **Example II: HVT with the Personal Computer dataset**
 
@@ -1454,7 +1450,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 * Next, we pass the validation dataset along with the HVT map obtained from `trainHVT()` to `scoreHVT()`  to see which cell and level each   point belongs to
 
-# Applications 
+# 9. Applications 
 
 1. Pricing Segmentation - The package can be used to discover groups of similar customers based on the customer spend pattern and understand price sensitivity of customers
 
@@ -1469,7 +1465,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 6. Using the base idea of Systems Dynamics, these diagrams can also be used to depict customer state changes over a period of time
 
 
-# References
+# 10. References
 
 1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
 
