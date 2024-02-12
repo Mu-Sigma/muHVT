@@ -276,39 +276,17 @@ Table <- function(data,scroll = FALSE, limit = NULL){
 summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.1,limit=NULL){
   
   scroll <- scroll
-  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) < value,"red","#333"))))  
+  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) > value,"red","#333"))))  
   
   return(Table(summaryTable,scroll = scroll,limit = limit))
-  
 }
 
+compressionSummaryTable <- function(data,scroll = TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
+  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
 
+  return(Table(summaryTable,scroll = scroll))
+}
 
-compressionSummaryTable <-
-  function(data,
-           scroll = TRUE,
-           columnName = 'percentOfCellsBelowQuantizationErrorThreshold',...) {
-  
-        table_out=  DT::datatable(
-        data %>% 
-          mutate_if(is.numeric, ~round(., 4)),
-        # round(QEdata(), digits = 4),
-        class = 'cell-border stripe',
-        rownames = FALSE,
-        escape = FALSE,
-        selection = "none",
-        options=options,
-        caption = "Compression Summary Table"
-      ) %>%
-        formatStyle(columns = c(1:ncol(data)),
-                    'text-align' = 'center') %>%
-        formatStyle(columns = columnName,
-                    color = "green",fontWeight = 'bold')
-    
-    
-    return(table_out)
-    
-  }
 
 
 set.seed(240)
@@ -1422,8 +1400,7 @@ threshold and percentage of cells having quantization error below
 threshold.
 
 ```{r}
-Table(hvt.results[[3]]$compression_summary,scroll = TRUE, limit = 10)
-#compressionSummaryTable(hvt.results[[3]]$compression_summary)
+compressionSummaryTable(hvt.results[[3]]$compression_summary)
 ```
 
 As seen in the above table, 95% of the cells have a quantization error

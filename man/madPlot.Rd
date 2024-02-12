@@ -4,10 +4,10 @@
 \alias{madPlot}
 \title{Mean Absolute Deviation Plot}
 \usage{
-madPlot(hvt.prediction, ...)
+madPlot(hvt.scoring, ...)
 }
 \arguments{
-\item{hvt.prediction}{List. A list of hvt.prediction obtained from the predictHVT
+\item{hvt.scoring}{List. A list of hvt.scoring obtained from the scoreHVT
 function.}
 
 \item{...}{The ellipsis is passed to it as additional argument. (Used internally)}
@@ -39,9 +39,8 @@ hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
                       distance_metric = "L1_Norm", error_metric = "mean",
                       projection.scale = 10, normalize = TRUE,seed = 123,
                       quant_method = "kmeans")
-predictions <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-data_predictions <- predictions$scoredPredictedData
-madPlot(hvt.prediction=predictions)
+score_var <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
+madPlot(hvt.scoring=score_var)
 }
 \seealso{
 \code{\link{scoreHVT}}

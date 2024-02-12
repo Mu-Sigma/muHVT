@@ -94,23 +94,25 @@ Following are the links to the vignettes for the HVT package:
 
 # 3. Version History
 
-## HVT (v24.1.1) | What's New? {-}
+## HVT (v24.2.1) | What's New? {-}
 
-09th February, 2024
+12th February, 2024
 
 In this version of HVT package, the following new features have been introduced:
 
-1. **Nomenclature:** To enhance consistency and impart the function names with greater contextual relevance, we have opted to standardize the nomenclature by employing camel case formatting throughout the entirety of the package. Given below are the few instances.
+1. **Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
+
 * `HVT` to `trainHVT`
 * `predictHVT` to `scoreHVT`
 * `predictLayerHVT` to `scoreLayeredHVT`
 
-2. **Restructured:** The functions have been strategically reorganized and categorized under newly established sections to infuse greater significance into their purpose across the package. These sections are prominently featured on the index page of the package's PDF documentation.Given below are the few instances.
+2. **Restructured:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package's PDF documentation. Given below are the few instances.
+
 * `trainHVT` function now resides within the `Training_or_Compression` section.
 * `plotHVT` function now resides within the `Tessellation_and_Heatmap` section.
 * `scoreHVT` function now resides within the `Scoring` section.
 
-3. **Enhancements:** The pre-existed functions, `hvtHmap` & `exploded_hmap`, have been consolidated and added to the function `plotHVT`. Additionally, we have expanded the functionality of `plotHVT` to include 1D plotting capabilities. Users can generate various types of plots, including 1D, 2D hvt, 2D heatmap, and Interactive surface plots, all using a single, versatile function. This consolidation aims to create a robust framework to meet all plot-related requirements efficiently.
+3. **Enhancements:** The pre-existed functions, `hvtHmap` and `exploded_hmap`, have been combined and incorporated into the `plotHVT` function. Additionally, `plotHVT` now includes the ability to perform 1D plotting.
 
 
 
@@ -148,7 +150,7 @@ This version of HVT package offers features for both training an HVT model and e
 
 
 
-# 4. Installation of HVT (v24.1.1)
+# 4. Installation of HVT (v24.2.1)
 
 ``` r
 library(devtools)

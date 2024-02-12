@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi" />
 
-<meta name="date" content="2024-02-09" />
+<meta name="date" content="2024-02-12" />
 
 <title>HVT: Collection of functions used to build hierarchical topology preserving maps</title>
 
@@ -343,7 +343,7 @@ hierarchical topology preserving maps</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
 Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya
 Shambhawi</h4>
-<h4 class="date">2024-02-09</h4>
+<h4 class="date">2024-02-12</h4>
 
 
 <div id="TOC">
@@ -353,15 +353,15 @@ Shambhawi</h4>
 <li><a href="#version-history" id="toc-version-history">3. Version
 History</a>
 <ul>
-<li><a href="#hvt-v24.1.1-whats-new" id="toc-hvt-v24.1.1-whats-new">HVT
-(v24.1.1) | What’s New?</a></li>
+<li><a href="#hvt-v24.2.1-whats-new" id="toc-hvt-v24.2.1-whats-new">HVT
+(v24.2.1) | What’s New?</a></li>
 <li><a href="#hvt-v23.11.02" id="toc-hvt-v23.11.02">HVT
 (v23.11.02)</a></li>
 <li><a href="#hvt-v22.12.06" id="toc-hvt-v22.12.06">HVT
 (v22.12.06)</a></li>
 </ul></li>
-<li><a href="#installation-of-hvt-v24.1.1" id="toc-installation-of-hvt-v24.1.1">4. Installation of HVT
-(v24.1.1)</a></li>
+<li><a href="#installation-of-hvt-v24.2.1" id="toc-installation-of-hvt-v24.2.1">4. Installation of HVT
+(v24.2.1)</a></li>
 </ul>
 </div>
 
@@ -451,17 +451,15 @@ on a sequence of maps using scoreLayeredHVT.</p></li>
 </div>
 <div id="version-history" class="section level1">
 <h1>3. Version History</h1>
-<div id="hvt-v24.1.1-whats-new" class="section level2 unnumbered">
-<h2 class="unnumbered">HVT (v24.1.1) | What’s New?</h2>
-<p>09th February, 2024</p>
+<div id="hvt-v24.2.1-whats-new" class="section level2 unnumbered">
+<h2 class="unnumbered">HVT (v24.2.1) | What’s New?</h2>
+<p>12th February, 2024</p>
 <p>In this version of HVT package, the following new features have been
 introduced:</p>
 <ol style="list-style-type: decimal">
-<li><strong>Nomenclature:</strong> To enhance consistency and impart the
-function names with greater contextual relevance, we have opted to
-standardize the nomenclature by employing camel case formatting
-throughout the entirety of the package. Given below are the few
-instances.</li>
+<li><strong>Nomenclature:</strong> To make the function names more
+consistent and understandable/intuitive, we have renamed the functions
+throughout the package. Given below are the few instances.</li>
 </ol>
 <ul>
 <li><code>HVT</code> to <code>trainHVT</code></li>
@@ -469,11 +467,9 @@ instances.</li>
 <li><code>predictLayerHVT</code> to <code>scoreLayeredHVT</code></li>
 </ul>
 <ol start="2" style="list-style-type: decimal">
-<li><strong>Restructured:</strong> The functions have been strategically
-reorganized and categorized under newly established sections to infuse
-greater significance into their purpose across the package. These
-sections are prominently featured on the index page of the package’s PDF
-documentation.Given below are the few instances.</li>
+<li><strong>Restructured:</strong> The functions have been rearranged
+and grouped into new sections which are highlighted on the index page of
+package’s PDF documentation. Given below are the few instances.</li>
 </ol>
 <ul>
 <li><code>trainHVT</code> function now resides within the
@@ -485,14 +481,10 @@ documentation.Given below are the few instances.</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
 <li><strong>Enhancements:</strong> The pre-existed functions,
-<code>hvtHmap</code> &amp; <code>exploded_hmap</code>, have been
-consolidated and added to the function <code>plotHVT</code>.
-Additionally, we have expanded the functionality of <code>plotHVT</code>
-to include 1D plotting capabilities. Users can generate various types of
-plots, including 1D, 2D hvt, 2D heatmap, and Interactive surface plots,
-all using a single, versatile function. This consolidation aims to
-create a robust framework to meet all plot-related requirements
-efficiently.</li>
+<code>hvtHmap</code> and <code>exploded_hmap</code>, have been combined
+and incorporated into the <code>plotHVT</code> function. Additionally,
+<code>plotHVT</code> now includes the ability to perform 1D
+plotting.</li>
 </ol>
 </div>
 <div id="hvt-v23.11.02" class="section level2 unnumbered">
@@ -543,8 +535,8 @@ containing ‘data without novelty’.</p></li>
 </ol>
 </div>
 </div>
-<div id="installation-of-hvt-v24.1.1" class="section level1">
-<h1>4. Installation of HVT (v24.1.1)</h1>
+<div id="installation-of-hvt-v24.2.1" class="section level1">
+<h1>4. Installation of HVT (v24.2.1)</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;Mu-Sigma/HVT&quot;</span>)</span></code></pre></div>
 </div>

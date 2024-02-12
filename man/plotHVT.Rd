@@ -94,7 +94,7 @@ be scaled. (default = 0.5)}
 
 \item{dim_size}{(surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 
-\item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
+\item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
 '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.}
 }
 \value{

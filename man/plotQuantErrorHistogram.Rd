@@ -14,7 +14,7 @@ function.}
 function.}
 }
 \value{
-Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and predictions
+Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scores.
 }
 \description{
 This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 

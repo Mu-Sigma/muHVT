@@ -39,7 +39,7 @@
 #' 
 #' @export sammonsProjection
 #' @keywords internal
-#' 
+
 sammonsProjection <- function(d, y = stats::cmdscale(d, k), k = 2, niter = 100, trace = TRUE,
        magic = 0.2, tol = 1e-4){
 	   

@@ -4,7 +4,7 @@
 #'  Interactive surface plot.
 #' @param hvt.results (2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
-#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
+#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
 #' '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.
 #' @param line.width (2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.

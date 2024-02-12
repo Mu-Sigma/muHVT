@@ -1,9 +1,9 @@
 Package: HVT
 Type: Package
-Date: 2024-02-17
+Date: 2024-02-12
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
-Version: 24.1.1
+Version: 24.2.1
 Authors@R: c(
 	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
@@ -28,31 +28,5 @@ Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-02-07 14:50:00 UTC
-Collate: 
-    'Add_boundary_points.R'
-    'Corrected_Tessellations.R'
-    'Transform_Coordinates.R'
-    'ScaleMat.R'
-    'DelaunayInfo.R'
-    'Delete_Outpoints.R'
-    'VQ_codebookSplit.R'
-    'diagPlot.R'
-    'diagSuggestion.R'
-    'getCellId.R'
-    'getCentroids.R'
-    'getCentroids_for_opti.R'
-    'getOptimalCentroids.R'
-    'global.R'
-    'hvq.R'
-    'madPlot.R'
-    'multiNormalDist.R'
-    'plotHVT.R'
-    'plotModelDiagnostics.R'
-    'plotNovelCells.R'
-    'plotQuantErrorHistogram.R'
-    'removeNovelty.R'
-    'sammonsProjection.R'
-    'scoreHVT.R'
-    'scoreLayeredHVT.R'
-    'trainHVT.R'
+Date/Publication: 2024-02-12 18:50:00 UTC
+
