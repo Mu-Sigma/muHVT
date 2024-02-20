@@ -511,8 +511,8 @@ FALSE as we are simulating a dataset in next section.**
 ```{r loading csv, message=FALSE, warning=FALSE}
 import_data_from_local = FALSE # expects logical input
 
-  file_name <- " " 
-  file_path <- " "
+  file_name <- " " #enter file name
+  file_path <- " " #enter the path of the file in local
 
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
@@ -563,7 +563,7 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
     # Display imported dataset
     dataset_updated %>% head(100) %>% 
       as.data.frame() %>%
-      Table(scroll = TRUE, limit = 20)
+      Table(scroll = TRUE, limit = 100)
   }
 
 ```
@@ -580,20 +580,31 @@ The table below shows summary of all (numeric & categorical) columns of
 Dataset
 
 ```{r sum_test,  message=FALSE, warning=FALSE}
-df <- do.call(cbind, lapply(dataset_updated, summary)) %>% 
-  data.frame() %>%
-  tibble::rownames_to_column("Metrics")
+calculate_statistics <- function(column_data) {
+     if (is.numeric(column_data)) {
+         a <- min(column_data, na.rm = TRUE)
+         b <- as.numeric(quantile(column_data, probs = 0.25, na.rm = TRUE)[1])
+         c <- median(column_data, na.rm = TRUE)
+         d <- mean(column_data, na.rm = TRUE)
+         e <- sd(column_data, na.rm = TRUE)
+         f <- as.numeric(quantile(column_data, probs = 0.75, na.rm = TRUE)[1])
+         g <- max(column_data, na.rm = TRUE)
+         
+         # Combine the statistics into a data frame and set row names to an empty string
+         stats_data <- data.frame(Min = a, Q1 = b, Median = c, Mean = d, sd = e, Q3 = f, Max = g)
+         row.names(stats_data) <- ""
+     } else {
+         cat("Column is not numeric and was skipped.\n")
+         return(NULL)
+     }
+     return(stats_data)
+ }
 
-df %>% head(100) %>% as.data.frame() %>%
-Table(scroll = TRUE, limit = 20)
+# Apply the function to each column of dataset_updated_train
+statistics_list <- lapply(dataset_updated, calculate_statistics)
 
-# DT::datatable(df %>% 
-#                 mutate_if(is.numeric, round,4) %>% 
-#                 head(),
-#     options  = options,
-#     rownames = FALSE)
-
-rm(df)
+# Print the result
+print(statistics_list)
 ```
 
 **Structure of Data**
@@ -1882,7 +1893,7 @@ folder.
 predictClusterData <- hvt.score[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
-      Table(scroll = TRUE, limit = 20)
+      Table(scroll = TRUE, limit = 100)
 ```
 
 # 10. Applications
