@@ -561,14 +561,13 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4) 
     paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
-    dataset_updated %>% head(100) %>% 
+    dataset_updated %>% head(20) %>% 
       as.data.frame() %>%
-      Table(scroll = TRUE, limit = 100)
+      Table(scroll = TRUE)
   }
 
 ```
 
-------------------------------------------------------------------------
 
 # 5. Data Understanding
 
@@ -576,35 +575,70 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
 
 **Summary of Dataset**
 
-The table below shows summary of all (numeric & categorical) columns of
+The table below shows summary of all numeric columns of
 Dataset
 
-```{r sum_test,  message=FALSE, warning=FALSE}
-calculate_statistics <- function(column_data) {
-     if (is.numeric(column_data)) {
-         a <- min(column_data, na.rm = TRUE)
-         b <- as.numeric(quantile(column_data, probs = 0.25, na.rm = TRUE)[1])
-         c <- median(column_data, na.rm = TRUE)
-         d <- mean(column_data, na.rm = TRUE)
-         e <- sd(column_data, na.rm = TRUE)
-         f <- as.numeric(quantile(column_data, probs = 0.75, na.rm = TRUE)[1])
-         g <- max(column_data, na.rm = TRUE)
-         
-         # Combine the statistics into a data frame and set row names to an empty string
-         stats_data <- data.frame(Min = a, Q1 = b, Median = c, Mean = d, sd = e, Q3 = f, Max = g)
-         row.names(stats_data) <- ""
-     } else {
-         cat("Column is not numeric and was skipped.\n")
-         return(NULL)
-     }
-     return(stats_data)
- }
+```{r,echo=TRUE,eval=FALSE, warning=FALSE,message=FALSE}
+      DT::datatable(
+        dataset_updated %>%
+          select_if(., is.numeric) %>%
+          skimr::skim() %>%
+          mutate_if(is.numeric, round, digits = 4) %>%
+          rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
+          rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
+          select(-c(type, n_missing, complete_rate)) %>%
+          mutate(n_row = nrow(dataset_updated),
+                 n_missing = rowSums(is.na(.))
+                 # ,n_non_missing = n_row - n_missing
+                 ) ,
+        selection = "none",
+        # filter = "top",
+        class = 'cell-border stripe',
+        escape = FALSE,
+        options = options,
+        callback = htmlwidgets::JS(
+          "var tips = ['Index showing column number',
+                        'Columns used for building the HVT model',
+                        'Histogram for individual column',
+                        'Number of records for each feature',
+                        'Number of missing (NA) values for each feature',
+                        'Mean of individual column',
+                        'Standard deviation of individual column',
+                        '0th Percentile means that the values are smaller than all 100% of the rows',
+                        '25th Percentile means that the values are bigger than 25% and smaller than only 75% of the rows',
+                        '50th Percentile means that the values are bigger than 50% and smaller than only 50% of the rows',
+                        '75th Percentile means that the values are bigger than 75% and smaller than only 25% of the rows',
+                        '100th Percentile means that the values are bigger than 100% of the rows'],
+                            header = table.columns().header();
+                        for (var i = 0; i < tips.length; i++) {
+                          $(header[i]).attr('title', tips[i]);
+                        }"
+        )
+      )
+```
 
-# Apply the function to each column of dataset_updated_train
-statistics_list <- lapply(dataset_updated, calculate_statistics)
-
-# Print the result
-print(statistics_list)
+```{r, warning=FALSE, message=FALSE}
+#print(
+ aa <-  dataset_updated %>%
+    select_if(., is.numeric) %>%
+    skimr::skim() %>%
+    mutate_if(is.numeric, round, digits = 4) %>%
+    rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
+    rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
+    select(-c(type, n_missing, complete_rate)) %>%
+    mutate(n_row = nrow(dataset_updated),
+           n_missing = rowSums(is.na(.))
+           # ,n_non_missing = n_row - n_missing
+           )
+aa <- aa %>%
+  rename(
+    Min = p0,
+    `1st Quartile` = p25,
+    median = p50,
+    `3rd Quartile` = p75,
+    Max = p100
+  )
+Table(aa,scroll = FALSE)
 ```
 
 **Structure of Data**
@@ -1042,52 +1076,13 @@ dataset_updated <-  dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
 
 dataset_updated %>% head(10) %>%
   as.data.frame() %>%
-  Table(scroll = TRUE, limit = 20)
+  Table(scroll = FALSE)
 
-```
-
-```{r,echo=TRUE,eval=FALSE}
-      DT::datatable(
-        dataset_updated %>%
-          select_if(., is.numeric) %>%
-          skimr::skim() %>%
-          mutate_if(is.numeric, round, digits = 4) %>%
-          rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
-          rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
-          select(-c(type, n_missing, complete_rate)) %>%
-          mutate(n_row = nrow(dataset_updated),
-                 n_missing = rowSums(is.na(.))
-                 # ,n_non_missing = n_row - n_missing
-                 ) ,
-        selection = "none",
-        # filter = "top",
-        class = 'cell-border stripe',
-        escape = FALSE,
-        options = options,
-        callback = htmlwidgets::JS(
-          "var tips = ['Index showing column number',
-                        'Columns used for building the HVT model',
-                        'Histogram for individual column',
-                        'Number of records for each feature',
-                        'Number of missing (NA) values for each feature',
-                        'Mean of individual column',
-                        'Standard deviation of individual column',
-                        '0th Percentile means that the values are smaller than all 100% of the rows',
-                        '25th Percentile means that the values are bigger than 25% and smaller than only 75% of the rows',
-                        '50th Percentile means that the values are bigger than 50% and smaller than only 50% of the rows',
-                        '75th Percentile means that the values are bigger than 75% and smaller than only 25% of the rows',
-                        '100th Percentile means that the values are bigger than 100% of the rows'],
-                            header = table.columns().header();
-                        for (var i = 0; i < tips.length; i++) {
-                          $(header[i]).attr('title', tips[i]);
-                        }"
-        )
-      )
 ```
 
 ```{r}
 #print(
- aa <-  dataset_updated %>%
+  aa <-  dataset_updated %>%
     select_if(., is.numeric) %>%
     skimr::skim() %>%
     mutate_if(is.numeric, round, digits = 4) %>%
@@ -1098,7 +1093,15 @@ dataset_updated %>% head(10) %>%
            n_missing = rowSums(is.na(.))
            # ,n_non_missing = n_row - n_missing
            )
-Table(aa,scroll = TRUE, limit = 20)
+aa <- aa %>%
+  rename(
+    Min = p0,
+    `1st Quartile` = p25,
+    median = p50,
+    `3rd Quartile` = p75,
+    Max = p100
+  )
+Table(aa,scroll = FALSE)
 ```
 
 # 6. Data distribution

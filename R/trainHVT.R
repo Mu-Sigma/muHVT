@@ -124,7 +124,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       std_data <- attr(scaledata, "scaled:scale")
 
       scale_summary <- list(mean_data = mean_data, std_data = std_data)
-
+  #  browser()
       # flog.info("scaling is done")
     } else {
       scaledata <- as.matrix(dataset)

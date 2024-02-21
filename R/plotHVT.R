@@ -107,13 +107,22 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     y <- hvq_k[["summary"]][["Cell.ID"]]
     data_plot <- data.frame(x,y)
     
-    gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("1D point: ", round(x,4), "<br>Cell ID: ", y))) +
-      geom_point(color = "blue", alpha= 0.5,size = 1) +
-      theme_minimal() +
-      labs(title = "Sammons 1D x Cell ID", x = "Cell ID", y = "1D points")
+    if(length(y) <= 100) {
+      size <- 2
+    } else if(length(y) <= 500) {
+      size <- 0.1
+    } else if(length(y) <= 1000) {
+      size <- 0.06
+    } else {
+      size <- 0.014
+    }
     
-      gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
-      
+     gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("1D point: ", round(x,4), "<br>Cell ID: ", y))) +
+       geom_point(color = "blue", alpha= 1,size = size) +
+       theme_minimal() +
+       labs(title = "Sammons 1D x Cell ID", x = "Cell ID", y = "1D points")
+
+      gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text") 
      return(suppressMessages(gg_plot))  
       
      } else if (heatmap == '2Dhvt') {
