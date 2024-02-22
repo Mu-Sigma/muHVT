@@ -5,7 +5,7 @@ date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
 output:
- rmarkdown::html_vignette:
+  rmarkdown::html_vignette:
     toc: true
     toc_depth : 2
 vignette: >
@@ -25,26 +25,17 @@ editor_options:
     position: fixed;
     margin-left: -22vw;
     width: 18vw;
-    height: 90vh;
+    height: fit-content;
     overflow-y: auto;
     padding-top: 20px;
     padding-bottom: 20px;
     background-color: #f9f9f9;
     border-right: 1px solid #ddd;
-    margin-top: -11.5em; 
+    margin-top: -14em; 
 }
 
 .main-container {
-  margin-left: 320px; /* Adjust this value to match the width of the TOC + some margin */
-}
-
-body {
-max-width: calc( 100% - 400px );
-margin-left: 422px ;
-}
-
-p {
-  text-align: justify;
+  margin-left: 222px; /* Adjust this value to match the width of the TOC + some margin */
 }
 
 li {
@@ -392,9 +383,8 @@ where
 
 Let us try to understand quantization error with an example.
 
-```{r,  fig.width = 12,fig.height=7, fig.align='center', echo=FALSE}
-knitr::include_graphics("quant_explainer.png")
-
+```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='100%',fig.height=5,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
+knitr::include_graphics('quant_explainer.png')
 ```
 
 An example of a 2 dimensional VQ is shown above.
@@ -529,9 +519,9 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
     paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
-    dataset_updated %>% head(20) %>%
+    dataset_updated %>% head(100) %>%
       as.data.frame() %>%
-      Table(scroll = TRUE)
+      Table(scroll = TRUE, limit = 20)
   }
 
 ```
@@ -539,13 +529,14 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
 
 Now let's try to visualize the torus (donut) in  3D Space.
 
-```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =TRUE,echo=TRUE, fig.width = 12,fig.height=7, fig.align='center'}
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 2: 3D Torus',eval =TRUE,echo=TRUE}
 
 knitr::include_graphics('torus_donut.png')
 
 ```
 
 
+------------------------------------------------------------------------
 
 # 6.2 Data Understanding
 
@@ -553,70 +544,35 @@ knitr::include_graphics('torus_donut.png')
 
 **Summary of Dataset**
 
-The table below shows summary of all numeric columns of
+The table below shows summary of all (numeric & categorical) columns of
 Dataset
 
-```{r,echo=TRUE,eval=FALSE, warning=FALSE,message=FALSE}
-      DT::datatable(
-        dataset_updated %>%
-          select_if(., is.numeric) %>%
-          skimr::skim() %>%
-          mutate_if(is.numeric, round, digits = 4) %>%
-          rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
-          rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
-          select(-c(type, n_missing, complete_rate)) %>%
-          mutate(n_row = nrow(dataset_updated),
-                 n_missing = rowSums(is.na(.))
-                 # ,n_non_missing = n_row - n_missing
-                 ) ,
-        selection = "none",
-        # filter = "top",
-        class = 'cell-border stripe',
-        escape = FALSE,
-        options = options,
-        callback = htmlwidgets::JS(
-          "var tips = ['Index showing column number',
-                        'Columns used for building the HVT model',
-                        'Histogram for individual column',
-                        'Number of records for each feature',
-                        'Number of missing (NA) values for each feature',
-                        'Mean of individual column',
-                        'Standard deviation of individual column',
-                        '0th Percentile means that the values are smaller than all 100% of the rows',
-                        '25th Percentile means that the values are bigger than 25% and smaller than only 75% of the rows',
-                        '50th Percentile means that the values are bigger than 50% and smaller than only 50% of the rows',
-                        '75th Percentile means that the values are bigger than 75% and smaller than only 25% of the rows',
-                        '100th Percentile means that the values are bigger than 100% of the rows'],
-                            header = table.columns().header();
-                        for (var i = 0; i < tips.length; i++) {
-                          $(header[i]).attr('title', tips[i]);
-                        }"
-        )
-      )
-```
+```{r sum_test,  message=FALSE, warning=FALSE}
+calculate_statistics <- function(column_data) {
+     if (is.numeric(column_data)) {
+         a <- min(column_data, na.rm = TRUE)
+         b <- as.numeric(quantile(column_data, probs = 0.25, na.rm = TRUE)[1])
+         c <- median(column_data, na.rm = TRUE)
+         d <- mean(column_data, na.rm = TRUE)
+         e <- sd(column_data, na.rm = TRUE)
+         f <- as.numeric(quantile(column_data, probs = 0.75, na.rm = TRUE)[1])
+         g <- max(column_data, na.rm = TRUE)
+         
+         # Combine the statistics into a data frame and set row names to an empty string
+         stats_data <- data.frame(Min = a, Q1 = b, Median = c, Mean = d, sd = e, Q3 = f, Max = g)
+         row.names(stats_data) <- ""
+     } else {
+         cat("Column is not numeric and was skipped.\n")
+         return(NULL)
+     }
+     return(stats_data)
+ }
 
-```{r, warning=FALSE, message=FALSE}
-#print(
- aa <-  dataset_updated %>%
-    select_if(., is.numeric) %>%
-    skimr::skim() %>%
-    mutate_if(is.numeric, round, digits = 4) %>%
-    rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
-    rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
-    select(-c(type, n_missing, complete_rate)) %>%
-    mutate(n_row = nrow(dataset_updated),
-           n_missing = rowSums(is.na(.))
-           # ,n_non_missing = n_row - n_missing
-           )
-aa <- aa %>%
-  rename(
-    Min = p0,
-    `1st Quartile` = p25,
-    median = p50,
-    `3rd Quartile` = p75,
-    Max = p100
-  )
-Table(aa,scroll = FALSE)
+# Apply the function to each column of trainTorus_data
+statistics_list <- lapply(dataset_updated, calculate_statistics)
+
+# Print the result
+print(statistics_list)
 ```
 
 **Structure of Data**
@@ -804,7 +760,7 @@ if(want_to_filter_dataset == "yes"){
 }
 ```
 
-
+------------------------------------------------------------------------
 
 ## 6.2.8 Missing Value Analysis
 
@@ -858,7 +814,7 @@ This function gives us(if any missing value present):
 -   which variable has the most missing values
 -   And give us the variables which have missing values together
 
-```{r miss_value_column_level, warning=FALSE, purl = FALSE}
+```{r miss_value_column_level, warning=FALSE,,fig.width=10, purl = FALSE}
 
 # Below code gives you missing value in each column
 paste0("Number of missing value in each column") %>% cat("\n")
@@ -1041,8 +997,7 @@ dataset_updated=dataset_updated[,numeric_cols]
 colnames(dataset_updated)
 ```
 
-
-
+------------------------------------------------------------------------
 
 ## 6.2.12 Final Dataset Summary
 
@@ -1059,6 +1014,44 @@ dataset_updated %>% head(10) %>%
 
 ```
 
+```{r,echo=TRUE,eval=FALSE, warning=FALSE,message=FALSE}
+      DT::datatable(
+        dataset_updated %>%
+          select_if(., is.numeric) %>%
+          skimr::skim() %>%
+          mutate_if(is.numeric, round, digits = 4) %>%
+          rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
+          rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
+          select(-c(type, n_missing, complete_rate)) %>%
+          mutate(n_row = nrow(dataset_updated),
+                 n_missing = rowSums(is.na(.))
+                 # ,n_non_missing = n_row - n_missing
+                 ) ,
+        selection = "none",
+        # filter = "top",
+        class = 'cell-border stripe',
+        escape = FALSE,
+        options = options,
+        callback = htmlwidgets::JS(
+          "var tips = ['Index showing column number',
+                        'Columns used for building the HVT model',
+                        'Histogram for individual column',
+                        'Number of records for each feature',
+                        'Number of missing (NA) values for each feature',
+                        'Mean of individual column',
+                        'Standard deviation of individual column',
+                        '0th Percentile means that the values are smaller than all 100% of the rows',
+                        '25th Percentile means that the values are bigger than 25% and smaller than only 75% of the rows',
+                        '50th Percentile means that the values are bigger than 50% and smaller than only 50% of the rows',
+                        '75th Percentile means that the values are bigger than 75% and smaller than only 25% of the rows',
+                        '100th Percentile means that the values are bigger than 100% of the rows'],
+                            header = table.columns().header();
+                        for (var i = 0; i < tips.length; i++) {
+                          $(header[i]).attr('title', tips[i]);
+                        }"
+        )
+      )
+```
 
 ```{r, warning=FALSE, message=FALSE}
 #print(
@@ -1073,15 +1066,7 @@ dataset_updated %>% head(10) %>%
            n_missing = rowSums(is.na(.))
            # ,n_non_missing = n_row - n_missing
            )
-aa <- aa %>%
-  rename(
-    Min = p0,
-    `1st Quartile` = p25,
-    median = p50,
-    `3rd Quartile` = p75,
-    Max = p100
-  )
-Table(aa,scroll = FALSE)
+Table(aa,scroll = TRUE, limit = 20)
 ```
 
 # 6.3. Data distribution
@@ -1149,11 +1134,10 @@ generateDistributionPlot <- function(data, column){
 
 ```
 
-```{r dist_plots_true2, purl = FALSE,message=FALSE,warning=FALSE,fig.width = 12,fig.height=7, fig.align='center'}
+```{r dist_plots_true2, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
-  
 generateDistributionPlot(dataset_updated, eda_cols[i]) })
 do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
  
@@ -1188,7 +1172,7 @@ quantile_outlier_plots_fn <- function(data, outlier_check_var, numeric_cols = nu
 }
 ```
 
-```{r message=FALSE, warning=FALSE,results='asis',fig.width = 12,fig.height=7, fig.align='center'}
+```{r message=FALSE, warning=FALSE,results='asis', fig.height=6, fig.width=6}
 ## the below code gives the interactive plot for Quantile Outlier analysis for numerical variables 
 box_plots <- list()
 for (x in names(dataset_updated)) {
@@ -1207,7 +1191,7 @@ In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
 numeric columns. The output shown is a matrix.
 
-```{r Correlation, echo=FALSE,fig.width = 12,fig.height=7, fig.align='center',purl=FALSE}
+```{r Correlation, echo=FALSE, fig.height=6, fig.width=6, purl=FALSE}
 
 corrplot::corrplot(cor(dataset_updated), 
                             method = "color", 
@@ -1255,7 +1239,7 @@ columns.
 
 ### 6.4.1 Train Distribution
 
-```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE,  fig.width = 12,fig.height=7, fig.align='center'}
+```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_train)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
@@ -1266,7 +1250,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
 
 ### 6.4.2 Test Distribution
 
-```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.width = 12,fig.height=7, fig.align='center'}
+```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
 eda_cols <- names(dataset_updated_test)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
@@ -1396,7 +1380,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 
 Let's take a look on the 1D projection of this iteration. The output of hvq from the above iteration is then passed to the plotHVT function, which applies Sammon's 1D using `MASS` package. The resulting 1D Sammon's points are used to determine their corresponding cell IDs and subsequently plotted in a plotly object.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 14,fig.height=8, fig.align='center',fig.cap='Figure 3: Sammons 1D x Cell ID plot for layer 1 shown for the 100 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,out.width='100%',fig.height=5,fig.cap='Figure 3: Sammons 1D x Cell ID plot for layer 1 shown for the 100 cells in the dataset ’torus’'}
 plotHVT(heatmap = '1D')
 ```
 
@@ -1438,7 +1422,7 @@ compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 ```
 **It can be observed from the table above that only 5 cells out of 300 i.e. `2%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
 
-```{r, warning=FALSE,message=FALSE, fig.width = 14,fig.height=8, fig.align='center',fig.cap='Figure 4: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,out.width='100%',fig.height=5,fig.cap='Figure 4: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the dataset ’torus’'}
 plotHVT(heatmap = '1D')
 ```
 
@@ -1483,7 +1467,7 @@ compressionSummaryTable(hvt.torus3[[3]]$compression_summary)
 We successfully compressed 84% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
 
 
-```{r, warning=FALSE,message=FALSE, fig.width = 14,fig.height=8, fig.align='center',fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,out.width='100%',fig.height=5,fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the dataset ’torus’'}
 plotHVT(heatmap = '1D')
 ```
 
@@ -1516,7 +1500,7 @@ Table(head(centroid_coordinates1))
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 100 in first iteration.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 6: Sammons 2D Plot for 100 cells'}
+```{r, warning=FALSE,message=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 6: Sammons 2D Plot for 100 cells'}
 ggplot(centroid_coordinates1, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
   labs(x = "X", y = "Y")
@@ -1548,7 +1532,7 @@ Table(head(centroid_coordinates2))
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 300 in second iteration.
 
-```{r, message=FALSE,warning=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 7: Sammons 2D Plot for 300 cells'}
+```{r, message=FALSE,warning=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 7: Sammons 2D Plot for 300 cells'}
 ggplot(centroid_coordinates2, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
   labs(x = "X", y = "Y")
@@ -1578,7 +1562,7 @@ Table(head(centroid_coordinates3))
 Lets see the projected Sammons 2D onto a plane with n_cell set to 900 in third iteration.
 
 
-```{r, warning=FALSE,message=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 8: Sammons 2D Plot for 900 cells'}
+```{r, warning=FALSE,message=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 8: Sammons 2D Plot for 900 cells'}
 
 ggplot(centroid_coordinates3, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
@@ -1654,7 +1638,7 @@ be scaled.(default = 0.5)
 
 To enhance visualization, let's generate a plot of the Voronoi tessellation for the **first iteration** where we set **n_cells parameter as 100**. This plot will provide a visual representation of the Voronoi regions corresponding to the data points, aiding in the analysis and understanding of the data distribution.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 9: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 9: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus,
   line.width = c(0.4),
@@ -1669,7 +1653,7 @@ plotHVT(
 
 Now, let's plot the Voronoi tessellation for the **second iteration** where we set **n_cells parameter to 300**.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 10: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 10: The Voronoi tessellation for layer 1 shown for the 300 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus2,
   line.width = c(0.4),
@@ -1684,7 +1668,7 @@ plotHVT(
 
 Now, let's plot the Voronoi tessellation again, for the **third iteration** where we set **n_cells parameter to 900**.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.cap='Figure 11: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’'}
+```{r, warning=FALSE,message=FALSE,fig.height=4, fig.width=6,fig.cap='Figure 11: The Voronoi tessellation for layer 1 shown for the 900 cells in the dataset ’torus’'}
 plotHVT(
   hvt.torus3,
   line.width = c(0.4),
@@ -1707,7 +1691,7 @@ Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the 
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (n,X,Y and Z). The sheer green shades highlight regions with higher coordinate values in each of the heatmaps, while the indigo  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure.
 
 
-```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for No. of entities in each cell in the ’torus’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for No. of entities in each cell in the ’torus’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -1724,7 +1708,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable x in the ’torus’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable x in the ’torus’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -1741,7 +1725,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable y in the ’torus’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable y in the ’torus’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -1758,7 +1742,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z in the ’torus’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z in the ’torus’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.torus3,
   torus_df,
@@ -1815,7 +1799,7 @@ The important parameters for the function `scoreHVT` are as below:
 
 * __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
-* __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, the `data` (testing dataset) is standardized by mean and sd of the training dataset referred from the `trainHVT()`. When set to FALSE, the `data` is used as such without any changes.
+* __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
 
 * __`seed`__  - A Random seed.
 
@@ -1854,7 +1838,7 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 ```
 
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 16: Mean Absolute Difference', fig.width = 12,fig.height=7, fig.align='center'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 16: Mean Absolute Difference',fig.height=4, fig.width=6}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
 
 
@@ -1987,7 +1971,7 @@ Now let us understand what each column in the above summary table means:
 
 All the columns after this will contain centroids for each cell. They can also be called a codebook, which represents a collection of all centroids or codewords.
 
-```{r, warning=FALSE,message=FALSE, fig.width = 14,fig.height=8, fig.align='center',fig.cap='Figure 17: Sammons 1D x Cell ID plot for layer 1 shown for the 450 cells in the dataset ’computers’'}
+```{r, warning=FALSE,message=FALSE,out.width='100%',fig.height=5,fig.cap='Figure 17: Sammons 1D x Cell ID plot for layer 1 shown for the 450 cells in the dataset ’computers’'}
 plotHVT(heatmap = '1D')
 ```
 
@@ -2020,7 +2004,7 @@ Table(head(centroid_coordinates))
 
 Lets visualize the projected Sammons 2D for n_cell set to 450 onto a plane.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 2D Plot for 450 cells', fig.width = 12,fig.height=7, fig.align='center'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 2D Plot for 450 cells',fig.height=4, fig.width=6}
 # Assuming your sammons_data is a dataframe with columns "x" and "y"
 ggplot(centroid_coordinates, aes(x_coord, y_coord)) +
   geom_point(color = "blue") +
@@ -2036,7 +2020,7 @@ Now, we have obtained the centroid coordinates resulting from the application of
 
 For better visualisation, let's plot the Voronoi tessellation using the `plotHVT` function.
 
-```{r plot level one computers,warning=FALSE, fig.width = 12,fig.height=7, fig.align='center',fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation for layer 1 shown for the 450 cells in the dataset ’computers’',eval = global_var}
+```{r plot level one computers,warning=FALSE,fig.height=4, fig.width=6,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 19: The Voronoi Tessellation for layer 1 shown for the 450 cells in the dataset ’computers’',eval = global_var}
 # Voronoi tessellation plot for level one
 
 plotHVT(hvt.results,
@@ -2057,7 +2041,7 @@ Now let's plot the Voronoi Tessellation with the heatmap overlaid for all the fe
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (n,price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data
 
 
-```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid over the No. of entities in each cell in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation with the heat map overlaid over the No. of entities in each cell in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 
 plotHVT(
   hvt.results,
@@ -2075,7 +2059,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the variable price in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the variable price in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 
 plotHVT(
   hvt.results,
@@ -2093,7 +2077,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi Tessellation with the heat map overlaid over the variable hd in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi Tessellation with the heat map overlaid over the variable hd in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 
 plotHVT(
   hvt.results,
@@ -2112,7 +2096,7 @@ plotHVT(
 
 ```
 
-```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi Tessellation with the heat map overlaid over the variable ram in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi Tessellation with the heat map overlaid over the variable ram in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.results,
   trainComputers,
@@ -2129,7 +2113,7 @@ plotHVT(
 )
 ```
 
-```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi Tessellation with the heat map overlaid over the variable screen in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi Tessellation with the heat map overlaid over the variable screen in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 plotHVT(
   hvt.results,
   trainComputers,
@@ -2147,7 +2131,7 @@ plotHVT(
 
 ```
 
-```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi Tessellation with the heat map overlaid over the variable ads in the ’computers’ dataset',eval = global_var, fig.width = 12,fig.height=7, fig.align='center'}
+```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi Tessellation with the heat map overlaid over the variable ads in the ’computers’ dataset',eval = global_var,fig.height=4, fig.width=6}
 
 plotHVT(
   hvt.results,
@@ -2212,7 +2196,7 @@ The important parameters for the function `scoreHVT` are as below:
 
 * __`color.vec`__	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
 
-* __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, the `data` (testing dataset) is standardized by mean and sd of the training dataset referred from the `trainHVT()`. When set to FALSE, the `data` is used as such without any changes.
+* __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
 
 * __`seed`__  - A Random seed.
 
@@ -2238,15 +2222,6 @@ scoring_comp <-scoreHVT(
 ```
 
 
-**When `normalize` is set to TRUE while using `scoreHVT`, the function has an inbuilt feature to standardize the input testing dataset based on the mean and standard deviation of the training dataset from the `trainHVT` results.**
-
-*  Steps involved in Normalizing the data:
-*  From the `trainHVT` result's list variable (here it is `hvt.results`) the `summary` is accessed which is the third list object.
-*  From the `summary` list, the `scale.summary` object is accessed which have two entries that stores `mean_data` and `std_data` of all the columns in `training dataset`.
-*  Those two entries are taken for the center and scale parameter in scale() which normalizes the testing dataset similar to training dataset
-*  This approach ensures that the model that is evaluated on testing dataset scaled in the same way as the training dataset, maintaining consistency and improving the model's ability to generalize to new, unseen data.
-
-
 Let's see which cell and level each point belongs to and check the mean absolute difference of each of the **1237 records**. For the sake of brevity, we will only show the first 100 rows.
 
 ```{r scoreHVT pred computers,warning=FALSE,eval = FALSE,echo=FALSE}
@@ -2266,7 +2241,7 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 ```
 
 
-```{r,message=FALSE,warning=FALSE,fig.cap='Figure 26: Mean Absolute Difference', fig.width = 12,fig.height=7, fig.align='center'}
+```{r,message=FALSE,warning=FALSE,fig.cap='Figure 26: Mean Absolute Difference',fig.height=4, fig.width=6}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 

@@ -14,8 +14,7 @@
 #' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer. 
 #' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
 #' @param normalize Logical. A logical value indicating if the dataset should be normalized. 
-#' When set to TRUE, the `data` (testing dataset) is standardized by mean and sd of the training dataset 
-#' referred from the `trainHVT()`. When set to FALSE, the `data` is used as such without any changes.
+#' When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
 #' @param seed Numeric. Random Seed.
 #' @param distance_metric Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
 #' `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
@@ -98,7 +97,7 @@ scoreHVT <- function(data,
   } else {
     scaled_test_data <- data[, train_colnames]
   }
- #browser()
+
   colnames(scaled_test_data) <- train_colnames
   # level <- length(summary_list$nodes.clust)
   level <- child.level

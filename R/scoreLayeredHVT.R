@@ -12,9 +12,8 @@
 #' @param mad.threshold Numeric. A number indicating the permissible Mean Absolute Deviation
 #' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer.
 #' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
-#' @param normalize Logical. A logical value indicating if the dataset should be normalized. 
-#' When set to TRUE, the `data` (testing dataset) is standardized by mean and sd of the training dataset
-#' referred from the `trainHVT()`. When set to FALSE, the `data` is used as such without any changes.
+#' @param normalize Logical. A logical value indicating if the columns in your
+#' dataset should be normalized. Default value is TRUE.
 #' @param seed Numeric. Random Seed.
 #' @param distance_metric Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
 #' `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
