@@ -100,13 +100,13 @@ Following are the links to the vignettes for the HVT package:
 
 In this version of HVT package, the following new features have been introduced:
 
-1. **Updated Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
+1. **Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
 
 * `HVT` to `trainHVT`
 * `predictHVT` to `scoreHVT`
 * `predictLayerHVT` to `scoreLayeredHVT`
 
-2. **Restructured Functions:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package's PDF documentation. Given below are the few instances.
+2. **Restructured:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package's PDF documentation. Given below are the few instances.
 
 * `trainHVT` function now resides within the `Training_or_Compression` section.
 * `plotHVT` function now resides within the `Tessellation_and_Heatmap` section.
