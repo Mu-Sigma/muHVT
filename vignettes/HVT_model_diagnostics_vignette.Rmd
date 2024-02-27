@@ -30,13 +30,23 @@ editor_options:
     padding-bottom: 20px;
     background-color: #f9f9f9;
     border-right: 1px solid #ddd;
-    margin-top: -14em;
+    margin-top: -10em;
 }
 
 .main-container {
   margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
 }
+body{
+max-width:1200px;
+width: 50%;
+}
+.caption {
+  text-align: center;
+}
 
+p {
+text-align: justify;
+}
 li {
   padding-bottom: 5px;
 }
@@ -279,16 +289,16 @@ summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.1,l
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) > value,"red","#333"))))  
   
   return(Table(summaryTable,scroll = scroll,limit = limit))
+  
 }
+
+
 
 compressionSummaryTable <- function(data,scroll = TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
   summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
 
   return(Table(summaryTable,scroll = scroll))
 }
-
-
-
 set.seed(240)
 ```
 
@@ -389,7 +399,7 @@ one of the below conditions
 
 Let us try to understand quantization error with an example.
 
-```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
+```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
 knitr::include_graphics('quant_explainer.png')
 ```
 
@@ -511,8 +521,8 @@ FALSE as we are simulating a dataset in next section.**
 ```{r loading csv, message=FALSE, warning=FALSE}
 import_data_from_local = FALSE # expects logical input
 
-  file_name <- " " 
-  file_path <- " "
+  file_name <- " " #enter the name of the local file
+  file_path <- " " #enter the path of the local file
 
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
@@ -533,7 +543,7 @@ if(import_data_from_local){
 } 
 ```
 
-# 4.1.2 Simulate Dataset
+## 4.1.2 Simulate Dataset
 
 In this section, we will use a simulated dataset. If you are not using
 this option set `simulate_dataset` to FALSE. Given below is a simulated
@@ -548,6 +558,8 @@ Here, we load the data and store into a variable `dataset_updated`.
 ```{r}
 simulate_dataset= TRUE
 
+if(simulate_dataset == TRUE){
+  
 set.seed(257)
 ##torus data generation
 torus <- geozoo::torus(p = 3,n = 12000)
@@ -559,16 +571,16 @@ colnames(dataset_updated) <- c("x","y","z")
 paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_updated), " column(s)",  "simulated successfully. ") %>% cat("\n")  
     # Round only the numeric columns in dataset
     dataset_updated <- dataset_updated %>% mutate_if(is.numeric, round, digits = 4) 
-    paste0("Code chunk executed successfully. The table below is showing first 20 row(s) of the dataset.") %>% cat("\n")
+    paste0("Code chunk executed successfully. The table below is showing first 10 row(s) of the dataset.") %>% cat("\n")
     # Display imported dataset
-    dataset_updated %>% head(100) %>% 
+    dataset_updated %>% head(10) %>% 
       as.data.frame() %>%
-      Table(scroll = TRUE, limit = 20)
+      Table(limit = 10)
   }
-
+}
 ```
 
-------------------------------------------------------------------------
+
 
 # 5. Data Understanding
 
@@ -576,24 +588,33 @@ paste0( "Dataset having ", nrow(dataset_updated), " row(s) and ", ncol(dataset_u
 
 **Summary of Dataset**
 
-The table below shows summary of all (numeric & categorical) columns of
-Dataset
+The table below shows summary of all numeric columns of
+dataset.
 
-```{r sum_test,  message=FALSE, warning=FALSE}
-df <- do.call(cbind, lapply(dataset_updated, summary)) %>% 
-  data.frame() %>%
-  tibble::rownames_to_column("Metrics")
+```{r, message=FALSE,warning=FALSE}
+summary_eda <- function(df) {
+  
+numeric_columns <- sapply(df, is.numeric)  
+missing_counts <- sapply(seq_along(numeric_columns)[numeric_columns], function(i) sum(is.na(df[[i]])))
+missing_counts_vector <- unlist(missing_counts)
 
-df %>% head(100) %>% as.data.frame() %>%
-Table(scroll = TRUE, limit = 20)
+  result <- df %>%
+    select(where(is.numeric)) %>%
+    skimr::skim() %>%
+    mutate(across(where(is.numeric), ~round(., 4))) %>%
+    rename_with(~sub("^(skim_|numeric\\.)", "", .)) %>%
+    select(-type, -n_missing, -complete_rate) %>%
+    mutate(n_row = nrow(df), n_missing = missing_counts_vector) %>%
+    dplyr::rename(min = p0, `1st Quartile` = p25, median = p50, `3rd Quartile` = p75, max = p100) %>%
+    dplyr::select(variable, min, `1st Quartile`, median, mean, sd, `3rd Quartile`, max, hist,n_row, n_missing)
 
-# DT::datatable(df %>% 
-#                 mutate_if(is.numeric, round,4) %>% 
-#                 head(),
-#     options  = options,
-#     rownames = FALSE)
+  return(result)
+}
+```
 
-rm(df)
+```{r}
+data_table <- summary_eda(dataset_updated)
+Table(data_table, scroll = TRUE)
 ```
 
 **Structure of Data**
@@ -781,7 +802,7 @@ if(want_to_filter_dataset == "yes"){
 }
 ```
 
-------------------------------------------------------------------------
+
 
 ## 5.8 Missing Value Analysis
 
@@ -1018,7 +1039,7 @@ dataset_updated=dataset_updated[,numeric_cols]
 colnames(dataset_updated)
 ```
 
-------------------------------------------------------------------------
+
 
 ## 5.9 Final Dataset Summary
 
@@ -1031,63 +1052,14 @@ dataset_updated <-  dataset_updated %>% mutate_if(is.numeric, round, digits = 4)
 
 dataset_updated %>% head(10) %>%
   as.data.frame() %>%
-  Table(scroll = TRUE, limit = 20)
+  Table(limit = 10)
 
 ```
 
-```{r,echo=TRUE,eval=FALSE}
-      DT::datatable(
-        dataset_updated %>%
-          select_if(., is.numeric) %>%
-          skimr::skim() %>%
-          mutate_if(is.numeric, round, digits = 4) %>%
-          rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
-          rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
-          select(-c(type, n_missing, complete_rate)) %>%
-          mutate(n_row = nrow(dataset_updated),
-                 n_missing = rowSums(is.na(.))
-                 # ,n_non_missing = n_row - n_missing
-                 ) ,
-        selection = "none",
-        # filter = "top",
-        class = 'cell-border stripe',
-        escape = FALSE,
-        options = options,
-        callback = htmlwidgets::JS(
-          "var tips = ['Index showing column number',
-                        'Columns used for building the HVT model',
-                        'Histogram for individual column',
-                        'Number of records for each feature',
-                        'Number of missing (NA) values for each feature',
-                        'Mean of individual column',
-                        'Standard deviation of individual column',
-                        '0th Percentile means that the values are smaller than all 100% of the rows',
-                        '25th Percentile means that the values are bigger than 25% and smaller than only 75% of the rows',
-                        '50th Percentile means that the values are bigger than 50% and smaller than only 50% of the rows',
-                        '75th Percentile means that the values are bigger than 75% and smaller than only 25% of the rows',
-                        '100th Percentile means that the values are bigger than 100% of the rows'],
-                            header = table.columns().header();
-                        for (var i = 0; i < tips.length; i++) {
-                          $(header[i]).attr('title', tips[i]);
-                        }"
-        )
-      )
-```
 
 ```{r}
-#print(
- aa <-  dataset_updated %>%
-    select_if(., is.numeric) %>%
-    skimr::skim() %>%
-    mutate_if(is.numeric, round, digits = 4) %>%
-    rename_at(.vars = vars(starts_with("skim_")), .funs = funs(sub("skim_", "", .))) %>%
-    rename_at(.vars = vars(starts_with("numeric.")), .funs = funs(sub("numeric.", "", .))) %>%
-    select(-c(type, n_missing, complete_rate)) %>%
-    mutate(n_row = nrow(dataset_updated),
-           n_missing = rowSums(is.na(.))
-           # ,n_non_missing = n_row - n_missing
-           )
-Table(aa,scroll = TRUE, limit = 20)
+final_table <- summary_eda(dataset_updated)
+Table(final_table, scroll = TRUE)
 ```
 
 # 6. Data distribution
@@ -1155,7 +1127,7 @@ generateDistributionPlot <- function(data, column){
 
 ```
 
-```{r dist_plots_true2, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
+```{r dist_plots_true2, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6, fig.align='center'}
 eda_cols <- names(dataset_updated)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
@@ -1193,15 +1165,11 @@ quantile_outlier_plots_fn <- function(data, outlier_check_var, data_cat = datase
 }
 ```
 
-```{r message=FALSE, warning=FALSE,results='asis', fig.height=6, fig.width=6}
+```{r message=FALSE, warning=FALSE,results='asis', fig.height=6, fig.width=6,fig.align='center'}
 ## the below code gives the interactive plot for Quantile Outlier analysis for numerical variables 
 box_plots <- list()
 for (x in names(dataset_updated)) {
-
-box_plots[[x]] <- quantile_outlier_plots_fn(data = dataset_updated, outlier_check_var = x)[[1]]
-
-}
-
+box_plots[[x]] <- quantile_outlier_plots_fn(data = dataset_updated, outlier_check_var = x)[[1]]}
 gridExtra::grid.arrange(grobs = box_plots, ncol = 3)
 
 ```
@@ -1212,7 +1180,7 @@ In this section we are calculating **pearson correlation** which is a
 bivariate correlation value measuring the linear correlation between two
 numeric columns. The output shown is a matrix.
 
-```{r Correlation, echo=FALSE, fig.height=6, fig.width=6, purl=FALSE}
+```{r Correlation, echo=FALSE, fig.height=6, fig.width=6, purl=FALSE,fig.align='center'}
 
 corrplot::corrplot(cor(dataset_updated), 
                             method = "color", 
@@ -1238,7 +1206,7 @@ corrplot::corrplot(cor(dataset_updated),
 
 # 6.1 Train - Test Split
 
-Let us first split the data into train and test. We will use 80% of the
+Let us split the data into train and test. We will randomly select 80% of the
 data as train and remaining as test.
 
 ```{r train-test dataset_updated,warning=FALSE,message=FALSE,eval = global_var}
@@ -1260,7 +1228,7 @@ columns.
 
 ### 6.1.1 Train Distribution
 
-```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
+```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
 eda_cols <- names(dataset_updated_train)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
@@ -1271,7 +1239,7 @@ do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = 
 
 ### 6.1.2 Test Distribution
 
-```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6}
+```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
 eda_cols <- names(dataset_updated_test)
 # Here we plot the distribution of columns selected by user for numerical transformation
 dist_list <- lapply(1:length(eda_cols), function(i){
@@ -1318,7 +1286,7 @@ HVT::trainHVT(
 
 Each of the parameters have been explained below
 
--   **`dataset`** - A dataframe with numeric columns
+-   **`dataset`** - A dataframe with numeric columns for training the model
 
 -   **`n_cells`** - An integer indicating the number of cells per
     hierarchy (level)
@@ -1331,8 +1299,8 @@ Each of the parameters have been explained below
     quantization error of the cell is above the defined quantization
     error threshold
 
--   **`distance_metric`** - The distance metric can be `L1_Norm` or
-    `L2_Norm`. `L1_Norm` is selected by default. The distance metric is
+-   **`distance_metric`** - The distance metric can be `L1_Norm(Manhattan)` or
+    `L2_Norm(Euclidean)`. `L1_Norm` is selected by default. The distance metric is
     used to calculate the distance between an `n` dimensional point and
     centroid. The user can also pass a custom function to calculate this
     distance
@@ -1351,7 +1319,7 @@ Each of the parameters have been explained below
     algorithm supports Z-score normalization
 
 -   **`diagnose`** - A logical value indicating whether user wants to
-    perform diagnostics on the model. Default value is TRUE.
+    perform diagnostics on the model. Default value is FALSE.
 
 -   **`hvt_validation`** - A logical value indicating whether user wants
     to holdout a validation set and find mean absolute deviation of the
@@ -1386,13 +1354,14 @@ hvt.results <-trainHVT(dataset_updated_train,
                           train_validation_split_ratio=0.8)
 ```
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 # Voronoi tessellation plot for level one
 plotHVT(hvt.results,
         line.width = c(0.6 ),
         color.vec = c("#141B41"),
         centroid.size = 1,
-        maxDepth = 1, heatmap = '2Dhvt')
+        maxDepth = 1, 
+        heatmap = '2Dhvt')
 ```
 
 The table below shows number of cells having quantization error below
@@ -1407,10 +1376,10 @@ As seen in the above table, 95% of the cells have a quantization error
 below the threshold. Let's have a closer look at `Quant.Error` variable
 in the below table. The values for `Quant.Error` of the cells which have
 hit the Quantization Error threshold are shown in red. Here we are
-showing just top 50 rows for the sake of brevity.
+showing just top 100 rows for the sake of brevity.
 
 ```{r}
-summaryTable(hvt.results[[3]][['summary']])
+summaryTable(hvt.results[[3]][['summary']], scroll = TRUE, limit = 100)
 ```
 
 ## 7.1 Model Diagnostics and Validation
@@ -1420,7 +1389,7 @@ summaryTable(hvt.results[[3]][['summary']])
 **HVT model diagnostics** are used to evaluate the model fit and
 investigate the proximity between centroids. The distribution of
 proximity value can also be used to decided an optimum Mean Absolute
-Deviation threshold for HVT model based prediction.
+Deviation threshold for HVT model based scoring.
 
 The diagnosis can be enabled by setting the **`diagnose`** parameter to
 `TRUE` while building the HVT Model.
@@ -1459,10 +1428,10 @@ an object to itself. This minimum distance value gives the
 **proximity(distance to nearest neighbour)** of other object in the
 datatable.
 
-plotModelDiagnostics() function can be used to print diagnostic plots for HVT model
+``plotModelDiagnostics()` function can be used to print diagnostic plots for HVT model
 or HVT scoring.
 
-The plotModelDiagnostics() function for HVT Model provides 5 diagnostic plots which
+The `plotModelDiagnostics()` function for HVT Model provides 5 diagnostic plots which
 are as follows:
 
 -   Mean Absolute Deviation Plot: Calibration: HVT Model \| Train Data
@@ -1490,7 +1459,7 @@ at varying Mean Absolute Deviation values. It can be seen from the plot
 that at **0.1** Mean Absolute Deviation value the percentage anomalies
 drop below one percent.
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 p3=hvt.results[[4]]$mad_plot_train+ggtitle("Mean Absolute Deviation Plot: Calibration: HVT Model | Train Data")
 p3
 ```
@@ -1501,7 +1470,7 @@ The second diagnostics plot helps us in finding out how the points in
 the training data are distributed. Shown below is a histogram of minimum
 distances with nearest neighbour for each observation in train data.
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 p1=hvt.results[[4]]$datapoint_plot+ggtitle("Minimum Intra-DataPoint Distance Plot: Train Data")
 p1
 ```
@@ -1514,7 +1483,7 @@ The third diagnostics plot helps us in finding out how the centroids in
 the HVT Model are distributed. Shown below is a histogram of minimum
 distances with nearest neighbour for each centroid in HVT Model
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 p2=hvt.results[[4]]$cent_plot+ggtitle("Minimum Intra-Centroid Distance Plot: HVT Model | Train Data")
 p2
 ```
@@ -1529,7 +1498,7 @@ The fourth diagnostics plot finds out distribution of number of
 observations in each centroid. Shown below is a histogram to depict the
 same.
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 p4=hvt.results[[4]]$number_plot+ggtitle("Distribution of Number of Observations in Cells: HVT Model | Train Data")
 p4
 ```
@@ -1542,7 +1511,7 @@ is **7**.
 The fifth diagnostics plot finds out number of Singleton centroids
 (Segments/Centroids with single observation.)
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 p5=hvt.results[[4]]$singleton_piechart
 p5
 ```
@@ -1553,7 +1522,7 @@ The Mean Absolute Deviation Plot for Validation Data has been shown in
 above section. Alternatively to fetch it separately, we can use the
 following code:
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6,fig.align='center'}
 m1=hvt.results[[5]][["mad_plot"]]+ggtitle("Mean Absolute Deviation Plot:Validation")
 m1
 ```
@@ -1573,12 +1542,12 @@ The following steps explain the scoring method for a single point in
 the test dataset :
 
 1.  Calculate the distance between the point and the centroid of all the
-    cells in the first level
-2.  Find the cell whose centroid has minimum distance to the point
-3.  Check if the cell drills down further to form more cells
+    cells in the first level.
+2.  Find the cell whose centroid has minimum distance to the point.
+3.  Check if the cell drills down further to form more cells.
 4.  If it doesn't, return the path. Or else repeat steps 1 to 4 till we
-    reach a level at which the cell doesn't drill down further
-
+    reach a level at which the cell doesn't drill down further.
+    
 ## 8.2 Load Test Data
 
 The user can provide an absolute or relative path in the cell below to
@@ -1589,8 +1558,8 @@ load_test_data=FALSE
 # Loading the data in the Rstudio environment 
 # Please change the path in the code line below to the path location of the .csv file
 if(load_test_data){
-  file_name <- " " ## Single_hotel_Time_Series.csv,HotelPanel_100.csv
-  file_path <- " "
+  file_name <- " " #enter the name of the local file for validation
+  file_path <- " " #enter the path of the local file for validation
   file_load <- paste0(file_path, file_name)
   
   dataset_updated_test <- as.data.frame(fread(file_load))
@@ -1620,7 +1589,8 @@ if(load_test_data){
 In this section we will perform one hot encoding on test dataset, based
 on whether one hot encoding has been performed on train dataset.
 
-```{r dummify_Test, purl=FALSE,eval = dummify_cat,echo=dummify_cat,class.source = 'fold-show'}
+```{r dummify_Test, purl=FALSE,eval = dummify_cat,class.source = 'fold-show'}
+
 if(dummify_cat){
 dummified_cols_test <- dataset_updated_test %>% dplyr::select(dum_cols) %>%
   dummies::dummy.data.frame(dummy.classes = "ALL", sep = "_")
@@ -1632,11 +1602,13 @@ names(dummified_cols_test) <- gsub(pattern = "[^[:alnum:]]+",
 columns_difference=setdiff(dummified_cols,names(dummified_cols_test))
 dummified_cols_test[,columns_difference]=0
 
-dataset_updated_test <- dataset_updated_test %>% cbind(dummified_cols_test) %>%     # append encoded columns
+dataset_updated_test <- dataset_updated_test %>% cbind(dummified_cols_test) %>%     
+  # append encoded columns
   dplyr::select(-dum_cols)
 # remove the old categorical columns
 dummified_cols_test %>% head(5) %>% DT::datatable(options = options)
 }
+
 ```
 
 ### 8.2.2 Subsetting Test Dataset
@@ -1674,7 +1646,7 @@ The important parameters for the function `scoreHVT` are as below
 
 - **`data`** - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
--  **`hvt.results.model`** - A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+-  **`hvt.results.model`** - A list obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
 -  **`child.level`** - A number indicating the depth for which the heat map is to be plotted. Each depth represents a different level of clustering or partitioning of the data.
 
@@ -1684,7 +1656,7 @@ The important parameters for the function `scoreHVT` are as below
 
 * **`color.vec`**	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameter)
 
-* **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
+* **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
 
 * **`seed`**  - A Random seed.
 
@@ -1717,13 +1689,12 @@ hvt.score <- scoreHVT(
 )
 ```
 
-The plotModelDiagnostics() function can be called for scoring object as well.
+The `plotModelDiagnostics()` function can be called for scoring object as well.
 Shown below is the comparison of Mean Absolute Deviation Plot for train
 data and test data.
 
 ::: superbigimage
-```{r, fig.width=8,fig.height=10,class.source = 'fold-show'}
-
+```{r, fig.width=8,fig.height=10,class.source = 'fold-show',fig.align='center'}
 plotModelDiagnostics(hvt.score)
 ```
 :::
@@ -1739,9 +1710,6 @@ Quant.Error.Actual <- QEdata %>%
       transmute(Quant.Error = Quant.Error/ n) %>% 
       unlist()%>%round(4)
 
-# predictions[["predictPlot"]]
-# 
-# Table(predictions$predictions %>% dplyr::relocate(Cell_path), scroll = TRUE, limit = 10)
 ```
 
 ### 8.3.1 Quantization Error Comparison (Train vs. Test)
@@ -1758,15 +1726,15 @@ percentageAnomalies = formatC((sum(QECompareDf$n) / nrow(dataset_updated_test)) 
                                 100, digits = 2, format = "f") %>% paste0("%")
 ```
 
-**Number of test data points:`r nrow(dataset_updated_test)` \| Number of
-anomalous data points:`r sum(QECompareDf$n)` \| Percentage of anomalous
+**Number of test data points: `r nrow(dataset_updated_test)` \| Number of
+anomalous data points: `r sum(QECompareDf$n)` \| Percentage of anomalous
 data points: `r percentageAnomalies`** <br> **Mean QE for fitted data:
 `r Quant.Error.Actual %>% round(digits = 4)` \| Mean QE for test data:
 `r hvt.score[["scoredPredictedData"]]$Quant.Error %>%  mean() %>% round(digits = 4)`
 \| Difference in QE between fitted and test data:
 `r abs(Quant.Error.Actual%>%round(digits = 4)-hvt.score[["scoredPredictedData"]]$Quant.Error%>%mean() %>%round(digits = 4))`**
 
-```{r fig.height=7.5, fig.width=6}
+```{r fig.height=7.5, fig.width=6,fig.align='center'}
 plotQuantErrorHistogram(hvt.results,hvt.score)
 ```
 
@@ -1882,7 +1850,7 @@ folder.
 predictClusterData <- hvt.score[["scoredPredictedData"]]%>%as.data.frame()
  predictClusterData  %>% head(100) %>% round(2)%>%
       as.data.frame() %>%
-      Table(scroll = TRUE, limit = 20)
+      Table(scroll = TRUE, limit = 100)
 ```
 
 # 10. Applications

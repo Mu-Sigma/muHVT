@@ -92,7 +92,7 @@ mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
 hvt_mapC <- trainHVT(data_without_novelty,n_cells = 15,
                     depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
                     error_metric = "max", quant_method = "kmeans",
-                    projection.scale = 10, scale_summary = mapA_scale_summary)
+                    projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary)
                     
 ##SCORE LAYERED
 data_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)

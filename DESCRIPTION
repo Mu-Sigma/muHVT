@@ -1,6 +1,6 @@
 Package: HVT
 Type: Package
-Date: 2024-02-12
+Date: 2024-02-27
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
 Version: 24.2.1
@@ -28,5 +28,6 @@ Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-02-12 18:50:00 UTC
+Date/Publication: 2024-02-27 22:50:00 UTC
 
+  

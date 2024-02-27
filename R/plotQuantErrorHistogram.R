@@ -6,7 +6,7 @@
 #' function.
 #' @param hvt.scoring List. A list of hvt.scoring obtained from the scoreHVT
 #' function.
-#' @return Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scores.
+#' @return Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and predictions
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Diagnostics_or_Validation

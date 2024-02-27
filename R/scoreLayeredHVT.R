@@ -59,7 +59,7 @@
 #' hvt_mapC <- trainHVT(data_without_novelty,n_cells = 15,
 #'                     depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
 #'                     error_metric = "max", quant_method = "kmeans",
-#'                     projection.scale = 10, scale_summary = mapA_scale_summary)
+#'                     projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary)
 #'                     
 #' ##SCORE LAYERED
 #' data_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)
@@ -221,11 +221,11 @@ scoreLayeredHVT <- function(data,
     pred_cols <- unique(sub("\\..*", "", names(df))) # Extract unique column names
     pred_values <- vector("list", length(pred_cols))
 
-    pred_values <- lapply(seq_along(pred_cols), function(i) {
-  col_x <- paste0(pred_cols[i], ".x")
-  col_y <- paste0(pred_cols[i], ".y")
-  coalesce(df[[col_x]], df[[col_y]])
-})
+    for (i in seq_along(pred_cols)) {
+      col_x <- paste0(pred_cols[i], ".x")
+      col_y <- paste0(pred_cols[i], ".y")
+      pred_values[[i]] <- coalesce(df[[col_x]], df[[col_y]])
+    }
 
     df1 <- as.data.frame(pred_values)
     names(df1) <- paste0("pred_", pred_cols) 
@@ -240,12 +240,13 @@ scoreLayeredHVT <- function(data,
     actual_cols <- grep(paste0("^", actual_prefix), names(data), value = TRUE)
     df_new <- data.frame(matrix(ncol = 1, nrow = nrow(data)))
     temp0 <<- data.frame(matrix(nrow = nrow(data)))
-    lapply(actual_cols, function(col) {
-    predicted_col <- gsub(actual_prefix, predicted_prefix, col)
-    if (predicted_col %in% names(data)) {
+    for (col in actual_cols) {
+      predicted_col <- gsub(actual_prefix, predicted_prefix, col)
+
+      if (predicted_col %in% names(data)) {
         temp0[[predicted_col]] <<- abs(data[[col]] - data[[predicted_col]])
+      }
     }
-})
     temp0 <- temp0 %>% purrr::discard(~ all(is.na(.) | . == ""))
     df_new[, 1] <- rowMeans(temp0)
     #df_new <- round(df_new,4)

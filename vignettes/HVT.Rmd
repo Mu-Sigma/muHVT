@@ -28,15 +28,26 @@ vignette: >
     padding-bottom: 20px;
     background-color: #f9f9f9;
     border-right: 1px solid #ddd;
-    margin-top: -18em;
+    margin-top: -14.5em;
 }
 
 .main-container {
   margin-left: 220px; /* Adjust this value to match the width of the TOC + some margin */
 }
+body{
+max-width:1200px;
+width: 50%;
+}
+p {
+text-align: justify;
+}
 
 li {
   padding-bottom: 5px;
+}
+
+.caption {
+  text-align: center;
 }
 
 <!-- /* CSS for adding dots after section numbers */ -->
@@ -51,7 +62,7 @@ li {
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  out.width = "672px",
+  out.width = "auto",
   out.height = "480px",
   fig.width = 7,
   fig.height = 5,
@@ -77,7 +88,7 @@ The HVT package allows creation of visually stunning tessellations, showcasing t
 
 
 
-```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 1:  Heatmap Visualization of a Torus with 900 Cells'}
+```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1:  Heatmap Visualization of a Torus with 900 Cells'}
 knitr::include_graphics('./torus2.png')
 ```
 
@@ -96,17 +107,17 @@ Following are the links to the vignettes for the HVT package:
 
 ## HVT (v24.2.1) | What's New? {-}
 
-12th February, 2024
+23rd February, 2024
 
 In this version of HVT package, the following new features have been introduced:
 
-1. **Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
+1. **Updated Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
 
 * `HVT` to `trainHVT`
 * `predictHVT` to `scoreHVT`
 * `predictLayerHVT` to `scoreLayeredHVT`
 
-2. **Restructured:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package's PDF documentation. Given below are the few instances.
+2. **Restructured Functions:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package’s PDF documentation. Given below are the few instances.
 
 * `trainHVT` function now resides within the `Training_or_Compression` section.
 * `plotHVT` function now resides within the `Tessellation_and_Heatmap` section.
@@ -123,17 +134,17 @@ In this version of HVT package, the following new features have been introduced:
 
 This version of HVT package offers functionality to score cells with layers based on a sequence of maps created using `scoreLayeredHVT`. Given below are the steps to created the successive set of maps.
 
-1. **Map A** - The output of trainHVT function which is trained on parent data.
+1. **Map A** - The output of `trainHVT` function which is trained on parent data.
 
-2. **Map B** - The output of trainHVT function which is trained on the 'data with novelty' created from removeNovelty function.
+2. **Map B** - The output of `trainHVT` function which is trained on the 'data with novelty' created from `removeNovelty` function.
 
-3. **Map C** - The output of trainHVT function which is trained on the 'data without novelty' created from removeNovelty function.
+3. **Map C** - The output of `trainHVT` function which is trained on the 'data without novelty' created from `removeNovelty` function.
 
 The `scoreLayeredHVT` function uses these three maps to score the test datapoints.
 
 Let us try to understand the steps with the help of the diagram below
 
-```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,out.width='90%',fig.height=8,fig.cap='Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()'}
+```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()'}
 #knitr::include_graphics('./mlayer1.png')
 knitr::include_graphics('./scoreLayeredHVT_function.png')
 ```

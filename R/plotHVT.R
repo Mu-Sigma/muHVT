@@ -4,7 +4,7 @@
 #'  Interactive surface plot.
 #' @param hvt.results (2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
-#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are '1D',
+#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
 #' '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.
 #' @param line.width (2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
@@ -57,7 +57,8 @@
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'dataset_hvt <- dataset[,-c(1)]
+#'dataset_hvt <- dataset[,-c(1)] 
+#'hvt.results <- list()
 #'hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
 #'                        distance_metric = "L1_Norm", error_metric = "mean",
 #'                        projection.scale = 10, normalize = TRUE, seed = 123,
@@ -107,14 +108,18 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     y <- hvq_k[["summary"]][["Cell.ID"]]
     data_plot <- data.frame(x,y)
     
-    gg_plot <- ggplot(data_plot, aes(x = y, y = x, text = paste("1D point: ", round(x,4), "<br>Cell ID: ", y))) +
-      geom_point(color = "blue", alpha= 0.5,size = 1.5) +
-      theme_minimal() +
-      labs(title = "Sammons 1D x Cell ID", x = "Cell ID", y = "1D points")
+      if(length(y) <= 100) {dot_size <- 5} else if(length(y) <= 500) {dot_size <- 2.5} 
+      else if(length(y) <= 1000) {dot_size <- 1.5} else {dot_size <- 1}
     
-      gg_plot <- plotly::ggplotly(gg_plot, tooltip = "text")
-      
-     return(suppressMessages(gg_plot))  
+    plotly_obj <-  plotly::plot_ly(data_plot, x = ~y, y = ~x, type = 'scatter', mode = 'markers',
+            marker = list(size = dot_size, color = 'blue', symbol = 'circle'),
+            text = ~paste('Cell ID:', y, '<br>1D point:', round(x,4)), 
+            hoverinfo = 'text') %>% 
+            plotly::layout(title = 'Sammons 1D x Cell ID',
+             xaxis = list(title = 'Cell ID', zeroline = FALSE),
+             yaxis = list(title = '1D points',zeroline = FALSE))
+    
+     return(suppressMessages(plotly_obj))  
       
      } else if (heatmap == '2Dhvt') {
     

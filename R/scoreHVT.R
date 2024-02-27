@@ -60,28 +60,17 @@ scoreHVT <- function(data,
                        error_metric = "max",
                        yVar = NULL
                        ) {
-  # browser()
-
   set.seed(seed)
   requireNamespace("dplyr")
   requireNamespace("purrr")
-  # require("plotly")
-  # requireNamespace("rjson")
   requireNamespace("data.table")
 
-  # browser()
   if (!("Cell.ID" %in% colnames(hvt.results.model[[3]]$summary))) {
     hvt.results.model[[3]]$summary <- getCellId(hvt.results = hvt.results.model)
   }
   hvt.results.model[[3]]$summary <- cbind(hvt.results.model[[3]]$summary, centroidRadius = unlist(hvt.results.model[[3]]$max_QE))
 
-
-  # distance_metric <-
-  #   ifelse(distance_metric == "L1_Norm", "manhattan", "euclidean")
-
   summary_list <- hvt.results.model[[3]]
-  # n_cells <- n_cells.hmap
-
   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
 
   if (!all(train_colnames %in% colnames(data))) {
@@ -161,10 +150,10 @@ scoreHVT <- function(data,
   # Renaming fitted yVar with prefix Fitted
   if (!is.null(yVar)) {
     if (length(yVar) == 3) {
-      lapply(yVar, function(var) {
-  indexScored <- which(colnames(predict_test_data2) == var)
-  colnames(predict_test_data2)[indexScored] <- paste0("Fitted.", var)
-})
+      for (i in 1:length(yVar)) {
+        indexScored <- which(colnames(predict_test_data2) == yVar[i])
+        colnames(predict_test_data2)[indexScored] <- paste0("Fitted.", yVar[i])
+      }
     } else {
       indexScored <- which(colnames(predict_test_data2) == yVar)
       colnames(predict_test_data2)[indexScored] <- paste0("Fitted.", yVar)
@@ -411,22 +400,21 @@ scoreHVT <- function(data,
   subtract_predicted_actual <- function(data, actual_prefix = "act_", predicted_prefix = "pred_") {
     actual_cols <- grep(paste0("^", actual_prefix), names(data), value = TRUE)
     df_new <- data.frame(matrix(ncol = 1, nrow = nrow(data)))
-    temp0 <<- data.frame(matrix(nrow = nrow(data), ncol = length(actual_cols)))
-    names(temp0) <<- gsub(actual_prefix, predicted_prefix, actual_cols)
-    
-    lapply(actual_cols, function(col) {
+    temp0 <<- data.frame(matrix(nrow = nrow(data)))
+    for (col in actual_cols) {
       predicted_col <- gsub(actual_prefix, predicted_prefix, col)
-      
+
       if (predicted_col %in% names(data)) {
         temp0[[predicted_col]] <<- abs(data[[col]] - data[[predicted_col]])
       }
-    })
-    
-    temp0 <<- temp0 %>% purrr::discard(~ all(is.na(.) | . == ""))
-    df_new[, 1] <- rowMeans(temp0, na.rm = TRUE)
-    
+    }
+    temp0 <- temp0 %>% purrr::discard(~ all(is.na(.) | . == ""))
+    df_new[, 1] <- rowMeans(temp0)
+    #df_new <- round(df_new,4)
     return(df_new)
   }
+
+
 
   diff <- subtract_predicted_actual(merged_result)
   merged_result$diff <- diff$matrix.ncol...1..nrow...nrow.data..
