@@ -2,9 +2,9 @@
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D,2D or
 #'  Interactive surface plot.
-#' @param hvt.results (2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
+#' @param hvt.results (2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
-#' @param heatmap Character. An option to indicate which type of plot should be generated. Accepted entries are 
+#' @param plot.type Character. An option to indicate which type of plot should be generated. Accepted entries are 
 #' '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.
 #' @param line.width (2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
@@ -16,9 +16,6 @@
 #' tessellations. 
 #' @param title (2Dhvt) String. Set a title for the plot. (default = NULL)
 #' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)
-#' @param  palette.color (2Dheatmap) Numeric. A number indicating the heat map color palette. 1 - rainbow,
-#'  2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
-#'  6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).
 #' @param dataset (2Dheatmap) Data frame. The input data set.
 #' @param child.level (2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
@@ -28,8 +25,6 @@
 #' @param previous_level_heatmap (2Dheatmap) Logical. If TRUE, the heatmap of previous level
 #' will be overlayed on the heatmap of selected level. If FALSE, the heatmap
 #' of only selected level will be plotted
-#' @param show.points (2Dheatmap) Logical. Indicating if the centroids should
-#' be plotted on the tessellations. (default = FALSE)
 #' @param asp (2Dheatmap) Numeric. Indicating the aspect ratio type. For flexible aspect
 #' ratio set, asp = NA. (default = 1)
 #' @param ask (2Dheatmap) Logical. If TRUE (and the R session is interactive) the user is
@@ -65,29 +60,29 @@
 #'                        quant_method="kmeans")
 #'                        
 #' #1D - Plot                        
-#' plotHVT(heatmap='1D')  
+#' plotHVT(plot.type='1D')  
 #'                      
 #' #2D - HVT Plot
 #' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
-#' maxDepth = 1,heatmap = '2Dhvt')
+#' maxDepth = 1,plot.type = '2Dhvt')
 #' 
 #' #2D - HEATMAP
 #' plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
 #' child.level = 1, hmap.cols = "DAX",
 #' line.width = c(0.6), color.vec = ('#000000') , 
-#' pch1 = 21, heatmap = '2Dheatmap')
+#' pch1 = 21, plot.type = '2Dheatmap')
 #' 
 #' #Interactive surface plot
 #' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
-#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'surface_plot' )
+#' layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, plot.type = 'surface_plot' )
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color = 6, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, show.points = FALSE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, heatmap = '2Dhvt') {
-  if (is.null(heatmap)) {
-    heatmap <- '2Dhvt'
+plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols, previous_level_heatmap = TRUE, asp = 1, ask = TRUE, tess.label = NULL, quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, plot.type = '2Dhvt') {
+  if (is.null(plot.type)) {
+    plot.type <- '2Dhvt'
   }
-  if (heatmap == '1D') {
+  if (plot.type == '1D') {
    # browser()
     ####hvq output as global vaiable
     generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")  
@@ -121,7 +116,30 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     
      return(suppressMessages(plotly_obj))  
       
-     } else if (heatmap == '2Dhvt') {
+  } else if (plot.type == '2Dproj'){
+   
+     hvt_centroids_list <- hvt.results
+      
+    hvt_coordinates<- hvt_centroids_list[[2]][[1]][["1"]]
+    centroids <<- list()
+    coordinates_value <- lapply(1:length(hvt_coordinates), function(x){
+      centroids <-hvt_coordinates[[x]]
+      coordinates <- centroids$pt
+    })
+    centroid_coordinates<<- do.call(rbind.data.frame, coordinates_value)  
+    colnames(centroid_coordinates) <- c("x_coord","y_coord")
+    centroid_coordinates$Row.No <- as.numeric(row.names(centroid_coordinates)) 
+    centroid_coordinates <- centroid_coordinates %>% dplyr::select(Row.No,x_coord,y_coord)
+    centroid_coordinates1 <- centroid_coordinates %>% data.frame() %>% round(4)
+
+    gg_proj <- ggplot(centroid_coordinates1, aes(x_coord, y_coord)) +
+      geom_point(color = "blue") +
+      labs(x = "X", y = "Y")
+    
+    
+    return(suppressMessages(gg_proj))
+    
+     } else if (plot.type == '2Dhvt') {
     
     hvt_list <- hvt.results
     
@@ -288,7 +306,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
     
-  } else if (heatmap == '2Dheatmap') {
+  } else if (plot.type == '2Dheatmap') {
     hvt_list <- hvt.results
     # maxDepth <- child.level
     maxDepth <- min(child.level, max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
@@ -554,7 +572,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     
     return(suppressMessages(p))
     
-  } else if (heatmap == 'surface_plot') {
+  } else if (plot.type == 'surface_plot') {
     
     maxDepth <- min(child.level, max(hvt.results[[3]][["summary"]]
                                      %>% stats::na.omit()
@@ -818,6 +836,6 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, palette.color
     return(suppressMessages(p))
     
   } else {
-    stop("Invalid value for 'heatmap'. Expected '1D', '2Dhvt','2Dheatmap', or 'surface_plot'.")
+    stop("Invalid value for 'plot.type'. Expected '1D','2Dproj', '2Dhvt','2Dheatmap', or 'surface_plot'.")
   }
 }
