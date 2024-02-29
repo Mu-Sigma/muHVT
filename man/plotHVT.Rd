@@ -9,7 +9,6 @@ plotHVT(
   line.width,
   color.vec,
   pch1 = 21,
-  palette.color = 6,
   centroid.size = 1.5,
   title = NULL,
   maxDepth = NULL,
@@ -17,7 +16,6 @@ plotHVT(
   child.level,
   hmap.cols,
   previous_level_heatmap = TRUE,
-  show.points = FALSE,
   asp = 1,
   ask = TRUE,
   tess.label = NULL,
@@ -27,11 +25,11 @@ plotHVT(
   sepration_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
-  heatmap = "2Dhvt"
+  plot.type = "2Dhvt"
 )
 }
 \arguments{
-\item{hvt.results}{(2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
+\item{hvt.results}{(2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 which has the details of the tessellations to be plotted.}
 
 \item{line.width}{(2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
@@ -42,10 +40,6 @@ the tessellations at each level.}
 
 \item{pch1}{(2Dhvt/2Dheatmap) Numeric. Symbol type of the centroids of the tessellations
 (parent levels). Default value is 21.}
-
-\item{palette.color}{(2Dheatmap) Numeric. A number indicating the heat map color palette. 1 - rainbow,
-2 - heat.colors, 3 - terrain.colors, 4 - topo.colors, 5 - cm.colors, 
-6 - BlCyGrYlRd (Blue,Cyan,Green,Yellow,Red) color (default = 6).}
 
 \item{centroid.size}{(2Dhvt/2Dheatmap) Numeric. Size of centroids of first level
 tessellations.}
@@ -66,9 +60,6 @@ plotted.}
 \item{previous_level_heatmap}{(2Dheatmap) Logical. If TRUE, the heatmap of previous level
 will be overlayed on the heatmap of selected level. If FALSE, the heatmap
 of only selected level will be plotted}
-
-\item{show.points}{(2Dheatmap) Logical. Indicating if the centroids should
-be plotted on the tessellations. (default = FALSE)}
 
 \item{asp}{(2Dheatmap) Numeric. Indicating the aspect ratio type. For flexible aspect
 ratio set, asp = NA. (default = 1)}
@@ -94,7 +85,7 @@ be scaled. (default = 0.5)}
 
 \item{dim_size}{(surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 
-\item{heatmap}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
+\item{plot.type}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
 '2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.}
 }
 \value{
@@ -118,21 +109,21 @@ hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2,
                        quant_method="kmeans")
                        
 #1D - Plot                        
-plotHVT(heatmap='1D')  
+plotHVT(plot.type='1D')  
                      
 #2D - HVT Plot
 plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
-maxDepth = 1,heatmap = '2Dhvt')
+maxDepth = 1,plot.type = '2Dhvt')
 
 #2D - HEATMAP
 plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
 child.level = 1, hmap.cols = "DAX",
 line.width = c(0.6), color.vec = ('#000000') , 
-pch1 = 21, heatmap = '2Dheatmap')
+pch1 = 21, plot.type = '2Dheatmap')
 
 #Interactive surface plot
 plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
-layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, heatmap = 'surface_plot' )
+layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, plot.type = 'surface_plot' )
 }
 \seealso{
 \code{\link{trainHVT}}
