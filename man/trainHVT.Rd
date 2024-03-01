@@ -23,62 +23,74 @@ trainHVT(
 )
 }
 \arguments{
-\item{dataset}{Data frame. A data frame with different columns is given as
-input.}
+\item{dataset}{Dataframe. A dataframe, with numeric columns (features) that will be used for training the model.}
 
-\item{min_compression_perc}{Numeric. An integer indicating the minimum percent compression rate to
-be achieved for the dataset}
+\item{min_compression_perc}{Numeric. An integer, indicating the minimum compression percentage to be achieved for the dataset. 
+It indicates the desired level of reduction in dataset size compared to its original size.}
 
-\item{n_cells}{Numeric. An integer indicating the number of cells per
-hierarchy (level)}
+\item{n_cells}{Numeric. An integer, indicating the number of cells per hierarchy (level).
+This parameter determines the granularity or level of detail in the hierarchical vector quantization.}
 
-\item{depth}{Numeric. An integer indicating the number of levels. (1 = No
-hierarchy, 2 = 2 levels, etc ...)}
+\item{depth}{Numeric. An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), 
+while higher values indicate multiple levels (hierarchy).}
 
-\item{quant.err}{Numeric. A number indicating the quantization error
-treshold.}
+\item{quant.err}{Numeric. An number indicating the quantization error threshold.
+A cell will only breakdown into further cells if the quantization error of the cell is 
+above the defined quantization error threshold.}
 
-\item{projection.scale}{Numeric. A number indicating the scale factor for
-the tesselations so as to visualize the sub-tesselations well enough.}
+\item{projection.scale}{Numeric. A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations
+well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.}
 
-\item{normalize}{Logical. A logical value indicating if the columns in your
-dataset should be normalized. Default value is TRUE.}
+\item{normalize}{Logical. A logical value indicating if the dataset should be normalized. When set to TRUE, 
+scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).}
 
-\item{seed}{Numeric. Random Seed.}
+\item{seed}{Numeric. A Random Numeric Seed to preserve the repeatability.}
 
-\item{distance_metric}{Character. The distance metric can be "L1_Norm" or "Manhattan". L1_Norm is selected by default.}
+\item{distance_metric}{Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
+The distance metric is used to calculate the distance between an n dimensional point and centroid.}
 
-\item{error_metric}{Character. The error metric can be "mean" or "max". mean is selected by default}
+\item{error_metric}{Character. The error metric can be mean or max. max is selected by default. 
+max will return the max of m values and mean will take mean of m values where
+each value is a distance between a point and centroid of the cell.}
 
-\item{quant_method}{Character. The quant_method can be "kmeans" or "kmedoids". kmeans is selected by default}
+\item{quant_method}{Character. The quantization method can be kmeans or kmedoids. Kmeans uses means (centroids) as cluster centers
+while Kmedoids uses actual data points (medoids) as cluster centers. kmeans is selected by default.}
 
-\item{scale_summary}{List. A list with mean and standard deviation values for all the features in the dataset. 
-Pass the scale summary when the input dataset is already scaled or normalize is set to False.}
+\item{scale_summary}{List. A list with user defined mean and standard deviation values for all the features in the dataset. 
+Pass the scale summary when normalize is set to FALSE.}
 
-\item{diagnose}{Logical. A logical value indicating if the diagnose is required. Default value is TRUE.}
+\item{diagnose}{Logical. A logical value indicating whether user wants to perform diagnostics on the model. 
+Default value is FALSE.}
 
-\item{hvt_validation}{Logical. A logical value indicating if the MAD values are to tested for validation set. Default value is FALSE.}
+\item{hvt_validation}{Logical. A logical value indicating whether user wants to holdout a validation set and find 
+mean absolute deviation of the validation points from the centroid. Default value is FALSE.}
 
-\item{train_validation_split_ratio}{Numeric. A numeric value indicating the train and validation split ratio.}
+\item{train_validation_split_ratio}{Numeric. A numeric value indicating train validation split ratio. 
+This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8}
 }
 \value{
-A list that contains the hierarchical tesselation information. This
+A Nested list that contains the hierarchical tessellation information. This
 list has to be given as input argument to plot the tessellations.
-\item{[[1]] }{List. Information about the tesselation co-ordinates - level
-wise} \item{[[2]] }{List. Information about the polygon co-ordinates - level
-wise} 
-\item{[[3]] }{List. Information about the hierarchical vector quantized data - level wise}
-\item{[[4]] }{List. Information about the model diagnosis- selected level}
-\item{[[5]] }{List. Information about the MAD values and percentage anomalies for validation dataset}
-\item{[[6]] }{List. Information about the trained model}
+\item{[[1]] }{A list containing information related to plotting tessellations. 
+This information will include coordinates, boundaries, and other details necessary for visualizing the tessellations} 
+\item{[[2]] }{A list containing information related to Sammon’s projection coordinates of the data points
+in the reduced-dimensional space.}
+\item{[[3]] }{A list containing detailed information about the hierarchical vector quantized data along with 
+a summary section containing no of points, Quantization Error and the centroids for each cell.}
+\item{[[4]] }{A list that contains all the diagnostics information of the model when diagnose is set to TRUE. 
+Otherwise NA.}
+\item{[[5]] }{A list that contains all the information required to generates a Mean Absolute Deviation (MAD) plot, 
+if hvt_validation is set to TRUE. Otherwise NA}
+\item{[[6]] }{A list (model info) that contains model generated timestamp, input parameters 
+passed to the model and the validation results.}
 }
 \description{
 This is the main function to construct hierarchical voronoi tessellations.
-The \code{hvq} function is called from this function. The output of the
-\code{hvq} function is hierarchical clustered data which will be the input
-for constructing tessellations. The data is then represented in 2d
+The \code{hvq} script is used in this function. The output of 
+\code{hvq} is hierarchical clustered data which will be the input
+for constructing tessellations. The data is then represented in 2D
 coordinates and the tessellations are plotted using these coordinates as
-centroids. For subsequent levels, transformation is performed on the 2d
+centroids. For subsequent levels, transformation is performed on the 2D
 coordinates to get all the points within its parent tile. Tessellations are
 plotted using these transformed points as centroids. The lines in the
 tessellations are chopped in places so that they do not protrude outside the
@@ -86,16 +98,9 @@ parent polygon. This is done for all the subsequent levels.
 }
 \examples{
 data("EuStockMarkets")
-dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-                     DAX = EuStockMarkets[, "DAX"],
-                     SMI = EuStockMarkets[, "SMI"],
-                     CAC = EuStockMarkets[, "CAC"],
-                     FTSE = EuStockMarkets[, "FTSE"])
-dataset_hvt <- dataset[,-c(1)]
-hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
-                       distance_metric = "L1_Norm", error_metric = "mean",
-                       projection.scale = 10, normalize = TRUE, seed = 123,
-                       quant_method="kmeans")
+hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1, 
+                       distance_metric = "L1_Norm", error_metric = "max",
+                       normalize = TRUE,quant_method="kmeans")
 }
 \seealso{
 \code{\link{plotHVT}}

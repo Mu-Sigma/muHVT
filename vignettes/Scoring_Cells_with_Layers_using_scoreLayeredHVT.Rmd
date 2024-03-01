@@ -1,6 +1,6 @@
 ---
 title: "HVT Scoring Cells with Layers using scoreLayeredHVT"
-author: "Zubin Dowlaty, Srinivasan Sudarsanam, Somya Shambhawi"
+author: "Zubin Dowlaty, Srinivasan Sudarsanam, Somya Shambhawi, Vishwavani"
 date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
@@ -451,6 +451,7 @@ trainHVT(
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
   normalize = TRUE,
+  seed = 279,
   diagnose = FALSE,
   hvt_validation = FALSE,
   train_validation_split_ratio = 0.8
@@ -467,11 +468,13 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`depth`__   - An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), while higher values indicate multiple levels (hierarchy).
 
-* __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
+* __`quant.err`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
+* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
 
-* __`scale_summary`__ -  A list with mean and standard deviation values for all the features in the dataset. Pass the scale summary when the input dataset is already scaled or normalize is set to False.
+* __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
+
+* __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
 * __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
@@ -479,11 +482,11 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. Kmeans uses means (centroids) as cluster centers while Kmedoids uses actual data points (medoids) as cluster centers. `kmeans` is selected by default.
     
-* __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
+* __`scale_summary`__ -  A list with user defined mean and standard deviation values for all the features in the dataset. Pass the scale summary when normalize is set to FALSE.
 
 * __`diagnose`__ - A logical value indicating whether user wants to perform diagnostics on the model. Default value is FALSE. 
 
-* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. These values can be found in the 6th element of the result list under the model.info under the title validation_result. Default value is FALSE.
+* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
 
@@ -572,8 +575,7 @@ Now let's try to understand **plotHVT** function. The parameters have been expla
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
 plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, 
-           title = NULL, maxDepth = NULL, dataset, child.level, hmap.cols,
-           previous_level_heatmap = TRUE,asp = 1, ask = TRUE, tess.label = NULL, 
+           title = NULL, maxDepth = NULL, child.level, hmap.cols,
            quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, 
            sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, plot.type = '2Dhvt') 
 ```
@@ -592,23 +594,10 @@ plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5,
 
 * **`maxDepth`** -  (2Dhvt) An integer indicating the number of levels. (default = NULL)
 
-* **`dataset`** - (2Dheatmap) Data frame. The input dataset.
-
 * **`child.level`** - (2Dheatmap/surface_plot) A Number indicating the level for which the heat map is to be plotted.
 
 * **`hmap.cols`** - (2Dheatmap/surface_plot) A Number or a Character which is the column number or column name from
 the dataset indicating the variables for which the heat map is to be plotted.
-
-* **`previous_level_heatmap`** -  (2Dheatmap) A Logical value to indicate whether the heatmap of previous level
-will be overlayed on the heatmap of selected level.
-
-* **`asp`** - (2Dheatmap) A Number indicating the aspect ratio type. For flexible aspect
-ratio set, asp = NA. (default = 1)
-
-* **`ask`** - (2Dheatmap) A Logical value to have interactive R session.(default = TRUE) 
-
-* **`tess.label`** - (2Dheatmap) A vector for labelling the tessellations. (default
- = NULL)
 
 * **`label.size`** - (2Dheatmap) The size by which the tessellation labels should
 be scaled.(default = 0.5)
@@ -896,7 +885,6 @@ Now let's plot all the features for each cell at level two as a heatmap for bett
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
 
 
-
 ```{r hvt_mapC hmp level one x torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation with the heat map overlaid for feature `x` in the ’torus’ dataset' , eval = global_var}
   plotHVT(
   torus_mapC,
@@ -956,6 +944,7 @@ NOTE: The argument 'quant.error.hmap' is set to 0.1 which is the quantization er
 
 ```{r hvt_mapC hmp level two z torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation without the `quant.error.hmap` argument' ,eval = global_var}
 
+
   plotHVT(
   torus_mapC,
   torus_train,
@@ -964,11 +953,13 @@ NOTE: The argument 'quant.error.hmap' is set to 0.1 which is the quantization er
   line.width = c(0.6,0.4),
   color.vec = c("navyblue","steelblue"),
   centroid.size = 0.1,
- # quant.error.hmap = 0.1,
+  #quant.error.hmap = 0.1,
   plot.type = '2Dheatmap'
 ) 
 
 ```
+
+
 
 
 **We now have the set of maps (map A, map B & map C) which will be used to score, which map and cell each test record is assigned to.**

@@ -1,20 +1,21 @@
 #' @name scoreHVT
-#' @title Score which cell and what level each point in the test dataset belongs to.
+#' @title Score which cell each point in the test dataset belongs to.
 #' @description
-#' This is the function scores the cell and level for each point in the test dataset based on a hierarchical Voronoi tessellations model. 
+#' This is the function scores the cell for each point in the test dataset based on a trained hierarchical Voronoi tessellations model. 
 #' It provides scored data, plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
 #' @param data Dataframe. A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
-#' @param hvt.results.model List. A list (hvt.result) obtained from the trainHVT function while performing hierarchical vector quantization 
+#' @param hvt.results.model List. A list obtained from the trainHVT function while performing hierarchical vector quantization 
 #' on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, 
 #' Sammon's projection coordinates, and model input information.
 #' @param child.level Numeric. A number indicating the depth for which the heat map is to be plotted. Each depth represents a
-#'  different level of clustering or partitioning of the data.
+#' different level of clustering or partitioning of the data.
 #' @param mad.threshold Numeric. A numeric value indicating the permissible Mean Absolute Deviation which is obtained from
-#'  Minimum Intra centroid plot.
+#'  Minimum Intra centroid plot of diagnostics.
 #' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer. 
 #' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
-#' @param normalize Logical. A logical value indicating if the dataset should be normalized. 
-#' When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
+#' @param normalize Logical. A logical value indicating if the dataset should be normalized. When set to TRUE,
+#'  the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). 
+#'  When set to FALSE, the data is used as such without any changes.
 #' @param seed Numeric. Random Seed.
 #' @param distance_metric Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
 #' `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
@@ -29,22 +30,22 @@
 #' @keywords Scoring
 #' @importFrom magrittr %>%
 #' @examples
-#'data("EuStockMarkets")
-#'dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+#' data("EuStockMarkets")
+#' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                      DAX = EuStockMarkets[, "DAX"],
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#'rownames(EuStockMarkets) <- dataset$date
-#'# Split in train and test
-#'train <- EuStockMarkets[1:1302, ]
-#'test <- EuStockMarkets[1303:1860, ]
-#'hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
-#'                       distance_metric = "L1_Norm", error_metric = "mean",
-#'                       projection.scale = 10, normalize = TRUE,seed = 123,
-#'                       quant_method = "kmeans")
-#'scoring <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-#'data_predictions <- scoring$scoredPredictedData
+#' rownames(EuStockMarkets) <- dataset$date
+#' # Split in train and test
+#' train <- EuStockMarkets[1:1302, ]
+#' test <- EuStockMarkets[1303:1860, ]
+#' #model training
+#' hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                       distance_metric = "L1_Norm", error_metric = "max",
+#'                       normalize = TRUE,quant_method = "kmeans")
+#' scoring <- scoreHVT(test, hvt.results)
+#' data_scored <- scoring$scoredPredictedData
 #' @export scoreHVT
 
 
@@ -53,7 +54,7 @@ scoreHVT <- function(data,
                        child.level = 1,
                        mad.threshold = 0.2,
                        line.width = c(0.6, 0.4, 0.2),
-                       color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
+                       color.vec = c("navyblue", "slateblue", "lavender"),
                        normalize = TRUE,
                        seed = 300,
                        distance_metric = "L1_Norm",

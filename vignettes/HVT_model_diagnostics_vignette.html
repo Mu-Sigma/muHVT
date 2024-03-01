@@ -10,7 +10,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi" />
+<meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi,Vishwavani" />
 
 
 <title>HVT Model diagnostics and validation</title>
@@ -3423,8 +3423,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">HVT Model diagnostics and validation</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj,
-Praditi Shah, Somya Shambhawi</h4>
-<h4 class="date">Built on: 02/29/2024</h4>
+Praditi Shah, Somya Shambhawi,Vishwavani</h4>
+<h4 class="date">Built on: 03/01/2024</h4>
 
 
 <div id="TOC">
@@ -4920,15 +4920,17 @@ the parent polygon. This is done for all the subsequent levels.</p>
 <p>Let us try to understand the trainHVT function first.</p>
 <pre><code>HVT::trainHVT(
   dataset,
+  min_compression_perc,
   n_cells,
   depth,
   quant.err,
   projection.scale,
   normalize = TRUE,
+  seed = 279,
   distance_metric = c(&quot;L1_Norm&quot;, &quot;L2_Norm&quot;),
   error_metric = c(&quot;mean&quot;, &quot;max&quot;),
   quant_method = c(&quot;kmeans&quot;, &quot;kmedoids&quot;),
-  diagnose = TRUE,
+  diagnose = FALSE,
   hvt_validation = FALSE,
   train_validation_split_ratio = 0.8
 )</code></pre>
@@ -4948,19 +4950,21 @@ quantization.</p></li>
 <li><p><strong><code>depth</code></strong> - An integer, indicating the
 number of levels. A depth of 1 means no hierarchy (single level), while
 higher values indicate multiple levels (hierarchy).</p></li>
-<li><p><strong><code>quant.error</code></strong> - A number indicating
-the quantization error threshold. A cell will only breakdown into
-further cells if the quantization error of the cell is above the defined
+<li><p><strong><code>quant.err</code></strong> - A number indicating the
+quantization error threshold. A cell will only breakdown into further
+cells if the quantization error of the cell is above the defined
 quantization error threshold.</p></li>
 <li><p><strong><code>projection.scale</code></strong> - A number
-indicating the scale factor for the tesselations so as to visualize the
+indicating the scale factor for the tessellations so as to visualize the
 sub-tesselations well enough. It helps in adjusting the visual
 representation of the hierarchy to make the sub-tesselations more
 visible.</p></li>
-<li><p><strong><code>scale_summary</code></strong> - A list with mean
-and standard deviation values for all the features in the dataset. Pass
-the scale summary when the input dataset is already scaled or normalize
-is set to False.</p></li>
+<li><p><strong><code>normalize</code></strong> - A logical value
+indicating if the dataset should be normalized. When set to TRUE, scales
+the values of all features to have a mean of 0 and a standard deviation
+of 1 (Z-score)</p></li>
+<li><p><strong><code>seed</code></strong> - A Random Numeric Seed to
+preserve the repeatability.</p></li>
 <li><p><strong><code>distance_metric</code></strong> - The distance
 metric can be <code>L1_Norm</code>(Manhattan) or
 <code>L2_Norm</code>(Eucledian). <code>L1_Norm</code> is selected by
@@ -4977,19 +4981,16 @@ method can be <code>kmeans</code> or <code>kmedoids</code>. Kmeans uses
 means (centroids) as cluster centers while Kmedoids uses actual data
 points (medoids) as cluster centers. <code>kmeans</code> is selected by
 default.</p></li>
-<li><p><strong><code>normalize</code></strong> - A logical value
-indicating if the dataset should be normalized. When set to TRUE, scales
-the values of all features to have a mean of 0 and a standard deviation
-of 1 (Z-score)</p></li>
+<li><p><strong><code>scale_summary</code></strong> - A list with user
+defined mean and standard deviation values for all the features in the
+dataset. Pass the scale summary when normalize is set to FALSE.</p></li>
 <li><p><strong><code>diagnose</code></strong> - A logical value
 indicating whether user wants to perform diagnostics on the model.
 Default value is FALSE.</p></li>
 <li><p><strong><code>hvt_validation</code></strong> - A logical value
 indicating whether user wants to holdout a validation set and find mean
-absolute deviation of the validation points from the centroid. These
-values can be found in the 6th element of the result list under the
-model.info under the title validation_result. Default value is
-FALSE.</p></li>
+absolute deviation of the validation points from the centroid. Default
+value is FALSE.</p></li>
 <li><p><strong><code>train_validation_split_ratio</code></strong> - A
 numeric value indicating train validation split ratio. This argument is
 only used when hvt_validation has been set to TRUE. Default value for

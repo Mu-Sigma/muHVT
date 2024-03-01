@@ -11,16 +11,6 @@
 #' @returns Object containing Cell.ID mappings for the given hvt.results list.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @importFrom magrittr %>%
-#' @examples
-#' data("EuStockMarkets")
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(EuStockMarkets, n_cells = 15, depth = 1, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 123,
-#'                    quant_method="kmeans")
-#' plotHVT(hvt.results, line.width = c(0.8), color.vec = c('#141B41'), 
-#'         maxDepth = 1, heatmap ='2Dhvt')
-#'getCellId (hvt.results)
 #' @export getCellId
 #' @keywords internal
 

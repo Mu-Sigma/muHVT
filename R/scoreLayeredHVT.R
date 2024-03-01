@@ -1,19 +1,25 @@
 #' @name scoreLayeredHVT
-#' @title Score which cell and what level each point in the test dataset belongs to
+#' @title Score which cell and what layer each point in the test dataset belongs to
 #' @description
-#' This is a function that scores the cell and corresponding level for each point in a test dataset using three hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and
-#' returns a dataframe containing the scored layer output. The function incorporates the scored results from each map and merges them to provide a comprehensive result.
-#' @param data Data Frame. A dataframe containing test dataset. The dataframe should have atleast one variable used while training. The variables from
-#' this dataset can also be used to overlay as heatmap
-#' @param hvt_mapA A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data
-#' @param hvt_mapB A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data with novelty(s)
-#' @param hvt_mapC A list of hvt.results.model obtained from trainHVT function while performing hierarchical vector quantization on train data without novelty(s)
-#' @param child.level Numeric. A number indicating the level for which the heat map is to be plotted.(Only used if hmap.cols is not NULL)
+#' This is a function that scores the cell and corresponding layer for each point in a test dataset using three 
+#' hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and returns a dataframe containing the scored layer output. 
+#' The function incorporates the scored results from each map and merges them to provide a comprehensive result.
+#' @param data Data Frame. A dataframe containing test dataset. 
+#' The dataframe should have all the variable(features) used for training. 
+#' @param hvt_mapA A list of hvt.results.model obtained from trainHVT function while performing
+#'  hierarchical vector quantization on train data
+#' @param hvt_mapB A list of hvt.results.model obtained from trainHVT function while performing 
+#' hierarchical vector quantization on data with novelty(s)
+#' @param hvt_mapC A list of hvt.results.model obtained from trainHVT function while performing
+#'  hierarchical vector quantization on data without novelty(s)
+#' @param child.level Numeric. A number indicating the level for which the heat map is to be plotted.
 #' @param mad.threshold Numeric. A number indicating the permissible Mean Absolute Deviation
 #' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer.
 #' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
-#' @param normalize Logical. A logical value indicating if the columns in your
-#' dataset should be normalized. Default value is TRUE.
+#' @param normalize Logical. A logical value indicating if the dataset should be normalized. 
+#' When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset 
+#' referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
+#' (Default value is TRUE).
 #' @param seed Numeric. Random Seed.
 #' @param distance_metric Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
 #' `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
@@ -41,25 +47,27 @@
 #' test <- EuStockMarkets[1303:1860, ]
 #' 
 #' ###MAP-A
-#' hvt_mapA <- trainHVT(train, min_compression_perc = 70, quant.err = 0.2,
-#'                     distance_metric = "L1_Norm", error_metric = "mean",
-#'                     projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
-#' identified_Novelty_cells <<- c(2, 10)
+#' hvt_mapA <- trainHVT(train, n_cells = 60, depth = 1, quant.err = 0.1,
+#'                     distance_metric = "L1_Norm", error_metric = "max",
+#'                     normalize = TRUE,quant_method = "kmeans")
+#'                     
+#' identified_Novelty_cells <- c(55,58,59,60)
 #' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
-#' data_with_novelty <- output_list[[1]] %>% dplyr::select(!c("Cell.ID", "Cell.Number"))
+#' data_with_novelty <- output_list[[1]] 
+#' data_with_novelty <- data_with_novelty[, -c(1,2)]
 #' 
 #' ### MAP-B
-#' hvt_mapB <- trainHVT(data_with_novelty,n_cells = 3, quant.err = 0.2,
-#'                     distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
+#' hvt_mapB <- trainHVT(data_with_novelty,n_cells = 10, depth = 1, quant.err = 0.1,
+#'                     distance_metric = "L1_Norm", error_metric = "max",
+#'                     normalize = TRUE,quant_method = "kmeans")
 #' data_without_novelty <- output_list[[2]]
 #' mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
 #' 
 #' ### MAP-C
-#' hvt_mapC <- trainHVT(data_without_novelty,n_cells = 15,
-#'                     depth = 2, quant.err = 0.2, distance_metric = "L1_Norm",
+#' hvt_mapC <- trainHVT(data_without_novelty,n_cells = 130,
+#'                     depth = 1, quant.err = 0.1, distance_metric = "L1_Norm",
 #'                     error_metric = "max", quant_method = "kmeans",
-#'                     projection.scale = 10, normalize = FALSE, scale_summary = mapA_scale_summary)
+#'                     normalize = TRUE, scale_summary = mapA_scale_summary)
 #'                     
 #' ##SCORE LAYERED
 #' data_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)

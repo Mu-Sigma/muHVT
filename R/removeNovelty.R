@@ -21,21 +21,14 @@
 #' @importFrom magrittr %>%
 #' @importFrom plyr rbind.fill
 #' @examples
-#'data("EuStockMarkets")
-#' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-#'                      DAX = EuStockMarkets[, "DAX"],
-#'                      SMI = EuStockMarkets[, "SMI"],
-#'                      CAC = EuStockMarkets[, "CAC"],
-#'                      FTSE = EuStockMarkets[, "FTSE"])
-#'rownames(EuStockMarkets) <- dataset$date
-#'dataset_hvt <- dataset[,-c(1)]
-#'hvt_mapA <- trainHVT(dataset_hvt, min_compression_perc = 70, quant.err = 0.2,
-#'                     distance_metric = "L1_Norm", error_metric = "mean",
-#'                     projection.scale = 10, normalize = TRUE,quant_method = "kmeans")
+#' data("EuStockMarkets")
+#' hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1, 
+#'                        distance_metric = "L1_Norm", error_metric = "max",
+#'                        normalize = TRUE,quant_method="kmeans")
 #' identified_Novelty_cells <<- c(2, 10)
-#' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
-#' hvt_mapB <- output_list[[1]]
-#'dataset_without_novelty <- output_list[[2]]
+#' output_list <- removeNovelty(identified_Novelty_cells, hvt.results) 
+#' data_with_novelty <- output_list[[1]]
+#' data_without_novelty <- output_list[[2]]                      
 #' @keywords Novelty_or_Outliers
 #' @export removeNovelty
 

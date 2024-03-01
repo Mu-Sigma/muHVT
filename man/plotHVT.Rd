@@ -12,13 +12,8 @@ plotHVT(
   centroid.size = 1.5,
   title = NULL,
   maxDepth = NULL,
-  dataset,
   child.level,
   hmap.cols,
-  previous_level_heatmap = TRUE,
-  asp = 1,
-  ask = TRUE,
-  tess.label = NULL,
   quant.error.hmap = NULL,
   n_cells.hmap = NULL,
   label.size = 0.5,
@@ -48,27 +43,12 @@ tessellations.}
 
 \item{maxDepth}{(2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)}
 
-\item{dataset}{(2Dheatmap) Data frame. The input data set.}
-
 \item{child.level}{(2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is
 to be plotted.}
 
 \item{hmap.cols}{(2Dheatmap/surface_plot) Numeric or Character. The column number of column name from
 the dataset indicating the variables for which the heat map is to be
 plotted.}
-
-\item{previous_level_heatmap}{(2Dheatmap) Logical. If TRUE, the heatmap of previous level
-will be overlayed on the heatmap of selected level. If FALSE, the heatmap
-of only selected level will be plotted}
-
-\item{asp}{(2Dheatmap) Numeric. Indicating the aspect ratio type. For flexible aspect
-ratio set, asp = NA. (default = 1)}
-
-\item{ask}{(2Dheatmap) Logical. If TRUE (and the R session is interactive) the user is
-asked for input, before a new figure is drawn. (default = TRUE)}
-
-\item{tess.label}{(2Dheatmap) Vector. A vector for labelling the tessellations. (default
-= NULL)}
 
 \item{quant.error.hmap}{(2Dheatmap) Numeric. A number indicating the quantization error
 threshold.}
@@ -86,7 +66,7 @@ be scaled. (default = 0.5)}
 \item{dim_size}{(surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot}
 
 \item{plot.type}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
-'2Dhvt','2Dheatmap', 'surface_plot'. Default value is 2Dhvt.}
+'1D','2Dproj','2Dhvt','2Dheatmap', 'surface_plot'. Default value is '2Dhvt'.}
 }
 \value{
 plot object containing the hvt, heatmap or interactive surface plot for the given trainHVT results.
@@ -96,34 +76,30 @@ This is the main plotting function to construct hierarchical voronoi tessellatio
  Interactive surface plot.
 }
 \examples{
-dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-                     DAX = EuStockMarkets[, "DAX"],
-                     SMI = EuStockMarkets[, "SMI"],
-                     CAC = EuStockMarkets[, "CAC"],
-                     FTSE = EuStockMarkets[, "FTSE"])
-dataset_hvt <- dataset[,-c(1)] 
-hvt.results <- list()
-hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
-                       distance_metric = "L1_Norm", error_metric = "mean",
-                       projection.scale = 10, normalize = TRUE, seed = 123,
-                       quant_method="kmeans")
+data("EuStockMarkets")
+hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1, 
+                       distance_metric = "L1_Norm", error_metric = "max",
+                       normalize = TRUE,quant_method="kmeans")
                        
 #1D - Plot                        
 plotHVT(plot.type='1D')  
+
+#2D - PROJECTION PLOT
+plotHVT(hvt.results, plot.type = '2Dproj')
                      
 #2D - HVT Plot
-plotHVT(hvt.results, line.width = c(1.2), color.vec = c('#000000'), pch = 21, centroid.size = 1, 
+plotHVT(hvt.results, line.width = c(1.2), color.vec = c('black'), pch = 21, centroid.size = 1, 
 maxDepth = 1,plot.type = '2Dhvt')
 
 #2D - HEATMAP
-plotHVT(hvt.results, EuStockMarkets, centroid.size = 1,
+plotHVT(hvt.results, centroid.size = 1,
 child.level = 1, hmap.cols = "DAX",
-line.width = c(0.6), color.vec = ('#000000') , 
+line.width = c(0.6), color.vec = ('black') , 
 pch1 = 21, plot.type = '2Dheatmap')
 
 #Interactive surface plot
-plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", n_cells.hmap = 15, 
-layer_opacity = c(0.7, 0.8, 0.99), dim_size = 1000, plot.type = 'surface_plot' )
+plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", 
+plot.type = 'surface_plot' )
 }
 \seealso{
 \code{\link{trainHVT}}

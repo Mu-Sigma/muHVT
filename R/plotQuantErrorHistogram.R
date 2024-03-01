@@ -2,11 +2,9 @@
 #' @title Make the diagnostic plots for hierarchical voronoi tessellations model.
 #' @description This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 
 #' for both train and test datasets, highlighting mean values with dashed lines for quick evaluation.
-#' @param hvt.results List. A list of hvt.results obtained from the trainHVT
-#' function.
-#' @param hvt.scoring List. A list of hvt.scoring obtained from the scoreHVT
-#' function.
-#' @return Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and predictions
+#' @param hvt.results List. A list of hvt.results obtained from the trainHVT function.
+#' @param hvt.scoring List. A list of hvt.scoring obtained from the scoreHVT function.
+#' @return Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scoring
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Diagnostics_or_Validation
@@ -20,17 +18,16 @@
 #'                      SMI = EuStockMarkets[, "SMI"],
 #'                      CAC = EuStockMarkets[, "CAC"],
 #'                      FTSE = EuStockMarkets[, "FTSE"])
-#' #adding this step especially for this function
 #' rownames(EuStockMarkets) <- dataset$date
 #' #Split in train and test
 #' train <- EuStockMarkets[1:1302, ]
 #' test <- EuStockMarkets[1303:1860, ]
-#' hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
-#'                       distance_metric = "L1_Norm", error_metric = "mean",
-#'                       projection.scale = 10, normalize = TRUE,seed = 123,
-#'                       quant_method = "kmeans")
-#' scoring <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-#' plotQuantErrorHistogram(hvt_summary, scoring)  
+#' #model training
+#' hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                       distance_metric = "L1_Norm", error_metric = "max",
+#'                       normalize = TRUE, quant_method = "kmeans")
+#' scoring <- scoreHVT(test, hvt.results)
+#' plotQuantErrorHistogram(hvt.results, scoring)  
 #' @export plotQuantErrorHistogram
 #' 
 

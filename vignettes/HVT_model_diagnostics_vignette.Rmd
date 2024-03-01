@@ -1,6 +1,6 @@
 ---
 title: "HVT Model diagnostics and validation"
-author: "Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi"
+author: "Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj, Praditi Shah, Somya Shambhawi,Vishwavani"
 date: "Built on: `r format(Sys.Date(), '%m/%d/%Y')`"
 fig.height: 4
 fig.width: 15
@@ -1087,8 +1087,6 @@ return(list(quantile_outlier_plot, data, lower_threshold, upper_threshold))
 box_plots <- lapply(names(dataset_updated), function(x) {
 quantile_outlier_plots_fn(data = dataset_updated, outlier_check_var = x)[[1]]})
 do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3))
-
-
 ```
 
 **Correlation Matrix**
@@ -1145,7 +1143,6 @@ eda_cols <- names(dataset_updated_test)
 dist_list <- lapply(1:length(eda_cols), function(i){
 generateDistributionPlot(dataset_updated_test, eda_cols[i]) })
 do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
- 
 ```
 
 # 8. Model Training
@@ -1170,15 +1167,17 @@ Let us try to understand the trainHVT function first.
 ```         
 HVT::trainHVT(
   dataset,
+  min_compression_perc,
   n_cells,
   depth,
   quant.err,
   projection.scale,
   normalize = TRUE,
+  seed = 279,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
-  diagnose = TRUE,
+  diagnose = FALSE,
   hvt_validation = FALSE,
   train_validation_split_ratio = 0.8
 )
@@ -1194,23 +1193,25 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`depth`__   - An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), while higher values indicate multiple levels (hierarchy).
 
-* __`quant.error`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
+* __`quant.err`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
+* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
 
-* __`scale_summary`__ -  A list with mean and standard deviation values for all the features in the dataset. Pass the scale summary when the input dataset is already scaled or normalize is set to False.
+* __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
+
+* __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
 * __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell.
 
 * __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. Kmeans uses means (centroids) as cluster centers while Kmedoids uses actual data points (medoids) as cluster centers. `kmeans` is selected by default.
-    
-* __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
 
+* __`scale_summary`__ -  A list with user defined mean and standard deviation values for all the features in the dataset. Pass the scale summary when normalize is set to FALSE.
+    
 * __`diagnose`__ - A logical value indicating whether user wants to perform diagnostics on the model. Default value is FALSE. 
 
-* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. These values can be found in the 6th element of the result list under the model.info under the title validation_result. Default value is FALSE.
+* __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
 

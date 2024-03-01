@@ -7,14 +7,12 @@
 plotQuantErrorHistogram(hvt.results, hvt.scoring)
 }
 \arguments{
-\item{hvt.results}{List. A list of hvt.results obtained from the trainHVT
-function.}
+\item{hvt.results}{List. A list of hvt.results obtained from the trainHVT function.}
 
-\item{hvt.scoring}{List. A list of hvt.scoring obtained from the scoreHVT
-function.}
+\item{hvt.scoring}{List. A list of hvt.scoring obtained from the scoreHVT function.}
 }
 \value{
-Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and predictions
+Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scoring
 }
 \description{
 This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 
@@ -27,17 +25,16 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                      SMI = EuStockMarkets[, "SMI"],
                      CAC = EuStockMarkets[, "CAC"],
                      FTSE = EuStockMarkets[, "FTSE"])
-#adding this step especially for this function
 rownames(EuStockMarkets) <- dataset$date
 #Split in train and test
 train <- EuStockMarkets[1:1302, ]
 test <- EuStockMarkets[1303:1860, ]
-hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
-                      distance_metric = "L1_Norm", error_metric = "mean",
-                      projection.scale = 10, normalize = TRUE,seed = 123,
-                      quant_method = "kmeans")
-scoring <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
-plotQuantErrorHistogram(hvt_summary, scoring)  
+#model training
+hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
+                      distance_metric = "L1_Norm", error_metric = "max",
+                      normalize = TRUE, quant_method = "kmeans")
+scoring <- scoreHVT(test, hvt.results)
+plotQuantErrorHistogram(hvt.results, scoring)  
 }
 \seealso{
 \code{\link{plotHVT}}

@@ -2,7 +2,7 @@
 
 #### Zubin Dowlaty
 
-#### 2024-01-31
+#### 2024-02-29
 
 <div id="TOC">
 
@@ -12,10 +12,10 @@
     *   [<span class="toc-section-number">2.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
 *   [<span class="toc-section-number">3</span> Version History](#version-history)
-    *   [<span class="toc-section-number">3.3</span> HVT (v24.1.1) | What’s New?](#hvt-(v24.1.1)-whats-new)
+    *   [<span class="toc-section-number">3.3</span> HVT (v24.3.1) | What’s New?](#hvt-(v24.3.1)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
     *   [<span class="toc-section-number">3.1</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">4</span> Installation of HVT (v24.1.1)](#installation-of-hvt-(v24.1.1))
+*   [<span class="toc-section-number">4</span> Installation of HVT (v24.3.1)](#installation-of-hvt-(v24.3.1))
 
 
 </div>
@@ -80,17 +80,27 @@ Following are the links to the vignettes for the HVT package:
 # <span class="header-section-number">3</span> Version History 
 
 
-<div id="hvt-(v24.1.1)-whats-new" class="section level2" number="3.1">
+<div id="hvt-(v24.3.1)-whats-new" class="section level2" number="3.1">
 
-## HVT (v24.1.1) 
+## HVT (v24.3.1) 
 
-31st January, 2024
+29th February, 2024
 
 In this version of HVT package, the following new features have been introduced:
 
-1. **Rename:** Renamed the functions.
-2. **Reorganise:** Reorganised the functions into new sections.
-3. **Modification:** Merged the HVT plots and Heatmap generation functions for 1D,2D and Interactive surface plot.
+1. **Updated Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
+
+* `HVT` to `trainHVT`
+* `predictHVT` to `scoreHVT`
+* `predictLayerHVT` to `scoreLayeredHVT`
+
+2. **Restructured Functions:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package’s PDF documentation. Given below are the few instances.
+
+* `trainHVT` function now resides within the `Training_or_Compression` section.
+* `plotHVT` function now resides within the `Tessellation_and_Heatmap` section.
+* `scoreHVT` function now resides within the `Scoring` section.
+
+3. **Enhancements:** The pre-existed functions, `hvtHmap` and `exploded_hmap`, have been combined and incorporated into the `plotHVT` function. Additionally, `plotHVT` now includes the ability to perform 1D plotting.
 
 </div>
 
@@ -102,9 +112,24 @@ In this version of HVT package, the following new features have been introduced:
 
 17th November, 2023
 
-In this version of HVT package, the following new features have been introduced:
+This version of HVT package offers functionality to score cells with layers based on a sequence of maps created using `scoreLayeredHVT`. Given below are the steps to created the successive set of maps.
 
-This package provides  functionality to score cells with layers based on a sequence of maps using `scoreLayeredHVT`. 
+1. **Map A** - The output of `trainHVT` function which is trained on parent data.
+
+2. **Map B** - The output of `trainHVT` function which is trained on the 'data with novelty' created from `removeNovelty` function.
+
+3. **Map C** - The output of `trainHVT` function which is trained on the 'data without novelty' created from `removeNovelty` function.
+
+The `scoreLayeredHVT` function uses these three maps to score the test datapoints.
+
+Let us try to understand the steps with the help of the diagram below
+
+<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
+<p class="caption">
+Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()</p>
+
+
+
 </div>
 
 <div id="hvt-(v22.12.06)" class="section level2" number="3.3">
@@ -113,27 +138,18 @@ This package provides  functionality to score cells with layers based on a seque
 
 06th December, 2022
 
-This package provides functionality to score based on a sequence of maps.
+This version of HVT package offers features for both training an HVT model and eliminating outlier cells from the trained model.
 
-The creation of a scored set of maps involves three steps -
+1. **Training or Compression:** The initial step entails training the parent data using the `trainHVT` function, specifying the desired compression percentage and quantization error.
 
-1.  **Compress:** Compress the dataset using a percentage compression rate and a quantization threshold using the trainHVT() function (Map A).
-2.  **Remove novelty cells:** Manually identify and remove the novelty cells from the dataset using the removeNovelty() function (Map B).
-3.  **Compress the dataset without novelty:** Again, compress the dataset without novelty using n_cells, depth and a quantization threshold using the trainHVT() function (Map C).
-
-
-Let us try to understand the steps with the help of the diagram below -
-
-<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/predictLayerHVT_function.png" width="672px" height="480px" />
-<p class="caption">
-Figure 2: Flow diagram for scoring based on a sequence of maps using scoreLayeredHVT()
-</p>
+2. **Remove novelty cells:** Following the training process, outlier cells can be identified manually from the 2D hvt plot. These outlier cells can then be inputted into the `removeNovelty` function, which subsequently produces two datasets in its output: one containing 'data with novelty' and the other containing 'data without novelty'.
 
 
 
-<div id="installation-of-hvt-(v24.1.1)" class="section level2" number="4">
 
-# <span class="header-section-number">3</span> Installation of HVT (v24.1.1)
+<div id="installation-of-hvt-(v24.3.1)" class="section level2" number="4">
+
+# <span class="header-section-number">3</span> Installation of HVT (v24.3.1)
 
 <div class="sourceCode" id="cb1">
 
