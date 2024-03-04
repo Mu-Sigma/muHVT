@@ -296,7 +296,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
     
     
   } else if (plot.type == '2Dheatmap') {
-    # browser()
+  # browser()
     hvt_list <- hvt.results
     # maxDepth <- child.level
     maxDepth <- min(child.level, max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))
@@ -466,14 +466,20 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
       "#3194E0", "#2C9CDF", "#27A3DC", "#23ABD8", "#20B2D4", "#1DBACE", "#1BC1C9", "#1AC7C2", "#19CEBB", "#1AD4B3", "#1BD9AB", "#1DDFA3", "#21E39B",
       "#25E892", "#2AEB8A", "#30EF82", "#38F17B", "#40F373", "#49F56D", "#52F667", "#5DF662", "#67F75E", "#73F65A", "#7FF658", "#8BF457", "#97F357", "#A3F258"
     )
-   # browser()
+    # browser()
     data <- datapoly
     if (maxDepth > 1) {
       for (i in 1:(maxDepth - 1)) {
-        index_tess <- which(data$depth == i & data$qe > quant.error.hmap & data$n_cluster > 3)
-        data <- data[-index_tess, ]
+        #index_tess <- which(data$depth == i & data$qe > quant.error.hmap & data$n_cluster > 3)
+         index_tess <- which( data$qe > quant.error.hmap )
         
-        rm(index_tess)
+        if (length(index_tess) >0){
+          data <- data[-index_tess, ] 
+        } else {
+            data = data
+          }
+         
+        #rm(index_tess)
       }
     }
     
@@ -495,6 +501,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
             )
           )
         ) +
+        #browser()
         ggplot2::scale_fill_gradientn(colours = colour_scheme) +
         ggplot2::labs(fill = hmap.cols)
     } else {
@@ -530,11 +537,11 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
         ggplot2::scale_size_manual(values = line.width, guide = FALSE) +
         ggplot2::labs(color = "Level")
     }
-    
-    
-    
-    
-    
+
+
+
+
+
     for (depth in 1:maxDepth) {
       p <- p + ggplot2::geom_point(
         data = centroidDataframe[centroidDataframe["lev"] == depth, ],
@@ -559,7 +566,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
         ggplot2::scale_x_continuous(expand = c(0, 0)) +
         ggplot2::scale_y_continuous(expand = c(0, 0))
     }
-    
+# browser()
     return(suppressMessages(p))
     
   } else if (plot.type == 'surface_plot') {

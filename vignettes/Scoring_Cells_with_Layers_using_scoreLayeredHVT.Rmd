@@ -604,8 +604,6 @@ be scaled.(default = 0.5)
 
 * **`quant.error.hmap`** - (2Dheatmap) A number indicating the quantization error threshold.
 
-* **`n_cells.hmap`** - (2Dheatmap) An integer indicating the number of cells/clusters per hierarchy 
-
 * **`sepration_width`** - (surface_plot) An integer indicating the width between two Levels.
 
 * **`layer_opacity`** - (surface_plot) A vector indicating the opacity of each layer/ level.
@@ -885,6 +883,8 @@ Now let's plot all the features for each cell at level two as a heatmap for bett
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
 
 
+
+
 ```{r hvt_mapC hmp level one x torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation with the heat map overlaid for feature `x` in the ’torus’ dataset' , eval = global_var}
   plotHVT(
   torus_mapC,
@@ -894,11 +894,12 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   line.width = c(0.6,0.4),
   color.vec = c("navyblue","steelblue"),
   centroid.size = 0.1,
-  quant.error.hmap = 0.1,
   plot.type = '2Dheatmap'
 ) 
 
 ```
+
+
 
 ```{r hvt_mapC hmp levelonetorus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi Tessellation with the heat map overlaid for feature `y` in the ’torus’ dataset',eval = global_var}
 
@@ -910,7 +911,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   line.width = c(0.6,0.4),
   color.vec = c("navyblue","steelblue"),
   centroid.size = 0.1,
-  quant.error.hmap = 0.1,
   plot.type = '2Dheatmap'
 ) 
 
@@ -926,34 +926,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
   line.width = c(0.6,0.4),
   color.vec = c("navyblue","steelblue"),
   centroid.size = 0.1,
-  quant.error.hmap = 0.1,
-  plot.type = '2Dheatmap'
-) 
-
-```
-
-NOTE: The argument 'quant.error.hmap' is set to 0.1 which is the quantization error threshold set for training the model. This parameter helps us to visualize the data with colour scheme. 
-
-* Because in the above model training the depth is set to 2 and the n_cells is set to 30 which means the layer 1 or the first hierarchy  is split into 30 cells but as we can see the 'noOfCellsBelowQuantizationError' (from the compressionSummaryTable) is zero which means none of the 30 cells have reached the quantization error threshold.
-
-* But in the layer 2 or the second hierarchy each of the 30 cells have the capacity to divide further into 30 cells until it reaches the quantization error threshold. so out of 900 possible cells, 898 cells(from the compressionSummaryTable ) have reached the threshold and further can't be subdivided. 
-
-* Hence specifying the argument 'quant.error.hmap' with 0.1 helps us to visualize the heatmap of the layer where the cells have reached its quantization error threshold which is layer 2 in this case. 
-
-* If we not specify this argument with the threshold value we get a result plot with colour schemed or heatmap plot. example is given below with the same parameters except 'quant.error.hmap' argument.
-
-```{r hvt_mapC hmp level two z torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi Tessellation without the `quant.error.hmap` argument' ,eval = global_var}
-
-
-  plotHVT(
-  torus_mapC,
-  torus_train,
-  child.level = 2,
-  hmap.cols = "z",
-  line.width = c(0.6,0.4),
-  color.vec = c("navyblue","steelblue"),
-  centroid.size = 0.1,
-  #quant.error.hmap = 0.1,
   plot.type = '2Dheatmap'
 ) 
 
