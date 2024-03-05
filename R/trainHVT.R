@@ -148,8 +148,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
     
     polinfo <- hvqdata <- list()
     # browser()
-    hvq_k <<-
-      hvq(
+    hvq_k <- hvq(
         scaledata,
         min_compression_perc = min_compression_perc,
         n_cells = n_cells,
@@ -305,6 +304,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       fin_out[[1]] <- deldat1
       fin_out[[2]] <- polinfo
       fin_out[[3]] <- hvq_k
+      fin_out[[6]] <- hvq_k
       fin_out[[3]][['scale_summary']] <- scale_summary
       level = 1
       level_names <- list()
@@ -571,6 +571,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       fin_out[[1]] <- deldat1
       fin_out[[2]] <- polinfo
       fin_out[[3]] <- hvq_k
+      fin_out[[6]] <- hvq_k
       fin_out[[3]][['scale_summary']] <- scale_summary
       # fin_out[[4]] <- par_map
       level_names <- list()

@@ -82,7 +82,7 @@ hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1
                        normalize = TRUE,quant_method="kmeans")
                        
 #1D - Plot                        
-plotHVT(plot.type='1D')  
+plotHVT(hvt.results, plot.type='1D')
 
 #2D - PROJECTION PLOT
 plotHVT(hvt.results, plot.type = '2Dproj')

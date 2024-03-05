@@ -8,6 +8,7 @@
 ^vignettes/HVT_functions*
 ^..Rcheck/
 ^.git/
+.git/
 .gitignore
 .gitattributes
 ^CRAN-SUBMISSION$

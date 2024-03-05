@@ -715,7 +715,7 @@ compressionSummaryTable(hvt.torus[[3]]$compression_summary)
 Let's take a look on the 1D projection of this iteration. The output of hvq from the above iteration is then passed to the plotHVT function, which applies Sammon's 1D using `MASS` package. The resulting 1D Sammon's points are used to determine their corresponding cell IDs and subsequently plotted in a plotly object.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 4: Sammons 1D x Cell ID plot for layer 1 shown for the 100 cells in the torus training dataset'}
-plotHVT(plot.type = '1D')
+plotHVT(hvt.torus, plot.type = '1D')
 ```
 
 
@@ -756,7 +756,7 @@ compressionSummaryTable(hvt.torus2[[3]]$compression_summary)
 **It can be observed from the table above that only 6 cells out of 300 i.e. `2%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the torus training dataset',out.width="100%", out.height="60%"}
-plotHVT(plot.type = '1D')
+plotHVT(hvt.torus2, plot.type = '1D')
 ```
 
 
@@ -800,7 +800,7 @@ We successfully compressed 83% of the data using n_cells parameter as 900, the n
 
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 6: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the torus training dataset',out.width="100%", out.height="60%"}
-plotHVT(plot.type = '1D')
+plotHVT(hvt.torus3, plot.type = '1D')
 ```
 
 ## 7.2 Step 2: Data Projection
@@ -1318,7 +1318,7 @@ Now let us understand what each column in the above summary table means:
 All the columns after this will contain centroids for each cell. They can also be called a codebook, which represents a collection of all centroids or codewords.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 1D x Cell ID plot for layer 1 shown for the 440 cells in the dataset ’computers’',out.width="100%", out.height="60%"}
-plotHVT(plot.type = '1D')
+plotHVT(hvt.results, plot.type = '1D')
 ```
 
 

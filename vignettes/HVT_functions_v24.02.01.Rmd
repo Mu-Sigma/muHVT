@@ -46,7 +46,7 @@ pkgInstall <- function(x){
 packageStatus <- lapply(packages, FUN=pkgInstall)
 
 # sourcing the updated R scripts
-script_dir <- "./R"
+script_dir <- "../R"
 r_files <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
 for (file in r_files) {
   source(file)
@@ -71,7 +71,7 @@ The Dataset has 200,000 rows and 5 columns which are explained below:
 The dataset is loaded from a CSV file, and for later function usage, only the first 15,000 rows are isolated and utilized. This segmentation is essential because executing the trainHVT() function with the parameters **hvt_validation** and **diagnose** set to TRUE results in excessive memory usage, and to avoid this issue, the dataset is segmented and the columns selected are X,Y & Z.
 
 ```{r}
-data_raw <- read.csv("./lorenze_attractor.csv")
+data_raw <- read.csv("./sample_dataset/lorenze_attractor.csv")
 data <- data_raw[1:15000,-c(1)]
 data_hvt <- data_raw[1:15000,-c(1,5,6)]
 ######################PREVIEW###############
@@ -139,7 +139,7 @@ This function is used to construct hierarchical voronoi tessellations in 1D,2D a
 ### 5.1.1 plotHVT - 1D 
 
 ```{r, ,message=FALSE, warning=FALSE}
-plotHVT( plot.type = '1D')
+plotHVT( hvt_mapA, plot.type = '1D')
 ```
 
 

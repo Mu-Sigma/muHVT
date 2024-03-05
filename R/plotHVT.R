@@ -43,7 +43,7 @@
 #'                        normalize = TRUE,quant_method="kmeans")
 #'                        
 #' #1D - Plot                        
-#' plotHVT(plot.type='1D')  
+#' plotHVT(hvt.results, plot.type='1D')
 #' 
 #' #2D - PROJECTION PLOT
 #' plotHVT(hvt.results, plot.type = '2Dproj')
@@ -74,7 +74,8 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
   if (plot.type == '1D') {
    # browser()
     ####hvq output as global vaiable
-    generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")  
+    generic_col=c("Segment.Level","Segment.Parent","Segment.Child","n","Quant.Error")
+    hvq_k <- hvt.results[[6]]  
     temp_summary=hvq_k[["summary"]] %>% dplyr::select(!generic_col) %>% dplyr::mutate(id=row_number())
     cent_val= temp_summary %>% subset(.,complete.cases(.)) 
     set.seed(123)
@@ -110,7 +111,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
      hvt_centroids_list <- hvt.results
       
     hvt_coordinates<- hvt_centroids_list[[2]][[1]][["1"]]
-    centroids <<- list()
+    centroids <- list()
     coordinates_value <- lapply(1:length(hvt_coordinates), function(x){
       centroids <-hvt_coordinates[[x]]
       coordinates <- centroids$pt
