@@ -6,8 +6,8 @@
 \usage{
 plotHVT(
   hvt.results,
-  line.width,
-  color.vec,
+  line.width = 0.5,
+  color.vec = "black",
   pch1 = 21,
   centroid.size = 1.5,
   title = NULL,
@@ -81,25 +81,13 @@ hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1
                        distance_metric = "L1_Norm", error_metric = "max",
                        normalize = TRUE,quant_method="kmeans")
                        
-#1D - Plot                        
+#change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualise respective plots.                      
 plotHVT(hvt.results, plot.type='1D')
 
-#2D - PROJECTION PLOT
-plotHVT(hvt.results, plot.type = '2Dproj')
-                     
-#2D - HVT Plot
-plotHVT(hvt.results, line.width = c(1.2), color.vec = c('black'), pch = 21, centroid.size = 1, 
-maxDepth = 1,plot.type = '2Dhvt')
+#change the 'plot.type' argument to 'surface_plot' to visualise Interactive surface plot                   
+plotHVT(hvt.results,child.level = 1, 
+hmap.cols = "DAX", plot.type = '2Dheatmap')
 
-#2D - HEATMAP
-plotHVT(hvt.results, centroid.size = 1,
-child.level = 1, hmap.cols = "DAX",
-line.width = c(0.6), color.vec = ('black') , 
-pch1 = 21, plot.type = '2Dheatmap')
-
-#Interactive surface plot
-plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", 
-plot.type = 'surface_plot' )
 }
 \seealso{
 \code{\link{trainHVT}}

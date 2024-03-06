@@ -42,29 +42,17 @@
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method="kmeans")
 #'                        
-#' #1D - Plot                        
+#' #change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualise respective plots.                      
 #' plotHVT(hvt.results, plot.type='1D')
 #' 
-#' #2D - PROJECTION PLOT
-#' plotHVT(hvt.results, plot.type = '2Dproj')
-#'                      
-#' #2D - HVT Plot
-#' plotHVT(hvt.results, line.width = c(1.2), color.vec = c('black'), pch = 21, centroid.size = 1, 
-#' maxDepth = 1,plot.type = '2Dhvt')
+#' #change the 'plot.type' argument to 'surface_plot' to visualise Interactive surface plot                   
+#' plotHVT(hvt.results,child.level = 1, 
+#' hmap.cols = "DAX", plot.type = '2Dheatmap')
 #' 
-#' #2D - HEATMAP
-#' plotHVT(hvt.results, centroid.size = 1,
-#' child.level = 1, hmap.cols = "DAX",
-#' line.width = c(0.6), color.vec = ('black') , 
-#' pch1 = 21, plot.type = '2Dheatmap')
-#' 
-#' #Interactive surface plot
-#' plotHVT( hvt.results, child.level = 1, hmap.cols = "DAX", 
-#' plot.type = 'surface_plot' )
 #' @export plotHVT
 
 
-plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, 
+plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 21, centroid.size = 1.5, 
                     title = NULL, maxDepth = NULL, child.level, hmap.cols, quant.error.hmap = NULL,
                     n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), 
                     dim_size = 1000, plot.type = '2Dhvt') {
@@ -130,7 +118,7 @@ plotHVT <- function(hvt.results, line.width, color.vec, pch1 = 21, centroid.size
     return(suppressMessages(gg_proj))
     
      } else if (plot.type == '2Dhvt') {
-    
+      
     hvt_list <- hvt.results
     
     maxDepth <- min(maxDepth, max(hvt_list[[3]][["summary"]] %>% stats::na.omit() %>% dplyr::select("Segment.Level")))

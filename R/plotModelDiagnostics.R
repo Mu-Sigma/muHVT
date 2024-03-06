@@ -34,7 +34,6 @@ plotModelDiagnostics <-
     # require(magrittr)
     # require(patchwork)
 
-    # Model Print
 
     if (model_obj[["model_info"]][["type"]] == "hvt_model") {
       p1 <- model_obj[[4]]$datapoint_plot + ggplot2::ggtitle("Minimum Intra-DataPoint Distance Plot: Train Data")
@@ -50,16 +49,10 @@ plotModelDiagnostics <-
         plotDiag <- (p3 / (p1 | p2) / (p4 | p5))
       }
     } else if (model_obj[["model_info"]][["type"]] == "hvt_prediction") {
-      # browser()
       mtrain <- model_obj[["model_mad_plots"]][["mtrain"]] + ggplot2::ggtitle("Mean Absolute Deviation Plot: Calibration on Train Data")
       mtest <- model_obj[["model_mad_plots"]][["mtest"]] + ggplot2::ggtitle("Mean Absolute Deviation Plot:Validation")
       mpred <- madPlot(model_obj) + ggplot2::ggtitle("Mean Absolute Deviation Plot:Test Data")
-      #
       plotDiag <- mtrain / mtest / mpred
     }
-
-
-
-
     return(plotDiag)
   }

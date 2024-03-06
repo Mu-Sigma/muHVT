@@ -116,10 +116,9 @@ row_keep=c("mean","std.dev","var","median","range","min","max","sum")
 ```
 
 ```{r lib, warning=FALSE, message=FALSE, include=FALSE, error=FALSE}
-list.of.packages <<- c("DT",'plotly', "magrittr", "data.table", "tidyverse", "crosstalk", "kableExtra", "gganimate","gdata",
-                       "HVT", "data.table", "jmuOutlier", "viridis", "deldir", "conf.design", "splancs","Hmisc","xfun","sp",
-                       "polyclip","devtools","deldir","gdata","tidyverse","skimr","patchwork", "crosstalk", "ggforce",
-                       "SmartEDA", "scales", "ggplot2", "htmlwidgets", "gridExtra","gtable","tibble")
+list.of.packages <<- c("DT",'plotly', "magrittr", "data.table", "tidyverse", "crosstalk", "kableExtra", "gganimate","gdata", "data.table", "jmuOutlier", "viridis", "deldir", "conf.design", "splancs","Hmisc","xfun","sp",
+"polyclip","devtools","deldir","gdata","tidyverse","skimr","patchwork", "crosstalk", "ggforce",
+"SmartEDA", "scales", "ggplot2", "htmlwidgets", "gridExtra","gtable","tibble")
 
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages)){install.packages(new.packages, repos='https://cloud.r-project.org/')}
@@ -128,18 +127,6 @@ invisible(lapply(list.of.packages, library, character.only = TRUE))
 ```
 
 ```{r setup, warning = FALSE, include = FALSE,echo=FALSE}
-# knitr::opts_chunk$set(
-#   collapse = TRUE,
-#   comment = "#>",
-#   out.width = "672px",
-#   out.height = "480px",
-#   fig.width = 7,
-#   fig.height = 5,
-#   fig.align = "center",
-#   fig.retina = 1,
-#   dpi = 72
-# )
-
 knitr::opts_chunk$set(echo = TRUE,
                       collapse = FALSE,
                       message = FALSE,
@@ -179,15 +166,11 @@ install.packages('https://cran.r-project.org/src/contrib/Archive/dummies/dummies
 lapply(list.of.packages, library, character.only = TRUE)
 
 options(expressions = 10000)
-
-
-
 global_var <- nzchar(Sys.getenv("RUN_VIGNETTE"))
 global_var <- TRUE
 
 scrolLimit <- function(noOfRows){
   if(noOfRows<10){
-    
     swe = paste(as.character(noOfRows*50),"px")
   }
   else{
@@ -197,41 +180,19 @@ scrolLimit <- function(noOfRows){
 }
 
 Table <- function(data,scroll = FALSE, limit = NULL){
-  
   if(!is.null(limit)){
     data <- head(data,limit)
   }
-  
   kable_table <- data %>% kable(escape = FALSE,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
-  
   scroll <- scroll
-  
   if(scroll == TRUE){
   kable_table <- kable_table %>% scroll_box(width = "100%", height = scrolLimit(nrow(data)))
   }
-  
-
-  
   return(kable_table)
-  
-}
-
-summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.1,limit=NULL){
-  
-  scroll <- scroll
-  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#333",ifelse(eval(parse(text = columnName)) > value,"red","#333"))))  
-  
-  return(Table(summaryTable,scroll = scroll,limit = limit))
-  
 }
 
 
 
-compressionSummaryTable <- function(data,scroll = TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
-  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),color = ifelse(is.na(eval(parse(text = columnName))),"#00bb27",ifelse(eval(parse(text = columnName)) > value,"#00bb27","#333")))) 
-
-  return(Table(summaryTable,scroll = scroll))
-}
 set.seed(240)
 ```
 
@@ -444,7 +405,23 @@ the parent polygon. This is done for all the subsequent levels.
 # 5. Data Importing
 
 ## 5.1 Import Code Modules
-Firstly, we will load all the function scripts to the session environment.
+
+Here is the guide to install the HVT package. This helps user to install the most recent version of the HVT package.
+```{r}
+###direct installation###
+#install.packages("HVT")
+
+#or
+
+###git repo installation###
+#library(devtools)
+#devtools::install_github(repo = "Mu-Sigma/HVT")
+
+```
+
+
+**NOTE:** At the time documenting this vignette, the updated changes were not still in CRAN, hence we are sourcing the scripts from the R folder directly to the session environment.
+
 ```{r, loading all the script files of the package, message=FALSE, warning=FALSE, include = TRUE}
 # Sourcing required code scripts for HVT
 script_dir <- "../R"
@@ -519,37 +496,6 @@ colnames(dataset_updated) <- c("x","y","z")
 # 6. Data Understanding
 
 ## 6.1 Quick Peek of the Data
-
-**Summary of Dataset**
-
-The table below shows summary of all numeric columns of
-dataset.
-
-```{r, message=FALSE,warning=FALSE}
-summary_eda <- function(df) {
-  
-numeric_columns <- sapply(df, is.numeric)  
-missing_counts <- sapply(seq_along(numeric_columns)[numeric_columns], function(i) sum(is.na(df[[i]])))
-missing_counts_vector <- unlist(missing_counts)
-
-  result <- df %>%
-    select(where(is.numeric)) %>%
-    skimr::skim() %>%
-    mutate(across(where(is.numeric), ~round(., 4))) %>%
-    rename_with(~sub("^(skim_|numeric\\.)", "", .)) %>%
-    select(-type, -n_missing, -complete_rate) %>%
-    mutate(n_row = nrow(df), n_missing = missing_counts_vector) %>%
-    dplyr::rename(min = p0, `1st Quartile` = p25, median = p50, `3rd Quartile` = p75, max = p100) %>%
-    dplyr::select(variable, min, `1st Quartile`, median, mean, sd, `3rd Quartile`, max, hist,n_row, n_missing)
-
-  return(result)
-}
-```
-
-```{r}
-data_table <- summary_eda(dataset_updated)
-Table(data_table, scroll = TRUE)
-```
 
 **Structure of Data**
 
@@ -983,125 +929,24 @@ dataset_updated %>% head(10) %>%
 ```
 
 
-```{r}
-final_table <- summary_eda(dataset_updated)
-Table(final_table, scroll = TRUE)
-```
-
 # 7. Data distribution
 
-**Variable Histograms**
+This section displays four objects.
 
-Shown below is the distribution of all the variables in the dataset.
+1) *Variable Histograms*: The distribution of all the variables in the dataset.
 
-```{r hist_plot, purl=TRUE, echo = FALSE}
-##############function to generte histogram plots#############
-generateDistributionPlot <- function(data, column){
-  p1<- ggplot2::ggplot(data,ggplot2::aes(x = data[[column]])) +
-    ggplot2::geom_histogram(ggplot2::aes(y = ..count..), fill = "midnightblue", size = 0.2, alpha=0.7) +
-    ggplot2::xlab(column) + ggplot2::ylab("Count") +
-    ggplot2::labs(column) +ggplot2::theme_bw() + 
-    ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),legend.position = c(0.8, 0.8))
-  
-  p2<-ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
-    ggplot2::stat_function(ggplot2::aes(color = "Normal"), fun = dnorm,args = list(mean =                                       mean(data[[column]]),sd = sd(data[[column]]))) +
-    ggplot2::stat_density(ggplot2::aes(color = "Density"), geom = "line", linetype = "dashed")  +
-    ggplot2::scale_colour_manual("", values = c("black", "orange")) +
-    ggplot2::scale_linetype_manual("", values = c("Normal" = 2, "Density" = 1))  +
-    ggplot2::guides(
-      fill = ggplot2::guide_legend(keywidth = 1, keyheight = 1),
-      linetype = ggplot2::guide_legend(keywidth = 3, keyheight = 1),
-      colour = ggplot2::guide_legend(keywidth = 3, keyheight = 1)) + 
-    ggplot2::ylab("Density") +
-    ggplot2::xlab("Density") +
-    ggplot2::theme(
-      panel.background = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(colour="black", size=8),
-      axis.text.x = ggplot2::element_text(size = 14),
-      axis.ticks = ggplot2::element_line(colour = 'gray50'),
-      axis.ticks.x = ggplot2::element_line(colour = "black"))
-  
-  g1 <- ggplot2::ggplotGrob(p1)
-  g2 <- ggplot2::ggplotGrob(p2)
-  
-  pp <- c(subset(g1$layout, name == "panel", se = t:r))
-  
-  # superimpose p2 (the panel) on p1
-  g <- gtable::gtable_add_grob(g1, g2$grobs[[which(g2$layout$name == "panel")]], pp$t, 
-                               pp$l, pp$b, pp$l)
-  
-  # extract the y-axis of p2
-  ia <- which(g2$layout$name == "axis-l")
-  ga <- g2$grobs[[ia]]
-  ax <- ga$children[[2]]
-  
-  # flip it horizontally
-  ax$widths <- rev(ax$widths)
-  ax$grobs <- rev(ax$grobs)
-  
-  # add the flipped y-axis to the right
-  g <- gtable::gtable_add_cols(g, g2$widths[g2$layout[ia, ]$l], length(g$widths) - 1)
-  g <- gtable::gtable_add_grob(g, ax, pp$t, length(g$widths) - 1, pp$b)
-  distHistogram <- g
-  return(distHistogram)
-}
+2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
 
-```
-
-```{r dist_plots_true2, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6, fig.align='center'}
-eda_cols <- names(dataset_updated)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(dataset_updated, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
- 
-```
-
-**Box Plots**
-
-In this section, we plot box plots for each numeric column in the
-dataset across panels. These plots will display the median and Inter
-Quartile Range of each column at a panel level.
-
-```{r, results='asis', warning = FALSE, purl = FALSE}
-##############function to generte box plots#############
-quantile_outlier_plots_fn <- function(data, outlier_check_var, data_cat = dataset_updated[, cat_cols], numeric_cols = numeric_cols){
-lower_threshold <- stats::quantile(data[, outlier_check_var], .25,na.rm = TRUE) - 1.5*(stats::IQR(data[, outlier_check_var],                    na.rm = TRUE))
-upper_threshold <- stats::quantile(data[,outlier_check_var],.75,na.rm = TRUE) +                                                                1.5*(stats::IQR(data[,outlier_check_var],na.rm = TRUE))
-    
-data$QuantileOutlier <- data[,outlier_check_var] > upper_threshold | data[,outlier_check_var] < lower_threshold
-
-quantile_outlier_plot <- ggplot2::ggplot(data, ggplot2::aes(x="", y = data[,outlier_check_var])) +
-             ggplot2::geom_boxplot(fill = 'blue',alpha=0.7) + 
-             ggplot2::theme_bw() + 
-             ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),panel.grid.minor.x=ggplot2::element_blank(),
-                            panel.grid.major.x=ggplot2::element_blank(),legend.position = "bottom") +                                                   ggplot2::ylab(outlier_check_var) + ggplot2::xlab("")
-data <- cbind(data[, !names(data) %in% c("QuantileOutlier")] %>% round(2), outlier = data[, c("QuantileOutlier")])
-data <- cbind(data, data_cat)  
-return(list(quantile_outlier_plot, data, lower_threshold, upper_threshold))
-}
-```
-
-```{r message=FALSE, warning=FALSE,results='asis', fig.height=6, fig.width=6,fig.align='center'}
-box_plots <- lapply(names(dataset_updated), function(x) {
-quantile_outlier_plots_fn(data = dataset_updated, outlier_check_var = x)[[1]]})
-do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3))
-```
-
-**Correlation Matrix**
-
-In this section we are calculating **pearson correlation** which is a
+3) *Correlation Matrix*: This calculates the pearson correlation which is a
 bivariate correlation value measuring the linear correlation between two
-numeric columns. The output shown is a matrix.
+numeric columns. The output plot is shown as a matrix.
 
-```{r Correlation, fig.height=6, fig.width=6, purl=FALSE,fig.align='center'}
+4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
 
-corrplot::corrplot(cor(dataset_updated),method = "color",outline = TRUE,addgrid.col = "darkgray", addrect = 4,
-                       rect.col = "black",rect.lwd = 5, cl.pos = "b", tl.col = "black", tl.cex = 1, 
-                       cl.cex = 1,addCoef.col = "black",number.digits = 2,number.cex = 1.5, 
-                       type = "lower",col = grDevices::colorRampPalette(c("maroon","white","darkblue"))(200))
-  
+It uses an inbuilt function called `dataPlots` to display the above mentioned four objects.
+
+```{r, dataPlots function, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
+dataPlots(dataset_updated)
 ```
 
 ## 7.1 Train - Test Split
@@ -1129,20 +974,15 @@ columns.
 ### 7.1.1 Train Distribution
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-eda_cols <- names(dataset_updated_train)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(dataset_updated_train, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
+dataPlots(dataset_updated_train)
  
 ```
 
 ### 7.1.2 Test Distribution
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-eda_cols <- names(dataset_updated_test)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(dataset_updated_test, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
+dataPlots(dataset_updated_test)
+
 ```
 
 # 8. Model Training
@@ -1274,7 +1114,7 @@ threshold and percentage of cells having quantization error below
 threshold.
 
 ```{r}
-compressionSummaryTable(hvt.results[[3]]$compression_summary)
+displayTable(data = hvt.results[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 ```
 
 As seen in the above table, 95% of the cells have a quantization error
@@ -1284,7 +1124,8 @@ hit the Quantization Error threshold are shown in red. Here we are
 showing just top 100 rows for the sake of brevity.
 
 ```{r}
-summaryTable(hvt.results[[3]][['summary']], scroll = TRUE, limit = 100)
+displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary")
+
 ```
 
 ## 8.1 Model Diagnostics and Validation

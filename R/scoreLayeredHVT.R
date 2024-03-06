@@ -33,7 +33,6 @@
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 #' @importFrom magrittr %>%
 #' @examples
-#' library(magrittr)
 #' data("EuStockMarkets")
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                      DAX = EuStockMarkets[, "DAX"],
@@ -47,11 +46,11 @@
 #' test <- EuStockMarkets[1303:1860, ]
 #' 
 #' ###MAP-A
-#' hvt_mapA <- trainHVT(train, n_cells = 60, depth = 1, quant.err = 0.1,
+#' hvt_mapA <- trainHVT(train, n_cells = 150, depth = 1, quant.err = 0.1,
 #'                     distance_metric = "L1_Norm", error_metric = "max",
 #'                     normalize = TRUE,quant_method = "kmeans")
 #'                     
-#' identified_Novelty_cells <- c(55,58,59,60)
+#' identified_Novelty_cells <- c(127,55,83,61,44,35,27,77)
 #' output_list <- removeNovelty(identified_Novelty_cells, hvt_mapA)
 #' data_with_novelty <- output_list[[1]] 
 #' data_with_novelty <- data_with_novelty[, -c(1,2)]
@@ -61,13 +60,12 @@
 #'                     distance_metric = "L1_Norm", error_metric = "max",
 #'                     normalize = TRUE,quant_method = "kmeans")
 #' data_without_novelty <- output_list[[2]]
-#' mapA_scale_summary <- hvt_mapA[[3]]$scale_summary
 #' 
 #' ### MAP-C
-#' hvt_mapC <- trainHVT(data_without_novelty,n_cells = 130,
+#' hvt_mapC <- trainHVT(data_without_novelty,n_cells = 135,
 #'                     depth = 1, quant.err = 0.1, distance_metric = "L1_Norm",
 #'                     error_metric = "max", quant_method = "kmeans",
-#'                     normalize = TRUE, scale_summary = mapA_scale_summary)
+#'                     normalize = TRUE)
 #'                     
 #' ##SCORE LAYERED
 #' data_scored <- scoreLayeredHVT(test, hvt_mapA, hvt_mapB, hvt_mapC)

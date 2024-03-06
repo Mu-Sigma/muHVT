@@ -316,20 +316,20 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       
       names(fin_out[[2]][[level]]) <- level_names[[level]]
       
-      ####### Adding Code for Diagnosis Plot  
+      ####### Adding Code for Diagnosis Plot
       diag_Suggestion=NA
       fin_out[[4]] = NA
       fin_out[[5]] <- NA
       if(diagnose){
         # fin_out[[4]] = NA
-        diag_list = diagPlot(hvt.results = fin_out,
+        diag_list <-  diagPlot(hvt.results = fin_out,
                              data = dataset,
                              level = depth,
                              quant.err = quant.err,
                              distance_metric=distance_metric,
                              error_metric=error_metric
                              )
-        diag_Suggestion = diagSuggestion(hvt.results = fin_out,
+        diag_Suggestion <-  diagSuggestion(hvt.results = fin_out,
                                          data = dataset,
                                          level = depth,
                                          quant.err = quant.err,
@@ -337,9 +337,9 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
                                          error_metric=error_metric
         )
         fin_out[[4]] = diag_list
-        
+
       }
-      
+
       ####### Adding Code for MAD Plot  
 # browser()
       if(hvt_validation){
@@ -593,7 +593,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
         fin_out[[2]][[length(fin_out[[2]]) + 1]] <- list()
       }
       
-      ###### Adding Code for Diagnosis Plot
+      # ###### Adding Code for Diagnosis Plot
       diag_Suggestion =NA
       fin_out[[4]] = NA
       fin_out[[5]] <- NA
@@ -607,7 +607,7 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
                              distance_metric=distance_metric,
                              error_metric=error_metric
         )
-        
+
         diag_Suggestion = diagSuggestion(hvt.results = fin_out,
                                          data = dataset,
                                          level = depth,
@@ -616,9 +616,9 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
                                          error_metric=error_metric
         )
         fin_out[[4]] = diag_list
-        
+
       }
-      
+
      #  fin_out[[5]] <- NA
 
       ####### Adding Code for MAD Plot

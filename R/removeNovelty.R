@@ -49,7 +49,7 @@ removeNovelty <-
       for(i in 1:length(hvt_results_cells)){
         temp_df <-  as.data.frame(hvt_results_cells[[i]])
         temp_df$Row.Number <- row.names(hvt_results_cells[[i]])
-        scaled_data <- rbind.fill(scaled_data, temp_df)
+        scaled_data <- plyr::rbind.fill(scaled_data, temp_df)
       }
       row.names(scaled_data) <- scaled_data$Row.Number
       scaled_data <- select(scaled_data, -c(Row.Number))
@@ -69,7 +69,7 @@ removeNovelty <-
       temp_df <-  as.data.frame(hvt_results_cells[[i]])
       temp_df$Cell.Number <- i
       temp_df$Row.Number <- row.names(hvt_results_cells[[i]])
-      scaled_data <- rbind.fill(scaled_data, temp_df)
+      scaled_data <- plyr::rbind.fill(scaled_data, temp_df)
     }
     row.names(scaled_data) <- scaled_data$Row.Number
     

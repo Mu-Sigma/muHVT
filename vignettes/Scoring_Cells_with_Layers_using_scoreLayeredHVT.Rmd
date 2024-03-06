@@ -110,158 +110,29 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
-# 2. Notebook Requirements
-## 2.1 Import Code Modules
+# 2. Import Code Modules
 
-In this section, we will load all the function scripts to the session environment.
+Here is the guide to install the HVT package. This helps user to install the most recent version of the HVT package.
+```{r}
+###direct installation###
+#install.packages("HVT")
 
+#or
+
+###git repo installation###
+#library(devtools)
+#devtools::install_github(repo = "Mu-Sigma/HVT")
+
+```
+
+
+**NOTE:** At the time documenting this vignette, the updated changes were not still in CRAN, hence we are sourcing the scripts from the R folder directly to the session environment.
 ```{r, loading all the script files of the package, message=FALSE, warning=FALSE, include = TRUE}
 # Sourcing required code scripts for HVT
 script_dir <- "../R"
 r_files <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
 invisible(lapply(r_files, function(file) { source(file, echo = FALSE); }))
 ```
-
-## 2.2 User defined functions
-
-In this section, we are defining all the functions to be used further in this notebook.
-
-```{r}
-#################function to generate summary table###############
-summaryTable <- function(data,scroll = TRUE,columnName='Quant.Error',value=0.1,limit=NULL){
-  summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% 
-  dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),
-  color = ifelse(is.na(eval(parse(text = columnName))),"black",
-  ifelse(eval(parse(text = columnName)) > value,"red","black"))))  
-  return(Table(summaryTable,scroll = scroll,limit = limit))
-}
-
-#################function to generate compression summary table###############
-compressionSummaryTable <- function(data,scroll =
-TRUE,columnName='percentOfCellsBelowQuantizationErrorThreshold',value=0.8){
-summaryTable <- data %>%  dplyr::mutate_if(is.numeric, funs(round(.,2))) %>% 
-dplyr::mutate(!!columnName:=  cell_spec(eval(parse(text = columnName)),
-color = ifelse(is.na(eval(parse(text = columnName))),"green",
-ifelse(eval(parse(text = columnName)) > value,"green","black"))))
-return(Table(summaryTable,scroll = scroll))
-}
-
-#################function to calculate summary eda###############
-summary_eda <- function(df) {
-numeric_columns <- sapply(df, is.numeric)  
-missing_counts <- sapply(seq_along(numeric_columns)[numeric_columns], function(i) sum(is.na(df[[i]])))
-missing_counts_vector <- unlist(missing_counts)
-
-  result <- df %>%
-    select(where(is.numeric)) %>%
-    skimr::skim() %>%
-    mutate(across(where(is.numeric), ~round(., 4))) %>%
-    rename_with(~sub("^(skim_|numeric\\.)", "", .)) %>%
-    select(-type, -n_missing, -complete_rate) %>%
-    mutate(n_row = nrow(df), n_missing = missing_counts_vector) %>%
-    dplyr::rename(min = p0, `1st Quartile` = p25, median = p50, `3rd Quartile` = p75, max = p100) %>%
-    dplyr::select(variable,min,`1st Quartile`,median,mean,sd,`3rd Quartile`,max,hist,n_row,n_missing)
-  return(result)}
-
-
-####################function to generate histograms############
-generateDistributionPlot <- function(data, column){
-  p1<- ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
-    ggplot2::geom_histogram(ggplot2::aes(y = ..count..),fill = "midnightblue",size = 0.2,alpha=0.7) +
-    ggplot2::xlab(column) + ggplot2::ylab("Count") +
-    ggplot2::labs(column) +ggplot2::theme_bw() + 
-    ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),legend.position = c(0.8, 0.8))
-  
-  p2<-ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
-    ggplot2::stat_function(ggplot2::aes(color = "Normal"), fun = dnorm,args = list(mean =
-mean(data[[column]]),sd = sd(data[[column]]))) +
-    ggplot2::stat_density(ggplot2::aes(color = "Density"), geom = "line", linetype = "dashed")  +
-    ggplot2::scale_colour_manual("", values = c("black", "orange")) +
-    ggplot2::scale_linetype_manual("", values = c("Normal" = 2, "Density" = 1))  +
-    ggplot2::guides(
-      fill = ggplot2::guide_legend(keywidth = 1, keyheight = 1),
-      linetype = ggplot2::guide_legend(keywidth = 3, keyheight = 1),
-      colour = ggplot2::guide_legend(keywidth = 3, keyheight = 1)) + 
-    ggplot2::ylab("Density") +
-    ggplot2::xlab("Density") +
-    ggplot2::theme(
-      panel.background = ggplot2::element_blank(),
-      panel.grid.minor = ggplot2::element_blank(),
-      panel.grid.major = ggplot2::element_blank(),
-      axis.text.y = ggplot2::element_text(colour="black", size=8),
-      axis.text.x = ggplot2::element_text(size = 14),
-      axis.ticks = ggplot2::element_line(colour = 'gray50'),
-      axis.ticks.x = ggplot2::element_line(colour = "black"))
-  
-  g1 <- ggplot2::ggplotGrob(p1)
-  g2 <- ggplot2::ggplotGrob(p2)
-  
-  pp <- c(subset(g1$layout, name == "panel", se = t:r))
-  
-  # superimpose p2 (the panel) on p1
-  g <- gtable::gtable_add_grob(g1, g2$grobs[[which(g2$layout$name == "panel")]], pp$t, 
-                               pp$l, pp$b, pp$l)
-  
-  # extract the y-axis of p2
-  ia <- which(g2$layout$name == "axis-l")
-  ga <- g2$grobs[[ia]]
-  ax <- ga$children[[2]]
-  
-  # flip it horizontally
-  ax$widths <- rev(ax$widths)
-  ax$grobs <- rev(ax$grobs)
-  
-  # add the flipped y-axis to the right
-  g <- gtable::gtable_add_cols(g, g2$widths[g2$layout[ia, ]$l], length(g$widths) - 1)
-  g <- gtable::gtable_add_grob(g, ax, pp$t, length(g$widths) - 1, pp$b)
-  distHistogram <- g
-  return(distHistogram)
-}
-
-###########function to generate the box plots#############
-quantile_outlier_plots_fn <- function(data, outlier_check_var, data_cat = data[, cat_cols], 
-                                      numeric_cols = numeric_cols){
-  CheckColumnType <- function(data) {
-  if (class(data) == "integer" || class(data) == "numeric") {
-    columnType <- "numeric"
-  } else { columnType <- "character" }
-  return(columnType)}
-cat_cols <-
-  colnames(data)[unlist(sapply(
-  data,FUN = function(x) {CheckColumnType(x) == "character" ||CheckColumnType(x) == "factor" }))]
-
-lower_threshold <-stats::quantile(data[, outlier_check_var], .25,na.rm = TRUE) -
-                     1.5*(stats::IQR(data[, outlier_check_var],na.rm = TRUE))
-upper_threshold <- stats::quantile(data[,outlier_check_var],.75,na.rm = TRUE) +
-                   1.5*(stats::IQR(data[,outlier_check_var],na.rm = TRUE))
-data$QuantileOutlier <- data[,outlier_check_var] > upper_threshold | data[,outlier_check_var] <
-                          lower_threshold
-
-quantile_outlier_plot <- ggplot2::ggplot(data, ggplot2::aes(x="", y = data[,outlier_check_var])) +
-                         ggplot2::geom_boxplot(fill = 'blue',alpha=0.7) + 
-                         ggplot2::theme_bw() + 
-                         ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),
-                         panel.grid.minor.x=ggplot2::element_blank(),
-                         panel.grid.major.x=ggplot2::element_blank(),legend.position = "bottom")+
-ggplot2::ylab(outlier_check_var) + ggplot2::xlab("")
-data <- cbind(data[, !names(data) %in% 
-c("QuantileOutlier")] %>% round(2), outlier = data[, c("QuantileOutlier")])
-data <- cbind(data, data_cat)  
-return(list(quantile_outlier_plot, data, lower_threshold, upper_threshold))
-}
-
-###############function to generate correlation plot###############
-correlation_plot <- function(df) {
-  corrplot::corrplot(cor(df), method = "color", outline = TRUE, addgrid.col = "darkgray", addrect = 4,
-                     rect.col = "black", rect.lwd = 5, cl.pos = "b", tl.col = "black", tl.cex = 1, 
-                     cl.cex = 1,addCoef.col = "black", number.digits = 2, number.cex = 1.5, 
-              type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200))
-}
-```
-
-
-
-
 
 
 # 3. Example : HVT with the Torus dataset
@@ -295,50 +166,32 @@ Table(head(torus_df), scroll = FALSE)
 ```
 
 
-Now let's have a look at **structure** and **summary** of the torus dataset.
+Now let's have a look at **structure** of the torus dataset.
 
 ```{r, message=FALSE, warning=FALSE}
 str(torus_df)
 ```
 
-```{r}
-data_table <- summary_eda(torus_df)
-Table(data_table, scroll = TRUE)
-```
+**Data distribution**
 
-Now, let us check the **Data Distribution** of the torus dataset.
+This section displays four objects.
 
-**Variable Histograms**
-Shown below is the distribution of all the variables in the torus dataset.
+1) *Variable Histograms*: The distribution of all the variables in the dataset.
 
-```{r, warning=FALSE,message=FALSE}
-eda_cols <- names(torus_df)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(torus_df, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
-```
+2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
 
-**Box Plots**
-
-In this section, we plot box plots for each numeric column in the
-torus dataset across panels. These plots will display the median and Inter
-Quartile Range of each column at a panel level.
-
-```{r message=FALSE, warning=FALSE,results='asis'}
-box_plots <- lapply(names(torus_df), function(x) {
-quantile_outlier_plots_fn(data = torus_df, outlier_check_var = x)[[1]]})
-do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3))
-```
-
-**Correlation Matrix**
-
-In this section we are calculating **pearson correlation** which is a
+3) *Correlation Matrix*: This calculates the pearson correlation which is a
 bivariate correlation value measuring the linear correlation between two
-numeric columns. The output shown is a matrix.
+numeric columns. The output plot is shown as a matrix.
 
-```{r Correlation, purl=FALSE}
-correlation_plot(torus_df)
+4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
+
+It uses an inbuilt function called `dataPlots` to display the above mentioned four objects.
+
+```{r, warning=FALSE, message=FALSE}
+dataPlots(torus_df)
 ```
+
 
 **Train - Test Split**
 
@@ -362,29 +215,18 @@ rownames(torus_train) <- NULL
 Table(head(torus_train), scroll= FALSE)
 ```
 
-Now lets have a look at **structure** and **summary** of the training dataset.
+Now lets have a look at **structure** of the training dataset.
 
 ```{r train torus structure, warning=FALSE, eval = global_var}
 str(torus_train)
 ```
 
-```{r}
-train_table <- summary_eda(torus_train)
-Table(train_table, scroll = TRUE)
-```
-
-Now, lets check the **Data Distribution** of the training dataset.
-
-**Variable Histograms**
-
-Shown below is the distribution of all the variables in the training dataset
+**Data Distribution**
 
 ```{r, warning=FALSE,message=FALSE}
-eda_cols <- names(torus_train)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(torus_train, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
+dataPlots(torus_train)
 ```
+
 
 **Testing Dataset**
 
@@ -396,29 +238,16 @@ rownames(torus_test) <- NULL
 Table(head(torus_test), scroll = FALSE)
 ```
 
-Now lets have a look at **structure** and **summary** of the testing dataset.
+Now lets have a look at **structure** of the testing dataset.
 
 ```{r torus test structure, warning=FALSE, eval = global_var}
 str(torus_test)
 ```
 
-```{r torus test summary, warning=FALSE,eval = global_var}
-test_table <- summary_eda(torus_test)
-Table(test_table, scroll = TRUE)
-```
-
-Now, lets check the **Data Distribution** of the testing dataset.
-
-**Variable Histograms**
-
-Shown below is the distribution of all the variables in the testing dataset
+**Data Distribution**
 
 ```{r, warning=FALSE,message=FALSE}
-eda_cols <- names(torus_test)
-dist_list <- lapply(1:length(eda_cols), function(i){
-generateDistributionPlot(torus_test, eda_cols[i]) })
-do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
-
+dataPlots(torus_test)
 ```
 
 # 4. Map A : Base Compressed Map
@@ -541,7 +370,7 @@ torus_mapA <- trainHVT(
 Let's check the compression summary for torus.
 
 ```{r compression summary torus third,warning=FALSE,eval = global_var}
-compressionSummaryTable(torus_mapA[[3]]$compression_summary)
+displayTable(data = torus_mapA[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 ```
 
 We successfully compressed 83% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
@@ -551,7 +380,8 @@ As per the manual, **`torus_mapA[[3]]`** gives us detailed information about the
 The datatable displayed below is the **summary from torus_mapA** showing Cell.ID, Centroids and Quantization Error for each of the 900 cells. For the sake of brevity, we are displaying only the first 100 rows.
 
 ```{r hvt_mapA display results, warning=FALSE, echo=TRUE}
-summaryTable(torus_mapA[[3]]$summary,scroll = TRUE,limit = 100)
+displayTable(data =torus_mapA[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary")
+
 ```
 
 Now let us understand what each column in the above table means:
@@ -764,15 +594,13 @@ torus_mapB <- trainHVT(data_with_novelty,
 The datatable displayed below is the **summary from map B (layer 2)** showing Cell.ID, Centroids and Quantization Error for each of the 11 cells.
 
 ```{r, message=FALSE,warning=FALSE}
-summaryTable(torus_mapB[[3]]$summary,scroll = TRUE)
-
+displayTable(data =torus_mapB[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary")
 ```
 
 Now let's check the compression summary for HVT (torus_mapB). The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_map_B compression summary,warning=FALSE,eval = global_var}
-mapB_compression_summary <- torus_mapB[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-compressionSummaryTable(mapB_compression_summary)
+displayTable(data = torus_mapB[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 ```
 
 **As it can be seen from the table above, `82%`** of the cells have hit the quantization threshold error.Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells
@@ -799,7 +627,6 @@ With the Novelties removed, we construct another hierarchical Voronoi tessellati
 
 ```{r,warning=FALSE,message=FALSE}
 torus_mapC <- list()
-mapA_scale_summary = torus_mapA[[3]]$scale_summary
 torus_mapC <- trainHVT(data_without_novelty,
                   n_cells = 10,
                   depth = 2,
@@ -807,16 +634,14 @@ torus_mapC <- trainHVT(data_without_novelty,
                   normalize = FALSE,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
-                  quant_method = "kmeans",
-                  scale_summary = mapA_scale_summary)
-
+                  quant_method = "kmeans")
 ```
 
 Now let's check the compression summary for HVT (torus_mapC) where n_cell was set to 10. The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_map_C compression summary,warning=FALSE,eval = global_var}
-mapC_compression_summary <- torus_mapC[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-compressionSummaryTable(mapC_compression_summary)
+displayTable(data = torus_mapC[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
+
 ```
 
 **As it can be seen from the table above, `0%`** of the cells have hit the quantization threshold error in level 1 and **`0%`** of the cells have hit the quantization threshold error in level 2
@@ -842,23 +667,19 @@ torus_mapC <- trainHVT(data_without_novelty,
                   normalize = FALSE,
                   distance_metric = "L1_Norm",
                   error_metric = "max",
-                  quant_method = "kmeans",
-                  scale_summary = mapA_scale_summary)
-
+                  quant_method = "kmeans")
 ```
 
 The datatable displayed below is the **summary from map C (layer2)**. showing Cell.ID, Centroids and Quantization Error for each of the 928 cells.
 
 ```{r,message=FALSE,warning=FALSE}
-summaryTable(torus_mapC[[3]]$summary,scroll = TRUE,limit = 100)
-
+displayTable(data =torus_mapC[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary")
 ```
 
 Now let's check the **compression summary** for HVT (torus_mapC). The table below shows no of cells, no of cells having quantization error below threshold and percentage of cells having quantization error below threshold for each level.
 
 ```{r hvt_mapC compression summary,warning=FALSE,eval = global_var}
-mapC_compression_summary <- torus_mapC[[3]]$compression_summary %>%  dplyr::mutate_if(is.numeric, funs(round(.,4)))
-compressionSummaryTable(mapC_compression_summary)
+displayTable(data = torus_mapC[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 ```
 
 **As it can be seen from the table above, `0%`** of the cells have hit the quantization threshold error in level 1 and **`82%`** of the cells have hit the quantization threshold error in level 2
@@ -936,7 +757,7 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
 **We now have the set of maps (map A, map B & map C) which will be used to score, which map and cell each test record is assigned to.**
 
-# 7 Scoring
+# 7. Scoring
 
 Now once we have built the model, let us try to score using our testing dataset (containing 2400 data points) which cell and which layer each point belongs to.
 
@@ -946,11 +767,12 @@ Now, Let us understand the **`scoreLayeredHVT`** function.
 
 ```{r scoreLayeredHVT function,echo = TRUE, eval= FALSE}
 scoreLayeredHVT(data,
-                map_A,
-                map_B,
-                map_C,
+                hvt_mapA,
+                hvt_mapB,
+                hvt_mapC,
                 mad.threshold = 0.2,
                 normalize = TRUE, 
+                seed=300,
                 distance_metric="L1_Norm",
                 error_metric="max",
                 child.level = 1, 
@@ -963,27 +785,40 @@ Each of the parameters of **scoreLayeredHVT** function has been explained below:
 
 -   **`data`** - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training.
 
--   **`map A`** - Result obtained from trainHVT function while performing hierarchical vector quantization on train data. This list containes information about the hierarchical vector quantized data along with a summary section.
+-   **`hvt_mapA`** - Result obtained from trainHVT function while performing hierarchical vector quantization on train data. This list containes information about the hierarchical vector quantized data along with a summary section.
 
--   **`map B`** - Result obtained from trainHVT function while performing hierarchical vector quantization on novelty data. Novelty data is a subset of the training data obtained as a result of removeNovelty function (1st element).
+-   **`hvt_mapB`** - Result obtained from trainHVT function while performing hierarchical vector quantization on novelty data. Novelty data is a subset of the training data obtained as a result of removeNovelty function (1st element).
 
--   **`map C`** - Result obtained from trainHVT function while performing hierarchical vector quantization on data without novelty. This data is a subset of the training data obtained as a result of removeNovelty function (2nd element).
-
--   **`child.level`** - A number indicating the depth for which the heat map is to be plotted (Only used if hmap.cols is not NULL), Each depth represents a different level of clustering or partitioning of the data.
+-   **`hvt_mapC`** - Result obtained from trainHVT function while performing hierarchical vector quantization on data without novelty. This data is a subset of the training data obtained as a result of removeNovelty function (2nd element).
 
 -   **`mad.threshold`** - A threshold value used to filter data based on the Median Absolute Deviation (MAD) of the Quant.Error variable. It determines how extreme a deviation from the median has to be in order to consider as novelty
 
 -   **`normalize`** -  A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
 
+-  **`seed`**   - A Random Numeric Seed to preserve the repeatability.
+
 -   **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The distance metric can be different from the one used during training.
 
 -   **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. The error metric can be different from the one used during training.
 
--   **`yVar`** - A character or a vector representing the name of the dependent variable(s)
+-   **`child.level`** - A number indicating the depth for which the heat map is to be plotted (Only used if hmap.cols is not NULL), Each depth represents a different level of clustering or partitioning of the data.
 
 -   **`line.width`** - A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameters)
 
 -   **`color.vec`** - A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameters)
+
+-   **`yVar`** - A character or a vector representing the name of the dependent variable(s)
+
+
+**When normalize is set to TRUE, the scoreHVT function has an inbuilt feature to standardize the  testing dataset based on the mean and standard deviation of the training dataset from the trainHVT results.**
+
+* Steps involved in Normalizing the data:
+* From the trainHVT results (here it is torus_mapA, torus_mapB & torus_mapC) the summary is accessed which is the third list object.
+* From the summary list, the scale.summary object is taken which have two entries that stores mean_data and std_data of all the columns in training dataset.
+* Those two entries are taken for the center and scale parameter in scale() which normalizes the testing dataset similar to training dataset in scoreHVT()
+* Here in `scoreLayeredHVT` function the testing dataset is scored against all the maps (A, B & C) by using scoreHVT function and the results are merged and further processed.
+* This approach ensures that the model that is evaluated on testing dataset scaled in the same way as the training dataset, maintaining consistency and improving the model’s ability to generalize to new, unseen data.
+
 
 The function score based on the HVT maps - map A, map B and map C, constructed using trainHVT function. For each test record, the function will assign that record to Layer1 or Layer2. Layer1 contains the cell ids from map A and Layer 2 contains cell ids from map B (novelty map) and map C (map without novelty).
 
@@ -1002,9 +837,9 @@ The Scoring algorithm recursively calculates the distance between each point in 
 validation_data <- torus_test
 new_score <- scoreLayeredHVT(
     data=validation_data,
-    torus_mapA,
-    torus_mapB,
-    torus_mapC,
+    hvt_mapA = torus_mapA,
+    hvt_mapB = torus_mapB,
+    hvt_mapC = torus_mapC,
     normalize = FALSE
   )
 ```
