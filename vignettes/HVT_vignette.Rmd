@@ -342,7 +342,7 @@ str(torus_df)
 
 This section displays four objects.
 
-1) *Variable Histograms*: The distribution of all the variables in the dataset.
+1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
 
 2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
 
@@ -480,7 +480,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
 
-The output of trainHVT function (list of 6 elements) have been explained below with an image attached for clear understanding.
+The output of trainHVT function (list of 7 elements) have been explained below with an image attached for clear understanding.
 
 **NOTE: Here the attached image is the snapshot of output list generated from iteration 1 which can be referred later in this section**
 
@@ -492,13 +492,15 @@ knitr::include_graphics('hvt_results_list.png')
 
 * The '2nd element' is a list containing information related to Sammon's projection coordinates of the data points in the reduced-dimensional space.
 
-* The '3rd element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell.
+* The '3rd element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell for 2D.
 
 * The '4th element'  is a list that contains all the diagnostics information of the model when diagnose is set to TRUE. Otherwise NA.
 
 * The '5th element' is a list that contains all the information required to generates a Mean Absolute Deviation (MAD) plot, if hvt_validation is set to TRUE. Otherwise NA 
 
-* The '6th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
+* The '6th element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`.
+
+* The '7th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
 
 We will use the `trainHVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the trainHVT function again.
 
@@ -542,7 +544,7 @@ displayTable(data = hvt.torus[[3]]$compression_summary,columnName = 'percentOfCe
 
 **As it can be seen from the table above, none of the 100 cells have reached the quantization threshold error. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if desired compression (80%) is reached**
 
-Let's take a look on the 1D projection of this iteration. The output of hvq from the above iteration is then passed to the plotHVT function, which applies Sammon's 1D using `MASS` package. The resulting 1D Sammon's points are used to determine their corresponding cell IDs and subsequently plotted in a plotly object.
+Let's take a look on the 1D projection of this iteration. The output of hvq from the `trainHVT` function is then passed to the `plotHVT` function, which applies Sammon's 1D using `MASS` package. The resulting 1D Sammon's points are used to determine their corresponding cell IDs and subsequently plotted in a plotly object.
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 4: Sammons 1D x Cell ID plot for layer 1 shown for the 100 cells in the torus training dataset'}
 plotHVT(hvt.torus, plot.type = '1D')
@@ -948,7 +950,7 @@ computers <-computers %>% dplyr::select(-c( cd, multi, premium, trend))
 
 This section displays four objects.
 
-1) *Variable Histograms*: The distribution of all the variables in the dataset.
+1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
 
 2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
 

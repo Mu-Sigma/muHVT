@@ -420,7 +420,7 @@ Here is the guide to install the HVT package. This helps user to install the mos
 ```
 
 
-**NOTE:** At the time documenting this vignette, the updated changes were not still in CRAN, hence we are sourcing the scripts from the R folder directly to the session environment.
+**NOTE:** At the time of documenting this vignette, the updated changes were not still in CRAN, hence we are sourcing the scripts from the R folder directly to the session environment.
 
 ```{r, loading all the script files of the package, message=FALSE, warning=FALSE, include = TRUE}
 # Sourcing required code scripts for HVT
@@ -933,7 +933,7 @@ dataset_updated %>% head(10) %>%
 
 This section displays four objects.
 
-1) *Variable Histograms*: The distribution of all the variables in the dataset.
+1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
 
 2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
 
@@ -1055,7 +1055,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
 
-The output of trainHVT function (list of 6 elements) have been explained below with an image attached for clear understanding.
+The output of trainHVT function (list of 7 elements) have been explained below with an image attached for clear understanding.
 
 **NOTE: Here the attached image is the snapshot of output list generated from model training which can be referred later in this section**
 
@@ -1067,13 +1067,15 @@ knitr::include_graphics('hvt_result_diag.png')
 
 * The '2nd element' is a list containing information related to Sammon's projection coordinates of the data points in the reduced-dimensional space.
 
-* The '3rd element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell.
+* The '3rd element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell for 2D.
 
 * The '4th element'  is a list that contains all the diagnostics information of the model when diagnose is set to TRUE. Otherwise NA.
 
 * The '5th element' is a list that contains all the information required to generates a Mean Absolute Deviation (MAD) plot, if hvt_validation is set to TRUE. Otherwise NA 
 
-* The '6th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
+* The '6th element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`.
+
+* The '7th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
 
 
 
