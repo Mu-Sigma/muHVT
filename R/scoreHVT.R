@@ -69,6 +69,7 @@ scoreHVT <- function(data,
   if (!("Cell.ID" %in% colnames(hvt.results.model[[3]]$summary))) {
     hvt.results.model[[3]]$summary <- getCellId(hvt.results = hvt.results.model)
   }
+ # browser()
   hvt.results.model[[3]]$summary <- cbind(hvt.results.model[[3]]$summary, centroidRadius = unlist(hvt.results.model[[3]]$max_QE))
 
   summary_list <- hvt.results.model[[3]]
@@ -95,12 +96,12 @@ scoreHVT <- function(data,
   # keep_col <- names(summary_list$summary)
   # subsetting df based on multiple dep variables
   if (!is.null(yVar)) {
-    yVardf <- data[, yVar]
+    yVardf <- data[, yVar, drop=FALSE]
     if (length(yVar) != 1) {
       colnames(yVardf) <- paste0("Scored.", yVar)
     }
   }
-
+   
   # dfWithMapping <- summary_list$summary
 
 

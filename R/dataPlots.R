@@ -1,15 +1,14 @@
+#' importFrom dplyr mutate select rename rename_with everything
+#' importFrom ggplot2 ggplot aes geom_histogram element_rect stat_function stat_density scale_colour_manual scale_linetype_manual guides guide_legend element_blank
+#' importFrom skimr skim
+#' importFrom gridExtra grid.arrange
+#' importFrom knitr kable
+#' importFrom kableExtra kable_styling
+#' @keywords internal
 
 
 dataPlots <- function(df) {
-  # # Load necessary libraries
-  # require(dplyr)
-  # require(ggplot2)
-  # require(corrplot)
-  # require(skimr)
-  # require(gridExtra)
-  # require(knitr)
-  # require(kableExtra)
-  # 
+
   
 ###########Summary EDA Function
   summary_eda <- function(df) {

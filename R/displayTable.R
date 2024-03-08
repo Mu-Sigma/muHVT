@@ -1,6 +1,26 @@
 #' @importFrom rlang sym
+#' @importFrom dplyr mutate across where
+#' @importFrom knitr kable
+#' @importFrom kableExtra cell_spec kable_styling scroll_box
+#' @keywords internal
 
 displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE) {
+  # Check that columnName is a column in data
+  if (!columnName %in% names(data)) {
+    stop("columnName is not a valid column in the provided data frame.")
+  }
+  
+  # Check that value is numeric
+  if (!is.numeric(value)) {
+    stop("value should be a numeric value.")
+  }
+  
+  # Check that tableType is valid
+  valid_table_types <- c("summary", "compression")
+  if (!tableType %in% valid_table_types) {
+    stop("tableType should be one of the following: ", paste(valid_table_types, collapse = ", "), ".")
+  }
+
   # Limit the data
   data <- head(data, 100)
   
