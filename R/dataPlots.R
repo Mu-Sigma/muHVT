@@ -1,9 +1,4 @@
-#' importFrom dplyr mutate select rename rename_with everything
-#' importFrom ggplot2 ggplot aes geom_histogram element_rect stat_function stat_density scale_colour_manual scale_linetype_manual guides guide_legend element_blank
-#' importFrom skimr skim
-#' importFrom gridExtra grid.arrange
-#' importFrom knitr kable
-#' importFrom kableExtra kable_styling
+
 #' @keywords internal
 
 
@@ -12,6 +7,8 @@ dataPlots <- function(df) {
   
 ###########Summary EDA Function
   summary_eda <- function(df) {
+    variable  <-  `1st Quartile`<-median<- sd<-`3rd Quartile`<-  hist<- n_row<- n_missing<- NULL
+    type <-complete_rate <-p0 <-p25 <-p50 <-p75<-p100<-NULL
     numeric_columns <- sapply(df, is.numeric)
     missing_counts <- sapply(seq_along(numeric_columns)[numeric_columns], function(i) sum(is.na(df[[i]])))
     missing_counts_vector <- unlist(missing_counts)
@@ -26,6 +23,7 @@ dataPlots <- function(df) {
       dplyr::rename(min = p0, `1st Quartile` = p25, median = p50, `3rd Quartile` = p75, max = p100) %>%
       dplyr::select(variable, min, `1st Quartile`, median, mean, sd, `3rd Quartile`, max, hist,n_row, n_missing)
     
+    
     # Generate the kable table with options using knitr's kable and kableExtra's styling functions
     eda_format <- knitr::kable(result, "html", escape = FALSE, align = "c") %>%
       kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive")) 
@@ -35,6 +33,7 @@ dataPlots <- function(df) {
  
 #############Histogram   
   generateDistributionPlot <- function(data, column) {
+    name <-dnorm <-  NULL
     p1<- ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
       ggplot2::geom_histogram(ggplot2::aes(y = ..count..), fill = "midnightblue", size = 0.2, alpha=0.7) +
       ggplot2::xlab(column) + ggplot2::ylab("Count") +
@@ -43,7 +42,7 @@ dataPlots <- function(df) {
     
     p2<-ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
       ggplot2::stat_function(ggplot2::aes(color = "Normal"), fun = dnorm,args = list(mean =
-                                                                                       mean(data[[column]]),sd = sd(data[[column]]))) +
+                                                                                       mean(data[[column]]),sd = stats::sd(data[[column]]))) +
       ggplot2::stat_density(ggplot2::aes(color = "Density"), geom = "line", linetype = "dashed")  +
       ggplot2::scale_colour_manual("", values = c("black", "orange")) +
       ggplot2::scale_linetype_manual("", values = c("Normal" = 2, "Density" = 1))  +
@@ -66,7 +65,7 @@ dataPlots <- function(df) {
     g2 <- ggplot2::ggplotGrob(p2)
     
     pp <- c(subset(g1$layout, name == "panel", se = t:r))
-    
+
     # superimpose p2 (the panel) on p1
     g <- gtable::gtable_add_grob(g1, g2$grobs[[which(g2$layout$name == "panel")]], pp$t, 
                                  pp$l, pp$b, pp$l)
@@ -90,7 +89,8 @@ dataPlots <- function(df) {
 ################Box Plots Function
   quantile_outlier_plots_fn <- function(data, outlier_check_var, data_cat = data[, cat_cols], numeric_cols = numeric_cols){
     CheckColumnType <- function(data) {
-      if (class(data) == "integer" || class(data) == "numeric") {
+      if (is.numeric(data) || is.integer(data)) {
+      #if (class(data) == "integer" || class(data) == "numeric") {
         columnType <- "numeric"
       } else { columnType <- "character" }
       return(columnType)}
@@ -116,7 +116,7 @@ dataPlots <- function(df) {
 
 ############Correlation Plot Function
   correlation_plot <- function(df) {
-    corrplot::corrplot(cor(df, use = "complete.obs"), method = "color", outline = TRUE, addgrid.col = "darkgray", addrect = 4,
+    corrplot::corrplot(stats::cor(df, use = "complete.obs"), method = "color", outline = TRUE, addgrid.col = "darkgray", addrect = 4,
                        rect.col = "black", rect.lwd = 5, cl.pos = "b", tl.col = "black", tl.cex = 1, 
                        cl.cex = 1,addCoef.col = "black", number.digits = 2, number.cex = 1.5, 
                        type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200))

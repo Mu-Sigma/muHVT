@@ -1,7 +1,5 @@
 #' @importFrom rlang sym
 #' @importFrom dplyr mutate across where
-#' @importFrom knitr kable
-#' @importFrom kableExtra cell_spec kable_styling scroll_box
 #' @keywords internal
 
 displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE) {

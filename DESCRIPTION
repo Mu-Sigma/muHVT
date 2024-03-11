@@ -1,6 +1,6 @@
 Package: HVT
 Type: Package
-Date: 2024-03-08
+Date: 2024-03-11
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
 Version: 24.3.1
@@ -14,20 +14,47 @@ Encoding: UTF-8
 Imports: MASS, deldir, grDevices, splancs, sp, conf.design, Hmisc,
         stats, dplyr, purrr, magrittr, polyclip, ggplot2, tidyr,
         scales, cluster, reshape2,data.table, patchwork,
-         knitr,kableExtra, rlang,plyr
+        rlang,plyr
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.3.1
 Suggests: rmarkdown, testthat, geozoo, plotly, DT,
         gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools,
-        tidyverse, DataExplorer, htmltools, corrplot
+        tidyverse, DataExplorer, htmltools, corrplot,knitr,kableExtra
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-03-08 12:35:23 UTC;
+Packaged: 2024-03-11 12:35:23 UTC;
 Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-03-08 16:50:00 UTC
-
+Date/Publication: 2024-03-11 16:50:00 UTC
+Collate: 
+    'Add_boundary_points.R'
+    'Corrected_Tessellations.R'
+    'Transform_Coordinates.R'
+    'ScaleMat.R'
+    'DelaunayInfo.R'
+    'Delete_Outpoints.R'
+    'VQ_codebookSplit.R'
+    'dataPlots.R'
+    'diagPlot.R'
+    'diagSuggestion.R'
+    'displayTable.R'
+    'getCellId.R'
+    'getCentroids.R'
+    'getCentroids_for_opti.R'
+    'getOptimalCentroids.R'
+    'global.R'
+    'hvq.R'
+    'madPlot.R'
+    'plotHVT.R'
+    'plotModelDiagnostics.R'
+    'plotNovelCells.R'
+    'plotQuantErrorHistogram.R'
+    'removeNovelty.R'
+    'sammonsProjection.R'
+    'scoreHVT.R'
+    'scoreLayeredHVT.R'
+    'trainHVT.R'

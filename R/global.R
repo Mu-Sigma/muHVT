@@ -3,7 +3,7 @@
 
 utils::globalVariables(c(".","k","Segment.Level","Segment.Child","Quant.Error",
                          "noOfCellsBelowQuantizationError","noOfCells","index",
-                         "Segment.Parent","cluster","child","value", "hvq_k",
+                         "Segment.Parent","cluster","child","value", "hvq_k","..count..",":=",
                          "min_dist", "perc", "Centroid_Type", "polygon_x", "polygon_y",
                          "quantError", "kout$cluster", 'kmedoids_model[["clustering"]]',
                          "cellID", "Mean_Absolute_Deviation", "Percentage_of_Anomalous_Points",
