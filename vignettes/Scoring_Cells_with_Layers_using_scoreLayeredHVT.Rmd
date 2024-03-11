@@ -468,7 +468,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
   plotHVT(
   torus_mapA,
-  torus_train,
   child.level = 1,
   hmap.cols = "x",
   line.width = c(0.2),
@@ -483,7 +482,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
   plotHVT(
   torus_mapA,
-  torus_train,
   child.level = 1,
   hmap.cols = "y",
   line.width = c(0.2),
@@ -498,7 +496,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
   plotHVT(
   torus_mapA,
-  torus_train,
   child.level = 1,
   hmap.cols = "z",
   line.width = c(0.2),
@@ -711,7 +708,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 ```{r hvt_mapC hmp level one x torus,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 12: The Voronoi Tessellation with the heat map overlaid for feature `x` in the ’torus’ dataset' , eval = global_var}
   plotHVT(
   torus_mapC,
-  torus_train,
   child.level = 2,
   hmap.cols = "x",
   line.width = c(0.6,0.4),
@@ -728,7 +724,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
   plotHVT(
   torus_mapC,
-  torus_train,
   child.level = 2,
   hmap.cols = "y",
   line.width = c(0.6,0.4),
@@ -743,7 +738,6 @@ The heatmaps displayed below provides a visual representation of the spatial cha
 
   plotHVT(
   torus_mapC,
-  torus_train,
   child.level = 2,
   hmap.cols = "z",
   line.width = c(0.6,0.4),
