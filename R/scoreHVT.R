@@ -69,34 +69,41 @@ scoreHVT <- function(data,
   if (!("Cell.ID" %in% colnames(hvt.results.model[[3]]$summary))) {
     hvt.results.model[[3]]$summary <- getCellId(hvt.results = hvt.results.model)
   }
- # browser()
+  #browser()
   hvt.results.model[[3]]$summary <- cbind(hvt.results.model[[3]]$summary, centroidRadius = unlist(hvt.results.model[[3]]$max_QE))
 
   summary_list <- hvt.results.model[[3]]
   train_colnames <- names(summary_list[["nodes.clust"]][[1]][[1]])
-
+  #data <- data.frame(data)
   if (!all(train_colnames %in% colnames(data))) {
     stop("Not all training columns are part of test dataset")
   }
 
+  #common_cols <- intersect(colnames(data), train_colnames)
+  
   if (!all(is.na(summary_list$scale_summary)) && normalize == TRUE) {
     scaled_test_data <- scale(
+      #data[, common_cols],
       data[, train_colnames],
       center = summary_list$scale_summary$mean_data[train_colnames],
       scale = summary_list$scale_summary$std_data[train_colnames]
     )
   } else {
-    scaled_test_data <- data[, train_colnames]
+     scaled_test_data <- data[, train_colnames]
+    #scaled_test_data <- data[, common_cols]
+    
   }
 
   colnames(scaled_test_data) <- train_colnames
+  #colnames(scaled_test_data) <- common_cols
+  
   # level <- length(summary_list$nodes.clust)
   level <- child.level
 
   # keep_col <- names(summary_list$summary)
   # subsetting df based on multiple dep variables
   if (!is.null(yVar)) {
-    yVardf <- data[, yVar, drop=FALSE]
+    yVardf <- data[, yVar]
     if (length(yVar) != 1) {
       colnames(yVardf) <- paste0("Scored.", yVar)
     }
@@ -106,6 +113,7 @@ scoreHVT <- function(data,
 
 
   find_path <- function(data_vec, centroid_data) {
+   # browser()
     # centroidDist <- which.min(sqrt(colSums((centroid_data - data_vec) ^ 2)))
     if (distance_metric == "L1_Norm") {
       centroidDist <- which.min(colSums(abs(centroid_data - data_vec), na.rm = TRUE))
@@ -301,9 +309,9 @@ scoreHVT <- function(data,
 
   if (nrow(boundaryCoords2) != 0) {
     hoverText <- paste(
-      " Cell ID:",
-      boundaryCoords2$Cell.ID,
-      "<br>",
+      # " Cell ID:",
+      # boundaryCoords2$Cell.ID,
+      # "<br>",
       "Segment.Level:",
       boundaryCoords2$Segment.Level,
       "<br>",
@@ -363,6 +371,8 @@ scoreHVT <- function(data,
 
   predict_test_data3 <- predict_test_data3 %>% mutate_if(is.numeric, round, digits = 4) # Rounding decimal columns using dplyr function
   predict_test_dataRaw <- predict_test_data3
+  #common_cols <- intersect(colnames(data), train_colnames)
+  #predict_test_dataRaw <- data[, common_cols]
   predict_test_dataRaw[, train_colnames] <- data[, train_colnames]
 
   ################################################# Changes #################
