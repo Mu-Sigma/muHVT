@@ -943,10 +943,10 @@ numeric columns. The output plot is shown as a matrix.
 
 4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
 
-It uses an inbuilt function called `dataPlots` to display the above mentioned four objects.
+It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
 
-```{r, dataPlots function, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-dataPlots(dataset_updated)
+```{r, edaPlots function, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
+edaPlots(dataset_updated)
 ```
 
 ## 7.1 Train - Test Split
@@ -974,14 +974,14 @@ columns.
 ### 7.1.1 Train Distribution
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-dataPlots(dataset_updated_train)
+edaPlots(dataset_updated_train)
  
 ```
 
 ### 7.1.2 Test Distribution
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-dataPlots(dataset_updated_test)
+edaPlots(dataset_updated_test)
 
 ```
 
@@ -1390,20 +1390,20 @@ The important parameters for the function `scoreHVT` are as below
 
 -  **`child.level`** - A number indicating the depth for which the heat map is to be plotted. Each depth represents a different level of clustering or partitioning of the data.
 
-- **`mad.threshold`**  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot.
+- **`mad.threshold`**  - A numeric value indicating the permissible Mean Absolute Deviation which is obtained from Minimum Intra centroid plot(when diagnose is set to TRUE in trainHVT). `mad.threshold` value is important since it is used in anomaly detection. Default value is 0.2
+*NOTE: for a given datapoint, when the quantization error is above `mad.threshold` it is denoted as anomaly else not.*
 
 - **`line.width`**	- A vector indicating the line widths of the tessellation boundaries for each layer. (Optional Parameter)
 
 * **`color.vec`**	- A vector indicating the colors of the tessellations boundaries at each layer. (Optional Parameter)
 
-* **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
+* **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset referred from the trainHVT(). When set to FALSE, the `data` is used as such without any changes.
 
-* **`seed`**  - A Random seed.
+* **`seed`**  - A Random Numeric Seed to preserve the repeatability.
 
-* **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. The distance metric can be different from the one used during training.
+* **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
-* **`error_metric`** - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell. The error metric can be different from the one used during training.
-
+* **`error_metric`** - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
 * **`yVar`** - A character or a vector representing the name of the dependent variable(s)
 

@@ -14,8 +14,6 @@
 #'  hierarchical vector quantization on data without novelty(s)
 #' @param child.level Numeric. A number indicating the level for which the heat map is to be plotted.
 #' @param mad.threshold Numeric. A number indicating the permissible Mean Absolute Deviation
-#' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer.
-#' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
 #' @param normalize Logical. A logical value indicating if the dataset should be normalized. 
 #' When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset 
 #' referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
@@ -82,8 +80,6 @@ scoreLayeredHVT <- function(data,
                             distance_metric = "L1_Norm",
                             error_metric = "max",
                             child.level = 1,
-                            line.width = c(0.6, 0.4, 0.2),
-                            color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
                             yVar = NULL) {
   # browser()
 
@@ -97,8 +93,6 @@ scoreLayeredHVT <- function(data,
     hvt_mapA,
     child.level = 1,
     mad.threshold = 0.2,
-    line.width = c(0.6),
-    color.vec = c("#141B41"),
     normalize = normalize,
     distance_metric = distance_metric,
     error_metric = error_metric,
@@ -113,8 +107,6 @@ scoreLayeredHVT <- function(data,
     hvt_mapB,
     child.level = 1,
     mad.threshold = 0.2,
-    line.width = c(0.6),
-    color.vec = c("#141B41"),
     normalize = normalize,
     distance_metric = distance_metric,
     error_metric = error_metric,
@@ -130,8 +122,6 @@ scoreLayeredHVT <- function(data,
     hvt_mapC,
     child.level = 1,
     mad.threshold = 0.2,
-    line.width = c(0.6),
-    color.vec = c("#141B41"),
     normalize = normalize,
     distance_metric = distance_metric,
     error_metric = error_metric,

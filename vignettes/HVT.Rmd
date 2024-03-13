@@ -107,7 +107,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## HVT (v24.3.1) | What's New? {-}
 
-11th March, 2024
+13th March, 2024
 
 In this version of HVT package, the following new features have been introduced:
 

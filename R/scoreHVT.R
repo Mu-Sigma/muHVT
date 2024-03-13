@@ -69,7 +69,7 @@ scoreHVT <- function(data,
   if (!("Cell.ID" %in% colnames(hvt.results.model[[3]]$summary))) {
     hvt.results.model[[3]]$summary <- getCellId(hvt.results = hvt.results.model)
   }
-  #browser()
+ # browser()
   hvt.results.model[[3]]$summary <- cbind(hvt.results.model[[3]]$summary, centroidRadius = unlist(hvt.results.model[[3]]$max_QE))
 
   summary_list <- hvt.results.model[[3]]
@@ -140,10 +140,16 @@ scoreHVT <- function(data,
     bind_rows()
 
   groupCols2 <- c(paste0("Segment.", c("Level", "Parent", "Child")), yVar)
-  if ("Cell.ID" %in% names(innermostCells2)) groupCols2 <- c(groupCols2, "Cell.ID", "centroidRadius")
+  
+  if ("Cell.ID" %in% names(innermostCells2)) { 
+       groupCols2 <- c(groupCols2, "Cell.ID", "centroidRadius")
+    } else{
+      groupCols2 <- groupCols2
+    }
 
   predict_test_data2 <-
     cbind(data.frame(scaled_test_data, "n" = 1), cent_dist_df2) %>%
+   # cbind(data.frame(scaled_test_data[, !(names(scaled_test_data) == yVar)], "n" = 1), cent_dist_df2) %>%
     dplyr::left_join(
       innermostCells2 %>%
         select(all_of(groupCols2)) %>%
@@ -309,9 +315,9 @@ scoreHVT <- function(data,
 
   if (nrow(boundaryCoords2) != 0) {
     hoverText <- paste(
-      # " Cell ID:",
-      # boundaryCoords2$Cell.ID,
-      # "<br>",
+      " Cell ID:",
+      boundaryCoords2$Cell.ID,
+      "<br>",
       "Segment.Level:",
       boundaryCoords2$Segment.Level,
       "<br>",

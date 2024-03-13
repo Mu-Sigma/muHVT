@@ -2,7 +2,7 @@
 #' @keywords internal
 
 
-dataPlots <- function(df) {
+edaPlots <- function(df) {
 
   
 ###########Summary EDA Function
@@ -26,14 +26,16 @@ dataPlots <- function(df) {
     
     # Generate the kable table with options using knitr's kable and kableExtra's styling functions
     eda_format <- knitr::kable(result, "html", escape = FALSE, align = "c") %>%
-      kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive")) 
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+        # caption = "EDA summary Table", font_size = 14, position = "center") 
+
     
     return(eda_format)
  }  
  
 #############Histogram   
   generateDistributionPlot <- function(data, column) {
-    name <-dnorm <-  NULL
+    name  <-  NULL
     p1<- ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
       ggplot2::geom_histogram(ggplot2::aes(y = ..count..), fill = "midnightblue", size = 0.2, alpha=0.7) +
       ggplot2::xlab(column) + ggplot2::ylab("Count") +
@@ -41,8 +43,8 @@ dataPlots <- function(df) {
       ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),legend.position = c(0.8, 0.8))
     
     p2<-ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
-      ggplot2::stat_function(ggplot2::aes(color = "Normal"), fun = dnorm,args = list(mean =
-                                                                                       mean(data[[column]]),sd = stats::sd(data[[column]]))) +
+      ggplot2::stat_function(ggplot2::aes(color = "Normal"), 
+      fun = stats::dnorm,args = list(mean = mean(data[[column]]),sd = stats::sd(data[[column]]))) +
       ggplot2::stat_density(ggplot2::aes(color = "Density"), geom = "line", linetype = "dashed")  +
       ggplot2::scale_colour_manual("", values = c("black", "orange")) +
       ggplot2::scale_linetype_manual("", values = c("Normal" = 2, "Density" = 1))  +
@@ -115,11 +117,12 @@ dataPlots <- function(df) {
   }
 
 ############Correlation Plot Function
-  correlation_plot <- function(df) {
-    corrplot::corrplot(stats::cor(df, use = "complete.obs"), method = "color", outline = TRUE, addgrid.col = "darkgray", addrect = 4,
+  correlation_plot <- function(df, title = "Feature Correlation Analysis") {
+    corrplot::corrplot(stats::cor(df, use = "complete.obs"), main = list(title , font = 1, cex = 1),method = "color", 
+                       outline = TRUE, addgrid.col = "darkgray", addrect = 4,
                        rect.col = "black", rect.lwd = 5, cl.pos = "b", tl.col = "black", tl.cex = 1, 
                        cl.cex = 1,addCoef.col = "black", number.digits = 2, number.cex = 1.5, 
-                       type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200))
+                       type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200), mar=c(0,0,2,0))  
   }
   
     # Execute Distribution Plots
@@ -132,10 +135,10 @@ dataPlots <- function(df) {
   box_plots <- lapply(eda_cols, function(column) {
     quantile_outlier_plots_fn(df, outlier_check_var = column)[[1]]
   })
-  do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3))
+  do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3, top = "Boxchart Visualization"))
 
   # Execute Correlation Plot
-   correlation_plot(df)
+   correlation_plot(df,title = "Feature Correlation Analysis")
    
    # Execute Summary EDA
    eda_table <- summary_eda(df)
