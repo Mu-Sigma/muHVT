@@ -2,7 +2,7 @@
 #' @importFrom dplyr mutate across where
 #' @keywords internal
 
-displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE) {
+displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE, limit= 100) {
   # Check that columnName is a column in data
   if (!columnName %in% names(data)) {
     stop("columnName is not a valid column in the provided data frame.")
@@ -20,7 +20,7 @@ displayTable <- function(data, columnName, value, tableType = "summary", scroll 
   }
 
   # Limit the data
-  data <- head(data, 100)
+  data <- head(data, limit)
   
   # Ensure all numeric columns are rounded to 2 decimal places using dplyr's mutate and across
   data <- data %>%

@@ -2,7 +2,7 @@
 #' @keywords internal
 
 
-edaPlots <- function(df) {
+edaPlots <- function(df, time_series = FALSE, time_column) {
 
   
 ###########Summary EDA Function
@@ -106,7 +106,7 @@ edaPlots <- function(df) {
     data$QuantileOutlier <- data[,outlier_check_var] > upper_threshold | data[,outlier_check_var] < lower_threshold
     
     quantile_outlier_plot <- ggplot2::ggplot(data, ggplot2::aes(x="", y = data[,outlier_check_var])) +
-      ggplot2::geom_boxplot(fill = 'blue',alpha=0.7) + 
+      ggplot2::geom_boxplot(fill = 'midnightblue',alpha=0.7) + 
       ggplot2::theme_bw() + 
       ggplot2::theme(panel.border=ggplot2::element_rect(size=0.1),
                      panel.grid.minor.x=ggplot2::element_blank(),
@@ -124,6 +124,50 @@ edaPlots <- function(df) {
                        cl.cex = 1,addCoef.col = "black", number.digits = 2, number.cex = 1.5, 
                        type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200), mar=c(0,0,2,0))  
   }
+
+#####################timeseries plots
+  generateTimeseriesPlot <- function(df, time_column){
+  #reshape the data to long format
+    melted_data <- tidyr::gather(df, variable, value, -time_column)
+  
+  # Create individual time series plots
+  plot_list <- lapply(unique(melted_data$variable), function(var) {
+    p <- ggplot2::ggplot(melted_data[melted_data$variable == var, ], ggplot2::aes_string(x =time_column , y = "value")) +
+      ggplot2::geom_line(color = "midnightblue", size = 0.5, alpha = 1) +
+      ggplot2::xlab(time_column) + 
+      ggplot2::ylab(var) + 
+      ggplot2::theme_bw() 
+  })
+  
+  do.call(gridExtra::grid.arrange, c(plot_list, ncol = 2, top = "Time series plots of Features" ))
+ }  
+  
+if (time_series == TRUE & (!is.null(time_column)) ){
+    
+    # Execute Distribution Plots
+    generateTimeseriesPlot(df,time_column)
+    
+    # Execute Distribution Plots
+    eda_cols <- names(df)[sapply(df, is.numeric)]
+    dist_list <- lapply(eda_cols, function(column) {
+      generateDistributionPlot(df, column)
+    }) 
+    do.call(gridExtra::grid.arrange, args = list(grobs = dist_list, ncol = 2, top = "Distribution of Features"))
+    # Execute Box Plots for Outliers
+    box_plots <- lapply(eda_cols, function(column) {
+      quantile_outlier_plots_fn(df, outlier_check_var = column)[[1]]
+    })
+    do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3, top = "Boxplot Visualization"))
+    
+    # Execute Correlation Plot
+    correlation_plot(df,title = "Features Correlation Visualization")
+    
+    # Execute Summary EDA
+    eda_table <- summary_eda(df)
+    return(eda_table)
+    
+    
+  }  else {
   
     # Execute Distribution Plots
   eda_cols <- names(df)[sapply(df, is.numeric)]
@@ -135,16 +179,15 @@ edaPlots <- function(df) {
   box_plots <- lapply(eda_cols, function(column) {
     quantile_outlier_plots_fn(df, outlier_check_var = column)[[1]]
   })
-  do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3, top = "Boxchart Visualization"))
+  do.call(gridExtra::grid.arrange, c(grobs = box_plots, ncol = 3, top = "Boxplot Visualization"))
 
   # Execute Correlation Plot
-   correlation_plot(df,title = "Feature Correlation Analysis")
-   
+   correlation_plot(df,title = "Features Correlation Visualization")
+  
    # Execute Summary EDA
    eda_table <- summary_eda(df)
    return(eda_table)
-  
+  } 
    
-  
 }
 

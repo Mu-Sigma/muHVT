@@ -30,31 +30,5 @@ Author: Zubin Dowlaty [aut],
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
 Date/Publication: 2024-03-11 16:50:00 UTC
-Collate: 
-    'Add_boundary_points.R'
-    'Corrected_Tessellations.R'
-    'Transform_Coordinates.R'
-    'ScaleMat.R'
-    'DelaunayInfo.R'
-    'Delete_Outpoints.R'
-    'VQ_codebookSplit.R'
-    'dataPlots.R'
-    'diagPlot.R'
-    'diagSuggestion.R'
-    'displayTable.R'
-    'getCellId.R'
-    'getCentroids.R'
-    'getCentroids_for_opti.R'
-    'getOptimalCentroids.R'
-    'global.R'
-    'hvq.R'
-    'madPlot.R'
-    'plotHVT.R'
-    'plotModelDiagnostics.R'
-    'plotNovelCells.R'
-    'plotQuantErrorHistogram.R'
-    'removeNovelty.R'
-    'sammonsProjection.R'
-    'scoreHVT.R'
-    'scoreLayeredHVT.R'
-    'trainHVT.R'
+
+    

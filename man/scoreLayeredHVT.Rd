@@ -15,8 +15,6 @@ scoreLayeredHVT(
   distance_metric = "L1_Norm",
   error_metric = "max",
   child.level = 1,
-  line.width = c(0.6, 0.4, 0.2),
-  color.vec = c("#141B41", "#6369D1", "#D8D2E1"),
   yVar = NULL
 )
 }
@@ -51,10 +49,6 @@ referred from the trainHVT(). When set to FALSE, the data is used as such withou
 between a point and centroid of the cell. The error metric can be different from the one used during training.}
 
 \item{child.level}{Numeric. A number indicating the level for which the heat map is to be plotted.}
-
-\item{line.width}{Vector. A vector indicating the line widths of the tessellation boundaries for each layer.}
-
-\item{color.vec}{Vector. A vector indicating the colors of the tessellations boundaries at each layer.}
 
 \item{yVar}{Character. A character or a vector representing the name of the dependent variable(s)}
 }
