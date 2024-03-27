@@ -10,7 +10,10 @@
 #' @param animation Character. Type of animation ('state_based', 'time_based', or 'All').
 #' @param flow_map Character. Type of flow map ('self_state', 'probability', or 'All').
 #' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
+#' Default value is 1
 #' @param threshold Numeric. An Integer representing the Probability threshold for flow map arrows.
+#' @param duration Numeric. An Integer representing the total duration of the animation.
+#' Default value is 2
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
@@ -41,14 +44,18 @@
 #' print(plot[[2]])
 #' @export plotAnimatedFlowmap
 
-plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df, animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column, time_column) {
+plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df, animation = NULL, flow_map = NULL, fps_time = 1,fps_state = 1,time_duration =2, state_duration = 2, threshold = NULL,duration = 2, cellid_column, time_column) {
   
   # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL
   if (is.null(animation))animation <- "state_based"
   if (is.null(flow_map))flow_map <- "without_self_state"
-  if (is.null(animation_speed))animation_speed <- 2
   if (is.null(threshold))threshold <- 0.6
+ # if (is.null(animation_speed))animation_speed <- 0.6
+  if (is.null(duration))duration <- 2
+
   
+  
+  #browser()
   # Rename columns for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
   colnames(df)[colnames(df) == cellid_column] <- "Cell.ID"
@@ -67,17 +74,18 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   
   # Function to get highest state and probability excluding self-state
   get_second_highest <- function(df) {
-    df$Tplus1_States <- as.integer(df$Tplus1_States)
-    max_probability_row <- df[which.max(df$Probability), ]
-    max_probability_state <- max_probability_row$Tplus1_States
+   # browser()
+    df$Next_State <- as.integer(df$Next_State)
+    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    max_probability_state <- max_probability_row$Next_State
     
-    other_states <- df$Tplus1_States[df$Probability != max(df$Probability)]
+    other_states <- df$Next_State[df$Probability_Percentage != max(df$Probability_Percentage)]
     
     if (length(other_states) > 0) {
-      sorted_states <- other_states[order(-df$Probability[df$Tplus1_States %in% other_states])]
+      sorted_states <- other_states[order(-df$Probability_Percentage[df$Next_State %in% other_states])]
       if (length(sorted_states) >= 1) {
         next_highest_state <- sorted_states[1]
-        next_highest_probability <- df$Probability[df$Tplus1_States == next_highest_state]
+        next_highest_probability <- df$Probability_Percentage[df$Next_State == next_highest_state]
       } else {
         next_highest_state <- NA
         next_highest_probability <- NA
@@ -87,23 +95,24 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
       next_highest_probability <- NA
     }
     
-    return(data.frame(Tplus1_States = next_highest_state, Probability = next_highest_probability))
+    return(data.frame(Next_State = next_highest_state, Probability = next_highest_probability))
   }
   
   # Apply the function to each data frame in 'transition_probability_df'
   second_highest_states_list <- lapply(transition_probability_df, get_second_highest)
+  #browser()
   
   # Combine the results into a single data frame
   second_state_df <- do.call(rbind, second_highest_states_list)
   
   # Function to get the highest probability state and probability
   get_highest_probability <- function(df) {
-    df$Tplus1_States <- as.integer(df$Tplus1_States)
-    max_probability_row <- df[which.max(df$Probability), ]
-    highest_probability_state <- max_probability_row$Tplus1_States
+    df$Next_State <- as.integer(df$Next_State)
+    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    highest_probability_state <- max_probability_row$Next_State
     highest_probability_probability <- max_probability_row$Probability
     
-    return(data.frame(Tplus1_States = highest_probability_state, Probability = highest_probability_probability))
+    return(data.frame(Next_State = highest_probability_state, Probability = highest_probability_probability))
   }
   
   highest_probability_states_list <- lapply(transition_probability_df, get_highest_probability)
@@ -115,21 +124,21 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   current_state_data <- dplyr::arrange(cellID_coordinates, Cell.ID)
   colnames(current_state_data) <- c("x1", "y1", "Cell.ID")
   
-  # Dataframe for second_highest state
+  # Dataframe for second_highest state (without self state)
   merged_df1 <- cbind(current_state_data, second_state_df)
   merged_df1 <- merged_df1 %>%
-    left_join(dplyr::select(merged_df1, Cell.ID, x1, y1), by = c("Tplus1_States" = "Cell.ID")) %>%
+    left_join(dplyr::select(merged_df1, Cell.ID, x1, y1), by = c("Next_State" = "Cell.ID")) %>%
     dplyr::mutate(x2 = x1.y, y2 = y1.y) %>%
     dplyr::select(-x1.y, -y1.y)
-  colnames(merged_df1) <- c("x1", "y1", "Cell.ID", "Tplus1_States", "Probability", "x2", "y2")
+  colnames(merged_df1) <- c("x1", "y1", "Cell.ID", "Next_State", "Probability", "x2", "y2")
   
-  # Dataframe for highest state
+  # Dataframe for highest state  (with self state)
   merged_df2 <- cbind(current_state_data, first_state_df)
   merged_df2 <- merged_df2 %>%
-    left_join(dplyr::select(merged_df2, Cell.ID, x1, y1), by = c("Tplus1_States" = "Cell.ID")) %>%
+    left_join(dplyr::select(merged_df2, Cell.ID, x1, y1), by = c("Next_State" = "Cell.ID")) %>%
     dplyr::mutate(x2 = x1.y, y2 = y1.y) %>%
     dplyr::select(-x1.y, -y1.y)
-  colnames(merged_df2) <- c("x1", "y1", "Cell.ID", "Tplus1_States", "Probability", "x2", "y2")
+  colnames(merged_df2) <- c("x1", "y1", "Cell.ID", "Next_State", "Probability", "x2", "y2")
   merged_df2$Probability <- round(merged_df2$Probability, digits = 3)
   
   # # Non-self state PLOT
@@ -175,29 +184,29 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   # Create a new column "threshold" based on the mean
   
   prob_with_no_selfstate <- function(df) {
-    df$Tplus1_States <- as.integer(df$Tplus1_States)
-    max_probability_row <- df[which.max(df$Probability), ]
-    max_probability_state <- max_probability_row$Tplus1_States
+    df$Next_State <- as.integer(df$Next_State)
+    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    max_probability_state <- max_probability_row$Next_State
     
     # Exclude the row with the highest probability
-    df <- df[df$Tplus1_States != max_probability_state, ]
+    df <- df[df$Next_State != max_probability_state, ]
     
     if (nrow(df) > 0) {
       # Calculate the total count of the remaining probabilities
-      total_count <- sum(df$Probability)
+      total_count <- sum(df$Probability_Percentage)
       
       # Calculate probabilities based on the remaining rows
-      probabilities <- as.vector(df$Probability) / total_count
+      probabilities <- as.vector(df$Probability_Percentage) / total_count
       
       # Find the state with the highest probability among the remaining rows
-      next_highest_state <- df$Tplus1_States[which.max(probabilities)]
+      next_highest_state <- df$Next_State[which.max(probabilities)]
       next_highest_probability <- max(probabilities)
     } else {
       next_highest_state <- NA
       next_highest_probability <- NA
     }
     
-    return(data.frame(Tplus1_States = next_highest_state, Probability = next_highest_probability))
+    return(data.frame(Next_State = next_highest_state, Probability = next_highest_probability))
   }
   
   probability_without_selfstate_list <- lapply(transition_probability_df, prob_with_no_selfstate)
@@ -208,10 +217,10 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   # Dataframe for second_highest state
   merged_df3 <- cbind(current_state_data, third_df)
   merged_df3 <- merged_df3 %>%
-    left_join(dplyr::select(merged_df3, Cell.ID, x1, y1), by = c("Tplus1_States" = "Cell.ID")) %>%
+    left_join(dplyr::select(merged_df3, Cell.ID, x1, y1), by = c("Next_State" = "Cell.ID")) %>%
     dplyr::mutate(x2 = x1.y, y2 = y1.y) %>%
     dplyr::select(-x1.y, -y1.y)
-  colnames(merged_df3) <- c("x1", "y1", "Cell.ID", "Tplus1_States", "Probability", "x2", "y2")
+  colnames(merged_df3) <- c("x1", "y1", "Cell.ID", "Next_State", "Probability", "x2", "y2")
   merged_df3 <- merged_df3 %>%
   dplyr::mutate(threshold_label = ifelse(Probability > threshold, "High", "Low"))
   merged_df3$Probability <- round(merged_df3$Probability, digits = 1)
@@ -234,33 +243,75 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
          subtitle = "without considering self state transitions") +
     guides(color = guide_legend(title = "Transition\nProbability")) + theme_minimal()
   
-  # Flow map Animation based on Timestamp
-  df <- df %>%
-    group_by(Cell.ID) %>%
-    dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
-  state_data <<- df %>%
-    group_by(grp = cumsum(c(TRUE, diff(Cell.ID) != 0))) %>%
-    slice(n())
+  # Flow map Animation based on Timestamp - circle blink
+  # #########new
+  # # new_df <- df %>% dplyr::select(Cell.ID,Timestamp) %>% as.data.frame()
+  # # new_df <- new_df %>% left_join(cellID_coordinates, by = "Cell.ID") %>% dplyr::select(-prob1)
+  # # freq <- new_df %>% group_by(Cell.ID, x, y) %>%mutate(freq = n()) %>%ungroup()
+  # # new_data <- freq %>% distinct(Cell.ID, .keep_all = TRUE)
+  # # new_data <- new_data %>% mutate(dummy_time = 1:nrow(new_data))
+  # # new_data <- new_data %>% mutate(state_msec = (new_data$freq)/1000)
+  # # new_data$state_msec <- new_data$state_msec %>% trunc()
+  # # new_data <- new_data %>% as.data.frame()
+  # #########
+ 
+  # 
+  # result_df <- data.frame(Cell.ID = numeric(), Frequency = numeric(), Timestamp = numeric())
+  # current_cell <- sampled_df$Cell.ID[1]
+  # frequency <- 0
+  # last_timestamp <- 0
+  # 
+  # # Iterate through each row of the dataframe
+  # for (i in 1:nrow(sampled_df)) {
+  #   if (sampled_df$Cell.ID[i] != current_cell) {
+  #     result_df <- rbind(result_df, data.frame(Cell.ID = current_cell, Frequency = frequency, Timestamp = last_timestamp))
+  #     current_cell <- sampled_df$Cell.ID[i]
+  #     frequency <- 1
+  #     last_timestamp <- sampled_df$Timestamp[i]
+  #   } else {
+  #     frequency <- frequency + 1
+  #     last_timestamp <- sampled_df$Timestamp[i]
+  #   }
+  # }
+  # 
+  # # Add the last cell ID, frequency, and timestamp to the result dataframe
+  # result_df <- rbind(result_df, data.frame(Cell.ID = current_cell, Frequency = frequency, Timestamp = last_timestamp))
+  # row.names(result_df) <- NULL
   
-  anime_data <- merge(state_data, cellID_coordinates, by = "Cell.ID")
-  anime_data <- anime_data %>% dplyr::mutate(Timestamp = round(Timestamp, 3)) %>% dplyr::arrange(Timestamp)
+  sampled_df <- df[seq(1, nrow(df), by = 100), ] %>% dplyr::select(Cell.ID,Timestamp)
+  
+  anime_data <- merge(sampled_df, cellID_coordinates, by = "Cell.ID", all.x = TRUE)
+  anime_data <- anime_data %>% dplyr::arrange(Timestamp) %>% dplyr::select(-prob1)
+  anime_data <- anime_data %>% dplyr::mutate(dummy_time = 1:nrow(anime_data))
+  #anime_data <- anime_data %>% dplyr::mutate(state_msec = (anime_data$Frequency)/1000)
+  #anime_data$state_msec <- anime_data$state_msec %>% trunc() 
+  anime_data <- anime_data %>% as.data.frame()
+  
+  
+  #browser()
+  
   dot_anim <- ggplot2::ggplot(anime_data, aes(x = x, y=y)) +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    ggplot2::geom_point(show.legend = FALSE, alpha = 0.7, color = "red", size = 5) +
-    scale_color_manual() + theme_minimal() + 
+    ggplot2::geom_point(aes(x = x, y = y),show.legend = FALSE, alpha = 0.7, color = "red", size = 5) +
+    #geom_text( aes(x = x, y = y, label = Frequency), vjust = 2, size = 5, color = "red") +
+    theme_minimal() + 
     labs(x = "x-coordinates", y = "y-coordinates")
   
-  dot_anim <- dot_anim + transition_time(Timestamp) +
+  dot_anim <- dot_anim + 
+             #transition_time(anime_data$dummy_time) +
+    transition_states(dummy_time) +
     labs(title = "Animation showing state transitions",
          subtitle = "considering self state transitions") +
-  shadow_wake(wake_length = 0.03, alpha = FALSE)
-  time_animation <- gganimate::animate(dot_anim, fps = animation_speed, duration = 2)
-  #time_animation <- animate(dot_anim, fps = animation_speed, duration = 100)
+    # exclude_layer = 4, wrap = FALSE
+  shadow_wake(wake_length = 0.05, alpha = FALSE,wrap = FALSE)
+ # time_animation <- gganimate::animate(dot_anim, nframes =sum(new_data$state_msec),fps = animation_speed, duration = duration)
+  time_animation <- gganimate::animate(dot_anim, fps = fps_time, duration = time_duration)
   anim_save("./time_animation.gif", animation = time_animation, width = 800, height = 400)
   
   ### Animation based on next state
-  
+  df <- df %>%group_by(Cell.ID) %>%dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
+  state_data <- df %>%group_by(grp = cumsum(c(TRUE, diff(Cell.ID) != 0))) %>% slice(n())
   order <- unique(state_data$Cell.ID)
   anime_df <- merged_df1[order, ]
   anime_df$order_map <- 1:nrow(anime_df)
@@ -281,11 +332,12 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     labs(x = "x-coordinates", y = "y-coordinates", color = "Transition\nProbability") + theme_minimal()
   
   
+  
   animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + shadow_mark() +
     labs(title = "Animation showing state transitions",
          subtitle = "without considering self-state transitions")
   
-  state_animation <- gganimate::animate(animation1, fps = animation_speed, duration = 2)
+  state_animation <- gganimate::animate(animation1, fps = fps_state, duration = state_duration)
   #state_animation <- animate(animation1, fps = animation_speed)
   anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
   

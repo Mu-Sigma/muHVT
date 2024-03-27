@@ -1,5 +1,5 @@
 ---
-title: "Collection of Functions used for Dynamic Analysis - Flow of Data over Time"
+title: "Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT"
 author: "Zubin Dowlaty, Pon Anureka Seenivasan, Vishwavani"
 date: "`r Sys.Date()`"
 fig.height: 4
@@ -9,7 +9,7 @@ output:
     toc: true
     toc_depth : 3
 vignette: >
-  %\VignetteIndexEntry{Collection of functions used for Dynamic Analysis: Flow of Data over Time}
+  %\VignetteIndexEntry{Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -74,15 +74,15 @@ knitr::opts_chunk$set(
 )
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr", "DT", "knitr", "kableExtra","htmltools", "htmlwidgets")
+list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr", "DT", "knitr", "kableExtra")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages, dependencies = TRUE)
+  install.packages(new.packages, dependencies = TRUE, verbose = FALSE)
 
 # Loading the required libraries
-lapply(list.of.packages, library, character.only = T)
+invisible(lapply(list.of.packages, library, character.only = TRUE))
 options(expressions = 10000)
 global_var <- nzchar(Sys.getenv("RUN_VIGNETTE"))
 global_var <- TRUE
@@ -325,13 +325,14 @@ plotHVT(
 
 # 6. Scoring
 
-Now once we have built the model, let us try to score using our testing dataset. 
+Now once we have built the model, let us try to score using our testing dataset.
+
+NOTE: *we are using the entire dataset here in place of test dataset.*
 
 ```{r scoreHVT function,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-dataset_score <- testDataset[,-c(4:5)]
 scoring_var <- scoreHVT(
-  dataset_score,
+  dataset,
   hvt.results,
   child.level = 1)
 ```
@@ -342,7 +343,7 @@ Let’s see which cell and level each point belongs to with the sorted Timestamp
 
 
 ```{r scoreHVT,warning=FALSE,eval = global_var}
-scored_data <- scoring_var[["scoredPredictedData"]] %>%round(2) %>% cbind(testDataset) %>% 
+scored_data <- scoring_var[["scoredPredictedData"]] %>%round(2) %>% cbind(dataset) %>% 
                as.data.frame()
 
 colnames(scored_data) <- c("Segment.Level", "Segment.Parent", "Segment.Child", "n","Cell.ID",
@@ -411,25 +412,224 @@ This function displays probability for Tplus1 states for all cells in the form o
 trans_table <- getTransitionProbability(df = scored_data, cellid_column = "Cell.ID", time_column = "t")
 ```
 
-```{r}
-Table(trans_table[[1]])
-```
+**NOTE: The output is stored as a nested list which provides facility to handle it with Cell IDs. For the purpose of demo, here we are displaying it as dataframe with first 100 rows.**
 
 ```{r}
-Table(trans_table[[2]])
-```
+names_list <- lapply(trans_table, names)
+common_names <- Reduce(intersect, names_list)
+trans_table_list <- lapply(trans_table, function(df) df[common_names])
+combined_df <- do.call(rbind, trans_table_list)
+combined_df$Next_State <- as.numeric(combined_df$Next_State)
 
-```{r}
-Table(trans_table[[3]])
-```
-
-```{r}
-Table(trans_table[[4]])
-```
-
-```{r}
-Table(trans_table[[5]])
+Table(combined_df, limit = 10)
 ```
 
 
+
+# 9. Reconciling transition probability using markovchain package
+
+```{r reconcileTransitionProbability, eval=FALSE}
+reconcileTransitionProbability(
+                df, 
+                hmap_type = "All", 
+                cellid_column, 
+                time_column)
+```
+
+ 
+* __`df`__  - A dataframe with scoring output and along with the dataset we used for scoreHVT function.
+
+* __`hmap_type`__ - If set to 'without_self_state', reconciliation plots for manual and Markovchain for highest transition probability excluding the self-state is given as output, if set to 'with_self_state', reconciliation plots for manual and Markovchain for highest transition probability considering the self-state is given as output and if set to 'All', plots including and excluding self-state is given as output.
+
+* __`cellid_column`__ -  A Character specifying the column name of Cell ID from the dataframe you pass to this function.
+
+* __`time_column`__ - A Charcater specifying the column name of timestamp from the dataframe you pass to this function.
+
+```{r, warning=FALSE, message=FALSE}
+reconcile_plots <- reconcileTransitionProbability(df = scored_data, hmap_type = "All", cellid_column = "Cell.ID", time_column = "t")
+```
+
+
+
+**Manual reconciliation of transition probability with self-state**
+
+The darker diagonal cells indicate higher probabilities of staying in the same state. These transitions represent situations where there is no change from the current state to the next state. Such states might be attractors in a dynamic system, where the system naturally tends to return to these states even after minor perturbations.
+</br>
+  
+```{r hmap1, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[1]]
+```
+
+</br>
+
+
+</br>
+
+
+
+
+**Manual reconciliation of transition probability without self-state**
+  
+In this plot, the transitions suggest that the states tend to move to neighboring states more frequently. Proximity might not only refer to physical distance but also to similarities in attributes or conditions.
+
+</br>
+
+```{r hmap2, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[2]]
+```
+
+</br>
+
+
+</br>
+
+
+
+
+**Markovchain reconciliation of transition probability with self-state**
+
+This plot uses the same data from the manual reconciliation process to determine the probability using self-state using the *markovchainFit* function.
+
+</br>
+  
+```{r hmap3, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[3]]
+```
+
+</br>
+
+
+</br>
+
+
+
+**Markovchain reconciliation of transition probability without self-state**
+
+This plot uses the same data from the manual reconciliation process to determine the probability using self-state using the *markovchainFit* function.
+</br>
+  
+```{r hmap4, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+
+reconcile_plots[[4]]
+```
+
+</br>
+
+
+</br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</br>
+
+
+
+</br>
+
+</br>
+
+</br>
+
+
+# 10.  Animated Flowmaps
+
+</br>
+
+```{r plotAnimatedFlowmap, eval=FALSE}
+plotAnimatedFlowmap(
+         hvt_model_output, 
+         transition_probability_df, 
+         df, 
+         animation = "All", 
+         flow_map = "All", 
+         animation_speed = 2, 
+         threshold = 0.6, 
+         cellid_column, 
+         time_column )
+
+```
+
+
+* __`hvt_model_output`__  - The List object which is the output from `trainHVT` function.
+
+* __`transition_probability_df`__  - A list of dataframe which is the output from the `getTransitionProbability` function.
+
+* __`df`__  - A dataframe with scoring output and along with the dataset we used for scoreHVT function.
+
+* __`animation`__  - Character. If set to 'time_based', dot animation for state transition with sorted Timestamp is the output. If set to 'state_based', arrow animation based on highest state excluding self-state will be the output. If set to 'All', both the animation will be resulted.
+
+* __`flow_map`__  - Character. If set to 'self_state', dot flowmap for next state based on highest transition probability will be the output.  If set to 'probability', arrow flowmap with arrow-size based on their probability pointing to next state based on highest transition probability excluding self-state will be the output. If set to 'All', all two flowmaps will be resulted.
+
+* __`fps_for_time`__  - A Numeric value indicating the frames per second for time based animated flowmap.
+(Must be numeric value and a factor of 100). Default value is 1.
+
+* __`fps_for_state`__  - A Numeric value indicating the frames per second for state based animated flowmap.
+(Must be numeric value and a factor of 100). Default value is 1.
+
+* __`time_duration`__  - A Numeric value indicating the total duration(in seconds) of the gif for time based animated flowmap.
+Default value is 2.
+
+* __`state_duration`__  - A Numeric value indicating the total duration(in seconds) of the gif for state based animated flowmap. Default value is 2.
+
+
+* __`threshold`__  - A Numeric value ranges between 0.1 to 1 to control the categorization of probability values into "High Probability" and "Low Probability" for the flow map type "Probability".
+
+* __`cellid_column`__  - A Character specifying the column name of Cell ID from the dataframe you pass to this function.
+
+* __`time_column`__  -  A Character specifying the column name of timestamp from the dataframe you pass to this function.
+
+
+```{r flow_map_fn, warning=FALSE,message=FALSE}
+plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_table, df = scored_data, animation = "All", flow_map = "All", fps_time = 10, fps_state =  2, time_duration = 200,state_duration = 50, threshold = 0.7, cellid_column = "Cell.ID", time_column = "t",duration = 50)
+```
+
+
+
+
+</br>
+  
+  
+
+**Flow map: Highest transition probability considering self-state**
+
+Circle around the centroid represents self-state Probability.
+  
+```{r dot_flow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%', out.height='70%', results='asis', warning=FALSE}
+plots[[1]]
+```
+
+
+
+**Flow Map: Highest transition probability excluding self-states - Arrow size represents transition probability**
+
+Arrow segment length based on Probability.
+  
+```{r arrow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%',out.height='70%', results='asis', warning=FALSE}
+
+plots[[2]]
+```
+
+
+**Flow map animation: Highest state transition probabilities (Including self-states)**
+
+
+![](./time_animation.gif){width=100%}
+
+**Flow Map animation: Highest state transition probabilities (Excluding self-states)**
+
+![](./next_state_animation.gif){width=100%}
 

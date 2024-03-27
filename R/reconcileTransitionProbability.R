@@ -50,7 +50,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   
   # Heatmap 1: Transition probability with self-state
   raw_data <- df %>% dplyr::select("Cell.ID", "Timestamp")
- # browser()
+  #browser()
   transition_values <- table(raw_data$Cell.ID[-nrow(raw_data)], raw_data$Cell.ID[-1])
   mat <- unclass(transition_values)
   normalized_value <- mat / rowSums(mat)
