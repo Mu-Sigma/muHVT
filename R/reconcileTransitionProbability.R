@@ -10,7 +10,7 @@
 #' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
-#' @param  hmap_type Character. Type of heatmap to generate ('with_self_state', 'without_self_state', or 'All')
+#' @param  hmap_type Character. Type of heatmap to generate ('self_state', 'without_self_state', or 'All')
 #' @return A list of plotly heatmap objects representing the transition probability heatmaps.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
@@ -46,7 +46,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   colnames(df)[colnames(df) == cellid_column] <- "Cell.ID"
   
   # Set default value for hmap_type if it is NULL
-  if (is.null(hmap_type)) hmap_type <- "with_self_state"
+  if (is.null(hmap_type)) hmap_type <- "self_state"
   
   # Heatmap 1: Transition probability with self-state
   raw_data <- df %>% dplyr::select("Cell.ID", "Timestamp")
@@ -57,17 +57,19 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   melted_matrix <- reshape2::melt(normalized_value)
   a_df <- melted_matrix %>% as.data.frame()
   colnames(a_df) <- c("StateFrom", "StateTo", "Probabilty")
-  a_df$StateTo <- as.factor(a_df$StateTo)
-  a_df$StateFrom <- as.factor(a_df$StateFrom)
+  a_df$StateTo <- as.integer(a_df$StateTo)
+  a_df$StateFrom <- as.integer(a_df$StateFrom)
+  a_df$Probabilty <- round(a_df$Probabilty, digits = 4)
   
   hmap1 <- plotly::plot_ly(
     data = a_df,
-    x = a_df$StateFrom,
-    y = a_df$StateTo,
-    z = a_df$Probabilty,
+    x = ~StateFrom,
+    y = ~StateTo,
+    z = ~Probabilty,
     type = "heatmap",
     colorscale = "colz",
     showlegend = TRUE,
+    name = "Probability",
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
@@ -75,8 +77,9 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
       xaxis = list(title = "Cell.ID From"),
       yaxis = list(title = "Cell.ID To"),
       autosize = FALSE,
-      width = 750,
-      height = 600
+      width = 1000,
+      height = 600,
+      colorbar = list(title = "Probability")
     )
   
   # Heatmap 2: Transition probability without self-state
@@ -86,25 +89,25 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   mat1 <- unclass(transition_values1)
   normalized_value1 <- mat1 / rowSums(mat1)
   
-
-  # browser()  
   # Normalize again after setting self-transitions to 0
-  normalized_value1 <- normalized_value1 / rowSums(normalized_value1)
+  #normalized_value1 <- normalized_value1 / rowSums(normalized_value1)
   # Set probability to 0 for transitions to the same state
   for (i in 1:nrow(normalized_value1)) {
     normalized_value1[i, i] <- 0
   }
+  
   melted_matrix1 <- reshape2::melt(normalized_value1)
   a_df1 <- melted_matrix1 %>% as.data.frame()
   colnames(a_df1) <- c("StateFrom", "StateTo", "Probabilty")
-  a_df1$StateTo <- as.factor(a_df1$StateTo)
-  a_df1$StateFrom <- as.factor(a_df1$StateFrom)
+  a_df1$StateTo <- as.integer(a_df1$StateTo)
+  a_df1$StateFrom <- as.integer(a_df1$StateFrom)
+  a_df1$Probabilty <- round(a_df1$Probabilty,4)
   
   hmap2 <- plotly::plot_ly(
     data = a_df1,
-    x = a_df1$StateFrom,
-    y = a_df1$StateTo,
-    z = a_df1$Probabilty,
+    x = ~StateFrom,
+    y = ~StateTo,
+    z = ~Probabilty,
     type = "heatmap",
     colorscale = "colz",
     showlegend = TRUE,
@@ -115,7 +118,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
       autosize = FALSE,
-      width = 750,
+      width = 1000,
       height = 600
     )
   
@@ -130,24 +133,24 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   
   melted_matrix_mc <- reshape2::melt(trans_plot)
   a_df_mc <- melted_matrix_mc %>% as.data.frame()
-  colnames(a_df_mc) <- c("State_From", "State_To", "Probability")
-  heatmap_data <- a_df_mc
+  colnames(a_df_mc) <- c("StateFrom", "StateTo", "Probability")
+  a_df_mc$Probability <- round(a_df_mc$Probability,4)
   
   hmap3 <- plotly::plot_ly(
-    data = heatmap_data,
-    x = ~State_From,
-    y = ~State_To,
+    data = a_df_mc,
+    x = ~StateFrom,
+    y = ~StateTo,
     z = ~Probability,
     type = "heatmap",
     colors = grDevices::colorRampPalette(c("white", "blue"))(100),
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Markovchain Transition Matrix (With Self-Transitions)",
+      title = "Probability Reconcilation for Self State Transition",
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
       autosize = FALSE,
-      width = 750,
+      width = 1000,
       height = 600
     )
 
@@ -159,35 +162,92 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   # Create the heatmap data frame
   melted_matrix_mc1 <- reshape2::melt(trans_matrix_no_self)
   a_df_mc1 <- melted_matrix_mc1 %>% as.data.frame()
-  colnames(a_df_mc1) <- c("State_From", "State_To", "Probability")
-  
+  colnames(a_df_mc1) <- c("StateFrom", "StateTo", "Probability")
+  a_df_mc1$Probability <- round(a_df_mc1$Probability,4)
+    
   # Create the heatmap without self-state
   hmap4 <- plotly::plot_ly(
     data = a_df_mc1,
-    x = ~State_From,
-    y = ~State_To,
+    x = ~StateFrom,
+    y = ~StateTo,
     z = ~Probability,
     type = "heatmap",
     colors = grDevices::colorRampPalette(c("white", "blue"))(100),
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Markovchain Transition Matrix (Without Self-Transitions)",
+      title = "Probability Reconcilation for Non-Self State Transition",
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
       autosize = FALSE,
-      width = 750,
+      width = 1000,
       height = 600
     )
   
+  #browser()
+  # a_df_mc <- a_df_mc[a_df_mc$Probability != 0,]
+  # a_df_mc <- a_df_mc[order(a_df_mc$StateTo), ]
+  # a_df_mc <- a_df_mc[order(a_df_mc$StateFrom), ]
+  # 
+  self_state_table <- merge(a_df, a_df_mc, by = c("StateFrom", "StateTo"))
+  colnames(self_state_table) <- c("Current_State", "Next_State","Probability_from_manual_calculation","Probability_from_markov_function")
+  self_state_table <- self_state_table[self_state_table$Probability_from_manual_calculation != 0, ]
+  self_state_table <- self_state_table[self_state_table$Probability_from_markov_function != 0, ]
+  
+  process_subset <- function(subset_df) {
+    max_index <- which.max(subset_df$Probability_from_manual_calculation)
+    return(subset_df[max_index, ])
+  }
+  
+  output_list <- lapply(split(self_state_table, self_state_table$Current_State), process_subset)
+  self_state_table <- do.call(rbind, output_list)
+  self_state_table$diff <- (self_state_table$Probability_from_manual_calculation - self_state_table$Probability_from_markov_function)
+  
+  non_self_state_table <- merge(a_df1, a_df_mc1, by = c("StateFrom", "StateTo"))
+  colnames(non_self_state_table) <- c("Current_State", "Next_State","Probability_from_manual_calculation","Probability_from_markov_function")
+  non_self_state_table <- non_self_state_table[non_self_state_table$Probability_from_manual_calculation != 0, ]
+  
+  process_subset <- function(subset_df) {
+    max_index <- which.max(subset_df$Probability_from_manual_calculation)
+    return(subset_df[max_index, ])
+  }
+  
+  output_list <- lapply(split(non_self_state_table, non_self_state_table$Current_State), process_subset)
+  non_self_state_table <- do.call(rbind, output_list)
+  non_self_state_table$diff <- (non_self_state_table$Probability_from_manual_calculation - non_self_state_table$Probability_from_markov_function)
+  
+  
+
+  self_state_plots <- subplot(
+    hmap1, hmap3,
+    nrows = 1,
+    shareX = TRUE,
+    shareY = TRUE,
+    widths = c(0.5, 0.5)
+  ) 
+  
+
+  non_self_state_plots <- subplot(
+    hmap2, hmap4,
+    nrows = 1,
+    shareX = TRUE,
+    shareY = TRUE,
+    widths = c(0.5, 0.5)
+  ) 
+  
+  
+  
+  
+  
   # Determine which heatmaps to return based on the hmap_type parameter
   if (hmap_type == "without_self_state") {
-    return(list(hmap2, hmap4))
-  } else if (hmap_type == "with_self_state") {
-    return(list(hmap1, hmap3))
+    return(list(non_self_state_plots, non_self_state_table))
+  } else if (hmap_type == "self_state") {
+    return(list(self_state_plots, self_state_table))
   } else if (hmap_type == "All") {
-    return(list(hmap1, hmap2, hmap3, hmap4))
+    return(list(self_state_plots,non_self_state_table, non_self_state_plots, non_self_state_table))
   } else {
-    stop("Invalid plot_type parameter. Use 'without_self_state', 'with_self_state', or 'both'.")
+    stop("Invalid plot_type parameter. Use 'without_self_state', 'self_state', or 'both'.")
   }
 }
+

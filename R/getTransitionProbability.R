@@ -61,7 +61,7 @@ getTransitionProbability <- function(df, cellid_column, time_column) {
       Current_State = state,
       Next_State = names(prob_table),
       Relative_Frequency = as.vector(prob_table),
-      Probability_Percentage = round(probabilities, 4)
+      Transition_Probability = round(probabilities, 4)
     )
     
     return(result_df)

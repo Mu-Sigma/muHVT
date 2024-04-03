@@ -55,9 +55,12 @@
 plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 21, centroid.size = 1.5, 
                     title = NULL, maxDepth = NULL, child.level, hmap.cols, quant.error.hmap = NULL,
                     n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), 
-                    dim_size = 1000, plot.type = '2Dhvt') {
+                    dim_size = 1000, plot.type = '2Dhvt', cell_id = FALSE) {
   if (is.null(plot.type)) {
     plot.type <- '2Dhvt'
+  }
+  if (is.null(cell_id)){
+    cell_id <- FALSE
   }
   if (plot.type == '1D') {
    # browser()
@@ -207,9 +210,18 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
             by = c("depth", "cluster", "child")
       )
     
+    if(cell_id == TRUE){
+    hvt_res1 <- hvt_list[[2]][[1]]$`1`
+    hvt_res2 <- hvt_list[[3]]$summary$Cell.ID
+    coordinates_value1 <- lapply(1:length(hvt_res1), function(x) {
+      centroids1 <- hvt_res1[[x]]
+      coordinates1 <- centroids1$pt})
+    cellID_coordinates <- do.call(rbind.data.frame, coordinates_value1)
+    colnames(cellID_coordinates) <- c("x", "y")
+    cellID_coordinates$Cell.ID <- hvt_res2
+    centroidDataframe <- merge(cellID_coordinates, centroidDataframe, by = c("x" ,"y"))
     
-    p <- ggplot2::ggplot()
-    
+    p <- ggplot2::ggplot()  
     for (i in maxDepth:1) {
       p <-
         p + ggplot2::geom_polygon(
@@ -248,6 +260,22 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
         )
     }
     
+   # browser()
+    for (depth in 1:maxDepth) {
+      p <- p + ggplot2::geom_text(
+        data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+        ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
+        size = 3,
+        color = color.vec[depth], vjust = -1
+      ) +
+       ggplot2::geom_text(
+          data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+          ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
+          size = 3,
+          color = color.vec[depth], vjust = -1
+        )
+    }
+    
     p <- p +
       ggplot2::scale_color_manual(
         name = "Level",
@@ -279,8 +307,81 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
         fill = "#038225"
       ) +
       ggplot2::ggtitle(title)
-    
-    
+    } else{
+      p <- ggplot2::ggplot()  
+      for (i in maxDepth:1) {
+        p <-
+          p + ggplot2::geom_polygon(
+            data = datapoly[which(datapoly$depth == i), ],
+            ggplot2::aes(
+              x = x,
+              y = y,
+              color = factor(depth),
+              size = factor(depth),
+              group = interaction(depth, cluster, child),
+            ),
+            fill = NA
+          ) +
+          ggplot2::scale_colour_manual(values = color.vec) +
+          ggplot2::scale_size_manual(values = line.width, guide = "none") +
+          ggplot2::labs(color = "Level")
+      }
+      
+      
+      for (depth in 1:maxDepth) {
+        p <- p + ggplot2::geom_point(
+          data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+          ggplot2::aes(x = x, y = y),
+          size = (centroid.size / (2^(depth - 1))),
+          pch = pch1,
+          fill = color.vec[depth],
+          color = color.vec[depth]
+        ) +
+          ggplot2::geom_point(
+            data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+            ggplot2::aes(x = x, y = y),
+            size = (centroid.size / (2^(depth - 1))),
+            pch = pch1,
+            fill = color.vec[depth],
+            color = color.vec[depth]
+          )
+      }
+      
+      p <- p +
+        ggplot2::scale_color_manual(
+          name = "Level",
+          values = color.vec
+        ) +
+        ggplot2::theme_bw() + ggplot2::theme(
+          plot.background = ggplot2::element_blank(),
+          plot.title = element_text(
+            size = 20,
+            hjust = 0.5,
+            margin = margin(0, 0, 20, 0)
+          ),
+          panel.grid = ggplot2::element_blank(),
+          panel.border = ggplot2::element_blank(),
+          axis.ticks = element_blank(),
+          axis.text = element_blank(),
+          axis.title = element_blank(),
+          panel.background = element_blank()
+        ) + ggplot2::theme(plot.title = element_text(hjust = 0.5)) +
+        ggplot2::scale_x_continuous(expand = c(0, 0)) +
+        ggplot2::scale_y_continuous(expand = c(0, 0)) +
+        ggplot2::geom_label(
+          label = centroidDataframe$outlier_cell,
+          nudge_x = 0.45, nudge_y = 0.1,
+          check_overlap = TRUE,
+          label.padding = unit(0.55, "lines"),
+          label.size = 0.4,
+          color = "white",
+          fill = "#038225"
+        ) +
+        ggplot2::ggtitle(title)
+      
+      
+    }
+
     return(suppressMessages(p))
     
     

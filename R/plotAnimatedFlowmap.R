@@ -8,7 +8,7 @@
 #' @param hvt_model_output List. Output from a trainHVT function.
 #' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
 #' @param animation Character. Type of animation ('state_based', 'time_based', or 'All').
-#' @param flow_map Character. Type of flow map ('self_state', 'probability', or 'All').
+#' @param flow_map Character. Type of flow map ('self_state', 'without_self_state', or 'All').
 #' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
 #' Default value is 1
 #' @param threshold Numeric. An Integer representing the Probability threshold for flow map arrows.
@@ -76,16 +76,16 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   get_second_highest <- function(df) {
    # browser()
     df$Next_State <- as.integer(df$Next_State)
-    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    max_probability_row <- df[which.max(df$Transition_Probability), ]
     max_probability_state <- max_probability_row$Next_State
     
-    other_states <- df$Next_State[df$Probability_Percentage != max(df$Probability_Percentage)]
+    other_states <- df$Next_State[df$Transition_Probability != max(df$Transition_Probability)]
     
     if (length(other_states) > 0) {
-      sorted_states <- other_states[order(-df$Probability_Percentage[df$Next_State %in% other_states])]
+      sorted_states <- other_states[order(-df$Transition_Probability[df$Next_State %in% other_states])]
       if (length(sorted_states) >= 1) {
         next_highest_state <- sorted_states[1]
-        next_highest_probability <- df$Probability_Percentage[df$Next_State == next_highest_state]
+        next_highest_probability <- df$Transition_Probability[df$Next_State == next_highest_state]
       } else {
         next_highest_state <- NA
         next_highest_probability <- NA
@@ -108,10 +108,9 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   # Function to get the highest probability state and probability
   get_highest_probability <- function(df) {
     df$Next_State <- as.integer(df$Next_State)
-    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    max_probability_row <- df[which.max(df$Transition_Probability), ]
     highest_probability_state <- max_probability_row$Next_State
-    highest_probability_probability <- max_probability_row$Probability
-    
+    highest_probability_probability <- max_probability_row$Transition_Probability
     return(data.frame(Next_State = highest_probability_state, Probability = highest_probability_probability))
   }
   
@@ -168,24 +167,29 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   custom_breaks[1] <- min_prob - 1e-6
   merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
   merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), 3, merged_df2$CircleSize)
-  self_state_plot <- ggplot2::ggplot() + 
+  
+  legend_size <- (2.2 * sort(unique(merged_df2$CircleSize)))
+
+  self_state_plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
     ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize)) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue", 
+    scale_color_gradient(low = "blue", high = "blue",
                          name = "Probability",
-                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) + 
+                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
     labs(title = "State Transitions: Circle size based on Transition Probability",
          subtitle = "considering self state transitions") +
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = c(2, 3, 4))), fill = guide_legend(title = "Probability")) + 
+    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = legend_size, color = "black")), fill = guide_legend(title = "Probability")) +
     theme_minimal()
+
+
   
   
   # Create a new column "threshold" based on the mean
   
   prob_with_no_selfstate <- function(df) {
     df$Next_State <- as.integer(df$Next_State)
-    max_probability_row <- df[which.max(df$Probability_Percentage), ]
+    max_probability_row <- df[which.max(df$Transition_Probability), ]
     max_probability_state <- max_probability_row$Next_State
     
     # Exclude the row with the highest probability
@@ -193,10 +197,10 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     
     if (nrow(df) > 0) {
       # Calculate the total count of the remaining probabilities
-      total_count <- sum(df$Probability_Percentage)
+      total_count <- sum(df$Transition_Probability)
       
       # Calculate probabilities based on the remaining rows
-      probabilities <- as.vector(df$Probability_Percentage) / total_count
+      probabilities <- as.vector(df$Transition_Probability) / total_count
       
       # Find the state with the highest probability among the remaining rows
       next_highest_state <- df$Next_State[which.max(probabilities)]
@@ -278,36 +282,38 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   # result_df <- rbind(result_df, data.frame(Cell.ID = current_cell, Frequency = frequency, Timestamp = last_timestamp))
   # row.names(result_df) <- NULL
   
-  sampled_df <- df[seq(1, nrow(df), by = 100), ] %>% dplyr::select(Cell.ID,Timestamp)
-  
+  #sampled_df <- df[seq(1, nrow(df), by = 50), ] %>% dplyr::select(Cell.ID,Timestamp)
+  sampled_df <- df %>% dplyr::select(Cell.ID,Timestamp)
   anime_data <- merge(sampled_df, cellID_coordinates, by = "Cell.ID", all.x = TRUE)
   anime_data <- anime_data %>% dplyr::arrange(Timestamp) %>% dplyr::select(-prob1)
   anime_data <- anime_data %>% dplyr::mutate(dummy_time = 1:nrow(anime_data))
-  #anime_data <- anime_data %>% dplyr::mutate(state_msec = (anime_data$Frequency)/1000)
-  #anime_data$state_msec <- anime_data$state_msec %>% trunc() 
+  anime_data <- anime_data %>% dplyr::mutate(colour = ifelse(lead(Cell.ID) == Cell.ID, 1, 0))
   anime_data <- anime_data %>% as.data.frame()
-  
   
   #browser()
   
   dot_anim <- ggplot2::ggplot(anime_data, aes(x = x, y=y)) +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), color = "black", size = 1) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    ggplot2::geom_point(aes(x = x, y = y),show.legend = FALSE, alpha = 0.7, color = "red", size = 5) +
+    ggplot2::geom_point(aes(x = x, y = y, color = "Active state at 't'"), alpha = 0.7, size = 5) +
     #geom_text( aes(x = x, y = y, label = Frequency), vjust = 2, size = 5, color = "red") +
+    scale_color_manual(values = c("Active state at 't'" = "red"), guide = "legend") +
+    # guides(shape = guide_legend(override.aes =list(shape = c(19, 19))))+
     theme_minimal() + 
-    labs(x = "x-coordinates", y = "y-coordinates")
-  
+    labs(x = "x-coordinates", y = "y-coordinates", color = "Time Transition") 
+    
   dot_anim <- dot_anim + 
-             #transition_time(anime_data$dummy_time) +
-    transition_states(dummy_time) +
+    transition_time(Timestamp) +
     labs(title = "Animation showing state transitions",
-         subtitle = "considering self state transitions") +
-    # exclude_layer = 4, wrap = FALSE
+         subtitle = "considering self state transitions\n\ntime(t): {(round(frame_time,4))} seconds") +
   shadow_wake(wake_length = 0.05, alpha = FALSE,wrap = FALSE)
- # time_animation <- gganimate::animate(dot_anim, nframes =sum(new_data$state_msec),fps = animation_speed, duration = duration)
   time_animation <- gganimate::animate(dot_anim, fps = fps_time, duration = time_duration)
   anim_save("./time_animation.gif", animation = time_animation, width = 800, height = 400)
+  
+  #transition_time(anime_data$dummy_time) +
+  # exclude_layer = 4, wrap = FALSE
+  # time_animation <- gganimate::animate(dot_anim, nframes =sum(new_data$state_msec),fps = animation_speed, duration = duration)
+  
   
   ### Animation based on next state
   df <- df %>%group_by(Cell.ID) %>%dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
@@ -315,7 +321,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   order <- unique(state_data$Cell.ID)
   anime_df <- merged_df1[order, ]
   anime_df$order_map <- 1:nrow(anime_df)
-  anime_df$label <- rep("State\nTransition", nrow(anime_df))
+  anime_df$label <- rep("Successive states", nrow(anime_df))
   #NEWLY ADDED FOR ARROW HEAD SIZE
   x <- anime_df$x1
   y <- anime_df$y1
@@ -325,13 +331,11 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   
   arrow_anim <- ggplot2::ggplot(anime_df, aes(x = x1, y = y1)) +
     geom_segment(data = anime_df, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.5, yend = y1 + (y2 - y1) * 0.5, color = label),
-                 arrow = arrow(length = unit(arrow_head_length, "mm")), show.legend = FALSE) +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
+                 arrow = arrow(length = unit(arrow_head_length, "mm")), show.legend = TRUE) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1, show.legend = FALSE) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3 ) +
-    scale_color_manual(values = c("State\nTransition" = "blue")) + 
-    labs(x = "x-coordinates", y = "y-coordinates", color = "Transition\nProbability") + theme_minimal()
-  
-  
+    scale_color_manual(values = c("Successive states" = "blue")) + 
+    labs(x = "x-coordinates", y = "y-coordinates", color = "State Transition") + theme_minimal()
   
   animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + shadow_mark() +
     labs(title = "Animation showing state transitions",
@@ -351,8 +355,8 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     plots$self_state <- self_state_plot
   }
   
-  if (flow_map == "probability"|| flow_map == "All") {
-    plots$flow_map <- arrow_flow_map
+  if (flow_map == "without_self_state"|| flow_map == "All") {
+    plots$without_self_state <- arrow_flow_map
   }
   
   if (animation == "time_based" || animation == "All") {
