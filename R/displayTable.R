@@ -1,6 +1,7 @@
 #' @importFrom rlang sym
 #' @importFrom dplyr mutate across where
 #' @keywords internal
+#' @export displayTable
 
 displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE, limit= 100) {
   # Check that columnName is a column in data

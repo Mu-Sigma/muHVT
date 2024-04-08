@@ -6,6 +6,8 @@
 ^vignettes/Testing.*
 ^vignettes/Flowmap*
 ^vignettes/HVT_functions*
+^vignettes/sample_dataset
+^vignettes/heatmaps
 ^..Rcheck/
 ^.git/
 .git/
@@ -14,5 +16,7 @@
 ^CRAN-SUBMISSION$
 ^cran-comments\.md$
 ^README.html
+lastMiKTeXException
+NULL
 ^LICENSE
 ^.*.tar.gz
