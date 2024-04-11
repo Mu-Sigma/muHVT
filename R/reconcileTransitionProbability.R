@@ -73,12 +73,12 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Transition Matrix (With Self-Transitions)",
+     # title = "Transition Matrix (With Self-Transitions)",
       xaxis = list(title = "Cell.ID From"),
       yaxis = list(title = "Cell.ID To"),
-      autosize = FALSE,
-      width = 1000,
-      height = 600,
+      autosize = TRUE,
+      #width = 1000,
+     # height = 600,
       colorbar = list(title = "Probability")
     )
   
@@ -114,12 +114,12 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Transition Matrix (Without Self-Transitions)",
+     # title = "Transition Matrix (Without Self-Transitions)",
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = FALSE,
-      width = 1000,
-      height = 600
+      autosize = TRUE
+      #width = 1000,
+     # height = 600
     )
   
   # Heatmap 3: Markov Chain state transition Probability
@@ -146,12 +146,12 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Probability Reconcilation for Self State Transition",
+     # title = "Probability Reconcilation for Self State Transition",
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = FALSE,
-      width = 1000,
-      height = 600
+      autosize = TRUE
+    #  width = 1000,
+     # height = 600
     )
 
   
@@ -176,64 +176,78 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     hovertemplate = "Cell t: %{x}<br>Cell t+1: %{y}<br>Probability: %{z}"
   ) %>%
     plotly::layout(
-      title = "Probability Reconcilation for Non-Self State Transition",
+      #title = "Probability Reconcilation for Non-Self State Transition",
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = FALSE,
-      width = 1000,
-      height = 600
+      autosize = TRUE
+     # width = 1000,
+     # height = 600
     )
   
   #browser()
-  # a_df_mc <- a_df_mc[a_df_mc$Probability != 0,]
-  # a_df_mc <- a_df_mc[order(a_df_mc$StateTo), ]
-  # a_df_mc <- a_df_mc[order(a_df_mc$StateFrom), ]
-  # 
-  self_state_table <- merge(a_df, a_df_mc, by = c("StateFrom", "StateTo"))
-  colnames(self_state_table) <- c("Current_State", "Next_State","Probability_from_manual_calculation","Probability_from_markov_function")
-  self_state_table <- self_state_table[self_state_table$Probability_from_manual_calculation != 0, ]
-  self_state_table <- self_state_table[self_state_table$Probability_from_markov_function != 0, ]
-  
-  process_subset <- function(subset_df) {
-    max_index <- which.max(subset_df$Probability_from_manual_calculation)
-    return(subset_df[max_index, ])
-  }
-  
-  output_list <- lapply(split(self_state_table, self_state_table$Current_State), process_subset)
-  self_state_table <- do.call(rbind, output_list)
-  self_state_table$diff <- (self_state_table$Probability_from_manual_calculation - self_state_table$Probability_from_markov_function)
-  
-  non_self_state_table <- merge(a_df1, a_df_mc1, by = c("StateFrom", "StateTo"))
-  colnames(non_self_state_table) <- c("Current_State", "Next_State","Probability_from_manual_calculation","Probability_from_markov_function")
-  non_self_state_table <- non_self_state_table[non_self_state_table$Probability_from_manual_calculation != 0, ]
-  
-  process_subset <- function(subset_df) {
-    max_index <- which.max(subset_df$Probability_from_manual_calculation)
-    return(subset_df[max_index, ])
-  }
-  
-  output_list <- lapply(split(non_self_state_table, non_self_state_table$Current_State), process_subset)
-  non_self_state_table <- do.call(rbind, output_list)
-  non_self_state_table$diff <- (non_self_state_table$Probability_from_manual_calculation - non_self_state_table$Probability_from_markov_function)
+  a_df <- a_df[a_df$Probabilty !=0,]
+  a_df <- a_df %>% arrange( StateFrom, StateTo)
+  colnames(a_df) <- c("Current_State", "Next_State_manual", "Proability_manual_calculation")
   
   
-
-  self_state_plots <- subplot(
-    hmap1, hmap3,
-    nrows = 1,
-    shareX = TRUE,
-    shareY = TRUE,
-    widths = c(0.5, 0.5)
-  ) 
+  a_df_mc <- a_df_mc[a_df_mc$Probability != 0,]
+  a_df_mc <- a_df_mc %>% arrange( StateFrom, StateTo) 
+  colnames(a_df_mc) <- c("Current_State", "Next_State_markov", "Proability_markov_function")
   
-
+  
+  a_df_mc <- a_df_mc[,-1]
+  self_state_table <- cbind (a_df, a_df_mc)
+  self_state_table$diff <- (self_state_table$Proability_manual_calculation - self_state_table$Proability_markov_function)
+  self_state_table <- self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Proability_manual_calculation,
+                                                          Proability_markov_function, diff)
+  
+  
+  
+  a_df1 <- a_df1[a_df1$Probabilty !=0,]
+  a_df1 <- a_df1 %>% arrange( StateFrom, StateTo)
+  colnames(a_df1) <- c("Current_State", "Next_State_manual", "Proability_manual_calculation")
+  
+  
+  a_df_mc1 <- a_df_mc1[a_df_mc1$Probability != 0,]
+  a_df_mc1 <- a_df_mc1 %>% arrange( StateFrom, StateTo) 
+  colnames(a_df_mc1) <- c("Current_State", "Next_State_markov", "Proability_markov_function")
+  
+  
+  a_df_mc1 <- a_df_mc1[,-1]
+  non_self_state_table <- cbind (a_df1, a_df_mc1)
+  non_self_state_table$diff <- (non_self_state_table$Proability_manual_calculation - non_self_state_table$Proability_markov_function)
+  non_self_state_table <- non_self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Proability_manual_calculation,
+                                                         Proability_markov_function, diff)
+  
+  
+  
+  
+  
+  
+  
+  
+ 
+  
+  #browser()
+  ############3
+  self_state_plots <-  subplot(hmap1, hmap3, nrows = 1, shareX = TRUE, shareY = TRUE) %>%
+                               #widths = c(0.5, 0.5)) %>%
+    layout(annotations = list(
+      list(x = 0.15, y = 1.05, text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper'),
+      list(x = 0.9, y = 1.05, text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper')
+    ))
+ ###############
   non_self_state_plots <- subplot(
     hmap2, hmap4,
     nrows = 1,
     shareX = TRUE,
-    shareY = TRUE,
-    widths = c(0.5, 0.5)
-  ) 
+    shareY = TRUE
+   # widths = c(0.5, 0.5)
+  ) %>%
+    layout(annotations = list(
+      list(x = 0.15, y = 1.05,text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper'),
+      list(x = 0.9, y = 1.05,text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper')
+    ))
   
   
   
