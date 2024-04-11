@@ -157,31 +157,46 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   #                        breaks = seq(0, max(merged_df1$distance), by = 1))  +
   #   labs(title = "Flow map: Distance based on Euclidean Distance") + 
   #   guides(color = guide_legend(title = "Euclidean\nDistance")) + theme_minimal()
-  
+  #browser
   # Self-state Plot
   prob1 <- merged_df2$Probability
   cellID_coordinates$prob1 <- prob1
   
   min_prob <- min(merged_df2$Probability)
+  max_prob <- max(merged_df2$Probability)
   custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
-  custom_breaks[1] <- min_prob - 1e-6
+  custom_breaks[1] <- min_prob - 0.0001
   merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
   merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), 3, merged_df2$CircleSize)
   
-  legend_size <- (2.2 * sort(unique(merged_df2$CircleSize)))
-
+  legend_size <- (2.6 * sort(unique(merged_df2$CircleSize)))
+  legend_labels <- c(paste0(format(custom_breaks[1], nsmall = 4), " to ", format(custom_breaks[2], nsmall = 4)),
+                     paste0(format(custom_breaks[2] + 0.001, nsmall = 4), " to ", format(custom_breaks[3], nsmall = 4)),
+                     paste0(format(custom_breaks[3] + 0.001, nsmall = 4), " to ", format(custom_breaks[4], nsmall = 4)))
+  interval <- 0.005
+  breaks <- seq(min_prob, max_prob, by = interval)
+  range_labels <- paste0(round(breaks, 3), " to ", round(breaks + interval, 3))
+  range_labels[length(range_labels)] <- paste0(round(breaks[length(breaks)], 3), " to ", "1")
+  legend_labels <- c(paste0(format(breaks[1], nsmall = 3), " to ", format(breaks[2]-0.001, nsmall = 3)),
+                     paste0(format(breaks[2], nsmall = 3), " to ", format(breaks[3]-0.001, nsmall = 3)),
+                     paste0(format(breaks[3], nsmall = 3), " to ", 1))
+  
+  
   self_state_plot <- ggplot2::ggplot() +
-    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 1) +
-    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize)) +
+    ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 0.9) +
+    #ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
+    ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize), color = "blue") +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    scale_color_gradient(low = "blue", high = "blue",
+    scale_color_gradient(low = "black", high = "black",
                          name = "Probability",
-                         breaks = seq(0, max(cellID_coordinates$prob1), by = 0.005)) +
+                         breaks = breaks, 
+                         labels = legend_labels) +
     labs(title = "State Transitions: Circle size based on Transition Probability",
          subtitle = "considering self state transitions") +
-    guides(color = guide_legend(title = "Transition\nProbability", override.aes=list(shape = 21, size = legend_size, color = "black")), fill = guide_legend(title = "Probability")) +
+    guides(color = guide_legend(title = "Transition\nProbability", 
+                                override.aes=list(shape = 21, size = legend_size, color = "blue")), 
+           fill = guide_legend(title = "Probability",override.aes = list(color = "blue", size = legend_size))) + 
     theme_minimal()
-
 
   
   
@@ -235,52 +250,34 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   yend <- merged_df3$y1 + (merged_df3$y2 - merged_df3$y1) * 0.8 * (merged_df3$Probability) * ifelse(merged_df3$threshold_label == "High Probability", 1.3, 0.9)
   arrow_head_length <- sqrt((xend - x)^2 + (yend - y)^2)
   
+  interval <- 0.2
+  breaks <- seq(min(merged_df3$Probability), max(merged_df3$Probability), by = interval)
+  legend_labels <- c(paste0( 0 , " to ", format(breaks[1], nsmall = 1)),
+                     paste0(format(breaks[1] + 0.1, nsmall = 1), " to ", format(breaks[2], nsmall = 1)),
+                     paste0(format(breaks[2] +0.1, nsmall = 1), " to ", format(breaks[3], nsmall = 1)),
+                     paste0(format(breaks[3]+0.1, nsmall = 1), " to ", 1))
+  legend_size <- c(0.1,0.2,0.3,0.4) 
+  
+ # browser()
+  
   arrow_flow_map <- ggplot2::ggplot() +
     geom_segment(data = merged_df3, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), yend = y1 + (y2 - y1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), color = Probability),
-                 show.legend = FALSE, arrow = arrow(length = unit(arrow_head_length, "mm")), type = "open" ) +
+                 show.legend = TRUE, arrow = arrow(length = unit(arrow_head_length, "mm")), type = "open" ) +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
     geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3)  +
-    scale_color_gradient(low = "blue", high = "blue", 
+    scale_color_gradient(low = "blue", high = "blue",
                          name = "Probability",
-                         breaks = seq(0, max(merged_df3$Probability), by = 0.2))  + 
+                         breaks = breaks,
+                         labels = legend_labels)  +
     labs(title = "State Transitions: Arrow size based on Transition Probability",
          subtitle = "without considering self state transitions") +
-    guides(color = guide_legend(title = "Transition\nProbability")) + theme_minimal()
-  
+    guides(color = guide_legend(title = "Transition\nProbability", 
+                                override.aes=list( size = legend_size))) + 
+    guides(size = guide_legend(title = "Transition\nProbability", 
+                                override.aes=list( size = legend_size))) +
+    theme_minimal()
   # Flow map Animation based on Timestamp - circle blink
-  # #########new
-  # # new_df <- df %>% dplyr::select(Cell.ID,Timestamp) %>% as.data.frame()
-  # # new_df <- new_df %>% left_join(cellID_coordinates, by = "Cell.ID") %>% dplyr::select(-prob1)
-  # # freq <- new_df %>% group_by(Cell.ID, x, y) %>%mutate(freq = n()) %>%ungroup()
-  # # new_data <- freq %>% distinct(Cell.ID, .keep_all = TRUE)
-  # # new_data <- new_data %>% mutate(dummy_time = 1:nrow(new_data))
-  # # new_data <- new_data %>% mutate(state_msec = (new_data$freq)/1000)
-  # # new_data$state_msec <- new_data$state_msec %>% trunc()
-  # # new_data <- new_data %>% as.data.frame()
-  # #########
- 
-  # 
-  # result_df <- data.frame(Cell.ID = numeric(), Frequency = numeric(), Timestamp = numeric())
-  # current_cell <- sampled_df$Cell.ID[1]
-  # frequency <- 0
-  # last_timestamp <- 0
-  # 
-  # # Iterate through each row of the dataframe
-  # for (i in 1:nrow(sampled_df)) {
-  #   if (sampled_df$Cell.ID[i] != current_cell) {
-  #     result_df <- rbind(result_df, data.frame(Cell.ID = current_cell, Frequency = frequency, Timestamp = last_timestamp))
-  #     current_cell <- sampled_df$Cell.ID[i]
-  #     frequency <- 1
-  #     last_timestamp <- sampled_df$Timestamp[i]
-  #   } else {
-  #     frequency <- frequency + 1
-  #     last_timestamp <- sampled_df$Timestamp[i]
-  #   }
-  # }
-  # 
-  # # Add the last cell ID, frequency, and timestamp to the result dataframe
-  # result_df <- rbind(result_df, data.frame(Cell.ID = current_cell, Frequency = frequency, Timestamp = last_timestamp))
-  # row.names(result_df) <- NULL
+  
   
   #sampled_df <- df[seq(1, nrow(df), by = 50), ] %>% dplyr::select(Cell.ID,Timestamp)
   sampled_df <- df %>% dplyr::select(Cell.ID,Timestamp)
@@ -299,10 +296,10 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     #geom_text( aes(x = x, y = y, label = Frequency), vjust = 2, size = 5, color = "red") +
     scale_color_manual(values = c("Active state at 't'" = "red"), guide = "legend") +
     # guides(shape = guide_legend(override.aes =list(shape = c(19, 19))))+
-    theme_minimal() + 
-    labs(x = "x-coordinates", y = "y-coordinates", color = "Time Transition") 
-    
-  dot_anim <- dot_anim + 
+    theme_minimal() +
+    labs(x = "x-coordinates", y = "y-coordinates", color = "Time Transition")
+
+  dot_anim <- dot_anim +
     transition_time(Timestamp) +
     labs(title = "Animation showing state transitions",
          subtitle = "considering self state transitions\n\ntime(t): {(round(frame_time,4))} seconds") +
@@ -310,10 +307,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   time_animation <- gganimate::animate(dot_anim, fps = fps_time, duration = time_duration)
   anim_save("./time_animation.gif", animation = time_animation, width = 800, height = 400)
   
-  #transition_time(anime_data$dummy_time) +
-  # exclude_layer = 4, wrap = FALSE
-  # time_animation <- gganimate::animate(dot_anim, nframes =sum(new_data$state_msec),fps = animation_speed, duration = duration)
-  
+
   
   ### Animation based on next state
   df <- df %>%group_by(Cell.ID) %>%dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))

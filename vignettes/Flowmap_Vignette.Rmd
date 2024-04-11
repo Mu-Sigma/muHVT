@@ -66,7 +66,7 @@ knitr::opts_chunk$set(
   comment = "#>",
   out.width = "672px",
   out.height = "480px",
-  fig.width = 7,
+  fig.width = 7.5,
   fig.height = 5,
   fig.align = "center",
   fig.retina = 1,
@@ -478,9 +478,9 @@ reconcile_plots <- reconcileTransitionProbability(df = scored_data,
 
 **Reconciliation Plots of transition probability with self-state**
 
-The darker diagonal cells indicate higher probabilities of staying in the same state. These transitions represent situations where there is no change from the current state to the next state. Such states might be attractors in a dynamic system, where the system naturally tends to return to these states even after minor perturbations.
+The Transition probability of one state staying in the same state is calculated using manual calculations and markov function and plotted for comparison.The darker diagonal cells indicate higher probabilities of cells staying in the same state. 
 
-```{r hmap1, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
+```{r hmap1, fig.align = "center", fig.show ='hold', message=FALSE, out.height='100%', out.width='100%', results='asis', warning=FALSE}
 reconcile_plots[[1]]
 ```
 
@@ -491,9 +491,9 @@ reconcile_plots[[1]]
 ```{r hmap2, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
 Table(reconcile_plots[[2]], scroll = TRUE)
 ```
-**Reconciliation Plots of transition probability with self-state**
+**Reconciliation Plots of transition probability without self-state**
 
-In this plot, the transitions suggest that the states tend to move to neighboring states more frequently. Proximity might not only refer to physical distance but also to similarities in attributes or conditions. 
+The transition probability of one state moving to the next state is calculated using manual calculations and markov function and plotted for comparison. From all the next state transitions, the one with higher probability is selected.
 
 ```{r hmap3, fig.align = "center", fig.show ='hold', message=FALSE, out.width='70%', results='asis', warning=FALSE}
 reconcile_plots[[3]]
@@ -559,10 +559,10 @@ Default value is 2.
 
 
 ```{r flow_map_fn, warning=FALSE,message=FALSE}
-plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_table, 
-                             df = scored_data, animation = "All", flow_map = "All", 
+plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_table,
+                             df = scored_data, animation = 'All', flow_map = 'All',
                              fps_time = 100, fps_state =  2, time_duration = 20,
-                             state_duration = 50, threshold = 0.7,duration = 50,
+                             state_duration = 50, threshold = 0.7,
                              cellid_column = "Cell.ID", time_column = "t")
 ```
 
@@ -588,7 +588,6 @@ plots[[1]]
 Arrow segment length based on Probability.
   
 ```{r arrow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%',out.height='70%', results='asis', warning=FALSE}
-
 plots[[2]]
 ```
 
