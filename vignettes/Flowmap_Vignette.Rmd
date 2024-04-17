@@ -37,6 +37,7 @@ vignette: >
 body{
 max-width:1200px;
 width: 50%;
+min-width: 700px;
 }
 p {
 text-align: justify;
@@ -114,7 +115,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension.
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D, 2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension.
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
 
@@ -326,7 +327,7 @@ plotHVT(
 ```
 
 To understand how cell IDs are distributed across the map, we again plot voronoi tessellation with `cell_id = TRUE`.
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 2: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’lorenz attractor’', fig.align = "center", fig.show ='hold', include=TRUE, out.width='90%', results='asis', }
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 3: The Voronoi tessellation for layer 1 shown for the 100 cells in the dataset ’lorenz attractor’ with Cell ID', fig.align = "center", fig.show ='hold', include=TRUE, out.width='90%', results='asis', }
 plotHVT(
   hvt.results,
   centroid.size = c(0.6),
