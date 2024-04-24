@@ -84,9 +84,9 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
+5. **Temporal Analysis and Visualization**: Analysing time series data to understand its patterns and movements and visualising the flow of data over time.
+
 The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. below is an image depicting a captivating tessellation of a torus.
-
-
 
 ```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1:  Heatmap Visualization of a Torus with 900 Cells'}
 knitr::include_graphics('./torus2.png')
@@ -103,11 +103,13 @@ Following are the links to the vignettes for the HVT package:
 
 3. [**HVT Scoring Cells with Layers using scoreLayeredHVT:**](https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
+4. [**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT**](https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Flowmap_Vignette.html)Contains descriptions of the functions used for analysing time series data and its flowmaps.
+
 # 3. Version History
 
-## HVT (v24.3.1) | What's New? {-}
+## HVT (v24.4.1) | What's New? {-}
 
-13th March, 2024
+24th April, 2024
 
 In this version of HVT package, the following new features have been introduced:
 
@@ -125,7 +127,7 @@ In this version of HVT package, the following new features have been introduced:
 
 3. **Enhancements:** The pre-existed functions, `hvtHmap` and `exploded_hmap`, have been combined and incorporated into the `plotHVT` function. Additionally, `plotHVT` now includes the ability to perform 1D plotting.
 
-
+4. **Temporal Analysis** This update makes the package to extend its foundational operations to time series data (sequential observations recorded over time). Also, new functionalities are introduced to analyze underlying patterns and trends within the data, providing insights into its evolution over time and also offers the capability to analyse movement of the data by calculating its transitioning probability. This includes generating visualizations such as plots and GIFs to vividly illustrate the flow of data transitions along cells, facilitating deeper insights into the dynamic behavior of the system.
 
 ## HVT (v23.11.02) {-}
 
@@ -161,7 +163,7 @@ This version of HVT package offers features for both training an HVT model and e
 
 
 
-# 4. Installation of HVT (v24.3.1)
+# 4. Installation of HVT (v24.4.1)
 
 ``` r
 library(devtools)

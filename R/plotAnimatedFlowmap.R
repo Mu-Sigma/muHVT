@@ -7,55 +7,47 @@
 #' and magnitude of flows or transitions. 
 #' @param hvt_model_output List. Output from a trainHVT function.
 #' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
-#' @param animation Character. Type of animation ('state_based', 'time_based', or 'All').
-#' @param flow_map Character. Type of flow map ('self_state', 'without_self_state', or 'All').
-#' @param animation_speed Numeric. An Integer representing the Speed of animation (frames per second).
-#' Default value is 1
-#' @param threshold Numeric. An Integer representing the Probability threshold for flow map arrows.
-#' @param duration Numeric. An Integer representing the total duration of the animation.
-#' Default value is 2
-#' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
+#' @param df Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
+#' @param animation Character. Type of animation ('state_based', 'time_based', 'All' or  NULL)
+#' @param flow_map Character. Type of flow map ('self_state', 'without_self_state', 'All' or NULL)
+#' @param fps_time Numeric. A numeric value for the frames per second of the time transition gif.
+#' @param fps_state Numeric. A numeric value for the frames per second of the state transition gif.
+#' @param time_duration Numeric. A numeric value for the total duration of the time transition gif.
+#' @param state_duration Numeric. A numeric value for the total duration of the state transition gif.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
-#' @return A list of plot objects representing flow maps and animations.
+#' @return A list of plot and gif objects representing flow maps and animations.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
-#' @keywords internal
+#' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
+#' @import gganimate gifski
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #' DAX = EuStockMarkets[, "DAX"],
 #' SMI = EuStockMarkets[, "SMI"],
 #' CAC = EuStockMarkets[, "CAC"],
 #' FTSE = EuStockMarkets[, "FTSE"])
-#' dataset_hvt <- dataset[,-c(1)]
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 1, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 123,
-#'                    quant_method="kmeans")
-#' predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold = 0.2) 
-#' cell_id <- predictions$scoredPredictedData$Cell.ID
+#' rownames(EuStockMarkets) <- dataset$date
+#' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                        distance_metric = "L1_Norm", error_metric = "max",
+#'                        normalize = TRUE,quant_method = "kmeans")
+#' scoring <- scoreHVT(dataset, hvt.results)
+#' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' getTransitionProbability(dataset,cellid_column = "cell_id", time_column = "time_stamp")
-#' plot <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_prob_df,  df = dataset,animation = NULL, flow_map = NULL, animation_speed = NULL, threshold = NULL, cellid_column = "cell_id", time_column = "time_stamp") 
-#' print(plot[[1]])
-#' print(plot[[2]])
+#' table <- getTransitionProbability(dataset, cellid_column = "cell_id",time_column = "time_stamp")
+#' plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = table,
+#' df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 10,
+#' state_duration = 10,cellid_column = "cell_id", time_column = "time_stamp")
 #' @export plotAnimatedFlowmap
 
-plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df, animation = NULL, flow_map = NULL, fps_time = 1,fps_state = 1,time_duration =2, state_duration = 2, threshold = NULL,duration = 2, cellid_column, time_column) {
-  
-  # Set default values for animation, flow_map, animation_speed, and threshold if they are NULL
-  if (is.null(animation))animation <- "state_based"
-  if (is.null(flow_map))flow_map <- "without_self_state"
-  if (is.null(threshold))threshold <- 0.6
- # if (is.null(animation_speed))animation_speed <- 0.6
-  if (is.null(duration))duration <- 2
-
+plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df, animation = NULL, flow_map = NULL, fps_time = 1,fps_state = 1,time_duration =2, state_duration = 2, cellid_column, time_column) {
+  ##for cran warnings, initializing empty vectors for these variables.
+  segment_len <- grp <- colour<-order_map<- Frequency <-Timestamp<-y2 <-x2 <-y1.y<- x1.y<- y1 <-x1<-label<-NULL
   
   
-  #browser()
+  
   # Rename columns for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
   colnames(df)[colnames(df) == cellid_column] <- "Cell.ID"
@@ -74,7 +66,6 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   
   # Function to get highest state and probability excluding self-state
   get_second_highest <- function(df) {
-   # browser()
     df$Next_State <- as.integer(df$Next_State)
     max_probability_row <- df[which.max(df$Transition_Probability), ]
     max_probability_state <- max_probability_row$Next_State
@@ -100,8 +91,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   
   # Apply the function to each data frame in 'transition_probability_df'
   second_highest_states_list <- lapply(transition_probability_df, get_second_highest)
-  #browser()
-  
+
   # Combine the results into a single data frame
   second_state_df <- do.call(rbind, second_highest_states_list)
   
@@ -140,43 +130,24 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   colnames(merged_df2) <- c("x1", "y1", "Cell.ID", "Next_State", "Probability", "x2", "y2")
   merged_df2$Probability <- round(merged_df2$Probability, digits = 3)
   
-  # # Non-self state PLOT
-  # merged_df1 <- merged_df1 %>%
-  #   dplyr::mutate(distance = round(sqrt((x2 - x1)^2 + (y2 - y1)^2), 0))
-  # 
-  # next_state_arrow_plot <- ggplot2::ggplot() +
-  #   geom_segment(data = merged_df1, mapping = aes(x = x1, y = y1, 
-  #                                                 xend = x1 + (x2 - x1) * 0.09 * sqrt((x2 - x1)^2 + (y2 - y1)^2), 
-  #                                                 yend = y1 + (y2 - y1) * 0.09 * sqrt((x2 - x1)^2 + (y2 - y1)^2), 
-  #                                                 color = distance),
-  #                arrow = arrow(length = unit(0.2, "cm")), linewidth = 1) +
-  #   ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
-  #   geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-  #   scale_color_gradient(low = "blue", high = "blue", 
-  #                        name = "Distance",
-  #                        breaks = seq(0, max(merged_df1$distance), by = 1))  +
-  #   labs(title = "Flow map: Distance based on Euclidean Distance") + 
-  #   guides(color = guide_legend(title = "Euclidean\nDistance")) + theme_minimal()
-  #browser()
   # Self-state Plot
   prob1 <- merged_df2$Probability 
   cellID_coordinates$prob1 <- prob1
   
+  if (!is.null(flow_map)){
+    if(flow_map == 'self_state' || flow_map == 'All'){
+    
   min_prob <- min(merged_df2$Probability)
   max_prob <- max(merged_df2$Probability)
-  custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
-  #custom_breaks <- quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.33))
+  custom_breaks <- stats::quantile(merged_df2$Probability, probs = seq(0, 1, by = 0.3))
   custom_breaks[1] <- min_prob - 0.001
   merged_df2$CircleSize <- as.numeric(cut(merged_df2$Probability, breaks = custom_breaks, labels = seq(1, length(custom_breaks) - 1)))
-  max_cirsize <- na.omit(merged_df2$CircleSize)
+  max_cirsize <- stats::na.omit(merged_df2$CircleSize)
   max_cirsize<- max(max_cirsize) + 1
   merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), max_cirsize, merged_df2$CircleSize)
-  
   legend_size <- (2.6 * sort(unique(merged_df2$CircleSize)))
-  #legend_labels <- c(paste0(format(custom_breaks[1], nsmall = 4), " to ", format(custom_breaks[2], nsmall = 4)),
-                     #paste0(format(custom_breaks[2] + 0.001, nsmall = 4), " to ", format(custom_breaks[3], nsmall = 4)),
-                     #paste0(format(custom_breaks[3] + 0.001, nsmall = 4), " to ", format(custom_breaks[4], nsmall = 4)))
-  #browser()
+ 
+  
   breaks <- as.numeric(custom_breaks)
   breaks[1]<- breaks[1]+0.001
   generate_legend_labels <- function(breaks) {
@@ -188,19 +159,11 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
      }
   
   legend_labels <- generate_legend_labels(breaks)
-  # interval <- 0.005
-  # breaks <- seq(min_prob, max_prob , by = interval)
-  # range_labels <- paste0(round(breaks, 3), " to ", round(breaks + interval, 3))
-  # range_labels[length(range_labels)] <- paste0(round(breaks[length(breaks)], 3), " to ", "1")
-  # legend_labels <- c(paste0(format(breaks[1], nsmall = 3), " to ", format(breaks[2]-0.001, nsmall = 3)),
-  # paste0(format(breaks[2], nsmall = 3), " to ", format(breaks[3]-0.001, nsmall = 3)),
-  # paste0(format(breaks[3], nsmall = 3), " to ", 1))
   
   self_state_plot <- ggplot2::ggplot() +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y, color = prob1), size = 0.9) +
-    #ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
     ggforce::geom_circle(data = merged_df2, aes(x0 = x1, y0 = y1, r = 0.5 * merged_df2$CircleSize), color = "blue") +
-    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
+    ggplot2::geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
     scale_color_gradient(low = "black", high = "black",
                          name = "Probability",
                          breaks = breaks, 
@@ -212,12 +175,13 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     guides(color = guide_legend(title = "Transition\nProbability", 
                                 override.aes=list(shape = 21, size = legend_size, color = "blue")), 
            fill = guide_legend(title = "Probability",override.aes = list(color = "blue", size = legend_size))) + 
-    theme_minimal()
+    theme_minimal() +
+   ggplot2::coord_equal()
 
-  
+    } 
+    if(flow_map == 'without_self_state' || flow_map == 'All') {
   
   # Create a new column "threshold" based on the mean
-  
   prob_with_no_selfstate <- function(df) {
     df$Next_State <- as.integer(df$Next_State)
     max_probability_row <- df[which.max(df$Transition_Probability), ]
@@ -256,11 +220,9 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     dplyr::mutate(x2 = x1.y, y2 = y1.y) %>%
     dplyr::select(-x1.y, -y1.y)
   colnames(merged_df3) <- c("x1", "y1", "Cell.ID", "Next_State", "Probability", "x2", "y2")
-  merged_df3 <- merged_df3 %>%
-  dplyr::mutate(threshold_label = ifelse(Probability > threshold, "High", "Low"))
   merged_df3$Probability <- round(merged_df3$Probability, digits = 1)
   
- # browser()
+ 
   # NEW CODE FOR PLOT LEGEND
   # Define a function to map probability to segment length
   segment_length <- function(p) {
@@ -279,129 +241,138 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   data_length <- data_frame(merged_df3$Probability, segment_lengths, merged_df3$segment_len) 
   data_length <- data_length[order(data_length$`merged_df3$Probability`),] %>% as.data.frame()
   intervals <- cut(data_length$`merged_df3$Probability`, breaks = c(0, 0.3, 0.6, 0.8, 1), include.lowest = TRUE)
-  seg_len <- tapply(data_length$segment_lengths, intervals, mean)
+  seg_len <- tapply(data_length$segment_lengths, intervals, max)
   seg_len <- as.numeric(seg_len)
-  max_seg_len <- na.omit(seg_len)
+  max_seg_len <- stats::na.omit(seg_len)
   max_seg_len  <- max(max_seg_len)
   arr_len <- (max_x +1) + max_seg_len +2
   
   intervals <- cut(data_length$`merged_df3$segment_len`, breaks = c(0, 0.2, 0.4, 0.7, 0.9), include.lowest = TRUE)
-  seg_len_arr <- tapply(data_length$`merged_df3$segment_len`, intervals, mean)
+  seg_len_arr <- tapply(data_length$`merged_df3$segment_len`, intervals, max)
   len_arrhead <- as.numeric(seg_len_arr)
 
-  
-  
-  
-  #browser()
+ 
   max_probability <- max(merged_df3$Probability)
   min_probability <- min(merged_df3$Probability)
   annotate_list <- list()
   
+  
+  y_range <- range(merged_df3$y1)
+  y1_l <- y_range[1] + 0.66 * diff(y_range)  
+  y2_l <- y_range[1] + 0.60 * diff(y_range) 
+  y3_l <- y_range[1] + 0.54 * diff(y_range) 
+  y4_l <- y_range[1] + 0.48 * diff(y_range) 
+  y5_l <- y_range[1] + 0.42 * diff(y_range) 
+  y6_l <- y_range[1] + 0.36 * diff(y_range)
+  
+  x_range <- range(merged_df3$x1)
+  x1_l <- x_range[1] + 1.19 * diff(x_range)  
+  x2_l <- x_range[1] + 1.15 * diff(x_range) 
+  x3_l <- x_range[1] + 1.3 * diff(x_range) 
+  
+  
   if (max_probability <= 0.3) {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0 to 0.3", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("segment", x = (max_x - 0.8), xend = (max_x + (- 0.8+ seg_len[1])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[1] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 0.8,(max_x + (- 0.8+ seg_len[1]))), y = c(0.8, 0.8)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0 to 0.3", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend = x2_l+ seg_len[1], 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[1] * 3, "mm"), type = "open"))
     )
   } else if(min_probability >= 0.4 & max_probability <= 0.6)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.4 to 0.6", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("segment", x = (max_x - 1.3), xend = (max_x +(- 1.3+ seg_len[2])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.3, (max_x +(- 1.3+ seg_len[2]))), y = c(0.8, 0.8)))
+      annotate("text", x =x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.4 to 0.6", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend = (x2_l+ seg_len[2]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open"))
     )
   } else if(min_probability >= 0.4 & max_probability <= 0.8)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.4 to 0.6", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("text", x = arr_len, y = -1.7, label = "0.7 to 0.8", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-1.7))),
-      annotate("segment", x = (max_x - 1.3), xend = (max_x +(- 1.3+ seg_len[2])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.3, (max_x +(- 1.3+ seg_len[2]))), y = c(0.8,0.8))),
-      annotate("segment", x = (max_x - 1.8), xend =(max_x +(- 1.8+ seg_len[3])), 
-               y = -1.7, yend = -1.7, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.8, (max_x +(- 1.8+ seg_len[3]))), y = c(-1.7, -1.7)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.4 to 0.6", size = 3, color = "black"),
+      annotate("text", x = x3_l, y = y4_l, label = "0.7 to 0.8", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend = (x2_l+ seg_len[2]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open")),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[3]), 
+               y = y4_l, yend = y4_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"))
     )
   } else if(min_probability >= 0.4 & max_probability <= 1)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.4 to 0.6", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-0.8))),
-      annotate("text", x = arr_len, y = -1.7, label = "0.7 to 0.8", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-1.7))),
-      annotate("text", x = arr_len, y = -4.5, label = "0.9 to 1", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-4.5))),
-      annotate("segment", x = (max_x - 1.3), xend = (max_x +(- 1.3+ seg_len[2])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.3,(max_x +(- 1.3+ seg_len[2]))), y = c(0.8,0.8))),
-      annotate("segment", x = (max_x - 1.8), xend =(max_x +(- 1.8+ seg_len[3])), 
-               y = -1.7, yend = -1.7, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.8,(max_x +(- 1.8+ seg_len[3]))), y = c(-1.7, -1.7))),
-      annotate("segment", x = (max_x - 2.3), xend =(max_x +(- 2.3+ seg_len[4])), 
-               y = -4.5, yend = -4.5, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 2.3, (max_x +(- 2.3+ seg_len[4]))), y = c(-4.5, -4.5)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.4 to 0.6", size = 3, color = "black"),
+      annotate("text", x = x3_l, y = y4_l, label = "0.7 to 0.8", size = 3, color = "black"),
+      annotate("text", x = x3_l, y = y5_l, label = "0.9 to 1", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend = (x2_l+ seg_len[2]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open")),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[3]), 
+               y = y4_l, yend = y4_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open")),
+      annotate("segment", x = (x2_l), xend =(x2_l+ seg_len[4]), 
+               y = y5_l, yend = y5_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"))
     )
   }else if(min_probability >= 0.7 & max_probability <= 0.8)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.7 to 0.8", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("segment", x = (max_x - 1.8), xend =(max_x +(- 1.8+ seg_len[3])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.8,(max_x +(- 1.8+ seg_len[3]))), y = c(0.8,0.8)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.7 to 0.8", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[3]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"))
     )
   }else if(min_probability >= 0.7 & max_probability <= 1)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.7 to 0.8", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("text", x = arr_len, y = -1.7, label = "0.9 to 1", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-1.7))),
-      annotate("segment", x = (max_x - 1.8), xend =(max_x +(- 1.8+ seg_len[3])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.8, (max_x +(- 1.8+ seg_len[3]))), y = c(0.8, 0.8))),
-      annotate("segment", x = (max_x - 2.3), xend =(max_x +(- 2.3+ seg_len[4])), 
-               y = -1.7, yend = -1.7, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 2.3, (max_x +(- 2.3+ seg_len[4]))), y = c(-1.7, -1.7)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.7 to 0.8", size = 3, color = "black"),
+      annotate("text", x = x3_l, y = y4_l, label = "0.9 to 1", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[3]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open")),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[4]), 
+               y = y4_l, yend = y4_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"))
     )
   }else if(min_probability >= 0.9 & max_probability <= 1)  {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = arr_len, y = 0.8, label = "0.9 to 1", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("segment", x = (max_x - 2.3), xend =(max_x +(- 2.3+ seg_len[4])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 2.3, (max_x +(- 2.3+ seg_len[4]))), y = c(0.8, 0.8)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = x3_l, y = y3_l, label = "0.9 to 1", size = 3, color = "black"),
+      annotate("segment", x = x2_l, xend =(x2_l+ seg_len[4]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"))
     )
   } else {
     annotate_list <- list(
-      annotate("text", x = (max_x + 1), y = 5.3, label = "Transition", size = 4, color = "black", data = data.frame(x = c(max_x + 1), y = c(5.3))),
-      annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 4, color = "black", data = data.frame(x = c(max_x + 1.5), y = c(3.4))),
-      annotate("text", x = (arr_len), y = 0.8, label = "0 to 0.3", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(0.8))),
-      annotate("text", x = (arr_len), y = -1.7, label = "0.4 to 0.6", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-1.7))),
-      annotate("text", x = (arr_len), y = -4.5, label = "0.7 to 0.8", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-4.5))),
-      annotate("text", x = (arr_len), y = -7.3, label = "0.9 to 1", size = 3, color = "black", data = data.frame(x = c(arr_len), y = c(-7.3))),
-      annotate("segment", x = (max_x - 0.8), xend = (max_x +(- 0.8+ seg_len[1])), 
-               y = 0.8, yend = 0.8, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[1] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 0.8, (max_x +(- 0.8+ seg_len[1]))), y = c(0.8, 0.8))),
-      annotate("segment", x = (max_x - 1.3), xend = (max_x +(- 1.3+ seg_len[2])), 
-               y = -1.7, yend = -1.7, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.3, (max_x +(- 1.3+ seg_len[2]))), y = c(-1.7, -1.7))),
-      annotate("segment", x = (max_x - 1.8), xend = (max_x +(- 1.8+ seg_len[3])), 
-               y = -4.5, yend = -4.5, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 1.8, (max_x +(- 1.8+ seg_len[3]))), y = c(-4.5, -4.5))),
-      annotate("segment", x = (max_x - 2.3), xend =(max_x +(- 2.3+ seg_len[4])), 
-               y = -7.3, yend = -7.3, color = "blue", 
-               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"), data = data.frame(x = c(max_x - 2.3, (max_x +(- 2.3+ seg_len[4]))), y = c(-7.3, -7.3)))
+      annotate("text", x = x1_l, y = y1_l, label = "Transition", size = 4, color = "black"),
+      annotate("text", x = x1_l, y = y2_l, label = "Probability", size = 4, color = "black"),
+      annotate("text", x = (x3_l), y = y3_l, label = "0 to 0.3", size = 3, color = "black"),
+      annotate("text", x = (x3_l), y = y4_l, label = "0.4 to 0.6", size = 3, color = "black"),
+      annotate("text", x = (x3_l), y = y5_l, label = "0.7 to 0.8", size = 3, color = "black"),
+      annotate("text", x = (x3_l), y = y6_l, label = "0.9 to 1", size = 3, color = "black"),
+      annotate("segment", x = (x2_l), xend = (x2_l+ seg_len[1]), 
+               y = y3_l, yend = y3_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[1] * 3, "mm"), type = "open")),
+      annotate("segment", x = x2_l, xend = (x2_l+ seg_len[2]), 
+               y = y4_l, yend = y4_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[2] * 3, "mm"), type = "open")),
+      annotate("segment", x = x2_l, xend = (x2_l+ seg_len[3]), 
+               y = y5_l, yend = y5_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[3] * 3, "mm"), type = "open")),
+      annotate("segment", x = (x2_l), xend =(x2_l+ seg_len[4]), 
+               y = y6_l, yend = y6_l, color = "blue", 
+               arrow = arrow(length = unit(len_arrhead[4] * 3, "mm"), type = "open"))
     )
   }
   
-  
- 
-  #browser()
   # Create the plot with the annotations
   arrow_flow_map <- ggplot(merged_df3, aes(x = x1, y = y1)) +
     geom_point(color = "black", size = 0.9) +
@@ -421,99 +392,45 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     arrow_flow_map <- arrow_flow_map + annotation
   }
 
+    } 
+    if(flow_map != 'self_state' && flow_map != 'without_self_state' && flow_map != 'All'){
+      print("invalid argument for flow_map")
+    }
+  }
   
-  
- 
+  if(!is.null(animation)){
+    if(animation == 'time_based' || animation == 'All' ) {
 
-  
-  
- 
-    # Add legend elements
-    # annotate("text", x = (max_x + 1), y = 5, label = "Transition", size = 3.9, color = "black") +
-    # annotate("text", x = (max_x + 1.5), y = 3.4, label = "Probability", size = 3.9, color = "black") +
-    # annotate("text", x = (max_x + 5), y = 0.8, label = "0 to 0.3", size = 2.9, color = "black") +
-    # annotate("text", x = (max_x + 5.4), y = -1.7, label = "0.4 to 0.6", size = 2.9, color = "black") +
-    # annotate("text", x = (max_x + 5.4), y = -4.5, label = "0.7 to 0.8", size = 2.9, color = "black") +
-    # annotate("text", x = (max_x + 5.6), y = -7.3, label = "0.9 to 1", size = 2.9, color = "black") +
-    # annotate("segment", x =(max_x-1.8), xend = (max_x), 
-    #          y = 0.8, yend = 0.8, color = "blue", 
-    #          arrow = arrow(length = unit(0.1, "inches"), type = "open")) +
-    # annotate("segment", x = (max_x-2.3), xend = ((max_x)+1), 
-    #          y = -1.7, yend = -1.7, color = "blue", 
-    #          arrow = arrow(length = unit(0.18, "inches"), type = "open")) +
-    # annotate("segment", x = (max_x-2.8), xend = ((max_x)+2), 
-    #          y = -4.5, yend = -4.5, color = "blue", 
-    #          arrow = arrow(length = unit(0.24, "inches"), type = "open")) +
-    # annotate("segment", x = (max_x-3.3), xend = ((max_x)+3), 
-    #          y = -7.3, yend = -7.3, color = "blue", 
-    #          arrow = arrow(length = unit(0.3, "inches"), type = "open"))
-  #newly added for arrow head size
-  # x <- merged_df3$x1
-  # y <- merged_df3$y1
-  # xend <- merged_df3$x1 + (merged_df3$x2 - merged_df3$x1) * 0.8 * (merged_df3$Probability) * ifelse(merged_df3$threshold_label == "High Probability", 1.3, 0.9)
-  # yend <- merged_df3$y1 + (merged_df3$y2 - merged_df3$y1) * 0.8 * (merged_df3$Probability) * ifelse(merged_df3$threshold_label == "High Probability", 1.3, 0.9)
-  # arrow_head_length <- sqrt((xend - x)^2 + (yend - y)^2)
-  # 
-  # interval <- 0.2
-  # breaks <- seq(min(merged_df3$Probability), max(merged_df3$Probability), by = interval)
-  # legend_labels <- c(paste0( 0 , " to ", format(breaks[1], nsmall = 1)),
-  #                    paste0(format(breaks[1] + 0.1, nsmall = 1), " to ", format(breaks[2], nsmall = 1)),
-  #                    paste0(format(breaks[2] +0.1, nsmall = 1), " to ", format(breaks[3], nsmall = 1)),
-  #                    paste0(format(breaks[3]+0.1, nsmall = 1), " to ", 1))
-  # legend_size <- c(0.1,0.2,0.3,0.4) 
-  # 
- 
-  # 
-  # arrow_flow_map <- ggplot2::ggplot() +
-  #   geom_segment(data = merged_df3, mapping = aes(x = x1, y = y1, xend = x1 + (x2 - x1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), yend = y1 + (y2 - y1) * 0.8 * Probability * ifelse(threshold_label == "High Probability", 1.3, 0.9), color = Probability),
-  #                show.legend = TRUE, arrow = arrow(length = unit(arrow_head_length, "mm")), type = "open" ) +
-  #   ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), size = 1) +
-  #   geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3)  +
-  #   scale_color_gradient(low = "blue", high = "blue",
-  #                        name = "Probability",
-  #                        breaks = breaks,
-  #                        labels = legend_labels)  +
-  #   labs(title = "State Transitions: Arrow size based on Transition Probability",
-  #        subtitle = "without considering self state transitions") +
-  #   guides(color = guide_legend(title = "Transition\nProbability", 
-  #                               override.aes=list( size = legend_size))) + 
-  #   guides(size = guide_legend(title = "Transition\nProbability", 
-  #                               override.aes=list( size = legend_size))) +
-  #   theme_minimal()
-  # Flow map Animation based on Timestamp - circle blink
-  
-  #browser()
-  #sampled_df <- df[seq(1, nrow(df), by = 50), ] %>% dplyr::select(Cell.ID,Timestamp)
   sampled_df <- df %>% dplyr::select(Cell.ID,Timestamp)
   anime_data <- merge(sampled_df, cellID_coordinates, by = "Cell.ID", all.x = TRUE)
   anime_data <- anime_data %>% dplyr::arrange(Timestamp) %>% dplyr::select(-prob1)
-  #anime_data <- anime_data %>% dplyr::mutate(dummy_time = 1:nrow(anime_data))
-  anime_data <- anime_data %>% dplyr::mutate(colour = ifelse(lead(Cell.ID) == Cell.ID, 1, 0))
-  anime_data <- anime_data %>% dplyr::mutate(latency = c(0, difftime(anime_data$Timestamp[-1], anime_data$Timestamp[-nrow(df)])))
-  anime_data$latency <- formatC(anime_data$latency, format = "f", digits = 4)
+  anime_data <- anime_data %>% dplyr::group_by(grp = cumsum(Cell.ID != lag(Cell.ID, default = first(Cell.ID)))) %>% 
+    dplyr::mutate( colour = 2 - row_number() %% 2 ) %>% dplyr::ungroup() %>% dplyr::select(-grp)
+  anime_data <- anime_data %>%
+     dplyr::mutate(latency = c(0, difftime(lead(Timestamp), Timestamp, units = "secs")[-length(Timestamp)]))
+  anime_data$latency <- formatC(anime_data$latency, format = "f", digits = 5)
   anime_data <- anime_data %>% as.data.frame()
   
-  #browser()
-  
+
   dot_anim <- ggplot2::ggplot(anime_data, aes(x = x, y=y)) +
     ggplot2::geom_point(data = cellID_coordinates, aes(x = x, y = y), color = "black", size = 1) +
-    geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
-    ggplot2::geom_point(aes(x = x, y = y, color = "Active state at 't'"), alpha = 0.7, size = 5) +
-    #ggplot2::geom_point(aes(x = x, y = y, color = ifelse(colour == 1, "Active state at t", "State Displacement")), alpha = 0.7, size = 5) +
-    #scale_color_manual(values = c("Active state at t" = "red", "State Displacement" = "black")) + 
-    scale_color_manual(values = c("Active state at 't'" = "red"), guide = "legend") +
+    ggplot2::geom_text(data = cellID_coordinates, aes(x = x, y = y, label = Cell.ID), vjust = -1, size = 3) +
+    ggplot2::geom_point(aes(x = x, y = y, color = ifelse(colour == 1, "Active state at t", " ")), alpha = 0.7, size = 5) +
+    scale_color_manual(values = c("Active state at t" = "red", " " = "white")) +
     theme_minimal() +
     labs(x = "x-coordinates", y = "y-coordinates", color = "Time Transition")
 
   dot_anim <- dot_anim +
     transition_time(Timestamp) +
     labs(title = "Animation showing state transitions considering self state transitions",
-         subtitle = "time(t): {(round(frame_time,4))} seconds\nLatency: {((anime_data$latency[frame]))} seconds") +
-  shadow_wake(wake_length = 0.05, alpha = FALSE,wrap = FALSE)
-  time_animation <- gganimate::animate(dot_anim, fps = fps_time, duration = time_duration)
-  anim_save("./time_animation.gif", animation = time_animation, width = 800, height = 400)
+         subtitle = "\n\ntime(t): {(round(frame_time,3))} seconds\nLatency: {((anime_data$latency[frame]))} seconds") +
+  shadow_wake(wake_length = 0.05, alpha = FALSE,wrap = FALSE)+
+    theme(plot.subtitle = element_text(margin = margin(t = 20)))
+  time_animation <- animate(dot_anim, fps = fps_time, duration = time_duration, renderer = gifski_renderer())
+  anim_save("./time_animation.gif", animation = time_animation,width = 800, height = 430)
   
-
+    }
+    if(animation == 'state_based' || animation == 'All') {
   
   ### Animation based on next state
   df <- df %>%group_by(Cell.ID) %>%dplyr::mutate(Frequency = with(rle(Cell.ID), rep(lengths, lengths)))
@@ -522,6 +439,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   anime_df <- merged_df1[order, ]
   anime_df$order_map <- 1:nrow(anime_df)
   anime_df$label <- rep("Successive states", nrow(anime_df))
+  
   #NEWLY ADDED FOR ARROW HEAD SIZE
   x <- anime_df$x1
   y <- anime_df$y1
@@ -537,28 +455,35 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
     scale_color_manual(values = c("Successive states" = "blue")) + 
     labs(x = "x-coordinates", y = "y-coordinates", color = "State Transition") + theme_minimal()
   
-  animation1 <- arrow_anim + gganimate::transition_states(order_map, wrap = FALSE) + shadow_mark() +
+  animation1 <- arrow_anim + transition_states(order_map, wrap = FALSE) + shadow_mark() +
     labs(title = "Animation showing state transitions",
          subtitle = "without considering self-state transitions")
   
-  state_animation <- gganimate::animate(animation1, fps = fps_state, duration = state_duration)
-  #state_animation <- animate(animation1, fps = animation_speed)
+  state_animation <- animate(animation1, fps = fps_state, duration = state_duration, renderer = gifski_renderer())
   anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
+    } 
+    if(animation != 'state_based' && animation != 'time_based' && animation != 'All'){
+      print("invalid argument for animation")
+    }
+  }
   
   plots <- list()
   
-  # if (flow_map == "without_self_state" || flow_map == "All") {
-  #   #plots$without_self_state <- next_state_arrow_plot
-  # }
-  
+ 
+  if(is.null(flow_map)){
+    print("'flowmap' argument is NULL")
+  } else{
   if (flow_map == "self_state" || flow_map == "All") {
     plots$self_state <- self_state_plot
   }
-  
+
   if (flow_map == "without_self_state"|| flow_map == "All") {
     plots$without_self_state <- arrow_flow_map
   }
-  
+  }
+  if(is.null(animation)){
+    print("'animation' argument is NULL")
+  }else{
   if (animation == "time_based" || animation == "All") {
     plots$time_based <- time_animation
   }
@@ -566,7 +491,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   if (animation == "state_based" || animation == "All") {
     plots$state_based <- state_animation
   }
-  
+  }
   return(plots)
   
 }

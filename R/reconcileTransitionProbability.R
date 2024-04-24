@@ -1,45 +1,43 @@
 #' @name reconcileTransitionProbability
-#' @title Reconciliation of Transition Probability - Model Diagnostics
-#' @description This is the main function to creating transition probability heatmaps and reconcilation of the same.
-#' The Reconciliation of Transition Probability refers to the process of analyzing and adjusting transition probabilities in a stochastic model like a Markov Chain. 
+#' @title Reconciliation of Transition Probability
+#' @description This is the main function for creating transition probability heatmaps and reconcilation of the same.
+#' The Reconciliation of Transition Probability refers to the process of analyzing transition probabilities in a stochastic model like a Markov Chain. 
 #' It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
 #' removing unlikely transitions, and comparing different models. 
-#' The function described creates heatmaps to visually represent these probabilities,
+#' The function creates heatmaps to visually represent these probabilities,
 #' aiding in the understanding and analysis of state transitions within the model.
-#' 
-#' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
+#' @param df Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
 #' @param  hmap_type Character. Type of heatmap to generate ('self_state', 'without_self_state', or 'All')
 #' @return A list of plotly heatmap objects representing the transition probability heatmaps.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
-#' @keywords internal
+#' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
-#' @import ggforce 
-#' @import markovchain
+#' @import markovchain methods
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #' DAX = EuStockMarkets[, "DAX"],
 #' SMI = EuStockMarkets[, "SMI"],
 #' CAC = EuStockMarkets[, "CAC"],
 #' FTSE = EuStockMarkets[, "FTSE"])
-#' dataset_hvt <- dataset[,-c(1)]
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 3, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 123,
-#'                    quant_method="kmeans")
-#' predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold = 0.2) 
-#' cell_id <- predictions$scoredPredictedData$Cell.ID
+#' rownames(EuStockMarkets) <- dataset$date
+#' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                        distance_metric = "L1_Norm", error_metric = "max",
+#'                        normalize = TRUE,quant_method = "kmeans")
+#' scoring <- scoreHVT(dataset, hvt.results)
+#' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' reconcileTransitionProbability(dataset, hmap_type = 'All', cellid_column = "cell_id",
-#'                                time_column = "time_stamp") 
+#' reconcileTransitionProbability(dataset, hmap_type = "All", 
+#' cellid_column = "cell_id", time_column = "time_stamp")
 #' @export reconcileTransitionProbability
 
 
 reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, time_column) {
+ 
+  StateFrom <- StateTo <- Current_State <- Next_State_manual <- Next_State_markov <- Proability_manual_calculation <- Proability_markov_function<- NULL
   
   # Rename columns for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
@@ -50,7 +48,6 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   
   # Heatmap 1: Transition probability with self-state
   raw_data <- df %>% dplyr::select("Cell.ID", "Timestamp")
-  #browser()
   transition_values <- table(raw_data$Cell.ID[-nrow(raw_data)], raw_data$Cell.ID[-1])
   mat <- unclass(transition_values)
   normalized_value <- mat / rowSums(mat)
@@ -61,18 +58,6 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   a_df$StateFrom <- as.integer(a_df$StateFrom)
   a_df$Probabilty <- round(a_df$Probabilty, digits = 4)
   a_df <- a_df %>% arrange( StateFrom, StateTo)
-    
-  # hmap1 <- ggplot(a_df, aes(x = StateFrom, y = StateTo, fill = Probabilty)) +
-  #   geom_tile() +
-  #   scale_fill_gradientn(colours = colorRampPalette(c("#E5E4E2", "#E57211", "red"))(100)) +
-  #   labs(x = "Cell ID From", y = "Cell ID To") +
-  #   theme_minimal() +
-  #   guides(fill = FALSE)
-  
-  min_x <- min(a_df$StateFrom)
-  max_x <- max(a_df$StateFrom)
-  min_y <- min(a_df$StateTo)
-  max_y <- max(a_df$StateTo)
   
   hmap1 <- plotly::plot_ly(
     data = a_df,
@@ -87,14 +72,8 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     plotly::layout(
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = TRUE,
-      colorbar = list(title = "Probability"),
-      xaxis = list(range = c(min_x, max_x)),
-      yaxis = list(range = c(min_y, max_y)),
-      aspectratio = list(x = 1, y = 1)
+      autosize = TRUE
     )
-  
-  
   
   # Heatmap 2: Transition probability without self-state
 
@@ -103,8 +82,6 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   mat1 <- unclass(transition_values1)
   normalized_value1 <- mat1 / rowSums(mat1)
   
-  # Normalize again after setting self-transitions to 0
-  #normalized_value1 <- normalized_value1 / rowSums(normalized_value1)
   # Set probability to 0 for transitions to the same state
   for (i in 1:nrow(normalized_value1)) {
     normalized_value1[i, i] <- 0
@@ -118,21 +95,6 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   a_df1$Probabilty <- round(a_df1$Probabilty,4)
   a_df1 <- a_df1 %>% arrange( StateFrom, StateTo)
   
-  #browser()
-
-  
-  # hmap2 <- ggplot(a_df1, aes(x = StateFrom, y = StateTo, fill = Probabilty)) +
-  #        geom_tile() +
-  #        scale_fill_gradientn(colours = colorRampPalette(c("#E5E4E2", "#E57211", "red"))(100)) +
-  #        labs(x = "Cell ID From", y = "Cell ID To") +
-  #        theme_minimal()
-  #  hmap2 <- ggplotly(hmap2) %>%   layout(showlegend = FALSE)
-  
-  min_x <- min(a_df1$StateFrom)
-  max_x <- max(a_df1$StateFrom)
-  min_y <- min(a_df1$StateTo)
-  max_y <- max(a_df1$StateTo)
-  
   hmap2 <- plotly::plot_ly(
     data = a_df1,
     x = ~StateFrom,
@@ -145,44 +107,21 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     plotly::layout(
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = TRUE,
-      xaxis = list(range = c(min_x, max_x)),
-      yaxis = list(range = c(min_y, max_y)),
-      aspectratio = list(x = 1, y = 1)
+      autosize = TRUE
     )
   
-  
-  
-  
-  
   # Heatmap 3: Markov Chain state transition Probability
-  # browser()
-  #old code: mc_data  <- df$Cell.ID
   mc_data  <- df$Cell.ID[-c(1, nrow(df))]
-
   mc <- markovchain::markovchainFit(data = mc_data)
   trans_matrix <- mc$estimate
-  trans_plot <- as(trans_matrix, "matrix")
-  
+  trans_plot <-methods::as(trans_matrix, "matrix")
+  #trans_plot <- as.matrix.default(trans_matrix)
   melted_matrix_mc <- reshape2::melt(trans_plot)
   a_df_mc <- melted_matrix_mc %>% as.data.frame()
   colnames(a_df_mc) <- c("StateFrom", "StateTo", "Probability")
   a_df_mc$Probability <- round(a_df_mc$Probability,4)
   a_df_mc <- a_df_mc %>% arrange( StateFrom, StateTo)
 
-  
-  # hmap3 <- ggplot(a_df_mc, aes(x = StateFrom, y = StateTo, fill = Probability)) +
-  #   geom_tile() +
-  #   scale_fill_gradientn(colours = colorRampPalette(c("white", "#92C2E5", "blue"))(100)) +
-  #   labs(x = "Cell ID From", y = "Cell ID To") +
-  #   theme_minimal()
-  # hmap3 <- ggplotly(hmap3) %>%   layout(showlegend = FALSE)
-  # 
-  min_x <- min(a_df_mc$StateFrom)
-  max_x <- max(a_df_mc$StateFrom)
-  min_y <- min(a_df_mc$StateTo)
-  max_y <- max(a_df_mc$StateTo)
-  
   hmap3 <- plotly::plot_ly(
     data = a_df_mc,
     x = ~StateFrom,
@@ -195,10 +134,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     plotly::layout(
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = TRUE,
-      xaxis = list(range = c(min_x, max_x)),
-      yaxis = list(range = c(min_y, max_y)),
-      aspectratio = list(x = 1, y = 1)
+      autosize = TRUE
     )
 
   
@@ -213,19 +149,6 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   a_df_mc1$Probability <- round(a_df_mc1$Probability,4)
   a_df_mc1 <- a_df_mc1 %>% arrange( StateFrom, StateTo) 
   
-  # hmap4 <- ggplot(a_df_mc1, aes(x = StateFrom, y = StateTo, fill = Probability)) +
-  #   geom_tile() +
-  #   scale_fill_gradientn(colours = colorRampPalette(c("white", "#92C2E5", "blue"))(100)) +
-  #   labs(x = "Cell ID From", y = "Cell ID To") +
-  #   theme_minimal()
-  # hmap4 <- ggplotly(hmap4) %>%   layout(showlegend = FALSE)
-  
-  min_x <- min(a_df_mc1$StateFrom)
-  max_x <- max(a_df_mc1$StateFrom)
-  min_y <- min(a_df_mc1$StateTo)
-  max_y <- max(a_df_mc1$StateTo)
-  
-  
   # Create the heatmap without self-state
   hmap4 <- plotly::plot_ly(
     data = a_df_mc1,
@@ -239,10 +162,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
     plotly::layout(
       xaxis = list(title = "Cell ID From"),
       yaxis = list(title = "Cell ID To"),
-      autosize = TRUE,
-      xaxis = list(range = c(min_x, max_x)),
-      yaxis = list(range = c(min_y, max_y)),
-      aspectratio = list(x = 1, y = 1)
+      autosize = TRUE
     )
  
    #browser()
@@ -281,36 +201,22 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
                                                          Proability_markov_function, diff)
   
   
-  
-  
-  
-  
-  
-  
- 
-  
   #browser()
-
-  ############3
-  self_state_plots <-  subplot(hmap1, hmap3, shareY = TRUE ) %>%
-    layout(annotations = list(
+  
+  ############
+  self_state_plots <-  plotly::subplot(hmap1, hmap3, shareY = TRUE ) %>%
+    plotly::layout(annotations = list(
       list(x = 0.15, y = 1.05, text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper', width = 150),
-      list(x = 0.9, y = 1.05, text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper', width = 155))) %>%
-    layout(xaxis = list(title = "Cell ID From"), 
-           xaxis2 = list(title = "Cell ID From"))
+      list(x = 0.9, y = 1.05, text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper', width = 155))) 
+    
   
   
- ###############
-  non_self_state_plots <- subplot(hmap2, hmap4,shareY = TRUE) %>%
-    layout(annotations = list(
+  ###############
+  non_self_state_plots <- plotly::subplot(hmap2, hmap4,shareY = TRUE) %>%
+    plotly::layout(annotations = list(
       list(x = 0.15, y = 1.05,text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper',width = 150),
-      list(x = 0.9, y = 1.05,text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper',width = 155))) %>%
-    layout(xaxis = list(title = "Cell ID From"), 
-           xaxis2 = list(title = "Cell ID From"))
-  
-  
-  
-  
+      list(x = 0.9, y = 1.05,text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper',width = 155))) 
+   
   
   
   # Determine which heatmaps to return based on the hmap_type parameter

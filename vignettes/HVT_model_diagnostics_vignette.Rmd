@@ -946,7 +946,7 @@ numeric columns. The output plot is shown as a matrix.
 It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
 
 ```{r, edaPlots function, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated)
+edaPlots(dataset_updated, time_series = FALSE, time_column = NULL)
 ```
 
 ## 7.1 Train - Test Split
@@ -974,14 +974,14 @@ columns.
 ### 7.1.1 Train Distribution
 
 ```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated_train)
+edaPlots(dataset_updated_train, time_series = FALSE, time_column = NULL)
  
 ```
 
 ### 7.1.2 Test Distribution
 
 ```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated_test)
+edaPlots(dataset_updated_test, time_series = FALSE, time_column = NULL)
 
 ```
 

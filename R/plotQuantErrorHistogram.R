@@ -10,7 +10,6 @@
 #' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
 #' @import ggplot2 
-#' @import patchwork
 #' @examples
 #' data("EuStockMarkets")
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -27,12 +26,14 @@
 #'                       distance_metric = "L1_Norm", error_metric = "max",
 #'                       normalize = TRUE, quant_method = "kmeans")
 #' scoring <- scoreHVT(test, hvt.results)
-#' plotQuantErrorHistogram(hvt.results, scoring)  
+#' plotQuantErrorHistogram(hvt.results, scoring) 
 #' @export plotQuantErrorHistogram
 #' 
 
 plotQuantErrorHistogram <- function(hvt.results, hvt.scoring) {
-  # require(patchwork)
+  if (!requireNamespace("patchwork", quietly = TRUE)) {
+    stop("Package 'patchwork' is required but not installed.")
+  }
   #browser()
   val <- hvt.results[[3]][["max_QE"]] %>%
     unlist() %>%

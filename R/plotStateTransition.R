@@ -4,20 +4,17 @@
 #' A state transition plot is a type of data visualization used to represent 
 #' the changes or transitions in states over time for a given system. 
 #' State refers to a particular condition or status of a cell at a specific point in time. 
-#' This could be related to various attributes like a phase in a cycle, or any other measurable characteristic.
 #' Transition refers to the change of state for a cell from one condition to another over time. 
-#' This could represent processes like progression through stages, changes in activity, or other dynamic characteristics.
-#' @param df Data frame. Input dataframe should contain two columns of cell ID from scoreHVT function and timestamp.
-#' @param sample_size Numeric. An integer indicating the Fraction of the dataframe to sample.
+#' @param df Data frame. Input dataframe should contain two columns. Cell ID from scoreHVT function and timestamp of that dataset.
+#' @param sample_size Numeric. An integer indicating the Fraction of the dataframe to visualize in the plot.
 #' Default value is 0.2
-#' @param line_plot Logical. A logical value indicating to create a line plot.
-#' Default value is NULL.
+#' @param line_plot Logical. A logical value indicating to create a line plot. Default value is NULL.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps.
 #' @return A plotly object representing the state transition plot for the given dataframe.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
-#' @keywords internal
+#' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -25,23 +22,21 @@
 #' SMI = EuStockMarkets[, "SMI"],
 #' CAC = EuStockMarkets[, "CAC"],
 #' FTSE = EuStockMarkets[, "FTSE"])
-#' dataset_hvt <- dataset[,-c(1)]
-#' hvt.results <- list()
-#' hvt.results <- trainHVT(dataset_hvt, n_cells = 15, depth = 3, quant.err = 0.2, 
-#'                    distance_metric = "L1_Norm", error_metric = "mean",
-#'                    projection.scale = 10, normalize = TRUE, seed = 123,
-#'                    quant_method="kmeans")
-#' 
-#' predictions <- scoreHVT(dataset_hvt, hvt.results, child.level = 2, mad.threshold = 0.2) 
-#' cell_id <- predictions$scoredPredictedData$Cell.ID
+#' rownames(EuStockMarkets) <- dataset$date
+#' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                        distance_metric = "L1_Norm", error_metric = "max",
+#'                        normalize = TRUE,quant_method = "kmeans")
+#' scoring <- scoreHVT(dataset, hvt.results)
+#' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
-#' plotStateTransition(dataset, sample_size = NULL, line_plot = FALSE, cellid_column = "cell_id",
-#'                     time_column = "time_stamp")
+#' plotStateTransition(dataset, sample_size = 1, cellid_column = "cell_id",time_column = "time_stamp")
 #' @export plotStateTransition
 
 
 plotStateTransition <- function(df, sample_size = NULL, line_plot = NULL, cellid_column, time_column) {
+  ##for cran warnings, initializing empty vectors for these variables.
+  Timestamp <-Frequency <- NULL
   
   # Rename column names for Time and Cell for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
@@ -71,7 +66,7 @@ plotStateTransition <- function(df, sample_size = NULL, line_plot = NULL, cellid
            yaxis = list(title = "Cell ID"))
   
   ### Plot on the whole dataset with lines
-  # Prepare data for state transitions with timestamps and frequencies
+  ### Prepare data for state transitions with timestamps and frequencies
   state_transitions <- sampled_data %>%
     dplyr::select(Timestamp, Cell.ID, Frequency)
   

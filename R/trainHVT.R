@@ -106,7 +106,8 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       check.names = FALSE,
       row.names = rownames(dataset)
     )
-
+     #browser()
+     data_structure <- dim(dataset)
 
     ## Diagnose Function
     if(hvt_validation){
@@ -322,14 +323,14 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
       fin_out[[5]] <- NA
       if(diagnose){
         # fin_out[[4]] = NA
-        diag_list <-  diagPlot(hvt.results = fin_out,
+        diag_list =  diagPlot(hvt.results = fin_out,
                              data = dataset,
                              level = depth,
                              quant.err = quant.err,
                              distance_metric=distance_metric,
                              error_metric=error_metric
                              )
-        diag_Suggestion <-  diagSuggestion(hvt.results = fin_out,
+        diag_Suggestion =  diagSuggestion(hvt.results = fin_out,
                                          data = dataset,
                                          level = depth,
                                          quant.err = quant.err,
@@ -362,9 +363,11 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
         fin_out[[5]][["mad_plot"]] <- mad_plot
       }
       ### Model Info
-
+      Dataset <- paste0(data_structure[1] ," Rows & ", data_structure[2], " Columns")
+      
       model_train_date=Sys.time()
       input_parameters = list(
+        input_dataset = Dataset,
         n_cells = n_cells,
         depth = depth,
         quant.err = quant.err,
@@ -643,12 +646,13 @@ if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantizati
         fin_out[[5]][["mad_plot"]] <- mad_plot
       }
       
-      #### Model info
-      
+     
       ### Model Info
+      Dataset <- paste0(data_structure[1] ," Rows & ", data_structure[2], " Columns")
       
       model_train_date=Sys.time()
       input_parameters = list(
+        input_dataset = Dataset,
         n_cells = n_cells,
         depth = depth,
         quant.err = quant.err,

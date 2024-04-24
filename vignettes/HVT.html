@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi, Vishwavani" />
 
-<meta name="date" content="2024-03-13" />
+<meta name="date" content="2024-04-24" />
 
 <title>HVT: Collection of functions used to build hierarchical topology preserving maps</title>
 
@@ -343,7 +343,7 @@ hierarchical topology preserving maps</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
 Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi,
 Vishwavani</h4>
-<h4 class="date">2024-03-13</h4>
+<h4 class="date">2024-04-24</h4>
 
 
 <div id="TOC">
@@ -353,15 +353,15 @@ Vishwavani</h4>
 <li><a href="#version-history" id="toc-version-history">3. Version
 History</a>
 <ul>
-<li><a href="#hvt-v24.3.1-whats-new" id="toc-hvt-v24.3.1-whats-new">HVT
-(v24.3.1) | What’s New?</a></li>
+<li><a href="#hvt-v24.4.1-whats-new" id="toc-hvt-v24.4.1-whats-new">HVT
+(v24.4.1) | What’s New?</a></li>
 <li><a href="#hvt-v23.11.02" id="toc-hvt-v23.11.02">HVT
 (v23.11.02)</a></li>
 <li><a href="#hvt-v22.12.06" id="toc-hvt-v22.12.06">HVT
 (v22.12.06)</a></li>
 </ul></li>
-<li><a href="#installation-of-hvt-v24.3.1" id="toc-installation-of-hvt-v24.3.1">4. Installation of HVT
-(v24.3.1)</a></li>
+<li><a href="#installation-of-hvt-v24.4.1" id="toc-installation-of-hvt-v24.4.1">4. Installation of HVT
+(v24.4.1)</a></li>
 </ul>
 </div>
 
@@ -430,6 +430,9 @@ preserving map useful for semi-supervised tasks.</p></li>
 <li><p><strong>Scoring</strong>: Scoring new data sets and recording
 their assignment using the map objects from the above steps, in a
 sequence of maps if required.</p></li>
+<li><p><strong>Temporal Analysis and Visualization</strong>: Analysing
+time series data to understand its patterns and movements and
+visualising the flow of data over time.</p></li>
 </ol>
 <p>The HVT package allows creation of visually stunning tessellations,
 showcasing the power of topology preserving maps. below is an image
@@ -457,13 +460,17 @@ model.</p></li>
 Scoring Cells with Layers using scoreLayeredHVT:</strong></a> Contains
 descriptions of the functions used for scoring cells with layers based
 on a sequence of maps using scoreLayeredHVT.</p></li>
+<li><p><a href="https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Flowmap_Vignette.html"><strong>Temporal
+Analysis and Visualization: Leveraging Time Series Capabilities in
+HVT</strong></a>Contains descriptions of the functions used for
+analysing time series data and its flowmaps.</p></li>
 </ol>
 </div>
 <div id="version-history" class="section level1">
 <h1>3. Version History</h1>
-<div id="hvt-v24.3.1-whats-new" class="section level2 unnumbered">
-<h2 class="unnumbered">HVT (v24.3.1) | What’s New?</h2>
-<p>13th March, 2024</p>
+<div id="hvt-v24.4.1-whats-new" class="section level2 unnumbered">
+<h2 class="unnumbered">HVT (v24.4.1) | What’s New?</h2>
+<p>24th April, 2024</p>
 <p>In this version of HVT package, the following new features have been
 introduced:</p>
 <ol style="list-style-type: decimal">
@@ -492,11 +499,21 @@ instances.</li>
 <code>Scoring</code> section.</li>
 </ul>
 <ol start="3" style="list-style-type: decimal">
-<li><strong>Enhancements:</strong> The pre-existed functions,
+<li><p><strong>Enhancements:</strong> The pre-existed functions,
 <code>hvtHmap</code> and <code>exploded_hmap</code>, have been combined
 and incorporated into the <code>plotHVT</code> function. Additionally,
 <code>plotHVT</code> now includes the ability to perform 1D
-plotting.</li>
+plotting.</p></li>
+<li><p><strong>Temporal Analysis</strong> This update makes the package
+to extend its foundational operations to time series data (sequential
+observations recorded over time). Also, new functionalities are
+introduced to analyze underlying patterns and trends within the data,
+providing insights into its evolution over time and also offers the
+capability to analyse movement of the data by calculating its
+transitioning probability. This includes generating visualizations such
+as plots and GIFs to vividly illustrate the flow of data transitions
+along cells, facilitating deeper insights into the dynamic behavior of
+the system.</p></li>
 </ol>
 </div>
 <div id="hvt-v23.11.02" class="section level2 unnumbered">
@@ -547,8 +564,8 @@ containing ‘data without novelty’.</p></li>
 </ol>
 </div>
 </div>
-<div id="installation-of-hvt-v24.3.1" class="section level1">
-<h1>4. Installation of HVT (v24.3.1)</h1>
+<div id="installation-of-hvt-v24.4.1" class="section level1">
+<h1>4. Installation of HVT (v24.4.1)</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(devtools)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="at">repo =</span> <span class="st">&quot;Mu-Sigma/HVT&quot;</span>)</span></code></pre></div>
 </div>

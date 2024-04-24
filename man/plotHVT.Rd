@@ -20,7 +20,8 @@ plotHVT(
   sepration_width = 7,
   layer_opacity = c(0.5, 0.75, 0.99),
   dim_size = 1000,
-  plot.type = "2Dhvt"
+  plot.type = "2Dhvt",
+  cell_id = FALSE
 )
 }
 \arguments{
@@ -67,6 +68,8 @@ be scaled. (default = 0.5)}
 
 \item{plot.type}{Character. An option to indicate which type of plot should be generated. Accepted entries are 
 '1D','2Dproj','2Dhvt','2Dheatmap', 'surface_plot'. Default value is '2Dhvt'.}
+
+\item{cell_id}{(2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not. (default = FALSE)}
 }
 \value{
 plot object containing the hvt, heatmap or interactive surface plot for the given trainHVT results.

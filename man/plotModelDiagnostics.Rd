@@ -3,6 +3,9 @@
 \name{plotModelDiagnostics}
 \alias{plotModelDiagnostics}
 \title{Make the diagnostic plots for hierarchical voronoi tessellations model.}
+\usage{
+plotModelDiagnostics(model_obj)
+}
 \arguments{
 \item{model_obj}{List. A list of model_obj obtained from the trainHVT
 function or scoring object}

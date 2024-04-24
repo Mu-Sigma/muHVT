@@ -34,7 +34,7 @@ hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
                       distance_metric = "L1_Norm", error_metric = "max",
                       normalize = TRUE, quant_method = "kmeans")
 scoring <- scoreHVT(test, hvt.results)
-plotQuantErrorHistogram(hvt.results, scoring)  
+plotQuantErrorHistogram(hvt.results, scoring) 
 }
 \seealso{
 \code{\link{plotHVT}}

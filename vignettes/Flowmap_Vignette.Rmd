@@ -113,7 +113,7 @@ set.seed(240)
 
 The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
-1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
+1.  **Data Compression**: Vector quantization (VQ), HVQ (Hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
 2.  **Data Projection**: Dimension projection of the compressed cells to 1D, 2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called as [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension.
 
@@ -121,7 +121,13 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
-5. **Dynamic Analysis** A collection of functions designed to understand and visually represent the movement of data over time within a dynamic system, with the ability to forecast the next cell (t+1) by examining its underlying flow pattern.
+5. **Temporal Analysis and Visualization**: A Collection of new functions that leverages the capacity of HVT package by analysing time series data for its underlying patterns, calculation of transitioning probabilities and the visualizations for the flow of data over time.
+
+**What's new?**
+
+The new update focuses on the integration of time series capabilities into the HVT package. This vignette emphasis the new functionalities introduced in the latest update (version 24.4.1), with a particular emphasis on temporal analysis and visualization techniques.
+
+This update makes the package to extend its foundational operations to time series data (sequential observations recorded over time). Also, new functionalities are introduced to analyze underlying patterns and trends within the data, providing insights into its evolution over time and also offers the capability to analyse movement of the data by calculating its transitioning probability. This includes generating visualizations such as plots and GIFs to vividly illustrate the flow of data transitions along cells, facilitating deeper insights into the dynamic behavior of the system.
 
 
 # 2. Experimental setup 
@@ -186,13 +192,12 @@ Now let's try to visualize the Lorenz attractor (overlapping spirals) in  3D Spa
 
 ```{r, eval=TRUE,fig.cap='Figure 1: Lorenz attractor in 3D space'}
 data_3d <- dataset[sample(1:nrow(dataset), 1000), ]
-plot_3d <- plotly::plot_ly(data_3d, x= ~X, y= ~Y, z = ~Z) %>% add_markers( marker = list(
+plotly::plot_ly(data_3d, x= ~X, y= ~Y, z = ~Z) %>% add_markers( marker = list(
                           size = 2,
                           symbol = "circle",
                           color = ~Z,
                           colorscale = "Bluered",
                           colorbar = (list(title = 'Z'))))
-plot_3d
 ```
 
 Now let's have a look at **structure** of the Lorenz Attractor dataset.
@@ -203,22 +208,26 @@ str(dataset)
 
 **Data distribution**
 
-This section displays four objects.
+This section displays five objects.
 
-1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
+1) *Time Series Plots*: Plots of all features (including time) against time column.
 
-2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter quartile Range of each column at a panel level.
+2) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
 
-3) *Correlation Matrix*: This calculates the pearson correlation which is a
+3) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter quartile Range of each column at a panel level.
+
+4) *Correlation Matrix*: This calculates the pearson correlation which is a
 bivariate correlation value measuring the linear correlation between two
 numeric columns. The output plot is shown as a matrix.
 
-4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
+5) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
 
-It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
+It uses an inbuilt function called `edaPlots` to display the above mentioned five objects. This function will sort the given dataset by the time column and proceed with the plots. 
+
+*NOTE: The input dataset should be a dataframe object and the columns should be numeric type.*
 
 ```{r, warning=FALSE,message=FALSE}
-edaPlots(dataset, time_series = TRUE, time_column = 't')
+edaPlots(dataset, time_series = TRUE, time_column = "t")
 ```
 
 **Train - Test Split**
@@ -251,7 +260,7 @@ str(trainDataset)
 **Data Distribution**
 
 ```{r, train distribution, warning=FALSE,message=FALSE}
-edaPlots(trainDataset, time_series = T, time_column = 't')
+edaPlots(trainDataset, time_series = TRUE, time_column = 't')
 ```
 
 ## 4.2 Testing dataset
@@ -312,7 +321,7 @@ displayTable(data = hvt.results[[3]]$compression_summary,
              columnName = 'percentOfCellsBelowQuantizationErrorThreshold', 
              value = 0.8, tableType = "compression")
 ```
-**NOTE:** *Based on the provided table, it's evident that the 'percentOfCellsBelowQuantizationErrorThreshold' value is zero, indicating that compression hasn't taken place for the specified number of cells, which is 100. Typically, we would continue increasing this value until at least 80% compression occurs. However, in this vignette demonstration, we're not doing so because the plots generated from dynamic analysis functions would become cluttered and complex, making explanations less clear.*
+**NOTE:** *Based on the provided table, it's evident that the 'percentOfCellsBelowQuantizationErrorThreshold' value is zero, indicating that compression hasn't taken place for the specified number of cells, which is 100. Typically, we would continue increasing the Number of cells until at least 80% compression occurs. However, in this vignette demonstration, we're not doing so, because the plots generated from dynamic analysis functions would become cluttered and complex, making explanations less clear.*
 
 Now, Let's plot the Voronoi tessellation for 100 cells.
 
@@ -341,11 +350,11 @@ plotHVT(
 
 Now once we have built the model, let us try to score using our testing dataset.
 
-NOTE: *we are using the entire dataset here in place of test dataset.*
+NOTE: *we are using the entire dataset here in place of test dataset. Sice the test dataset will not cover all the cells. but the entire dataset can cover all the 100 cells mentioned in model training*
 
 ```{r scoreHVT function,warning=FALSE,message=FALSE,eval = global_var}
 set.seed(240)
-scoring_var <- scoreHVT(
+scoring <- scoreHVT(
   dataset,
   hvt.results,
   child.level = 1)
@@ -357,7 +366,7 @@ Let’s see which cell and level each point belongs to with the sorted Timestamp
 
 
 ```{r scoreHVT,warning=FALSE,eval = global_var}
-scored_data <- scoring_var[["scoredPredictedData"]] %>%round(2) %>% cbind(dataset) %>% 
+scored_data <- scoring[["scoredPredictedData"]] %>%round(2) %>% cbind(dataset) %>% 
                as.data.frame()
 
 colnames(scored_data) <- c("Segment.Level", "Segment.Parent", "Segment.Child", "n","Cell.ID",
@@ -367,6 +376,28 @@ colnames(scored_data) <- c("Segment.Level", "Segment.Parent", "Segment.Child", "
 displayTable(data =scored_data, columnName= 'Quant.Error', value = 0.1, tableType = "summary", limit =100)
 
 ```
+
+Let's look at the trained model summary from `scoreHVT()`
+```{r}
+scoring$model_info$trained_model_summary
+```
+
+Let's look at the scored model summary from `scoreHVT()`
+```{r}
+scoring$model_info$scored_model_summary
+```
+
+
+
+
+
+
+
+
+
+
+
+
 
 </br>
 
@@ -421,21 +452,19 @@ getTransitionProbability(
 
 * __`time_column`__ - A Character specifing the column name of timestamp from the dataframe passed to this function.
 
-This function displays probability for Tplus1 states for all cells in the form of table. For the sake of brevity we are displaying the probability table for the Cell ID 1 to 5.
+
 
 ```{r, message=FALSE}
 trans_table <- getTransitionProbability(df = scored_data, cellid_column = "Cell.ID", time_column = "t")
 ```
 
-**NOTE: The output is stored as a nested list which provides facility to handle it with Cell IDs. For the purpose of demo, here we are displaying it as dataframe with first 10 rows.**
+**NOTE: The output is stored as a nested list which provides facility to handle it easily with Cell IDs for the upcoming functions. For the purpose of demo, here we are displaying it as dataframe with first 10 rows.**
 
 ```{r}
 names_list <- lapply(trans_table, names)
 common_names <- Reduce(intersect, names_list)
 trans_table_list <- lapply(trans_table, function(df) df[common_names])
 combined_df <- do.call(rbind, trans_table_list)
-combined_df$Next_State <- as.numeric(combined_df$Next_State)
-
 Table(combined_df, limit = 10)
 ```
 
@@ -444,7 +473,7 @@ Table(combined_df, limit = 10)
 
 - *Next_State*: The cell (out of 100 cells given in model training) to which the datapoint moves at the next time unit (t+1).
 
-- *Relative_Frequency*: The number of times that the datapoint moves from the `Current_State` (nth cell) to the `Next_State` (nth cell).
+- *Relative_Frequency*: The number of times that the datapoint moves from the `Current_State` to the `Next_State`.
 
 - *Transition_Probability*: The probability calculated from the `Relative_Frequency` of the top three states. Individual `Relative_Frequency` divided by the total of top 3 states.
 
@@ -461,13 +490,13 @@ reconcileTransitionProbability(
 ```
 
  
-* __`df`__  - A dataframe with scoring output and along with the dataset we used for scoreHVT function.
+* __`df`__  - A dataframe contains Cell ID and Timestamps.
 
 * __`hmap_type`__ - If set to 'without_self_state', reconciliation plots for manual and Markovchain for highest transition probability excluding the self-state is given as output, if set to 'with_self_state', reconciliation plots for manual and Markovchain for highest transition probability considering the self-state is given as output and if set to 'All', plots including and excluding self-state is given as output.
 
-* __`cellid_column`__ -  A Character specifying the column name of Cell ID from the dataframe you pass to this function.
+* __`cellid_column`__ -  A Character specifying the column name of Cell ID from the dataset.
 
-* __`time_column`__ - A Charcater specifying the column name of timestamp from the dataframe you pass to this function.
+* __`time_column`__ - A Charcater specifying the column name of timestamp from the dataset.
 
 ```{r, warning=FALSE, message=FALSE}
 reconcile_plots <- reconcileTransitionProbability(df = scored_data, 
@@ -522,8 +551,10 @@ plotAnimatedFlowmap(
          df, 
          animation = "All", 
          flow_map = "All", 
-         animation_speed = 2, 
-         threshold = 0.6, 
+         fps_state,
+         fps_time,
+         time_duration,
+         state_duration,
          cellid_column, 
          time_column )
 
@@ -534,37 +565,32 @@ plotAnimatedFlowmap(
 
 * __`transition_probability_df`__  - A list of dataframe which is the output from the `getTransitionProbability` function.
 
-* __`df`__  - A dataframe with scoring output and along with the dataset we used for scoreHVT function.
+* __`df`__  - A dataframe contains Cell ID and Timestamps.
 
-* __`animation`__  - Character. If set to 'time_based', an animation plot in which a red dot moves along cells according to the timestamp will be displayed. If set to 'state_based', arrow animation based on highest state excluding self-state will be displayed. If set to 'All', both the animation will be resulted.
+* __`animation`__  - Character. If set to 'time_based', an animation plot in which a red dot moves along cells according to the timestamp will be displayed. If set to 'state_based', arrow animation based on highest state excluding self-state will be displayed. If set to 'All', both the animation will be resulted. If set to NULL none will be resulted.
 
-* __`flow_map`__  - Character. If set to 'self_state', the plot which shows the self state by circles will be displayed. More the circle size, more probability of the cell stays in the same cell. If set to 'without_self_state', the plot which shows the next state by arrows will be displayed. The arrow head points the next cell to go from the cell which is pointed by the arrow tail. If set to 'All', all two flowmaps will be resulted.
+* __`flow_map`__  - Character. If set to 'self_state', the plot which shows the self state by circles will be displayed. More the circle size, more probability of the cell stays in the same cell. If set to 'without_self_state', the plot which shows the next state by arrows will be displayed. The arrow head points the next cell to go from the cell which is pointed by the arrow tail. If set to 'All', all two flowmaps will be resulted. If set to NULL none will be resulted.
 
-* __`fps_for_time`__  - A Numeric value indicating the frames per second for time based animated flowmap.
+* __`fps_for_time`__  - A Numeric value indicating the frames per second for time transition animation.
 (Must be numeric value and a factor of 100). Default value is 1.
 
-* __`fps_for_state`__  - A Numeric value indicating the frames per second for state based animated flowmap.
-(Must be numeric value and a factor of 100). Default value is 1.
+* __`fps_for_state`__  - A Numeric value indicating the frames per second for state transition animation. (Must be numeric value and a factor of 100). Default value is 1.
 
-* __`time_duration`__  - A Numeric value indicating the total duration(in seconds) of the gif for time based animated flowmap.
-Default value is 2.
+* __`time_duration`__  - A Numeric value indicating the total duration of the gif for time transition animation. Default value is 2.
 
-* __`state_duration`__  - A Numeric value indicating the total duration(in seconds) of the gif for state based animated flowmap. Default value is 2.
+* __`state_duration`__  - A Numeric value indicating the total duration(in seconds) of the gif for state transition animation. Default value is 2.
 
+* __`cellid_column`__  - A Character specifying the column name of Cell ID of the dataset.
 
-* __`threshold`__  - A Numeric value ranges between 0.1 to 1 to control the categorization of probability values into "High Probability" and "Low Probability" for the flow map type "Probability".
+* __`time_column`__  -  A Character specifying the column name of Timestamp of the dataset.
 
-* __`cellid_column`__  - A Character specifying the column name of Cell ID from the dataframe you pass to this function.
-
-* __`time_column`__  -  A Character specifying the column name of timestamp from the dataframe you pass to this function.
 
 
 ```{r flow_map_fn, warning=FALSE,message=FALSE}
-plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = trans_table,
-                             df = scored_data, animation = 'All', flow_map = 'All',
-                             fps_time = 100, fps_state =  2, time_duration = 20,
-                             state_duration = 50, threshold = 0.7,
-                             cellid_column = "Cell.ID", time_column = "t")
+flowmap_plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results,transition_probability_df =trans_table,
+                                     df = scored_data, animation = 'All', flow_map = 'All',
+                                     fps_time = 30, fps_state =  5, time_duration = 180,
+                                     state_duration = 20,cellid_column = "Cell.ID", time_column = "t")
 ```
 
   
@@ -573,10 +599,10 @@ plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probabil
 
 **1.Flow map: Highest transition probability considering self-state**
 
-Circle around the centroid represents self-state Probability.
+The Circle size around the cell's centroid represents self-state Probability. More the size, more the probability of the data staying in the same cell.
   
 ```{r dot_flow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%', out.height='70%', results='asis', warning=FALSE}
-plots[[1]]
+flowmap_plots[[1]]
 ```
 
 
@@ -586,10 +612,10 @@ plots[[1]]
 
 **2. Flow Map: Highest transition probability excluding self-states - Arrow size represents transition probability**
 
-Arrow segment length based on Probability.
-  
+The Arrow size represents the Probability of the data to move to the next state. And the arrow directions points out to which cell it is moving next.
+
 ```{r arrow_map, echo=FALSE, fig.align = "center", fig.show ='hold', message=FALSE, out.width='100%',out.height='70%', results='asis', warning=FALSE}
-plots[[2]]
+flowmap_plots[[2]]
 ```
 
 

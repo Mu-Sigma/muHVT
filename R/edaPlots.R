@@ -1,10 +1,26 @@
+#' @name edaPlots
+#' @title plots for understanding dataset
+#' @description main function that gives all the eda plots 
+#' @param df Dataframe. The input dataset, can be a time series too.
+#' @param time_series Logical. A value to indicate whether the dataset is time_series or not.
+#' @param time_column Character. The name of the time column in the dataset.
+#' @return Five objects which includes time series plots, data distribution plots, 
+#' box plots, correlation matrix plot and a descriptive statistics table.
+#' @author Vishwavani <vishwavani@@mu-sigma.com>
+#' @keywords EDA
+#' @examples
+#' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+#' DAX = EuStockMarkets[, "DAX"],
+#' SMI = EuStockMarkets[, "SMI"],
+#' CAC = EuStockMarkets[, "CAC"],
+#' FTSE = EuStockMarkets[, "FTSE"])
+#' edaPlots(dataset, time_series = TRUE, time_column = 'date')
+#' @export edaPlots
 
-#' @keywords internal
 
 
 edaPlots <- function(df, time_series = FALSE, time_column) {
 
-  
 ###########Summary EDA Function
   summary_eda <- function(df) {
     variable  <-  `1st Quartile`<-median<- sd<-`3rd Quartile`<-  hist<- n_row<- n_missing<- NULL
@@ -19,7 +35,7 @@ edaPlots <- function(df, time_series = FALSE, time_column) {
       mutate(across(where(is.numeric), ~round(., 4))) %>%
       rename_with(~sub("^(skim_|numeric\\.)", "", .)) %>%
       select(-type, -n_missing, -complete_rate) %>%
-      mutate(n_row = nrow(df), n_missing = missing_counts_vector) %>%
+      mutate(n_row = format(nrow(df), scientific = FALSE), n_missing = missing_counts_vector) %>%
       dplyr::rename(min = p0, `1st Quartile` = p25, median = p50, `3rd Quartile` = p75, max = p100) %>%
       dplyr::select(variable, min, `1st Quartile`, median, mean, sd, `3rd Quartile`, max, hist,n_row, n_missing)
     
@@ -36,6 +52,7 @@ edaPlots <- function(df, time_series = FALSE, time_column) {
 #############Histogram   
   generateDistributionPlot <- function(data, column) {
     name  <-  NULL
+   
     p1<- ggplot2::ggplot(data, ggplot2::aes(x = data[[column]])) +
       ggplot2::geom_histogram(ggplot2::aes(y = ..count..), fill = "midnightblue", size = 0.2, alpha=0.7) +
       ggplot2::xlab(column) + ggplot2::ylab("Count") +
@@ -66,8 +83,9 @@ edaPlots <- function(df, time_series = FALSE, time_column) {
     g1 <- ggplot2::ggplotGrob(p1)
     g2 <- ggplot2::ggplotGrob(p2)
     
-    pp <- c(subset(g1$layout, name == "panel", se = t:r))
-
+   # pp <- c(subset(g1$layout, name == "panel", se = t:r))
+    pp <- c(subset(g1$layout, name == "panel"))
+    
     # superimpose p2 (the panel) on p1
     g <- gtable::gtable_add_grob(g1, g2$grobs[[which(g2$layout$name == "panel")]], pp$t, 
                                  pp$l, pp$b, pp$l)
@@ -126,27 +144,50 @@ edaPlots <- function(df, time_series = FALSE, time_column) {
   }
 
 #####################timeseries plots
-  generateTimeseriesPlot <- function(df, time_column){
-  #reshape the data to long format
-    melted_data <- tidyr::gather(df, variable, value, -time_column)
+  generateTimeseriesPlot <- function(df, time_column) {
+          if (!is.data.frame(df)) {
+                 stop("Input dataset must be a data frame")
+             }
+        
+           # Check if the time_column_name exists in the dataset
+           if (!(time_column %in% names(df))) {
+                 stop("Specified time column does not exist in the dataset")
+             }
+         
+           # Order the dataset based on the time column
+           ordered_dataset <- df[order(df[[time_column]]), ]
+           
+           # Extract variable names
+            variable_names <- setdiff(names(df), time_column)
+             
+          # Create plots using lapply
+               plot_list <- lapply(variable_names, function(variable_name) {
+                     ggplot(data = ordered_dataset, aes_string(x = time_column, y = variable_name)) +
+                           geom_line(color = "midnightblue") +
+                           labs(x = time_column, y = variable_name) 
+                        
+                   })
+              
+                 # Add a separate plot for the time variable
+                time_plot <- ggplot(data = ordered_dataset, aes_string(x = time_column, y = time_column)) +
+                  geom_line(color = "midnightblue") +
+                       labs(x = time_column, y = time_column) 
+               
+                   plot_list <- c(plot_list, list(time_plot))  # Add the time plot to the list of plots
+                   
+                     # Arrange plots using grid.arrange
+                   gridExtra::grid.arrange(grobs = plot_list, ncol = 2, top = "Time series plots of Features")
+  }
   
-  # Create individual time series plots
-  plot_list <- lapply(unique(melted_data$variable), function(var) {
-    p <- ggplot2::ggplot(melted_data[melted_data$variable == var, ], ggplot2::aes_string(x =time_column , y = "value")) +
-      ggplot2::geom_line(color = "midnightblue", size = 0.5, alpha = 1) +
-      ggplot2::xlab(time_column) + 
-      ggplot2::ylab(var) + 
-      ggplot2::theme_bw() 
-  })
   
-  do.call(gridExtra::grid.arrange, c(plot_list, ncol = 2, top = "Time series plots of Features" ))
- }  
-  
-if (time_series == TRUE & (!is.null(time_column)) ){
+if (time_series == TRUE && (!is.null(time_column)) ){
+
+    df <- df[order(df[[time_column]]), ]
     
-    # Execute Distribution Plots
+    # Execute Time series Plots
     generateTimeseriesPlot(df,time_column)
     
+  
     # Execute Distribution Plots
     eda_cols <- names(df)[sapply(df, is.numeric)]
     dist_list <- lapply(eda_cols, function(column) {

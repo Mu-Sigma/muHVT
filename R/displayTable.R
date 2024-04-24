@@ -1,6 +1,33 @@
+#' @name displayTable
+#' @title Table for displaying summary
+#' @description main function for displaying summary from model training
+#' @param data List. Listed object from trainHVT results
+#' @param columnName Character. Name of the column that needs highlighting.
+#' @param value Numeric. The value above which highlighted in red or green.
+#' @param tableType Character. Type of table to generate ('summary', 'compression')
+#' @param scroll Logical. A value to have scroll or not in the table.
+#' @param limit Numeric. A value to indicate how many rows to display. Applicable for summary tableType.
+#' @return A considated table for the training results
+#' @author Vishwavani <vishwavani@@mu-sigma.com>
+#' @seealso \code{\link{trainHVT}} 
 #' @importFrom rlang sym
 #' @importFrom dplyr mutate across where
-#' @keywords internal
+#' @keywords EDA
+#' @examples
+#' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
+#' DAX = EuStockMarkets[, "DAX"],
+#' SMI = EuStockMarkets[, "SMI"],
+#' CAC = EuStockMarkets[, "CAC"],
+#' FTSE = EuStockMarkets[, "FTSE"])
+#' rownames(EuStockMarkets) <- dataset$date
+#' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
+#'                        distance_metric = "L1_Norm", error_metric = "max",
+#'                        normalize = TRUE,quant_method = "kmeans")
+#' displayTable(data = hvt.results[[3]]$compression_summary,
+#' columnName = 'percentOfCellsBelowQuantizationErrorThreshold', 
+#' value = 0.8, tableType = "compression")
+#' displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error',
+#'  value = 0.1, tableType = "summary")
 #' @export displayTable
 
 displayTable <- function(data, columnName, value, tableType = "summary", scroll = TRUE, limit= 100) {

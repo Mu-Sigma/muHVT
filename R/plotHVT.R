@@ -16,6 +16,7 @@
 #' tessellations. 
 #' @param title (2Dhvt) String. Set a title for the plot. (default = NULL)
 #' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)
+#' @param cell_id (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not. (default = FALSE)
 #' @param child.level (2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
 #' @param hmap.cols (2Dheatmap/surface_plot) Numeric or Character. The column number of column name from

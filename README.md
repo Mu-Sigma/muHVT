@@ -2,7 +2,7 @@
 
 #### Zubin Dowlaty
 
-#### 2024-02-29
+#### 2024-04-25
 
 <div id="TOC">
 
@@ -11,11 +11,12 @@
     *   [<span class="toc-section-number">2.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">2.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
+    *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT ](#Temporal-Analysis-and-Visualization:-Leveraging-Time-Series-Capabilities-in-HVT)
 *   [<span class="toc-section-number">3</span> Version History](#version-history)
-    *   [<span class="toc-section-number">3.3</span> HVT (v24.3.1) | What’s New?](#hvt-(v24.3.1)-whats-new)
+    *   [<span class="toc-section-number">3.3</span> HVT (v24.4.1) | What’s New?](#hvt-(v24.4.1)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
     *   [<span class="toc-section-number">3.1</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">4</span> Installation of HVT (v24.3.1)](#installation-of-hvt-(v24.3.1))
+*   [<span class="toc-section-number">4</span> Installation of HVT (v24.4.1)](#installation-of-hvt-(v24.4.1))
 
 
 </div>
@@ -34,6 +35,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
+5. **Temporal Analysis and Visualization**: Analysing time series data to understand its patterns and movements and visualising the flow of data over time.
 
 The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT.html) for more details.
 
@@ -73,16 +75,22 @@ Following are the links to the vignettes for the HVT package:
 
 [**HVT Scoring Cells with Layers using scoreLayeredHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
+</div>
 
+<div id="Temporal-Analysis-and-Visualization:-Leveraging-Time-Series-Capabilities-in-HVT" class="section level2" number="2.4">
+
+## <span class="header-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT
+
+[**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Flowmap_Vignette.html) Contains descriptions of the functions used for analysing time series data and its flowmaps.
 
 <div id="version-history" class="section level1" number="3">
 
 # <span class="header-section-number">3</span> Version History 
 
 
-<div id="hvt-(v24.3.1)-whats-new" class="section level2" number="3.1">
+<div id="hvt-(v24.4.1)-whats-new" class="section level2" number="3.1">
 
-## HVT (v24.3.1) 
+## HVT (v24.4.1) 
 
 29th February, 2024
 
@@ -101,6 +109,8 @@ In this version of HVT package, the following new features have been introduced:
 * `scoreHVT` function now resides within the `Scoring` section.
 
 3. **Enhancements:** The pre-existed functions, `hvtHmap` and `exploded_hmap`, have been combined and incorporated into the `plotHVT` function. Additionally, `plotHVT` now includes the ability to perform 1D plotting.
+
+4. **Temporal Analysis** This update makes the package to extend its foundational operations to time series data (sequential observations recorded over time). Also, new functionalities are introduced to analyze underlying patterns and trends within the data, providing insights into its evolution over time and also offers the capability to analyse movement of the data by calculating its transitioning probability. This includes generating visualizations such as plots and GIFs to vividly illustrate the flow of data transitions along cells, facilitating deeper insights into the dynamic behavior of the system.
 
 </div>
 
@@ -147,9 +157,9 @@ This version of HVT package offers features for both training an HVT model and e
 
 
 
-<div id="installation-of-hvt-(v24.3.1)" class="section level2" number="4">
+<div id="installation-of-hvt-(v24.4.1)" class="section level2" number="4">
 
-# <span class="header-section-number">3</span> Installation of HVT (v24.3.1)
+# <span class="header-section-number">3</span> Installation of HVT (v24.4.1)
 
 <div class="sourceCode" id="cb1">
 

@@ -78,7 +78,11 @@ scoreHVT <- function(data,
   if (!all(train_colnames %in% colnames(data))) {
     stop("Not all training columns are part of test dataset")
   }
-
+  
+  data_structure_score  <- dim(data)
+  
+  
+  
   #common_cols <- intersect(colnames(data), train_colnames)
   
   if (!all(is.na(summary_list$scale_summary)) && normalize == TRUE) {
@@ -446,9 +450,36 @@ scoreHVT <- function(data,
   df_reordered <- merged_result[, desired_order]
 
 
-
+  #browser()
   #################################################
-
+  #MODEL INFO Rewriting
+  input_dataset <- hvt.results.model[["model_info"]][["input_parameters"]][["input_dataset"]]
+  n_cells <-hvt.results.model[["model_info"]][["input_parameters"]][["n_cells"]]
+  compression_percentage <- compression_percentage <- paste0(hvt.results.model[[3]][["compression_summary"]][["percentOfCellsBelowQuantizationErrorThreshold"]] * 100, "%")
+  quantization_error <-  hvt.results.model[["model_info"]][["input_parameters"]][["quant.err"]]
+  
+  trained_model <- list(
+    input_dataset = input_dataset, 
+    no_of_cells = n_cells, 
+    compression_percentage = compression_percentage,
+    quantization_error = quantization_error)
+  
+  score_dataset <- paste0(data_structure_score[1] ," Rows & ", data_structure_score[2], " Columns")
+  qe_range_min <-min(predict_test_data3$Quant.Error)
+  qe_range_max <- max(predict_test_data3$Quant.Error)
+  qe_range <- paste0( qe_range_min, " to " ,qe_range_max)
+  no_of_anomaly_cells <- sum(QECompareDf2$anomalyFlag == 1)
+  no_of_anomaly_data <- sum(QECompareDf2$n[QECompareDf2$anomalyFlag == 1])
+  
+  scored_model <- list(
+    input_dataset = score_dataset,
+    scored_qe_range = qe_range,
+    mad.threshold = mad.threshold,
+    no_of_anomaly_cells = no_of_anomaly_cells,
+    no_of_anomaly_datapoints = no_of_anomaly_data
+  )
+  
+  ####################################
   prediction_list <- list(
     scoredPredictedData = predict_test_data3,
     actual_predictedTable = df_reordered,
@@ -456,7 +487,9 @@ scoreHVT <- function(data,
     predictPlot = plotlyPredict,
     predictInput = c("depth" = child.level, "quant.err" = mad.threshold),
     model_mad_plots = list(),
-    model_info = list(type = "hvt_prediction")
+    model_info = list(type = "hvt_prediction", 
+                      trained_model_summary = trained_model,
+                      scored_model_summary =scored_model)
   )
   model_mad_plots <- NA
   # browser()

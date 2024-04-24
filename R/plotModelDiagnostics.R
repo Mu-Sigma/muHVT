@@ -1,5 +1,4 @@
 #' @name plotModelDiagnostics
-#'
 #' @title Make the diagnostic plots for hierarchical voronoi tessellations model.
 #' @description This is the main function that generates diagnostic plots for 
 #' hierarchical Voronoi tessellations models and scoring. 
@@ -10,13 +9,11 @@
 #' Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
 #' Mean Absolute Deviation Plot for Validation Data are plotted.
 #' For hvt scoring Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
-#'
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
 #' @import ggplot2 
-#' @import patchwork
 #' @examples
 #' data("EuStockMarkets")
 #' hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1, 
@@ -26,13 +23,12 @@
 #' plotModelDiagnostics(hvt.results)
 #' @export plotModelDiagnostics
 
-library(patchwork)
+
 plotModelDiagnostics <-
   function(model_obj) {
-    # browser()
-    # require(ggplot2)
-    # require(magrittr)
-    # require(patchwork)
+    if (!requireNamespace("patchwork", quietly = TRUE)) {
+      stop("Package 'patchwork' is required but not installed.")
+    } 
 
 
     if (model_obj[["model_info"]][["type"]] == "hvt_model") {
@@ -54,5 +50,6 @@ plotModelDiagnostics <-
       mpred <- madPlot(model_obj) + ggplot2::ggtitle("Mean Absolute Deviation Plot:Test Data")
       plotDiag <- mtrain / mtest / mpred
     }
+    #browser()
     return(plotDiag)
   }
