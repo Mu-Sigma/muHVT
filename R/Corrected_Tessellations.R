@@ -1,34 +1,34 @@
 Corrected_Tessellations <-
 function(current_dirsgs, current_tile, current_polygon){
-  
-  requireNamespace("splancs")      #csr function 
+
+  requireNamespace("splancs")      #csr function
   requireNamespace("sp")           #point.in.polygon function
   requireNamespace("polyclip")
-  
-    
+
+
   initial_dirsgs <- current_dirsgs
   #vert_outside1 and vert_outside2 check for the points which are outside the parent polygon
-  vert_outside1 <- which(sp::point.in.polygon(current_dirsgs[, "x1"], 
-                                          current_dirsgs[, "y1"], 
+  vert_outside1 <- which(sp::point.in.polygon(current_dirsgs[, "x1"],
+                                          current_dirsgs[, "y1"],
                                           current_tile$x,
                                           current_tile$y) == 0)
-  
+
   vert_outside2 <- which(sp::point.in.polygon(current_dirsgs[, "x2"],
                                           current_dirsgs[, "y2"],
                                           current_tile$x,
                                           current_tile$y) == 0)
-  
-  #if the same index is present in both vert_outside1 and vert_outside2, it means the line 
+
+  #if the same index is present in both vert_outside1 and vert_outside2, it means the line
   #joining these points has both the end-points outside the parent polygon
   vert_outside <- intersect(vert_outside1, vert_outside2)
-  
+
   #if the line joining the points p1 and p2 is outside the parent polygon and
   #p1 is boundary point and p2 is not, then make p2 the boundary point or vice versa
   if (length(vert_outside) > 0 ) {
     for (j in 1: length(vert_outside)) {
       #obtain the index of the line for which the point is outside
       x_coord_index1 <- which((current_dirsgs[vert_outside[j], "x1"] == current_dirsgs[, c("x1", "x2")]) == TRUE)
-      y_coord_index1 <- which((current_dirsgs[vert_outside[j], "y1"] == current_dirsgs[, c("y1", "y2")]) == TRUE)      
+      y_coord_index1 <- which((current_dirsgs[vert_outside[j], "y1"] == current_dirsgs[, c("y1", "y2")]) == TRUE)
       x_coord_index2 <- which((current_dirsgs[vert_outside[j], "x2"] == current_dirsgs[, c("x1", "x2")]) == TRUE)
       y_coord_index2 <- which((current_dirsgs[vert_outside[j], "y2"] == current_dirsgs[, c("y1", "y2")]) == TRUE)
       x_coord_index <- c(x_coord_index1, x_coord_index2)
@@ -41,16 +41,16 @@ function(current_dirsgs, current_tile, current_polygon){
           current_dirsgs[(xy_index[i] - nrow(current_dirsgs)), "bp2"] <- TRUE
         } else {
           current_dirsgs[xy_index[i], "bp1"] <- TRUE
-        } 
-      }      
+        }
+      }
     }
   }
-  
+
   #boundary points in the first index
   firstpt <- current_dirsgs[which(current_dirsgs[, "bp1"] == TRUE), ]
   #boundary points in the second index
   secondpt <- current_dirsgs[which(current_dirsgs[, "bp2"] == TRUE), ]
-  
+
   #use all these points together and remove the common rows
   pts <- rbind(firstpt, secondpt)
   if(any(duplicated(pts) == TRUE)){
@@ -58,43 +58,43 @@ function(current_dirsgs, current_tile, current_polygon){
   }else{
     ptsout <- pts
   }
-  
+
   #2 matrices, 'm' to store slope and 'c' to store constants of the lines in the polygon
   m_parent <-  c_parent <- matrix(ncol = 1, nrow = nrow(current_polygon))
   #mat1 is the current polygon
   mat1 <-  current_polygon
   #closing the polygon by making the first and last points same
   mat1 <- rbind(mat1, mat1[1, ])
-  
+
   # Polygon offset to check if points lie within this margin
   A<-list(list(x=mat1[,1], y=mat1[,2]))
   C <- polyclip::polylineoffset(A, 0.0001, jointype="square", endtype="opensquare")
   offset_polygon<-cbind(C[[1]][["x"]],C[[1]][["y"]])
-  
+
   #slopes and intercepts for lines in the parent polygon
-  for (i in 1: (nrow(mat1) - 1)) {  
-    m_parent[i] <- ((mat1[(i + 1), 2] - mat1[i, 2]) / 
+  for (i in 1: (nrow(mat1) - 1)) {
+    m_parent[i] <- ((mat1[(i + 1), 2] - mat1[i, 2]) /
                       (mat1[(i + 1), 1] - mat1[i, 1]))
     c_parent[i] <- mat1[i, 2] - (m_parent[i] * mat1[i, 1])
   }
-  
+
   #polygon is too small to calculate child level tessellations
   if(any(is.nan(m_parent) == TRUE)){
     #flog.warn("Projection is not scaled enough")
     return("-1")
   }
-  
-  #slopes and intercepts for lines with endpoints outside the polgyon 
+
+  #slopes and intercepts for lines with endpoints outside the polgyon
   if(nrow (ptsout) != 0){
     m_ptsout <- c_ptsout <- matrix(ncol = 1, nrow = nrow(ptsout))
     #for all lines in the child tessellations for which the points are outside
     # i<-3
     for (i in 1: nrow(ptsout)){
-      m_ptsout[i] <- ((ptsout[i, "y2"] - ptsout[i, "y1"]) / 
+      m_ptsout[i] <- ((ptsout[i, "y2"] - ptsout[i, "y1"]) /
                         (ptsout[i, "x2"] - ptsout[i, "x1"]))
       c_ptsout[i] <- ptsout[i, "y1"] - (m_ptsout[i] * ptsout[i, "x1"])
-      
-      #for all lines in the child tessellation for which the points are outside,, 
+
+      #for all lines in the child tessellation for which the points are outside,,
       #calculate the point of intersection of each line
       #with all the boundary lines of the parent polygon
       x <- y <- c()
@@ -117,7 +117,7 @@ function(current_dirsgs, current_tile, current_polygon){
           }
         }
       }
-      
+
       #check which points among all the points of intersection lies on the boundary of parent polygon
       pt_intersect <- matrix(NA, ncol = 2, nrow = (nrow(mat1) - 1))
       xy.poly <- splancs::as.points(mat1)
@@ -138,13 +138,13 @@ function(current_dirsgs, current_tile, current_polygon){
           rows_del[k] <- all(is.na(pt_intersect[k,]))
         }
       }
-      
+
       if(any(rows_del == TRUE)){
         pt_intersect <- pt_intersect[-which(rows_del == TRUE), , drop = FALSE]
       }
-      
-      #calculate the distance between the boundary point of the second level tessellation with the 
-      #points of intersection which are on the boundary of the parent tile.      
+
+      #calculate the distance between the boundary point of the second level tessellation with the
+      #points of intersection which are on the boundary of the parent tile.
       if(nrow(pt_intersect) != 0){
         distmat <- matrix(0, ncol = 2, nrow = (nrow(pt_intersect) + 1))
         distmat[2: nrow(distmat), ] <- pt_intersect
@@ -162,10 +162,10 @@ function(current_dirsgs, current_tile, current_polygon){
       }
     }
   }
-  
+
   #assign the new points to the output of the tessellation
   current_dirsgs[rownames(ptsout), ] <- ptsout
-  
+
   #return the result
   return (current_dirsgs)
 }
