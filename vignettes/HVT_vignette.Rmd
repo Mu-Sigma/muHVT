@@ -665,7 +665,7 @@ plotHVT <-(hvt.results, line.width, color.vec,pch1 = 21, centroid.size = 1.5,
 
 * __`maxDepth`__ -  (2Dhvt) An integer indicating the number of levels. (default = NULL)
 
-* __`cell_id`__ - (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not. (default = FALSE)
+* __`cell_id`__ - (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not for the level 1. (default = FALSE)
 
 
 * __`child.level`__ - (2Dheatmap/surface_plot) A Number indicating the level for which the heat map is to be plotted.

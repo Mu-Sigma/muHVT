@@ -57,6 +57,8 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
                     title = NULL, maxDepth = NULL, child.level, hmap.cols, quant.error.hmap = NULL,
                     n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), 
                     dim_size = 1000, plot.type = '2Dhvt', cell_id = FALSE) {
+  
+  lev <- NULL
   if (is.null(plot.type)) {
     plot.type <- '2Dhvt'
   }
@@ -210,17 +212,22 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
             positionsDataframe,
             by = c("depth", "cluster", "child")
       )
-    
+   # browser()
     if(cell_id == TRUE){
     hvt_res1 <- hvt_list[[2]][[1]]$`1`
     hvt_res2 <- hvt_list[[3]]$summary$Cell.ID
+    a <- 1: length(hvt_res1)
+    b <- a[hvt_res2]
+    b <-  as.vector(b)
+    hvt_res2 <- stats::na.omit(b)
+    
     coordinates_value1 <- lapply(1:length(hvt_res1), function(x) {
       centroids1 <- hvt_res1[[x]]
       coordinates1 <- centroids1$pt})
     cellID_coordinates <- do.call(rbind.data.frame, coordinates_value1)
     colnames(cellID_coordinates) <- c("x", "y")
     cellID_coordinates$Cell.ID <- hvt_res2
-    centroidDataframe <- merge(cellID_coordinates, centroidDataframe, by = c("x" ,"y"))
+    centroidDataframe_2 <- merge(cellID_coordinates, centroidDataframe, by = c("x" ,"y"))
     
     p <- ggplot2::ggplot()  
     for (i in maxDepth:1) {
@@ -262,20 +269,31 @@ plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 
     }
     
    # browser()
-    for (depth in 1:maxDepth) {
+    #for (depth in 1:maxDepth) {
+    # for (centroidDataframe$lev == 1) {
+    #   p <- p + ggplot2::geom_text(
+    #     data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+    #     ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
+    #     size = 3,
+    #     color = color.vec[depth], vjust = -1
+    #   ) +
+    #    ggplot2::geom_text(
+    #       data = centroidDataframe[centroidDataframe["lev"] == depth, ],
+    #       ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
+    #       size = 3,
+    #       color = color.vec[depth], vjust = -1
+    #     )
+    # }
+    subset_data <- subset(centroidDataframe_2, lev == 1)  # Filter the dataframe
+   # for (depth in 1:maxDepth) {
       p <- p + ggplot2::geom_text(
-        data = centroidDataframe[centroidDataframe["lev"] == depth, ],
-        ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
+        data = subset_data,
+        ggplot2::aes(x = x, y = y, label = Cell.ID),
         size = 3,
-        color = color.vec[depth], vjust = -1
-      ) +
-       ggplot2::geom_text(
-          data = centroidDataframe[centroidDataframe["lev"] == depth, ],
-          ggplot2::aes(x = x, y = y, label = centroidDataframe$Cell.ID ),
-          size = 3,
-          color = color.vec[depth], vjust = -1
-        )
-    }
+        color = "black",
+        vjust = -1
+      )
+    #}
     
     p <- p +
       ggplot2::scale_color_manual(

@@ -140,7 +140,7 @@ edaPlots <- function(df, time_series = FALSE, time_column) {
                        outline = TRUE, addgrid.col = "darkgray", addrect = 4,
                        rect.col = "black", rect.lwd = 5, cl.pos = "b", tl.col = "black", tl.cex = 1, 
                        cl.cex = 1,addCoef.col = "black", number.digits = 2, number.cex = 1.5, 
-                       type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "darkblue"))(200), mar=c(0,0,2,0))  
+                       type = "lower",col = grDevices::colorRampPalette(c("maroon", "white", "midnightblue"))(200), mar=c(0,0,2,0))  
   }
 
 #####################timeseries plots

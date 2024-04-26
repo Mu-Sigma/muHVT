@@ -28,3 +28,27 @@ Add_boundary_points <-
     }
     return (tile.child)
   }
+
+# Add_boundary_points <- function(tile.child, tile.parent, data.points) {
+#   desired_index <- c()
+#   dist_to_tile_endpoints <- list()
+#   
+#   lapply(tile.parent$x, function(px) {
+#     dist_to_tile_endpoints <<- lapply(data.points[,1], function(dx) sum((px - dx)^2))
+#     
+#     desired_index <<- which(dist_to_tile_endpoints == min(as.numeric(dist_to_tile_endpoints)))
+#     
+#     lapply(desired_index, function(di) {
+#       tile.x <- c(tile.child[[di]]$x, px)
+#       tile.y <- c(tile.child[[di]]$y, tile.parent$y[which(tile.parent$x == px)])
+#       tile.bp <- c(tile.child[[di]]$bp, tile.parent$bp[which(tile.parent$x == px)])
+#       
+#       var1 <- grDevices::chull(tile.x, tile.y)
+#       tile.child[[di]]$x <- tile.x[var1]
+#       tile.child[[di]]$y <- tile.y[var1]
+#       tile.child[[di]]$bp <- tile.bp[var1]
+#     })
+#   })
+#   
+#   return(tile.child)
+# }
