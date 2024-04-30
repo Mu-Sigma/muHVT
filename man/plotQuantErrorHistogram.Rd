@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotQuantErrorHistogram.R
 \name{plotQuantErrorHistogram}
 \alias{plotQuantErrorHistogram}
-\title{Make the diagnostic plots for hierarchical voronoi tessellations model.}
+\title{Make the quantization error plots for training and scoring.}
 \usage{
 plotQuantErrorHistogram(hvt.results, hvt.scoring)
 }
@@ -12,10 +12,11 @@ plotQuantErrorHistogram(hvt.results, hvt.scoring)
 \item{hvt.scoring}{List. A list of hvt.scoring obtained from the scoreHVT function.}
 }
 \value{
-Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scoring
+Returns the ggplot object containing the quantization error distribution plots for 
+the given HVT results of training and scoring
 }
 \description{
-This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 
+This is the function that produces histograms displaying the distribution of Quantization Error (QE) values 
 for both train and test datasets, highlighting mean values with dashed lines for quick evaluation.
 }
 \examples{
@@ -29,7 +30,7 @@ rownames(EuStockMarkets) <- dataset$date
 #Split in train and test
 train <- EuStockMarkets[1:1302, ]
 test <- EuStockMarkets[1303:1860, ]
-#model training
+
 hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
                       distance_metric = "L1_Norm", error_metric = "max",
                       normalize = TRUE, quant_method = "kmeans")

@@ -1,28 +1,24 @@
 #' @name reconcileTransitionProbability
 #' @title Reconciliation of Transition Probability
-#' @description This is the main function for creating transition probability heatmaps and reconcilation of the same.
-#' The Reconciliation of Transition Probability refers to the process of analyzing transition probabilities in a stochastic model like a Markov Chain. 
-#' It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
-#' removing unlikely transitions, and comparing different models. 
-#' The function creates heatmaps to visually represent these probabilities,
-#' aiding in the understanding and analysis of state transitions within the model.
-#' @param df Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
+#' @description This is the main function for creating reconciliation plots and tables which 
+#' helps in comparing the transition probabilities calculated manually and from markovchain function
+#' @param df Data frame. The input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
-#' @param  hmap_type Character. Type of heatmap to generate ('self_state', 'without_self_state', or 'All')
-#' @return A list of plotly heatmap objects representing the transition probability heatmaps.
-#' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
+#' @param  hmap_type Character. ('self_state', 'without_self_state', or 'All')
+#' @return A list of plotly heatmap objects and tables representing the transition probability heatmaps.
+#' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>, Vishwavani <vishwavani@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
 #' @keywords Diagnostics_or_Validation
 #' @importFrom magrittr %>%
 #' @import markovchain methods
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-#' DAX = EuStockMarkets[, "DAX"],
-#' SMI = EuStockMarkets[, "SMI"],
-#' CAC = EuStockMarkets[, "CAC"],
-#' FTSE = EuStockMarkets[, "FTSE"])
-#' rownames(EuStockMarkets) <- dataset$date
+#'                       DAX = EuStockMarkets[, "DAX"],
+#'                       SMI = EuStockMarkets[, "SMI"],
+#'                       CAC = EuStockMarkets[, "CAC"],
+#'                       FTSE = EuStockMarkets[, "FTSE"])
+#' 
 #' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method = "kmeans")
@@ -30,6 +26,7 @@
 #' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
+#' 
 #' reconcileTransitionProbability(dataset, hmap_type = "All", 
 #' cellid_column = "cell_id", time_column = "time_stamp")
 #' @export reconcileTransitionProbability
@@ -37,7 +34,7 @@
 
 reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, time_column) {
  
-  StateFrom <- StateTo <- Current_State <- Next_State_manual <- Next_State_markov <- Proability_manual_calculation <- Proability_markov_function<- NULL
+  StateFrom <- StateTo <- Current_State <- Next_State_manual <- Next_State_markov <- Probability_manual_calculation <- Probability_markov_function<- NULL
   
   # Rename columns for consistency
   colnames(df)[colnames(df) == time_column] <- "Timestamp"
@@ -86,7 +83,7 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   for (i in 1:nrow(normalized_value1)) {
     normalized_value1[i, i] <- 0
   }
-  
+
   melted_matrix1 <- reshape2::melt(normalized_value1)
   a_df1 <- melted_matrix1 %>% as.data.frame()
   colnames(a_df1) <- c("StateFrom", "StateTo", "Probabilty")
@@ -168,37 +165,37 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
    #browser()
    a_df <- a_df[a_df$Probabilty !=0,]
    a_df <- a_df %>% arrange( StateFrom, StateTo)
-  colnames(a_df) <- c("Current_State", "Next_State_manual", "Proability_manual_calculation")
+  colnames(a_df) <- c("Current_State", "Next_State_manual", "Probability_manual_calculation")
   
   
    a_df_mc <- a_df_mc[a_df_mc$Probability != 0,]
    a_df_mc <- a_df_mc %>% arrange( StateFrom, StateTo) 
-  colnames(a_df_mc) <- c("Current_State", "Next_State_markov", "Proability_markov_function")
+  colnames(a_df_mc) <- c("Current_State", "Next_State_markov", "Probability_markov_function")
   
   
   a_df_mc <- a_df_mc[,-1]
   self_state_table <- cbind (a_df, a_df_mc)
-  self_state_table$diff <- (self_state_table$Proability_manual_calculation - self_state_table$Proability_markov_function)
-  self_state_table <- self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Proability_manual_calculation,
-                                                          Proability_markov_function, diff)
+  self_state_table$diff <- (self_state_table$Probability_manual_calculation - self_state_table$Probability_markov_function)
+  self_state_table <- self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Probability_manual_calculation,
+                                                          Probability_markov_function, diff)
   
   
 
   a_df1 <- a_df1[a_df1$Probabilty !=0,]
   a_df1 <- a_df1 %>% arrange( StateFrom, StateTo)
-  colnames(a_df1) <- c("Current_State", "Next_State_manual", "Proability_manual_calculation")
+  colnames(a_df1) <- c("Current_State", "Next_State_manual", "Probability_manual_calculation")
   
   
   a_df_mc1 <- a_df_mc1[a_df_mc1$Probability != 0,]
   a_df_mc1 <- a_df_mc1 %>% arrange( StateFrom, StateTo)
-  colnames(a_df_mc1) <- c("Current_State", "Next_State_markov", "Proability_markov_function")
+  colnames(a_df_mc1) <- c("Current_State", "Next_State_markov", "Probability_markov_function")
   
   
   a_df_mc1 <- a_df_mc1[,-1]
   non_self_state_table <- cbind (a_df1, a_df_mc1)
-  non_self_state_table$diff <- (non_self_state_table$Proability_manual_calculation - non_self_state_table$Proability_markov_function)
-  non_self_state_table <- non_self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Proability_manual_calculation,
-                                                         Proability_markov_function, diff)
+  non_self_state_table$diff <- (non_self_state_table$Probability_manual_calculation - non_self_state_table$Probability_markov_function)
+  non_self_state_table <- non_self_state_table %>% dplyr::select(Current_State,Next_State_manual, Next_State_markov, Probability_manual_calculation,
+                                                         Probability_markov_function, diff)
   
   
   #browser()
@@ -207,7 +204,10 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   self_state_plots <-  plotly::subplot(hmap1, hmap3, shareY = TRUE ) %>%
     plotly::layout(annotations = list(
       list(x = 0.15, y = 1.05, text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper', width = 150),
-      list(x = 0.9, y = 1.05, text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper', width = 155))) 
+      list(x = 0.9, y = 1.05, text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper', width = 165))) %>%
+    plotly::layout(xaxis = list(title = "Cell ID From"), 
+                    xaxis2 = list(title = "Cell ID From"))
+  
     
   
   
@@ -215,8 +215,9 @@ reconcileTransitionProbability <- function(df, hmap_type = NULL, cellid_column, 
   non_self_state_plots <- plotly::subplot(hmap2, hmap4,shareY = TRUE) %>%
     plotly::layout(annotations = list(
       list(x = 0.15, y = 1.05,text = "Using Manual calculation", showarrow = F, xref='paper', yref='paper',width = 150),
-      list(x = 0.9, y = 1.05,text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper',width = 155))) 
-   
+      list(x = 0.9, y = 1.05,text = "Using Markovchain method", showarrow = F, xref='paper', yref='paper',width = 165)))%>% 
+  plotly::layout(xaxis = list(title = "Cell ID From"), 
+                 xaxis2 = list(title = "Cell ID From"))
   
   
   # Determine which heatmaps to return based on the hmap_type parameter

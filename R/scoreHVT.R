@@ -1,30 +1,25 @@
 #' @name scoreHVT
 #' @title Score which cell each point in the test dataset belongs to.
 #' @description
-#' This is the function scores the cell for each point in the test dataset based on a trained hierarchical Voronoi tessellations model. 
-#' It provides scored data, plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
-#' @param data Dataframe. A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
-#' @param hvt.results.model List. A list obtained from the trainHVT function while performing hierarchical vector quantization 
-#' on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, 
-#' Sammon's projection coordinates, and model input information.
-#' @param child.level Numeric. A number indicating the depth for which the heat map is to be plotted. Each depth represents a
-#' different level of clustering or partitioning of the data.
-#' @param mad.threshold Numeric. A numeric value indicating the permissible Mean Absolute Deviation which is obtained from
-#'  Minimum Intra centroid plot of diagnostics.
+#' This function scores each data point in the test dataset based on a trained hierarchical Voronoi tessellations model. 
+#' @param data Dataframe. A dataframe containing the test dataset. 
+#' @param hvt.results.model List. A list obtained from the trainHVT function 
+#' @param child.level Numeric. A number indicating the depth for which the heat map is to be plotted. 
+#' @param mad.threshold Numeric. A numeric value indicating the permissible Mean Absolute Deviation.
 #' @param line.width Vector. A vector indicating the line widths of the tessellation boundaries for each layer. 
-#' @param color.vec Vector. A vector indicating the colors of the tessellations boundaries at each layer. 
+#' @param color.vec Vector. A vector indicating the colors of the tessellation boundaries at each layer. 
 #' @param normalize Logical. A logical value indicating if the dataset should be normalized. When set to TRUE,
 #'  the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). 
 #'  When set to FALSE, the data is used as such without any changes.
-#' @param seed Numeric. Random Seed.
-#' @param distance_metric Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
-#' `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
-#' `n` dimensional point and centroid. The distance metric can be different from the one used during training.
-#' @param error_metric Character. The error metric can be `mean` or `max`. `max` is selected by default. 
-#' `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance 
-#' between a point and centroid of the cell. The error metric can be different from the one used during training.
+#' @param seed Numeric. Random Seed to preserve the repeatability
+#' @param distance_metric Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
+#' The distance metric is used to calculate the distance between an n dimensional point and centroid.
+#'  The distance metric can be different from the one used during training.
+#' @param error_metric Character. The error metric can be mean or max. max is selected by default. 
+#' max will return the max of m values and mean will take mean of m values where
+#' each value is a distance between a point and centroid of the cell.
 #' @param yVar Character. A character or a vector representing the name of the dependent variable(s)
-#' @returns Dataframe containing scored data, plots and mean absolute deviation plots
+#' @returns Dataframe containing scored data, plots and summary
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 #' @keywords Scoring
@@ -475,8 +470,8 @@ scoreHVT <- function(data,
     input_dataset = score_dataset,
     scored_qe_range = qe_range,
     mad.threshold = mad.threshold,
-    no_of_anomaly_cells = no_of_anomaly_cells,
-    no_of_anomaly_datapoints = no_of_anomaly_data
+    no_of_anomaly_datapoints = no_of_anomaly_data,
+    no_of_anomaly_cells = no_of_anomaly_cells
   )
   
   ####################################

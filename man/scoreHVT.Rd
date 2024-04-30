@@ -19,44 +19,39 @@ scoreHVT(
 )
 }
 \arguments{
-\item{data}{Dataframe. A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training.}
+\item{data}{Dataframe. A dataframe containing the test dataset.}
 
-\item{hvt.results.model}{List. A list obtained from the trainHVT function while performing hierarchical vector quantization 
-on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, 
-Sammon's projection coordinates, and model input information.}
+\item{hvt.results.model}{List. A list obtained from the trainHVT function}
 
-\item{child.level}{Numeric. A number indicating the depth for which the heat map is to be plotted. Each depth represents a
-different level of clustering or partitioning of the data.}
+\item{child.level}{Numeric. A number indicating the depth for which the heat map is to be plotted.}
 
-\item{mad.threshold}{Numeric. A numeric value indicating the permissible Mean Absolute Deviation which is obtained from
-Minimum Intra centroid plot of diagnostics.}
+\item{mad.threshold}{Numeric. A numeric value indicating the permissible Mean Absolute Deviation.}
 
 \item{line.width}{Vector. A vector indicating the line widths of the tessellation boundaries for each layer.}
 
-\item{color.vec}{Vector. A vector indicating the colors of the tessellations boundaries at each layer.}
+\item{color.vec}{Vector. A vector indicating the colors of the tessellation boundaries at each layer.}
 
 \item{normalize}{Logical. A logical value indicating if the dataset should be normalized. When set to TRUE,
 the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). 
 When set to FALSE, the data is used as such without any changes.}
 
-\item{seed}{Numeric. Random Seed.}
+\item{seed}{Numeric. Random Seed to preserve the repeatability}
 
-\item{distance_metric}{Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
-`L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
-`n` dimensional point and centroid. The distance metric can be different from the one used during training.}
+\item{distance_metric}{Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
+The distance metric is used to calculate the distance between an n dimensional point and centroid.
+ The distance metric can be different from the one used during training.}
 
-\item{error_metric}{Character. The error metric can be `mean` or `max`. `max` is selected by default. 
-`max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance 
-between a point and centroid of the cell. The error metric can be different from the one used during training.}
+\item{error_metric}{Character. The error metric can be mean or max. max is selected by default. 
+max will return the max of m values and mean will take mean of m values where
+each value is a distance between a point and centroid of the cell.}
 
 \item{yVar}{Character. A character or a vector representing the name of the dependent variable(s)}
 }
 \value{
-Dataframe containing scored data, plots and mean absolute deviation plots
+Dataframe containing scored data, plots and summary
 }
 \description{
-This is the function scores the cell for each point in the test dataset based on a trained hierarchical Voronoi tessellations model. 
-It provides scored data, plots, and mean absolute deviation plots, aiding in the evaluation of model performance.
+This function scores each data point in the test dataset based on a trained hierarchical Voronoi tessellations model.
 }
 \examples{
 data("EuStockMarkets")

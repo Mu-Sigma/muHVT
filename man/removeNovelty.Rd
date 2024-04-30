@@ -2,27 +2,22 @@
 % Please edit documentation in R/removeNovelty.R
 \name{removeNovelty}
 \alias{removeNovelty}
-\title{Remove identified outlier cell(s) from the dataset}
+\title{Remove identified novelty cell(s)}
 \usage{
 removeNovelty(outlier_cells, hvt_results)
 }
 \arguments{
-\item{outlier_cells}{Vector. A vector with the cell number of the identified outliers}
+\item{outlier_cells}{Vector. A vector with the cell number of the identified novelty}
 
 \item{hvt_results}{List. A list having the results of the compressed map i.e. output of \code{trainHVT} function}
 }
 \value{
-A list of two items: a map having the data of removed outlier cells and the subset of  the dataset without outlier(s) which
-has to be passed as input argument to \code{trainHVT} function to generate another map
-\item{[[1]] }{Dataframe. Information about the removed outlier cell(s)}
-\item{[[2]] }{Dataframe. Subset of dataset without the outlier cell(s)}
+A list of two items
+\item{[[1]] }{Dataframe of novelty cell(s)}
+\item{[[2]] }{Dataframe without the novelty cell(s) from the dataset used in model training}
 }
 \description{
-This function is used to remove the identified outlier cell(s) from the dataset.
-It is recommended to run the \code{trainHVT} function before running this function. It takes input in the form 
-of cell number of the outlier cell(s) identified using the output of the \code{trainHVT} function and
-the compressed map (hvt_mapA) generated using the \code{trainHVT} function. The output of this function is
-a list of two items: a new map having the data of removed outlier cell(s) and the subset of dataset without outliers.
+This function is used to remove the identified novelty cells.
 }
 \examples{
 data("EuStockMarkets")

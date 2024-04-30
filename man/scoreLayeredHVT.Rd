@@ -2,7 +2,7 @@
 % Please edit documentation in R/scoreLayeredHVT.R
 \name{scoreLayeredHVT}
 \alias{scoreLayeredHVT}
-\title{Score which cell and what layer each point in the test dataset belongs to}
+\title{Score which cell and what layer each data point in the test dataset belongs to}
 \usage{
 scoreLayeredHVT(
   data,
@@ -23,30 +23,30 @@ scoreLayeredHVT(
 The dataframe should have all the variable(features) used for training.}
 
 \item{hvt_mapA}{A list of hvt.results.model obtained from trainHVT function while performing
-hierarchical vector quantization on train data}
+`trainHVT()` on train data}
 
 \item{hvt_mapB}{A list of hvt.results.model obtained from trainHVT function while performing 
-hierarchical vector quantization on data with novelty(s)}
+`trainHVT()` on data with novelty(s)}
 
 \item{hvt_mapC}{A list of hvt.results.model obtained from trainHVT function while performing
-hierarchical vector quantization on data without novelty(s)}
+`trainHVT()` on data without novelty(s)}
 
 \item{mad.threshold}{Numeric. A number indicating the permissible Mean Absolute Deviation}
 
 \item{normalize}{Logical. A logical value indicating if the dataset should be normalized. 
-When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset 
+When set to TRUE, the data (testing dataset) is standardized by 'mean' and 'sd' of the training dataset 
 referred from the trainHVT(). When set to FALSE, the data is used as such without any changes.
 (Default value is TRUE).}
 
 \item{seed}{Numeric. Random Seed.}
 
-\item{distance_metric}{Character. The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). 
-`L1_Norm` is selected by default. The distance metric is used to calculate the distance between an 
-`n` dimensional point and centroid. The distance metric can be different from the one used during training.}
+\item{distance_metric}{Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
+The distance metric is used to calculate the distance between an n dimensional point and centroid.
+The distance metric can be different from the one used during training.}
 
-\item{error_metric}{Character. The error metric can be `mean` or `max`. `max` is selected by default. 
-`max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance 
-between a point and centroid of the cell. The error metric can be different from the one used during training.}
+\item{error_metric}{Character. The error metric can be mean or max. max is selected by default. 
+max will return the max of m values and mean will take mean of m values where
+each value is a distance between a point and centroid of the cell.}
 
 \item{child.level}{Numeric. A number indicating the level for which the heat map is to be plotted.}
 
@@ -56,7 +56,7 @@ between a point and centroid of the cell. The error metric can be different from
 Dataframe containing scored layer output
 }
 \description{
-This is a function that scores the cell and corresponding layer for each point in a test dataset using three 
+This function that scores the cell and corresponding layer for each data point in a test dataset using three 
 hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and returns a dataframe containing the scored layer output. 
 The function incorporates the scored results from each map and merges them to provide a comprehensive result.
 }

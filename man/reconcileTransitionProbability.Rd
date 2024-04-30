@@ -12,32 +12,28 @@ reconcileTransitionProbability(
 )
 }
 \arguments{
-\item{df}{Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.}
+\item{df}{Data frame. The input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.}
 
-\item{hmap_type}{Character. Type of heatmap to generate ('self_state', 'without_self_state', or 'All')}
+\item{hmap_type}{Character. ('self_state', 'without_self_state', or 'All')}
 
 \item{cellid_column}{Character. Name of the column containing cell IDs.}
 
 \item{time_column}{Character. Name of the column containing timestamps}
 }
 \value{
-A list of plotly heatmap objects representing the transition probability heatmaps.
+A list of plotly heatmap objects and tables representing the transition probability heatmaps.
 }
 \description{
-This is the main function for creating transition probability heatmaps and reconcilation of the same.
-The Reconciliation of Transition Probability refers to the process of analyzing transition probabilities in a stochastic model like a Markov Chain. 
-It involves ensuring the probabilities accurately reflect real-world dynamics by normalizing them,
-removing unlikely transitions, and comparing different models. 
-The function creates heatmaps to visually represent these probabilities,
-aiding in the understanding and analysis of state transitions within the model.
+This is the main function for creating reconciliation plots and tables which 
+helps in comparing the transition probabilities calculated manually and from markovchain function
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-DAX = EuStockMarkets[, "DAX"],
-SMI = EuStockMarkets[, "SMI"],
-CAC = EuStockMarkets[, "CAC"],
-FTSE = EuStockMarkets[, "FTSE"])
-rownames(EuStockMarkets) <- dataset$date
+                      DAX = EuStockMarkets[, "DAX"],
+                      SMI = EuStockMarkets[, "SMI"],
+                      CAC = EuStockMarkets[, "CAC"],
+                      FTSE = EuStockMarkets[, "FTSE"])
+
 hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
                        distance_metric = "L1_Norm", error_metric = "max",
                        normalize = TRUE,quant_method = "kmeans")
@@ -45,6 +41,7 @@ scoring <- scoreHVT(dataset, hvt.results)
 cell_id <- scoring$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
+
 reconcileTransitionProbability(dataset, hmap_type = "All", 
 cellid_column = "cell_id", time_column = "time_stamp")
 }
@@ -52,6 +49,6 @@ cellid_column = "cell_id", time_column = "time_stamp")
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
 }
 \author{
-PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
+PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>, Vishwavani <vishwavani@mu-sigma.com>
 }
 \keyword{Diagnostics_or_Validation}

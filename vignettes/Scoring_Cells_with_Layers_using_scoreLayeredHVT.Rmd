@@ -694,7 +694,7 @@ plotHVT(torus_mapC,
         centroid.size = 0.1,
         maxDepth = 2, 
         plot.type = '2Dhvt')
-
+ 
 ```
 
 

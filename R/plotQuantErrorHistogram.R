@@ -1,10 +1,11 @@
 #' @name plotQuantErrorHistogram
-#' @title Make the diagnostic plots for hierarchical voronoi tessellations model.
-#' @description This is the function that produces histograms displaying the distribution of Quantized Error (QE) values 
+#' @title Make the quantization error plots for training and scoring.
+#' @description This is the function that produces histograms displaying the distribution of Quantization Error (QE) values 
 #' for both train and test datasets, highlighting mean values with dashed lines for quick evaluation.
 #' @param hvt.results List. A list of hvt.results obtained from the trainHVT function.
 #' @param hvt.scoring List. A list of hvt.scoring obtained from the scoreHVT function.
-#' @return Returns the ggplot object containing the Quantized Error distribution plots for the given HVT results and scoring
+#' @return Returns the ggplot object containing the quantization error distribution plots for 
+#' the given HVT results of training and scoring
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Diagnostics_or_Validation
@@ -21,7 +22,7 @@
 #' #Split in train and test
 #' train <- EuStockMarkets[1:1302, ]
 #' test <- EuStockMarkets[1303:1860, ]
-#' #model training
+#' 
 #' hvt.results<- trainHVT(train,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                       distance_metric = "L1_Norm", error_metric = "max",
 #'                       normalize = TRUE, quant_method = "kmeans")

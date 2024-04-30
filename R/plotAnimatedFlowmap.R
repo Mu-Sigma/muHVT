@@ -1,41 +1,47 @@
 #' @name plotAnimatedFlowmap
 #' @title Generating flow maps and animations based on transition probabilities
-#' @description This is the main function for generating flow maps and animations based on transition probabilities.
-#' Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
-#' They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
-#' These maps help in understanding the dynamics of the system being studied by visually representing the direction 
-#' and magnitude of flows or transitions. 
+#' @description This is the main function for generating flow maps and animations based on transition probabilities
+#' including self states and excluding self states.
+#' Flow maps are a type of data visualization used to represent transition probability of different states. 
+#' Animations are the gifs used to represent the movement of data through the cells. 
 #' @param hvt_model_output List. Output from a trainHVT function.
-#' @param transition_probability_df Data frame. Output Dataframe from getTransitionProbability function
-#' @param df Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
+#' @param transition_probability_df List. Output from getTransitionProbability function
+#' @param df Data frame. The input dataframe should contain two columns, 
+#' cell ID from scoreHVT function and time stamp of that dataset.
 #' @param animation Character. Type of animation ('state_based', 'time_based', 'All' or  NULL)
 #' @param flow_map Character. Type of flow map ('self_state', 'without_self_state', 'All' or NULL)
 #' @param fps_time Numeric. A numeric value for the frames per second of the time transition gif.
+#' (Must be a numeric value and a factor of 100). Default value is 1.
 #' @param fps_state Numeric. A numeric value for the frames per second of the state transition gif.
-#' @param time_duration Numeric. A numeric value for the total duration of the time transition gif.
-#' @param state_duration Numeric. A numeric value for the total duration of the state transition gif.
+#' (Must be a numeric value and a factor of 100). Default value is 1.
+#' @param time_duration Numeric. A numeric value for the duration of the time transition gif.
+#' Default value is 2.
+#' @param state_duration Numeric. A numeric value for the duration of the state transition gif.
+#' Default value is 2.
 #' @param cellid_column Character. Name of the column containing cell IDs.
-#' @param time_column Character. Name of the column containing timestamps
-#' @return A list of plot and gif objects representing flow maps and animations.
-#' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
+#' @param time_column Character. Name of the column containing time stamps
+#' @return A list of flowmap plots and animation gifs.
+#' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>, Vishwavani <vishwavani@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
 #' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
 #' @import gganimate gifski
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-#' DAX = EuStockMarkets[, "DAX"],
-#' SMI = EuStockMarkets[, "SMI"],
-#' CAC = EuStockMarkets[, "CAC"],
-#' FTSE = EuStockMarkets[, "FTSE"])
-#' rownames(EuStockMarkets) <- dataset$date
+#'                       DAX = EuStockMarkets[, "DAX"],
+#'                       SMI = EuStockMarkets[, "SMI"],
+#'                       CAC = EuStockMarkets[, "CAC"],
+#'                       FTSE = EuStockMarkets[, "FTSE"])
+#'                       
 #' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method = "kmeans")
+#'                        
 #' scoring <- scoreHVT(dataset, hvt.results)
 #' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
+#' 
 #' table <- getTransitionProbability(dataset, cellid_column = "cell_id",time_column = "time_stamp")
 #' plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = table,
 #' df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 10,
@@ -147,12 +153,11 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   merged_df2$CircleSize <- ifelse(is.na(merged_df2$CircleSize), max_cirsize, merged_df2$CircleSize)
   legend_size <- (2.6 * sort(unique(merged_df2$CircleSize)))
  
-  
   breaks <- as.numeric(custom_breaks)
   breaks[1]<- breaks[1]+0.001
   generate_legend_labels <- function(breaks) {
         legend_labels <- lapply(seq_along(breaks)[-length(breaks)], function(i) {
-               paste0(format(breaks[i], digits = 4), " to ", format(breaks[i + 1] - 0.0001, digits = 4))
+               paste0(format(breaks[i], digits = 4), " to ", format(breaks[i + 1] - 0.001, digits = 4))
            })
          legend_labels[length(legend_labels) + 1] <- paste0(format(tail(breaks, 1), digits = 4), " to 1")
          return(legend_labels)

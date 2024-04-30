@@ -28,8 +28,7 @@ trainHVT(
 \item{min_compression_perc}{Numeric. An integer, indicating the minimum compression percentage to be achieved for the dataset. 
 It indicates the desired level of reduction in dataset size compared to its original size.}
 
-\item{n_cells}{Numeric. An integer, indicating the number of cells per hierarchy (level).
-This parameter determines the granularity or level of detail in the hierarchical vector quantization.}
+\item{n_cells}{Numeric. An integer, indicating the number of cells per hierarchy (level).}
 
 \item{depth}{Numeric. An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), 
 while higher values indicate multiple levels (hierarchy).}
@@ -38,8 +37,8 @@ while higher values indicate multiple levels (hierarchy).}
 A cell will only breakdown into further cells if the quantization error of the cell is 
 above the defined quantization error threshold.}
 
-\item{projection.scale}{Numeric. A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations
-well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.}
+\item{projection.scale}{Numeric. A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations
+well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible.}
 
 \item{normalize}{Logical. A logical value indicating if the dataset should be normalized. When set to TRUE, 
 scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).}
@@ -81,20 +80,18 @@ a summary section containing no of points, Quantization Error and the centroids 
 Otherwise NA.}
 \item{[[5]] }{A list that contains all the information required to generates a Mean Absolute Deviation (MAD) plot, 
 if hvt_validation is set to TRUE. Otherwise NA}
-\item{[[6]] }{A list (model info) that contains model generated timestamp, input parameters 
-passed to the model and the validation results.}
+\item{[[6]]}{A list containing detailed information about the hierarchical vector quantized data along with a
+ summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`}
+\item{[[7]]}{model info: A list that contains model generated timestamp, input parameters passed to the model 
+and the validation results}
 }
 \description{
 This is the main function to construct hierarchical voronoi tessellations.
-The \code{hvq} script is used in this function. The output of 
-\code{hvq} is hierarchical clustered data which will be the input
-for constructing tessellations. The data is then represented in 2D
+This is done using hierarchical vector quantization(hvq). The data is then represented in 2D
 coordinates and the tessellations are plotted using these coordinates as
 centroids. For subsequent levels, transformation is performed on the 2D
 coordinates to get all the points within its parent tile. Tessellations are
-plotted using these transformed points as centroids. The lines in the
-tessellations are chopped in places so that they do not protrude outside the
-parent polygon. This is done for all the subsequent levels.
+plotted using these transformed points as centroids.
 }
 \examples{
 data("EuStockMarkets")

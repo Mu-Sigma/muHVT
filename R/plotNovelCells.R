@@ -1,7 +1,7 @@
 #' @name plotNovelCells
-#' @title Plot the identified outlier cell(s) in the voronoi tessellations map.
+#' @title Plot the identified outlier cell(s) in the voronoi tessellation map.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations 
-#' and highlight the cells using the compressed HVT map.
+#' and highlight the outlier cells 
 #' @param plot.cells Vector. A vector indicating the cells to be highlighted in the map
 #' @param hvt.map List. A list containing the output of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted
@@ -9,14 +9,14 @@
 #' tessellation boundaries for each level
 #' @param color.vec Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level
-#' @param pch Numeric. Symbol type of the centroids of the tessellations
+#' @param pch Numeric. Symbol of the centroids of the tessellations
 #' (parent levels) Default value is 21.
 #' @param centroid.size Numeric. Size of centroids of first level
 #' tessellations. Default value is 0.5
 #' @param title String. Set a title for the plot. (default = NULL)
 #' @param maxDepth Numeric. An integer indicating the number of levels. (default = NULL)
-#' @returns Returns a ggplot object containing hierarchical voronoi tessellations plot
-#' highlighting the outlier cells in the map
+#' @returns Returns a ggplot object containing hierarchical voronoi tessellation plot
+#' highlighting the outlier cells
 #' @author Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{plotHVT}}
 #' @keywords Novelty_or_Outliers

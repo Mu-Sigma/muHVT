@@ -1,24 +1,24 @@
 #' @name getTransitionProbability
-#' @title Creating Transition Probability table
-#' @description This is the main function to create transition probability table.
+#' @title Creating Transition Probability list
+#' @description This is the main function to create transition probability list.
 #' The transition probability table quantifies the likelihood of transitioning from one state to another. 
 #' States: The table includes the current states and the possible next states.
 #' Probabilities: For each current state, it lists the probability of transitioning to each of the next possible states. 
-#' @param df Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
+#' @param df Data frame. The input dataframe should contain two columns, 
+#' cell ID from scoreHVT function and time stamp of that dataset.
 #' @param cellid_column Character. Name of the column containing cell IDs.
-#' @param time_column Character. Name of the column containing timestamps.
-#' @return Prints and stores a nested list of dataframes with transition probabilities.
+#' @param time_column Character. Name of the column containing time stamps.
+#' @return Prints and stores a nested list of data frames with transition probabilities.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} 
 #' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-#' DAX = EuStockMarkets[, "DAX"],
-#' SMI = EuStockMarkets[, "SMI"],
-#' CAC = EuStockMarkets[, "CAC"],
-#' FTSE = EuStockMarkets[, "FTSE"])
-#' rownames(EuStockMarkets) <- dataset$date
+#'                       DAX = EuStockMarkets[, "DAX"],
+#'                       SMI = EuStockMarkets[, "SMI"],
+#'                       CAC = EuStockMarkets[, "CAC"],
+#'                       FTSE = EuStockMarkets[, "FTSE"])
 #' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method = "kmeans")

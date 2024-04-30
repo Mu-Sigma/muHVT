@@ -2,30 +2,30 @@
 % Please edit documentation in R/edaPlots.R
 \name{edaPlots}
 \alias{edaPlots}
-\title{plots for understanding dataset}
+\title{plots for data analysis}
 \usage{
 edaPlots(df, time_series = FALSE, time_column)
 }
 \arguments{
-\item{df}{Dataframe. The input dataset, can be a time series too.}
+\item{df}{Dataframe. A data frame object.}
 
 \item{time_series}{Logical. A value to indicate whether the dataset is time_series or not.}
 
-\item{time_column}{Character. The name of the time column in the dataset.}
+\item{time_column}{Character. The name of the time column in the data frame.}
 }
 \value{
 Five objects which includes time series plots, data distribution plots, 
-box plots, correlation matrix plot and a descriptive statistics table.
+box plots, correlation plot and a descriptive statistics table.
 }
 \description{
-main function that gives all the eda plots
+main function that provides eda plots
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-DAX = EuStockMarkets[, "DAX"],
-SMI = EuStockMarkets[, "SMI"],
-CAC = EuStockMarkets[, "CAC"],
-FTSE = EuStockMarkets[, "FTSE"])
+                      DAX = EuStockMarkets[, "DAX"],
+                      SMI = EuStockMarkets[, "SMI"],
+                      CAC = EuStockMarkets[, "CAC"],
+                      FTSE = EuStockMarkets[, "FTSE"])
 edaPlots(dataset, time_series = TRUE, time_column = 'date')
 }
 \author{

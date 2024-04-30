@@ -5,21 +5,22 @@
 #' @param hvt.results (2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param plot.type Character. An option to indicate which type of plot should be generated. Accepted entries are 
-#' '1D','2Dproj','2Dhvt','2Dheatmap', 'surface_plot'. Default value is '2Dhvt'.
+#' '1D','2Dproj','2Dhvt','2Dheatmap'and 'surface_plot'. Default value is '2Dhvt'.
 #' @param line.width (2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
 #' tessellation boundaries for each level.
 #' @param color.vec (2Dhvt/2Dheatmap) Vector. A vector indicating the colors of the boundaries of
 #' the tessellations at each level.
-#' @param pch1 (2Dhvt/2Dheatmap) Numeric. Symbol type of the centroids of the tessellations
+#' @param pch1 (2Dhvt/2Dheatmap) Numeric. Symbol of the centroids of the tessellations
 #' (parent levels). Default value is 21.
 #' @param centroid.size (2Dhvt/2Dheatmap) Numeric. Size of centroids of first level
 #' tessellations. 
-#' @param title (2Dhvt) String. Set a title for the plot. (default = NULL)
+#' @param title (2Dhvt) Character. Set a title for the plot. (default = NULL)
 #' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)
-#' @param cell_id (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not. (default = FALSE)
+#' @param cell_id (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not for the first layer. 
+#' (default = FALSE)
 #' @param child.level (2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is
 #' to be plotted.
-#' @param hmap.cols (2Dheatmap/surface_plot) Numeric or Character. The column number of column name from
+#' @param hmap.cols (2Dheatmap/surface_plot) Numeric or Character. The column number or column name from
 #' the dataset indicating the variables for which the heat map is to be
 #' plotted.
 #' @param label.size (2Dheatmap) Numeric. The size by which the tessellation labels should
@@ -28,10 +29,10 @@
 #' threshold.
 #' @param n_cells.hmap (2Dheatmap/surface_plot) Numeric. An integer indicating the number of
 #' cells/clusters per hierarchy (level)
-#' @param sepration_width (surface_plot) Numeric. An integer indicating the width between two Levels
+#' @param sepration_width (surface_plot) Numeric. An integer indicating the width between two levels
 #' @param layer_opacity (surface_plot) Numeric. A vector indicating the opacity of each layer/ level
 #' @param dim_size  (surface_plot) Numeric. An integer indicating the dimension size used to create the matrix for the plot
-#' @returns plot object containing the hvt, heatmap or interactive surface plot for the given trainHVT results.
+#' @returns plot object containing the visualizations of reduced dimension(1D/2D) for the given dataset.
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} 
 #' @keywords Tessellation_and_Heatmap
@@ -43,10 +44,10 @@
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method="kmeans")
 #'                        
-#' #change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualise respective plots.                      
+#' #change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualize respective plots.                      
 #' plotHVT(hvt.results, plot.type='1D')
 #' 
-#' #change the 'plot.type' argument to 'surface_plot' to visualise Interactive surface plot                   
+#' #change the 'plot.type' argument to 'surface_plot' to visualize Interactive surface plot                   
 #' plotHVT(hvt.results,child.level = 1, 
 #' hmap.cols = "DAX", plot.type = '2Dheatmap')
 #' 
@@ -54,9 +55,9 @@
 
 
 plotHVT <- function(hvt.results, line.width = 0.5, color.vec =  'black', pch1 = 21, centroid.size = 1.5, 
-                    title = NULL, maxDepth = NULL, child.level, hmap.cols, quant.error.hmap = NULL,
+                    title = NULL, maxDepth = NULL, child.level, hmap.cols, quant.error.hmap = NULL,cell_id = FALSE,
                     n_cells.hmap = NULL, label.size = 0.5, sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), 
-                    dim_size = 1000, plot.type = '2Dhvt', cell_id = FALSE) {
+                    dim_size = 1000, plot.type = '2Dhvt') {
   
   lev <- NULL
   if (is.null(plot.type)) {

@@ -21,50 +21,56 @@ plotAnimatedFlowmap(
 \arguments{
 \item{hvt_model_output}{List. Output from a trainHVT function.}
 
-\item{transition_probability_df}{Data frame. Output Dataframe from getTransitionProbability function}
+\item{transition_probability_df}{List. Output from getTransitionProbability function}
 
-\item{df}{Data frame. Input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.}
+\item{df}{Data frame. The input dataframe should contain two columns, 
+cell ID from scoreHVT function and time stamp of that dataset.}
 
 \item{animation}{Character. Type of animation ('state_based', 'time_based', 'All' or  NULL)}
 
 \item{flow_map}{Character. Type of flow map ('self_state', 'without_self_state', 'All' or NULL)}
 
-\item{fps_time}{Numeric. A numeric value for the frames per second of the time transition gif.}
+\item{fps_time}{Numeric. A numeric value for the frames per second of the time transition gif.
+(Must be a numeric value and a factor of 100). Default value is 1.}
 
-\item{fps_state}{Numeric. A numeric value for the frames per second of the state transition gif.}
+\item{fps_state}{Numeric. A numeric value for the frames per second of the state transition gif.
+(Must be a numeric value and a factor of 100). Default value is 1.}
 
-\item{time_duration}{Numeric. A numeric value for the total duration of the time transition gif.}
+\item{time_duration}{Numeric. A numeric value for the duration of the time transition gif.
+Default value is 2.}
 
-\item{state_duration}{Numeric. A numeric value for the total duration of the state transition gif.}
+\item{state_duration}{Numeric. A numeric value for the duration of the state transition gif.
+Default value is 2.}
 
 \item{cellid_column}{Character. Name of the column containing cell IDs.}
 
-\item{time_column}{Character. Name of the column containing timestamps}
+\item{time_column}{Character. Name of the column containing time stamps}
 }
 \value{
-A list of plot and gif objects representing flow maps and animations.
+A list of flowmap plots and animation gifs.
 }
 \description{
-This is the main function for generating flow maps and animations based on transition probabilities.
-Flow maps are a type of data visualization used to represent movements or transitions between different locations or states. 
-They visually connect points to show the direction and volume of movements, such as the transitions in a Hidden Markov Model.
-These maps help in understanding the dynamics of the system being studied by visually representing the direction 
-and magnitude of flows or transitions.
+This is the main function for generating flow maps and animations based on transition probabilities
+including self states and excluding self states.
+Flow maps are a type of data visualization used to represent transition probability of different states. 
+Animations are the gifs used to represent the movement of data through the cells.
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-DAX = EuStockMarkets[, "DAX"],
-SMI = EuStockMarkets[, "SMI"],
-CAC = EuStockMarkets[, "CAC"],
-FTSE = EuStockMarkets[, "FTSE"])
-rownames(EuStockMarkets) <- dataset$date
+                      DAX = EuStockMarkets[, "DAX"],
+                      SMI = EuStockMarkets[, "SMI"],
+                      CAC = EuStockMarkets[, "CAC"],
+                      FTSE = EuStockMarkets[, "FTSE"])
+                      
 hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
                        distance_metric = "L1_Norm", error_metric = "max",
                        normalize = TRUE,quant_method = "kmeans")
+                       
 scoring <- scoreHVT(dataset, hvt.results)
 cell_id <- scoring$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
+
 table <- getTransitionProbability(dataset, cellid_column = "cell_id",time_column = "time_stamp")
 plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = table,
 df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 10,
@@ -74,6 +80,6 @@ state_duration = 10,cellid_column = "cell_id", time_column = "time_stamp")
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
 }
 \author{
-PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>
+PonAnuReka Seenivasan <ponanureka.s@mu-sigma.com>, Vishwavani <vishwavani@mu-sigma.com>
 }
 \keyword{Transition_or_Prediction}

@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotNovelCells.R
 \name{plotNovelCells}
 \alias{plotNovelCells}
-\title{Plot the identified outlier cell(s) in the voronoi tessellations map.}
+\title{Plot the identified outlier cell(s) in the voronoi tessellation map.}
 \usage{
 plotNovelCells(
   plot.cells,
@@ -27,7 +27,7 @@ tessellation boundaries for each level}
 \item{color.vec}{Vector. A vector indicating the colors of the boundaries of
 the tessellations at each level}
 
-\item{pch}{Numeric. Symbol type of the centroids of the tessellations
+\item{pch}{Numeric. Symbol of the centroids of the tessellations
 (parent levels) Default value is 21.}
 
 \item{centroid.size}{Numeric. Size of centroids of first level
@@ -38,12 +38,12 @@ tessellations. Default value is 0.5}
 \item{maxDepth}{Numeric. An integer indicating the number of levels. (default = NULL)}
 }
 \value{
-Returns a ggplot object containing hierarchical voronoi tessellations plot
-highlighting the outlier cells in the map
+Returns a ggplot object containing hierarchical voronoi tessellation plot
+highlighting the outlier cells
 }
 \description{
 This is the main plotting function to construct hierarchical voronoi tessellations 
-and highlight the cells using the compressed HVT map.
+and highlight the outlier cells
 }
 \examples{
 data("EuStockMarkets")

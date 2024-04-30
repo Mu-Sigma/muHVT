@@ -1,19 +1,19 @@
 #' @name edaPlots
-#' @title plots for understanding dataset
-#' @description main function that gives all the eda plots 
-#' @param df Dataframe. The input dataset, can be a time series too.
+#' @title plots for data analysis
+#' @description main function that provides eda plots 
+#' @param df Dataframe. A data frame object.
 #' @param time_series Logical. A value to indicate whether the dataset is time_series or not.
-#' @param time_column Character. The name of the time column in the dataset.
+#' @param time_column Character. The name of the time column in the data frame.
 #' @return Five objects which includes time series plots, data distribution plots, 
-#' box plots, correlation matrix plot and a descriptive statistics table.
+#' box plots, correlation plot and a descriptive statistics table.
 #' @author Vishwavani <vishwavani@@mu-sigma.com>
 #' @keywords EDA
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-#' DAX = EuStockMarkets[, "DAX"],
-#' SMI = EuStockMarkets[, "SMI"],
-#' CAC = EuStockMarkets[, "CAC"],
-#' FTSE = EuStockMarkets[, "FTSE"])
+#'                       DAX = EuStockMarkets[, "DAX"],
+#'                       SMI = EuStockMarkets[, "SMI"],
+#'                       CAC = EuStockMarkets[, "CAC"],
+#'                       FTSE = EuStockMarkets[, "FTSE"])
 #' edaPlots(dataset, time_series = TRUE, time_column = 'date')
 #' @export edaPlots
 

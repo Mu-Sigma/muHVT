@@ -13,16 +13,17 @@ plotStateTransition(
 )
 }
 \arguments{
-\item{df}{Data frame. Input dataframe should contain two columns. Cell ID from scoreHVT function and timestamp of that dataset.}
+\item{df}{Data frame. The Input dataframe should contain two columns. 
+Cell ID from scoreHVT function and time stamp of that dataset.}
 
-\item{sample_size}{Numeric. An integer indicating the Fraction of the dataframe to visualize in the plot.
+\item{sample_size}{Numeric. An integer indicating the fraction of the data frame to visualize in the plot.
 Default value is 0.2}
 
 \item{line_plot}{Logical. A logical value indicating to create a line plot. Default value is NULL.}
 
 \item{cellid_column}{Character. Name of the column containing cell IDs.}
 
-\item{time_column}{Character. Name of the column containing timestamps.}
+\item{time_column}{Character. Name of the column containing time stamps.}
 }
 \value{
 A plotly object representing the state transition plot for the given dataframe.
@@ -40,7 +41,7 @@ DAX = EuStockMarkets[, "DAX"],
 SMI = EuStockMarkets[, "SMI"],
 CAC = EuStockMarkets[, "CAC"],
 FTSE = EuStockMarkets[, "FTSE"])
-rownames(EuStockMarkets) <- dataset$date
+
 hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
                        distance_metric = "L1_Norm", error_metric = "max",
                        normalize = TRUE,quant_method = "kmeans")
@@ -48,6 +49,7 @@ scoring <- scoreHVT(dataset, hvt.results)
 cell_id <- scoring$scoredPredictedData$Cell.ID
 time_stamp <- dataset$date
 dataset <- data.frame(cell_id, time_stamp)
+
 plotStateTransition(dataset, sample_size = 1, cellid_column = "cell_id",time_column = "time_stamp")
 }
 \seealso{

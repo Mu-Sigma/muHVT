@@ -5,12 +5,13 @@
 #' the changes or transitions in states over time for a given system. 
 #' State refers to a particular condition or status of a cell at a specific point in time. 
 #' Transition refers to the change of state for a cell from one condition to another over time. 
-#' @param df Data frame. Input dataframe should contain two columns. Cell ID from scoreHVT function and timestamp of that dataset.
-#' @param sample_size Numeric. An integer indicating the Fraction of the dataframe to visualize in the plot.
+#' @param df Data frame. The Input dataframe should contain two columns. 
+#' Cell ID from scoreHVT function and time stamp of that dataset.
+#' @param sample_size Numeric. An integer indicating the fraction of the data frame to visualize in the plot.
 #' Default value is 0.2
 #' @param line_plot Logical. A logical value indicating to create a line plot. Default value is NULL.
 #' @param cellid_column Character. Name of the column containing cell IDs.
-#' @param time_column Character. Name of the column containing timestamps.
+#' @param time_column Character. Name of the column containing time stamps.
 #' @return A plotly object representing the state transition plot for the given dataframe.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
@@ -22,7 +23,7 @@
 #' SMI = EuStockMarkets[, "SMI"],
 #' CAC = EuStockMarkets[, "CAC"],
 #' FTSE = EuStockMarkets[, "FTSE"])
-#' rownames(EuStockMarkets) <- dataset$date
+#'
 #' hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                        distance_metric = "L1_Norm", error_metric = "max",
 #'                        normalize = TRUE,quant_method = "kmeans")
@@ -30,6 +31,7 @@
 #' cell_id <- scoring$scoredPredictedData$Cell.ID
 #' time_stamp <- dataset$date
 #' dataset <- data.frame(cell_id, time_stamp)
+#' 
 #' plotStateTransition(dataset, sample_size = 1, cellid_column = "cell_id",time_column = "time_stamp")
 #' @export plotStateTransition
 
