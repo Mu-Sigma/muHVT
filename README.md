@@ -6,24 +6,24 @@
 
 <div id="TOC">
 
-*   [<span class="toc-section-number">1</span> Abstract](#abstract)
-*   [<span class="toc-section-number">2</span> Vignettes](#vignettes)
+*   [<span class="toc-section-number">1.</span> Abstract](#abstract)
+*   [<span class="toc-section-number">2.</span> Vignettes](#vignettes)
     *   [<span class="toc-section-number">2.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">2.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
     *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT ](#Temporal-Analysis-and-Visualization:-Leveraging-Time-Series-Capabilities-in-HVT)
-*   [<span class="toc-section-number">3</span> Version History](#version-history)
+*   [<span class="toc-section-number">3.</span> Version History](#version-history)
     *   [<span class="toc-section-number">3.3</span> HVT (v24.5.1) | What’s New?](#hvt-(v24.5.1)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
     *   [<span class="toc-section-number">3.1</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">4</span> Installation of HVT (v24.5.1)](#installation-of-hvt-(v24.5.1))
+*   [<span class="toc-section-number">4.</span> Installation of HVT (v24.5.1)](#installation-of-hvt-(v24.5.1))
 
 
 </div>
 
 <div id="abstract" class="section level1" number="1">
 
-# <span class="header-section-number">1</span> Abstract
+# <span class="header-section-number">1.</span> Abstract
 
 The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high%2Ddimensional%20data) for rich multivariate data analysis, see `Figure 1` as an example of a 2D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
@@ -49,7 +49,7 @@ Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the 
 
 <div id="vignettes" class="section level1" number="2">
 
-# <span class="header-section-number">2</span> Vignettes
+# <span class="header-section-number">2.</span> Vignettes
 
 Following are the links to the vignettes for the HVT package:
 
@@ -57,7 +57,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.1</span> HVT Vignette
 
-[**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+[**HVT Vignette:**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
@@ -65,7 +65,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.2</span> HVT Model Diagnostics Vignette
 
-[**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+[**HVT Model Diagnostics Vignette:**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
 
 </div>
 
@@ -73,7 +73,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT
 
-[**HVT Scoring Cells with Layers using scoreLayeredHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
+[**HVT Scoring Cells with Layers using scoreLayeredHVT :**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
 </div>
 
@@ -81,11 +81,11 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT
 
-[**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Flowmap_Vignette.html) Contains descriptions of the functions used for analysing time series data and its flowmaps.
+[**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_Temporal_Analysis.html) Contains descriptions of the functions used for analyzing time series data and its flow maps.
 
 <div id="version-history" class="section level1" number="3">
 
-# <span class="header-section-number">3</span> Version History 
+# <span class="header-section-number">3.</span> Version History 
 
 
 <div id="hvt-(v24.5.1)-whats-new" class="section level2" number="3.1">
@@ -168,7 +168,7 @@ This version of HVT package offers features for both training an HVT model and e
 
 <div id="installation-of-hvt-(v24.5.1)" class="section level2" number="4">
 
-# <span class="header-section-number">3</span> Installation of HVT (v24.5.1)
+# <span class="header-section-number">4.</span> Installation of HVT (v24.5.1)
 
 <div class="sourceCode" id="cb1">
 
