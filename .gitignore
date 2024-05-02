@@ -3,9 +3,10 @@
 .RData
 .Ruserdata
 ^.*\.log
+HVT/
+..Rcheck
+.git
 inst/doc
-build
-cran-comments.md
-CRAN-SUBMISSION
+*.tar.gz
 next_state_animation.gif
 time_animation.gif
