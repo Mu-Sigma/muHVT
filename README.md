@@ -11,7 +11,7 @@
     *   [<span class="toc-section-number">2.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">2.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
-    *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT](#temporal-analysis-and-visualization:-leveraging-time-series-capabilities-in-hvt)
+    *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT](#temporal-analysis-and-visualization-leveraging-time-series-capabilities-in-hvt)
 *   [<span class="toc-section-number">3.</span> Version History](#version-history)
     *   [<span class="toc-section-number">3.3</span> HVT (v24.5.1) | What’s New?](#hvt-(v24.5.1)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
@@ -77,7 +77,7 @@ Following are the links to the vignettes for the HVT package:
 
 </div>
 
-<div id="temporal-analysis-and-visualization:-leveraging-time-series-capabilities-in-hvt" class="section level2" number="2.4">
+<div id="temporal-analysis-and-visualization-leveraging-time-series-capabilities-in-hvt" class="section level2" number="2.4">
 
 ## <span class="header-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT
 
