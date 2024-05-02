@@ -11,7 +11,7 @@
     *   [<span class="toc-section-number">2.1</span> HVT Vignette](#hvt-vignette)
     *   [<span class="toc-section-number">2.2</span> HVT Model Diagnostics Vignette](#hvt-model-diagnostics-vignette)
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
-    *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT ](#Temporal-Analysis-and-Visualization:-Leveraging-Time-Series-Capabilities-in-HVT)
+    *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT](#Temporal-Analysis-and-Visualization:-Leveraging-Time-Series-Capabilities-in-HVT)
 *   [<span class="toc-section-number">3.</span> Version History](#version-history)
     *   [<span class="toc-section-number">3.3</span> HVT (v24.5.1) | What’s New?](#hvt-(v24.5.1)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
@@ -82,6 +82,9 @@ Following are the links to the vignettes for the HVT package:
 ## <span class="header-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT
 
 [**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_Temporal_Analysis.html) Contains descriptions of the functions used for analyzing time series data and its flow maps.
+
+</div>
+
 
 <div id="version-history" class="section level1" number="3">
 
