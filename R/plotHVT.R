@@ -2,7 +2,7 @@
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D,2D or
 #'  Interactive surface plot.
-#' @param hvt.results (2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
+#' @param hvt.results (2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the output of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param plot.type Character. An option to indicate which type of plot should be generated. Accepted entries are 
 #' '1D','2Dproj','2Dhvt','2Dheatmap'and 'surface_plot'. Default value is '2Dhvt'.
@@ -47,7 +47,7 @@
 #' #change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualize respective plots.                      
 #' plotHVT(hvt.results, plot.type='1D')
 #' 
-#' #change the 'plot.type' argument to 'surface_plot' to visualize Interactive surface plot                   
+#' #change the 'plot.type' argument to 'surface_plot' to visualize the Interactive surface plot                   
 #' plotHVT(hvt.results,child.level = 1, 
 #' hmap.cols = "DAX", plot.type = '2Dheatmap')
 #' 

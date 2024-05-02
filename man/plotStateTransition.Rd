@@ -13,7 +13,7 @@ plotStateTransition(
 )
 }
 \arguments{
-\item{df}{Data frame. The Input dataframe should contain two columns. 
+\item{df}{Data frame. The Input data frame should contain two columns. 
 Cell ID from scoreHVT function and time stamp of that dataset.}
 
 \item{sample_size}{Numeric. An integer indicating the fraction of the data frame to visualize in the plot.
@@ -26,10 +26,10 @@ Default value is 0.2}
 \item{time_column}{Character. Name of the column containing time stamps.}
 }
 \value{
-A plotly object representing the state transition plot for the given dataframe.
+A plotly object representing the state transition plot for the given data frame.
 }
 \description{
-This is the main function to creating state transition plot from a dataframe.
+This is the main function to create a state transition plot from a data frame.
 A state transition plot is a type of data visualization used to represent 
 the changes or transitions in states over time for a given system. 
 State refers to a particular condition or status of a cell at a specific point in time. 

@@ -12,13 +12,13 @@ function or scoreHVT function}
 }
 \value{
 For trainHVT, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
-Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
+Mean Absolute Deviation Plot, Distribution of Number of Observations in Cells, for Training Data and
 Mean Absolute Deviation Plot for Validation Data are plotted.
 For scoreHVT Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
 }
 \description{
 This is the main function that generates diagnostic plots for 
-hierarchical Voronoi tessellations models and scoring.
+hierarchical voronoi tessellations models and scoring.
 }
 \examples{
 data("EuStockMarkets")

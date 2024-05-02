@@ -1,6 +1,6 @@
 Package: HVT
 Type: Package
-Date: 2024-04-30
+Date: 2024-05-02
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
 Version: 24.5.1
@@ -24,40 +24,10 @@ Suggests: rmarkdown, testthat, geozoo, plotly, DT, patchwork, sp, Hmisc,
         tidyverse, DataExplorer, htmltools, corrplot,knitr,kableExtra
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-04-30 12:35:23 UTC;
+Packaged: 2024-05-02 12:35:23 UTC;
 Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-04-30 02:20:00 UTC
-Collate: 
-    'Add_boundary_points.R'
-    'Corrected_Tessellations.R'
-    'Transform_Coordinates.R'
-    'ScaleMat.R'
-    'DelaunayInfo.R'
-    'Delete_Outpoints.R'
-    'VQ_codebookSplit.R'
-    'diagPlot.R'
-    'diagSuggestion.R'
-    'displayTable.R'
-    'edaPlots.R'
-    'getCellId.R'
-    'getCentroids.R'
-    'getCentroids_for_opti.R'
-    'getOptimalCentroids.R'
-    'getTransitionProbability.R'
-    'global.R'
-    'hvq.R'
-    'madPlot.R'
-    'plotAnimatedFlowmap.R'
-    'plotHVT.R'
-    'plotModelDiagnostics.R'
-    'plotNovelCells.R'
-    'plotQuantErrorHistogram.R'
-    'plotStateTransition.R'
-    'reconcileTransitionProbability.R'
-    'removeNovelty.R'
-    'scoreHVT.R'
-    'scoreLayeredHVT.R'
-    'trainHVT.R'
+Date/Publication: 2024-05-02 02:20:00 UTC
+

@@ -47,12 +47,12 @@ Default value is 2.}
 \item{time_column}{Character. Name of the column containing time stamps}
 }
 \value{
-A list of flowmap plots and animation gifs.
+A list of flow maps and animation gifs.
 }
 \description{
 This is the main function for generating flow maps and animations based on transition probabilities
 including self states and excluding self states.
-Flow maps are a type of data visualization used to represent transition probability of different states. 
+Flow maps are a type of data visualization used to represent the transition probability of different states. 
 Animations are the gifs used to represent the movement of data through the cells.
 }
 \examples{

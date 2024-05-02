@@ -1,11 +1,11 @@
 #' @name displayTable
 #' @title Table for displaying summary
-#' @description main function for displaying summary from model training and scoring
-#' @param data List. Listed object from trainHVT or scoreHVT
+#' @description This is the main function for displaying summary from model training and scoring
+#' @param data List. A listed object from trainHVT or scoreHVT
 #' @param columnName Character. Name of the column that needs highlighting.
-#' @param value Numeric. The value above which will be highlighted in red or green.
+#' @param value Numeric. The value above will be highlighted in red or green.
 #' @param tableType Character. Type of table to generate ('summary', 'compression')
-#' @param scroll Logical. A value to have scroll or not in the table.
+#' @param scroll Logical. A value to have a scroll or not in the table.
 #' @param limit Numeric. A value to indicate how many rows to display.
 #' Applicable for summary tableType.
 #' @return A consolidated table of results

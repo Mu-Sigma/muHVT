@@ -1,10 +1,10 @@
 #' @name getTransitionProbability
-#' @title Creating Transition Probability list
-#' @description This is the main function to create transition probability list.
+#' @title Creating Transition Probabilities list
+#' @description This is the main function to create transition probabilities list.
 #' The transition probability table quantifies the likelihood of transitioning from one state to another. 
 #' States: The table includes the current states and the possible next states.
 #' Probabilities: For each current state, it lists the probability of transitioning to each of the next possible states. 
-#' @param df Data frame. The input dataframe should contain two columns, 
+#' @param df Data frame. The input data frame should contain two columns, 
 #' cell ID from scoreHVT function and time stamp of that dataset.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing time stamps.

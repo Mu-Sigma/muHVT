@@ -1,11 +1,11 @@
 #' @name plotModelDiagnostics
 #' @title Make the diagnostic plots for hierarchical voronoi tessellations
 #' @description This is the main function that generates diagnostic plots for 
-#' hierarchical Voronoi tessellations models and scoring. 
+#' hierarchical voronoi tessellations models and scoring. 
 #' @param model_obj List. A list obtained from the trainHVT
 #' function or scoreHVT function
 #' @returns For trainHVT, Minimum Intra-DataPoint Distance Plot, Minimum Intra-Centroid Distance Plot
-#' Mean Absolute Deviation Plot,Distribution of Number of Observations in Cells, for Training Data and
+#' Mean Absolute Deviation Plot, Distribution of Number of Observations in Cells, for Training Data and
 #' Mean Absolute Deviation Plot for Validation Data are plotted.
 #' For scoreHVT Mean Absolute Deviation Plot for Training Data and Validation Data are plotted
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>

@@ -2,12 +2,12 @@
 % Please edit documentation in R/getTransitionProbability.R
 \name{getTransitionProbability}
 \alias{getTransitionProbability}
-\title{Creating Transition Probability list}
+\title{Creating Transition Probabilities list}
 \usage{
 getTransitionProbability(df, cellid_column, time_column)
 }
 \arguments{
-\item{df}{Data frame. The input dataframe should contain two columns, 
+\item{df}{Data frame. The input data frame should contain two columns, 
 cell ID from scoreHVT function and time stamp of that dataset.}
 
 \item{cellid_column}{Character. Name of the column containing cell IDs.}
@@ -18,7 +18,7 @@ cell ID from scoreHVT function and time stamp of that dataset.}
 Prints and stores a nested list of data frames with transition probabilities.
 }
 \description{
-This is the main function to create transition probability list.
+This is the main function to create transition probabilities list.
 The transition probability table quantifies the likelihood of transitioning from one state to another. 
 States: The table includes the current states and the possible next states.
 Probabilities: For each current state, it lists the probability of transitioning to each of the next possible states.

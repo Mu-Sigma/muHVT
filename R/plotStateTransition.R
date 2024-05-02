@@ -1,18 +1,18 @@
 #' @name plotStateTransition
 #' @title Creating State Transition Plot 
-#' @description This is the main function to creating state transition plot from a dataframe.
+#' @description This is the main function to create a state transition plot from a data frame.
 #' A state transition plot is a type of data visualization used to represent 
 #' the changes or transitions in states over time for a given system. 
 #' State refers to a particular condition or status of a cell at a specific point in time. 
 #' Transition refers to the change of state for a cell from one condition to another over time. 
-#' @param df Data frame. The Input dataframe should contain two columns. 
+#' @param df Data frame. The Input data frame should contain two columns. 
 #' Cell ID from scoreHVT function and time stamp of that dataset.
 #' @param sample_size Numeric. An integer indicating the fraction of the data frame to visualize in the plot.
 #' Default value is 0.2
 #' @param line_plot Logical. A logical value indicating to create a line plot. Default value is NULL.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing time stamps.
-#' @return A plotly object representing the state transition plot for the given dataframe.
+#' @return A plotly object representing the state transition plot for the given data frame.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}}
 #' @keywords Transition_or_Prediction

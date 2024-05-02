@@ -6,16 +6,16 @@
 #' centroids. For subsequent levels, transformation is performed on the 2D
 #' coordinates to get all the points within its parent tile. Tessellations are
 #' plotted using these transformed points as centroids.
-#' @param dataset Dataframe. A dataframe, with numeric columns (features) that will be used for training the model.
+#' @param dataset Data frame. A data frame, with numeric columns (features) will be used for training the model.
 #' @param min_compression_perc Numeric. An integer, indicating the minimum compression percentage to be achieved for the dataset. 
 #' It indicates the desired level of reduction in dataset size compared to its original size.
 #' @param n_cells Numeric. An integer, indicating the number of cells per hierarchy (level).
 #' @param depth Numeric. An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), 
 #' while higher values indicate multiple levels (hierarchy).
-#' @param quant.err Numeric. An number indicating the quantization error threshold.
+#' @param quant.err Numeric. A number indicating the quantization error threshold.
 #' A cell will only breakdown into further cells if the quantization error of the cell is 
 #' above the defined quantization error threshold.
-#' @param projection.scale Numeric. A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations
+#' @param projection.scale Numeric. A number indicating the scale factor for the tessellations to visualize the sub-tessellations
 #' well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible.
 #' @param normalize Logical. A logical value indicating if the dataset should be normalized. When set to TRUE, 
 #' scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).
@@ -27,7 +27,7 @@
 #' each value is a distance between a point and centroid of the cell.
 #' @param quant_method Character. The quantization method can be kmeans or kmedoids. Kmeans uses means (centroids) as cluster centers
 #'  while Kmedoids uses actual data points (medoids) as cluster centers. kmeans is selected by default.
-#' @param scale_summary List. A list with user defined mean and standard deviation values for all the features in the dataset. 
+#' @param scale_summary List. A list with user-defined mean and standard deviation values for all the features in the dataset. 
 #' Pass the scale summary when normalize is set to FALSE.
 #' @param diagnose Logical. A logical value indicating whether user wants to perform diagnostics on the model. 
 #' Default value is FALSE.
@@ -49,7 +49,7 @@
 #' if hvt_validation is set to TRUE. Otherwise NA}
 #' \item{[[6]]}{A list containing detailed information about the hierarchical vector quantized data along with a
 #'  summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`}
-#' \item{[[7]]}{model info: A list that contains model generated timestamp, input parameters passed to the model 
+#' \item{[[7]]}{model info: A list that contains model-generated timestamp, input parameters passed to the model 
 #' and the validation results}
 #' @author Shubhra Prakash <shubhra.prakash@@mu-sigma.com>, Sangeet Moy Das <sangeet.das@@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@@mu-sigma.com>
 #' @seealso \code{\link{plotHVT}}

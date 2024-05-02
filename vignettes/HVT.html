@@ -12,7 +12,7 @@
 
 <meta name="author" content="Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi, Vishwavani" />
 
-<meta name="date" content="2024-04-30" />
+<meta name="date" content="2024-05-02" />
 
 <title>HVT: Collection of functions used to build hierarchical topology preserving maps</title>
 
@@ -343,7 +343,7 @@ hierarchical topology preserving maps</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das,
 Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi,
 Vishwavani</h4>
-<h4 class="date">2024-04-30</h4>
+<h4 class="date">2024-05-02</h4>
 
 
 <div id="TOC">
@@ -430,9 +430,11 @@ preserving map useful for semi-supervised tasks.</p></li>
 <li><p><strong>Scoring</strong>: Scoring new data sets and recording
 their assignment using the map objects from the above steps, in a
 sequence of maps if required.</p></li>
-<li><p><strong>Temporal Analysis and Visualization</strong>: Analysing
-time series data to understand its patterns and movements and
-visualising the flow of data over time.</p></li>
+<li><p><strong>Temporal Analysis and Visualization</strong>: A
+Collection of new functions that leverages the capacity of the HVT
+package by analyzing time series data for its underlying patterns,
+calculation of transitioning probabilities and the visualizations for
+the flow of data over time.</p></li>
 </ol>
 <p>The HVT package allows creation of visually stunning tessellations,
 showcasing the power of topology preserving maps. below is an image
@@ -462,15 +464,15 @@ descriptions of the functions used for scoring cells with layers based
 on a sequence of maps using scoreLayeredHVT.</p></li>
 <li><p><a href="https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/Flowmap_Vignette.html"><strong>Temporal
 Analysis and Visualization: Leveraging Time Series Capabilities in
-HVT</strong></a>Contains descriptions of the functions used for
-analysing time series data and its flowmaps.</p></li>
+HVT:</strong></a> Contains descriptions of the functions used for
+analyzing time series data and its flow maps.</p></li>
 </ol>
 </div>
 <div id="version-history" class="section level1">
 <h1>3. Version History</h1>
 <div id="hvt-v24.5.1-whats-new" class="section level2 unnumbered">
 <h2 class="unnumbered">HVT (v24.5.1) | What’s New?</h2>
-<p>24th April, 2024</p>
+<p>2nd May, 2024</p>
 <p>In this version of HVT package, the following new features have been
 introduced:</p>
 <ol style="list-style-type: decimal">
@@ -504,17 +506,31 @@ instances.</li>
 and incorporated into the <code>plotHVT</code> function. Additionally,
 <code>plotHVT</code> now includes the ability to perform 1D
 plotting.</p></li>
-<li><p><strong>Temporal Analysis</strong> This update makes the package
-to extend its foundational operations to time series data (sequential
-observations recorded over time). Also, new functionalities are
-introduced to analyze underlying patterns and trends within the data,
-providing insights into its evolution over time and also offers the
-capability to analyse movement of the data by calculating its
-transitioning probability. This includes generating visualizations such
-as plots and GIFs to vividly illustrate the flow of data transitions
-along cells, facilitating deeper insights into the dynamic behavior of
-the system.</p></li>
+<li><p><strong>Temporal Analysis</strong></p></li>
 </ol>
+<ul>
+<li>The new update focuses on the integration of time series
+capabilities into the HVT package by extending its foundational
+operations to time series data which is emphasized in this
+vignette.</li>
+<li>The new functionalities are introduced to analyze underlying
+patterns and trends within the data, providing insights into its
+evolution over time and also offering the capability to analyze the
+movement of the data by calculating its transitioning probability and
+creates elegant plots and GIFs.</li>
+</ul>
+<p>Below are the new functions and its brief descriptions:</p>
+<ul>
+<li><code>plotStateTransition</code>: Provides the time series flowmap
+plot.</li>
+<li><code>getTransitionProbability</code>: Provides a list of transition
+probabilities.</li>
+<li><code>reconcileTransitionProbability</code>: Provides plots and
+tables for comparing transition probabilities calculated manually and
+from markovchain function.</li>
+<li><code>plotAnimatedFlowmap</code>: Creates flowmaps and animations
+for both self state and without self state scenarios.</li>
+</ul>
 </div>
 <div id="hvt-v23.11.02" class="section level2 unnumbered">
 <h2 class="unnumbered">HVT (v23.11.02)</h2>

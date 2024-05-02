@@ -2,7 +2,7 @@
 #' @title Generating flow maps and animations based on transition probabilities
 #' @description This is the main function for generating flow maps and animations based on transition probabilities
 #' including self states and excluding self states.
-#' Flow maps are a type of data visualization used to represent transition probability of different states. 
+#' Flow maps are a type of data visualization used to represent the transition probability of different states. 
 #' Animations are the gifs used to represent the movement of data through the cells. 
 #' @param hvt_model_output List. Output from a trainHVT function.
 #' @param transition_probability_df List. Output from getTransitionProbability function
@@ -20,7 +20,7 @@
 #' Default value is 2.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing time stamps
-#' @return A list of flowmap plots and animation gifs.
+#' @return A list of flow maps and animation gifs.
 #' @author PonAnuReka Seenivasan <ponanureka.s@@mu-sigma.com>, Vishwavani <vishwavani@@mu-sigma.com>
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
 #' @keywords Transition_or_Prediction

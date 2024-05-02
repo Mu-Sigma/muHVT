@@ -25,7 +25,7 @@ plotHVT(
 )
 }
 \arguments{
-\item{hvt.results}{(2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the ouput of \code{trainHVT} function
+\item{hvt.results}{(2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the output of \code{trainHVT} function
 which has the details of the tessellations to be plotted.}
 
 \item{line.width}{(2Dhvt/2Dheatmap) Numeric Vector. A vector indicating the line widths of the
@@ -88,7 +88,7 @@ hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1
 #change the 'plot.type' argument to '2Dproj' or '2DHVT' to visualize respective plots.                      
 plotHVT(hvt.results, plot.type='1D')
 
-#change the 'plot.type' argument to 'surface_plot' to visualize Interactive surface plot                   
+#change the 'plot.type' argument to 'surface_plot' to visualize the Interactive surface plot                   
 plotHVT(hvt.results,child.level = 1, 
 hmap.cols = "DAX", plot.type = '2Dheatmap')
 

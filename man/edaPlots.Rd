@@ -14,11 +14,11 @@ edaPlots(df, time_series = FALSE, time_column)
 \item{time_column}{Character. The name of the time column in the data frame.}
 }
 \value{
-Five objects which includes time series plots, data distribution plots, 
+Five objects which include time series plots, data distribution plots, 
 box plots, correlation plot and a descriptive statistics table.
 }
 \description{
-main function that provides eda plots
+This is the main function that provides exploratory data analysis plots
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

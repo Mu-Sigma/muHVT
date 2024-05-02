@@ -2,7 +2,7 @@
 #' @title Reconciliation of Transition Probability
 #' @description This is the main function for creating reconciliation plots and tables which 
 #' helps in comparing the transition probabilities calculated manually and from markovchain function
-#' @param df Data frame. The input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
+#' @param df Data frame. The input data frame should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.
 #' @param cellid_column Character. Name of the column containing cell IDs.
 #' @param time_column Character. Name of the column containing timestamps
 #' @param  hmap_type Character. ('self_state', 'without_self_state', or 'All')

@@ -14,15 +14,15 @@ displayTable(
 )
 }
 \arguments{
-\item{data}{List. Listed object from trainHVT or scoreHVT}
+\item{data}{List. A listed object from trainHVT or scoreHVT}
 
 \item{columnName}{Character. Name of the column that needs highlighting.}
 
-\item{value}{Numeric. The value above which will be highlighted in red or green.}
+\item{value}{Numeric. The value above will be highlighted in red or green.}
 
 \item{tableType}{Character. Type of table to generate ('summary', 'compression')}
 
-\item{scroll}{Logical. A value to have scroll or not in the table.}
+\item{scroll}{Logical. A value to have a scroll or not in the table.}
 
 \item{limit}{Numeric. A value to indicate how many rows to display.
 Applicable for summary tableType.}
@@ -31,7 +31,7 @@ Applicable for summary tableType.}
 A consolidated table of results
 }
 \description{
-main function for displaying summary from model training and scoring
+This is the main function for displaying summary from model training and scoring
 }
 \examples{
 dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),

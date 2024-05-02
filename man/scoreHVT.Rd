@@ -19,7 +19,7 @@ scoreHVT(
 )
 }
 \arguments{
-\item{data}{Dataframe. A dataframe containing the test dataset.}
+\item{data}{Data frame. A data frame containing the test dataset.}
 
 \item{hvt.results.model}{List. A list obtained from the trainHVT function}
 

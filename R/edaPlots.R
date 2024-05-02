@@ -1,10 +1,10 @@
 #' @name edaPlots
 #' @title plots for data analysis
-#' @description main function that provides eda plots 
+#' @description This is the main function that provides exploratory data analysis plots 
 #' @param df Dataframe. A data frame object.
 #' @param time_series Logical. A value to indicate whether the dataset is time_series or not.
 #' @param time_column Character. The name of the time column in the data frame.
-#' @return Five objects which includes time series plots, data distribution plots, 
+#' @return Five objects which include time series plots, data distribution plots, 
 #' box plots, correlation plot and a descriptive statistics table.
 #' @author Vishwavani <vishwavani@@mu-sigma.com>
 #' @keywords EDA

@@ -2,7 +2,7 @@
 #' @title Score which cell each point in the test dataset belongs to.
 #' @description
 #' This function scores each data point in the test dataset based on a trained hierarchical Voronoi tessellations model. 
-#' @param data Dataframe. A dataframe containing the test dataset. 
+#' @param data Data frame. A data frame containing the test dataset. 
 #' @param hvt.results.model List. A list obtained from the trainHVT function 
 #' @param child.level Numeric. A number indicating the depth for which the heat map is to be plotted. 
 #' @param mad.threshold Numeric. A numeric value indicating the permissible Mean Absolute Deviation.

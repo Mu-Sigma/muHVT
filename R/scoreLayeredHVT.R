@@ -2,10 +2,10 @@
 #' @title Score which cell and what layer each data point in the test dataset belongs to
 #' @description
 #' This function that scores the cell and corresponding layer for each data point in a test dataset using three 
-#' hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and returns a dataframe containing the scored layer output. 
+#' hierarchical vector quantization (HVT) models (Map A, Map B, Map C) and returns a data frame containing the scored layer output. 
 #' The function incorporates the scored results from each map and merges them to provide a comprehensive result.
-#' @param data Data Frame. A dataframe containing test dataset. 
-#' The dataframe should have all the variable(features) used for training. 
+#' @param data Data Frame. A data frame containing test dataset. 
+#' The data frame should have all the variable(features) used for training. 
 #' @param hvt_mapA A list of hvt.results.model obtained from trainHVT function while performing
 #'  `trainHVT()` on train data
 #' @param hvt_mapB A list of hvt.results.model obtained from trainHVT function while performing 

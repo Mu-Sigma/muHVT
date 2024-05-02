@@ -23,7 +23,7 @@ trainHVT(
 )
 }
 \arguments{
-\item{dataset}{Dataframe. A dataframe, with numeric columns (features) that will be used for training the model.}
+\item{dataset}{Data frame. A data frame, with numeric columns (features) will be used for training the model.}
 
 \item{min_compression_perc}{Numeric. An integer, indicating the minimum compression percentage to be achieved for the dataset. 
 It indicates the desired level of reduction in dataset size compared to its original size.}
@@ -33,11 +33,11 @@ It indicates the desired level of reduction in dataset size compared to its orig
 \item{depth}{Numeric. An integer, indicating the number of levels. A depth of 1 means no hierarchy (single level), 
 while higher values indicate multiple levels (hierarchy).}
 
-\item{quant.err}{Numeric. An number indicating the quantization error threshold.
+\item{quant.err}{Numeric. A number indicating the quantization error threshold.
 A cell will only breakdown into further cells if the quantization error of the cell is 
 above the defined quantization error threshold.}
 
-\item{projection.scale}{Numeric. A number indicating the scale factor for the tessellations so as to visualize the sub-tessellations
+\item{projection.scale}{Numeric. A number indicating the scale factor for the tessellations to visualize the sub-tessellations
 well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible.}
 
 \item{normalize}{Logical. A logical value indicating if the dataset should be normalized. When set to TRUE, 
@@ -55,7 +55,7 @@ each value is a distance between a point and centroid of the cell.}
 \item{quant_method}{Character. The quantization method can be kmeans or kmedoids. Kmeans uses means (centroids) as cluster centers
 while Kmedoids uses actual data points (medoids) as cluster centers. kmeans is selected by default.}
 
-\item{scale_summary}{List. A list with user defined mean and standard deviation values for all the features in the dataset. 
+\item{scale_summary}{List. A list with user-defined mean and standard deviation values for all the features in the dataset. 
 Pass the scale summary when normalize is set to FALSE.}
 
 \item{diagnose}{Logical. A logical value indicating whether user wants to perform diagnostics on the model. 
@@ -82,12 +82,12 @@ Otherwise NA.}
 if hvt_validation is set to TRUE. Otherwise NA}
 \item{[[6]]}{A list containing detailed information about the hierarchical vector quantized data along with a
  summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`}
-\item{[[7]]}{model info: A list that contains model generated timestamp, input parameters passed to the model 
+\item{[[7]]}{model info: A list that contains model-generated timestamp, input parameters passed to the model 
 and the validation results}
 }
 \description{
 This is the main function to construct hierarchical voronoi tessellations.
-This is done using hierarchical vector quantization(hvq). The data is then represented in 2D
+This is done using hierarchical vector quantization(hvq). The data is represented in 2D
 coordinates and the tessellations are plotted using these coordinates as
 centroids. For subsequent levels, transformation is performed on the 2D
 coordinates to get all the points within its parent tile. Tessellations are

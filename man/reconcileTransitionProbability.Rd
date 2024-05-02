@@ -12,7 +12,7 @@ reconcileTransitionProbability(
 )
 }
 \arguments{
-\item{df}{Data frame. The input dataframe should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.}
+\item{df}{Data frame. The input data frame should contain two columns, cell ID from scoreHVT function and timestamp of that dataset.}
 
 \item{hmap_type}{Character. ('self_state', 'without_self_state', or 'All')}
 
