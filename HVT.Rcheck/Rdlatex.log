@@ -1,0 +1,558 @@
+Hmm ... looks like a package
+Converting parsed Rd's to LaTeX .
+Creating pdf output from LaTeX ...
+Warning in texi2dvi(file = file, pdf = TRUE, clean = clean, quiet = quiet,  :
+  texi2dvi script/program not available, using emulation
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty))
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty))))
+(/usr/share/texlive/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+No file Rd2.aux.
+(/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd) [1{/var/lib/texmf/fon
+ts/map/pdftex/updmap/pdftex.map}] [2]
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [3] [4]
+Overfull \hbox (1.37852pt too wide) in paragraph at lines 235--236
+[]\T1/ptm/m/n/10 Function. The func-tion is to find 'L1_Norm" or "L2_Norm" dis-
+tances. L1_Norm
+[5]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 273--274
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[6]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 329--329
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+[7]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 416--417
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[8] [9] [10]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 565--566
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[11]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 589--589
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+
+Overfull \hbox (21.75941pt too wide) in paragraph at lines 590--590
+ []\T1/zi4/m/n/9 plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, t
+ransition_probability_df = table,[] 
+
+Overfull \hbox (14.23488pt too wide) in paragraph at lines 591--591
+ []\T1/zi4/m/n/9 df = dataset, animation = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS
+1/zi4/m/n/9 '\T1/zi4/m/n/9 , flow_map = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS1/z
+i4/m/n/9 '\T1/zi4/m/n/9 ,fps_time = 1,fps_state =  1,time_duration = 2,[] 
+[12]
+Overfull \hbox (23.20702pt too wide) in paragraph at lines 662--664
+[]\T1/ptm/m/n/10 (2Dheatmap/surface_plot) Nu-meric. An in-te-ger in-di-cat-ing 
+the num-ber of cells/clusters
+
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 684--685
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[13]
+Overfull \hbox (2.24715pt too wide) in paragraph at lines 701--701
+ []\T1/zi4/m/n/9 #change the \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 plot.type\TS1/zi4/m/
+n/9 ' \T1/zi4/m/n/9 argument to \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 surface_plot\TS1/
+zi4/m/n/9 ' \T1/zi4/m/n/9 to visualize the Interactive surface plot[] 
+[14] [15] [16] [17]
+Overfull \hbox (38.25635pt too wide) in paragraph at lines 950--950
+ []\T1/zi4/m/n/9 plotStateTransition(dataset, sample_size = 1, cellid_column = 
+"cell_id",time_column = "time_stamp")[] 
+[18]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 990--991
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[19] [20]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1113--1116
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 1130--1131
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[21] [22]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1208--1211
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1227--1228
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+
+Overfull \hbox (4.35739pt too wide) in paragraph at lines 1227--1228
+\T1/ptm/m/n/10 Shan-tanu Vaidya <shantanu.vaidya@mu-sigma.com>,Somya Shamb-hawi
+ <somya.shambhawi@mu-
+[23] [24]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1332--1334
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+[25]
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1378--1379
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+[26] [27]
+No file Rd2.ind.
+[28] (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information){/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/texlive/texmf-dist/fonts
+/enc/dvips/base/8r.enc} </home/vishwavani/.texlive2021/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/tcrm1000.600pk>{/usr/share/texlive/texmf-dist/fonts/enc/dvips/inc
+onsolata/i4-t1-0.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsol
+ata/Inconsolata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helveti
+c/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (28 pages, 135791 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2022/dev] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (63 entries accepted, 0 rejected).
+Sorting entries....done (417 comparisons).
+Generating output file Rd2.ind....done (95 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty))
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty))))
+(/usr/share/texlive/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+(./Rd2.aux) (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty))
+(./Rd2.out) (./Rd2.out)
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc [1{/var/li
+b/texmf/fonts/map/pdftex/updmap/pdftex.map}]) [2]
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [3] [4]
+Overfull \hbox (1.37852pt too wide) in paragraph at lines 235--236
+[]\T1/ptm/m/n/10 Function. The func-tion is to find 'L1_Norm" or "L2_Norm" dis-
+tances. L1_Norm
+[5]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 273--274
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[6]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 329--329
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+[7]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 416--417
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[8] [9] [10]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 565--566
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[11]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 589--589
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+
+Overfull \hbox (21.75941pt too wide) in paragraph at lines 590--590
+ []\T1/zi4/m/n/9 plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, t
+ransition_probability_df = table,[] 
+
+Overfull \hbox (14.23488pt too wide) in paragraph at lines 591--591
+ []\T1/zi4/m/n/9 df = dataset, animation = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS
+1/zi4/m/n/9 '\T1/zi4/m/n/9 , flow_map = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS1/z
+i4/m/n/9 '\T1/zi4/m/n/9 ,fps_time = 1,fps_state =  1,time_duration = 2,[] 
+[12]
+Overfull \hbox (23.20702pt too wide) in paragraph at lines 662--664
+[]\T1/ptm/m/n/10 (2Dheatmap/surface_plot) Nu-meric. An in-te-ger in-di-cat-ing 
+the num-ber of cells/clusters
+
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 684--685
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[13]
+Overfull \hbox (2.24715pt too wide) in paragraph at lines 701--701
+ []\T1/zi4/m/n/9 #change the \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 plot.type\TS1/zi4/m/
+n/9 ' \T1/zi4/m/n/9 argument to \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 surface_plot\TS1/
+zi4/m/n/9 ' \T1/zi4/m/n/9 to visualize the Interactive surface plot[] 
+[14] [15] [16] [17]
+Overfull \hbox (38.25635pt too wide) in paragraph at lines 950--950
+ []\T1/zi4/m/n/9 plotStateTransition(dataset, sample_size = 1, cellid_column = 
+"cell_id",time_column = "time_stamp")[] 
+[18]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 990--991
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[19] [20]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1113--1116
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+[21]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 1130--1131
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[22]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1208--1211
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1227--1228
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+
+Overfull \hbox (4.35739pt too wide) in paragraph at lines 1227--1228
+\T1/ptm/m/n/10 Shan-tanu Vaidya <shantanu.vaidya@mu-sigma.com>,Somya Shamb-hawi
+ <somya.shambhawi@mu-
+[23] [24] [25]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1332--1334
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+[26]
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1378--1379
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+[27] (./Rd2.ind [28] [29]) (./Rd2.aux)
+
+Package rerunfilecheck Warning: File `Rd2.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+ )
+(see the transcript file for additional information){/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/texlive/texmf-dist/fonts
+/enc/dvips/base/8r.enc} </home/vishwavani/.texlive2021/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/tcrm1000.600pk>{/usr/share/texlive/texmf-dist/fonts/enc/dvips/inc
+onsolata/i4-t1-0.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsol
+ata/Inconsolata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr
+8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (29 pages, 151759 bytes).
+Transcript written on Rd2.log.
+This is makeindex, version 2.15 [TeX Live 2022/dev] (kpathsea + Thai support).
+Scanning input file Rd2.idx....done (63 entries accepted, 0 rejected).
+Sorting entries....done (417 comparisons).
+Generating output file Rd2.ind....done (96 lines written, 0 warnings).
+Output written in Rd2.ind.
+Transcript written in Rd2.ilg.
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(./Rd2.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-01-21>
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo))
+(/usr/share/R/share/texmf/tex/latex/Rd.sty
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/bm.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/textcomp.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amsfonts.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/amssymb.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/mathrsfs.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/fontenc.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/times.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/zi4.sty
+`inconsolata-zi4' v1.12, 2019/05/17 Text macros for Inconsolata (msharpe)
+(/usr/share/texlive/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+(/usr/share/texlive/texmf-dist/tex/generic/xkeyval/keyval.tex)))))
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/color.sty
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-cfg/color.cfg)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics-def/pdftex.def))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+(/usr/share/texlive/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+(/usr/share/texlive/texmf-dist/tex/generic/infwarerr/infwarerr.sty))
+(/usr/share/texlive/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/pdfescape/pdfescape.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hycolor/hycolor.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/auxhook/auxhook.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/kvoptions/kvoptions.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def)
+(/usr/share/texlive/texmf-dist/tex/generic/intcalc/intcalc.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/etexcmds/etexcmds.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/puenc.def)
+(/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
+(/usr/share/texlive/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/base/atbegshi-ltx.sty))
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+(/usr/share/texlive/texmf-dist/tex/latex/base/atveryend-ltx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+(/usr/share/texlive/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty))))
+(/usr/share/texlive/texmf-dist/tex/latex/base/makeidx.sty)
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty)
+Writing index file Rd2.idx
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def)
+(./Rd2.aux) (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+) (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+(/usr/share/texlive/texmf-dist/tex/latex/refcount/refcount.sty)
+(/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty))
+(./Rd2.out) (./Rd2.out)
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/t1zi4.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/jknapltx/ursfs.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ts1ptm.fd)
+(/usr/share/texlive/texmf-dist/tex/latex/psnfss/t1phv.fd) (./Rd2.toc [1{/var/li
+b/texmf/fonts/map/pdftex/updmap/pdftex.map}]) [2]
+(/usr/share/texlive/texmf-dist/tex/latex/inconsolata/ts1zi4.fd) [3] [4]
+Overfull \hbox (1.37852pt too wide) in paragraph at lines 235--236
+[]\T1/ptm/m/n/10 Function. The func-tion is to find 'L1_Norm" or "L2_Norm" dis-
+tances. L1_Norm
+[5]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 273--274
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[6]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 329--329
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+[7]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 416--417
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[8] [9] [10]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 565--566
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[11]
+Overfull \hbox (26.25941pt too wide) in paragraph at lines 589--589
+ []\T1/zi4/m/n/9 table <- getTransitionProbability(dataset, cellid_column = "ce
+ll_id",time_column = "time_stamp")[] 
+
+Overfull \hbox (21.75941pt too wide) in paragraph at lines 590--590
+ []\T1/zi4/m/n/9 plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, t
+ransition_probability_df = table,[] 
+
+Overfull \hbox (14.23488pt too wide) in paragraph at lines 591--591
+ []\T1/zi4/m/n/9 df = dataset, animation = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS
+1/zi4/m/n/9 '\T1/zi4/m/n/9 , flow_map = \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 All\TS1/z
+i4/m/n/9 '\T1/zi4/m/n/9 ,fps_time = 1,fps_state =  1,time_duration = 2,[] 
+[12]
+Overfull \hbox (23.20702pt too wide) in paragraph at lines 662--664
+[]\T1/ptm/m/n/10 (2Dheatmap/surface_plot) Nu-meric. An in-te-ger in-di-cat-ing 
+the num-ber of cells/clusters
+
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 684--685
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[13]
+Overfull \hbox (2.24715pt too wide) in paragraph at lines 701--701
+ []\T1/zi4/m/n/9 #change the \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 plot.type\TS1/zi4/m/
+n/9 ' \T1/zi4/m/n/9 argument to \TS1/zi4/m/n/9 '\T1/zi4/m/n/9 surface_plot\TS1/
+zi4/m/n/9 ' \T1/zi4/m/n/9 to visualize the Interactive surface plot[] 
+[14] [15] [16] [17]
+Overfull \hbox (38.25635pt too wide) in paragraph at lines 950--950
+ []\T1/zi4/m/n/9 plotStateTransition(dataset, sample_size = 1, cellid_column = 
+"cell_id",time_column = "time_stamp")[] 
+[18]
+Overfull \hbox (17.89706pt too wide) in paragraph at lines 990--991
+[]\T1/ptm/m/n/10 PonAnuReka Seeni-vasan <ponanureka.s@mu-sigma.com>, Vish-wa-va
+ni <vishwavani@mu-sigma.com> 
+[19] [20]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1113--1116
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+[21]
+Overfull \hbox (21.28691pt too wide) in paragraph at lines 1130--1131
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com> 
+[22]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1208--1211
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1227--1228
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+
+Overfull \hbox (4.35739pt too wide) in paragraph at lines 1227--1228
+\T1/ptm/m/n/10 Shan-tanu Vaidya <shantanu.vaidya@mu-sigma.com>,Somya Shamb-hawi
+ <somya.shambhawi@mu-
+[23] [24] [25]
+Overfull \hbox (22.04785pt too wide) in paragraph at lines 1332--1334
+[]\T1/ptm/m/n/10 Character. The dis-tance met-ric can be L1_Norm(Manhattan) or 
+L2_Norm(Eucledian).
+[26]
+Overfull \hbox (23.78691pt too wide) in paragraph at lines 1378--1379
+[]\T1/ptm/m/n/10 Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Da
+s <sangeet.das@mu-sigma.com>,
+[27] (./Rd2.ind [28] [29]) (./Rd2.aux) )
+(see the transcript file for additional information){/usr/share/texlive/texmf-d
+ist/fonts/enc/dvips/inconsolata/i4-ts1.enc}{/usr/share/texlive/texmf-dist/fonts
+/enc/dvips/base/8r.enc} </home/vishwavani/.texlive2021/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/tcrm1000.600pk>{/usr/share/texlive/texmf-dist/fonts/enc/dvips/inc
+onsolata/i4-t1-0.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/inconsol
+ata/Inconsolata-zi4r.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvetic/uhvr
+8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/urw/times/utmri8a.pfb>
+Output written on Rd2.pdf (29 pages, 152224 bytes).
+Transcript written on Rd2.log.
+Saving output to ‘HVT-manual.pdf’ ...
+Done
+You may want to clean up by 'rm -Rf /tmp/RtmpA1kbti/Rd2pdf4b9030505ba3'
