@@ -44,8 +44,8 @@
 #' 
 #' table <- getTransitionProbability(dataset, cellid_column = "cell_id",time_column = "time_stamp")
 #' plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = table,
-#' df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 10,
-#' state_duration = 10,cellid_column = "cell_id", time_column = "time_stamp")
+#' df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 2,
+#' state_duration = 2,cellid_column = "cell_id", time_column = "time_stamp")
 #' @export plotAnimatedFlowmap
 
 plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df, animation = NULL, flow_map = NULL, fps_time = 1,fps_state = 1,time_duration =2, state_duration = 2, cellid_column, time_column) {
@@ -432,7 +432,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
   shadow_wake(wake_length = 0.05, alpha = FALSE,wrap = FALSE)+
     theme(plot.subtitle = element_text(margin = margin(t = 20)))
   time_animation <- animate(dot_anim, fps = fps_time, duration = time_duration, renderer = gifski_renderer())
-  anim_save("./time_animation.gif", animation = time_animation,width = 800, height = 430)
+  #anim_save("./time_animation.gif", animation = time_animation,width = 800, height = 430)
   
     }
     if(animation == 'state_based' || animation == 'All') {
@@ -465,7 +465,7 @@ plotAnimatedFlowmap <- function(hvt_model_output, transition_probability_df, df,
          subtitle = "without considering self-state transitions")
   
   state_animation <- animate(animation1, fps = fps_state, duration = state_duration, renderer = gifski_renderer())
-  anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
+  #anim_save("./next_state_animation.gif", animation = state_animation, width = 800, height = 400)
     } 
     if(animation != 'state_based' && animation != 'time_based' && animation != 'All'){
       print("invalid argument for animation")

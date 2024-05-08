@@ -9,7 +9,7 @@ output:
     toc: true
     toc_depth : 3
 vignette: >
-  %\VignetteIndexEntry{HVT: Collection of functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis"}
+  %\VignetteIndexEntry{HVT: Collection of functions used to build hierarchical topology preserving maps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

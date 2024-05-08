@@ -9,7 +9,7 @@ output:
     toc: true
     toc_depth : 2
 vignette: >
-  %\VignetteIndexEntry{HVT: Scoring Cells with Layers using scoreLayerHVT}
+  %\VignetteIndexEntry{HVT Scoring Cells with Layers using scoreLayeredHVT}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -59,7 +59,7 @@ knitr::opts_chunk$set(
   fig.retina = 1,
   dpi = 150
 )
-list.of.packages <- c("plyr", "dplyr", "reactable", "kableExtra", "geozoo", "plotly", "purrr", "sp", "HVT", "data.table", "gridExtra", "tidyr")
+list.of.packages <- c("plyr", "dplyr", "reactable", "kableExtra", "geozoo", "plotly", "purrr", "sp", "data.table", "gridExtra", "tidyr")
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))

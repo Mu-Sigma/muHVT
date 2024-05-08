@@ -9,7 +9,7 @@ output:
     toc: true
     toc_depth : 3
 vignette: >
-  %\VignetteIndexEntry{Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT}
+  %\VignetteIndexEntry{Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT (Hierarchical Voronoi Tessellation)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -75,12 +75,12 @@ knitr::opts_chunk$set(
 )
 
 # installing all required packages
-list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "animation", "magick", "tidyr", "jpeg", "ggpubr", "stringr", "DT", "knitr", "kableExtra")
+list.of.packages <- c("dplyr", "kableExtra", "plotly", "purrr", "sp", "data.table", "gridExtra","plyr", "grid", "ggforce", "reactable", "markovchain", "reshape", "gganimate", "gapminder", "tidyr", "stringr", "DT", "knitr", "feather")
 
 new.packages <-
   list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
 if (length(new.packages))
-  install.packages(new.packages, dependencies = TRUE, verbose = FALSE)
+  install.packages(new.packages, dependencies = TRUE, verbose = FALSE, repos='https://cloud.r-project.org/')
 
 # Loading the required libraries
 invisible(lapply(list.of.packages, library, character.only = TRUE))
@@ -187,7 +187,8 @@ Here, we load the data. Let's explore the Lorenz Attractor Dataset. For the sake
 
 
 ```{r,warning=FALSE,message=FALSE}
-dataset <- read.csv("./sample_dataset/lorenz_attractor.csv")
+file_path <- ("./lorenz_attractor.feather")
+dataset <- read_feather(file_path) %>% as.data.frame()
 dataset <- dataset %>% select(X,Y,Z,U,t)
 dataset$t <- round(dataset$t, 5)
 Table(dataset, limit = 10)

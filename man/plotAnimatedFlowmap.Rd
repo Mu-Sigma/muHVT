@@ -73,8 +73,8 @@ dataset <- data.frame(cell_id, time_stamp)
 
 table <- getTransitionProbability(dataset, cellid_column = "cell_id",time_column = "time_stamp")
 plots <- plotAnimatedFlowmap(hvt_model_output = hvt.results, transition_probability_df = table,
-df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 10,
-state_duration = 10,cellid_column = "cell_id", time_column = "time_stamp")
+df = dataset, animation = 'All', flow_map = 'All',fps_time = 1,fps_state =  1,time_duration = 2,
+state_duration = 2,cellid_column = "cell_id", time_column = "time_stamp")
 }
 \seealso{
 \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}

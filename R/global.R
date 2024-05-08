@@ -1,7 +1,6 @@
-#' @import utils
-#' 
+#' @importFrom utils globalVariables
 
-utils::globalVariables(c(".","k","Segment.Level","Segment.Child","Quant.Error",
+globalVariables(c(".","k","Segment.Level","Segment.Child","Quant.Error",
                          "noOfCellsBelowQuantizationError","noOfCells","index",
                          "Segment.Parent","cluster","child","value", "hvq_k","..count..",":=",
                          "min_dist", "perc", "Centroid_Type", "polygon_x", "polygon_y",

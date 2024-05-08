@@ -1,3 +1,4 @@
+#' @importFrom utils combn
 requireNamespace("deldir")
 
 # ======================================================================================
@@ -244,7 +245,7 @@ shouldMergeClusters <- function(X, clusters, errorValue) {
 
 mergeClusters <- function(codebooks, clusters, errorValue) {
   # find the index of the centroids that are closest (X)
-  pairs <- t(utils::combn(length(codebooks), 2))
+  pairs <- t(combn(length(codebooks), 2))
 
   tryCatch(
     {

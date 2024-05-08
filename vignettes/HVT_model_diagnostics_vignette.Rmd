@@ -9,7 +9,7 @@ output:
     toc: true
     toc_depth : 2
 vignette: >
-  %\VignetteIndexEntry{Model diagnostics and validation for HVT model}
+  %\VignetteIndexEntry{HVT Model diagnostics and validation}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 
@@ -1512,7 +1512,7 @@ colnames(QECompareDf1) <- c(
     "Segment.Child",
     # "Cell.ID",
     "anomalyFlag",
-    "n" ,
+    "No.Of.Points" ,
     "Fitted.Quant.Error" ,
     "Scored.Quant.Error" ,
     "Quant.Error.Diff",
@@ -1523,8 +1523,7 @@ QECompareDf1$flag <-
 DT::datatable(
   QECompareDf1 %>%
     mutate_if(is.numeric, ~ round(., 4)) %>%
-    select(-c(`Quant.Error.Diff (%)`)) %>%
-    rename(No.Of.Points = n),
+    select(-c(`Quant.Error.Diff (%)`)),
   class = 'cell-border stripe',
   rownames = FALSE,
   filter = "top",
@@ -1571,8 +1570,8 @@ DT::datatable(
 #print(
 df1 <-  QECompareDf1 %>%
     mutate_if(is.numeric, ~ round(., 4)) %>%
-    select(-c(`Quant.Error.Diff (%)`)) %>%
-    rename(No.Of.Points = n)
+    select(-c(`Quant.Error.Diff (%)`)) 
+    #rename(No.Of.Points = n)
 Table(df1,scroll = TRUE, limit = 10)
 #)
 ```
