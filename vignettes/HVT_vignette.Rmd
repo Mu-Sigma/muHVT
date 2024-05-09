@@ -902,7 +902,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 **Data Understanding**
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://gitlab.ird.mu-sigma.com/applied_prescriptive_methods/HVT/-/blob/restructure/vignettes/sample_dataset/Computers.csv).
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/Mu-Sigma/HVT/-/blob/master/vignettes/sample_dataset/Computers.csv).
 
 In this example, we will compress this dataset by using hierarchical VQ via k-means and visualize the Voronoi Tessellation plots using Sammons projection. Later on, we will overlay all the variables as a heatmap to generate further insights.
 

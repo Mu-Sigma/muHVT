@@ -263,7 +263,7 @@ This package can perform vector quantization using the following algorithms -
 -   Hierarchical Vector Quantization using k−means
 -   Hierarchical Vector Quantization using k−medoids
 
-For more information on vector quantization, refer the following [link](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_vignette.html).
+For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html).
 
 The trainHVT function constructs highly compressed hierarchical Voronoi tessellations. The raw data is first scaled and this scaled data is supplied as input to the vector quantization algorithm. The vector quantization algorithm compresses the dataset until a user-defined compression percentage rate is achieved using a parameter called quantization error which acts as a threshold and determines the compression percentage. It means that for a given user-defined compression percentage we get the 'n' number of cells, then all of these cells formed will have a quantization error less than the threshold quantization error.
 
@@ -343,7 +343,7 @@ knitr::include_graphics('hvt_results_list_score.png')
 
 We will use the `trainHVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the trainHVT function again.
 
-As this is already done in  [**HVT Vignette:**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_vignette.html)  please refer for more information.
+As this is already done in  [**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html)  please refer for more information.
 
 **Model Parameters**
 

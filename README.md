@@ -57,7 +57,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.1</span> HVT Vignette
 
-[**HVT Vignette:**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+[**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
 </div>
 
@@ -65,7 +65,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.2</span> HVT Model Diagnostics Vignette
 
-[**HVT Model Diagnostics Vignette:**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+[**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
 
 </div>
 
@@ -73,7 +73,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT
 
-[**HVT Scoring Cells with Layers using scoreLayeredHVT :**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
+[**HVT Scoring Cells with Layers using scoreLayeredHVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
 </div>
 
@@ -81,7 +81,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT
 
-[**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://github.com/Mu-Sigma/HVT/blob/restructure/vignettes/HVT_Temporal_Analysis.html) Contains descriptions of the functions used for analyzing time series data and its flow maps.
+[**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT :**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_Temporal_Analysis.html) Contains descriptions of the functions used for analyzing time series data and its flow maps.
 
 </div>
 
