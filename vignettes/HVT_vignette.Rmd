@@ -330,8 +330,6 @@ layout(scene = list(xaxis = list(title = 'x'),yaxis = list(title = 'y'),zaxis = 
 aspectratio = list(x = 1, y = 1, z = 0.4)))
  
 ```
-
-
 Now let's have a look at **structure** of the torus dataset.
 
 ```{r, message=FALSE, warning=FALSE}
@@ -466,7 +464,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
-* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
+* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell.
 
@@ -646,7 +644,7 @@ Now let's try to understand **plotHVT** function. The parameters have been expla
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
 plotHVT <-(hvt.results, line.width, color.vec,pch1 = 21, centroid.size = 1.5,
         title = NULL, maxDepth = NULL, child.level,hmap.cols, 
-        quant.error.hmap = NULL, n_cells.hmap = NULL, 
+        quant.error.hmap = NULL, n_cells.hmap = NULL,cell_id, 
         label.size = 0.5, sepration_width = 7,layer_opacity = c(0.5, 0.75, 0.99),
         dim_size = 1000, plot.type = '2Dhvt') 
 ```
@@ -858,7 +856,7 @@ The parameters for the function `scoreHVT` are explained below:
 
 * __`seed`__  - A Random Numeric Seed to preserve the repeatability.
 
-* __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
+* __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * __`error_metric`__ - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
@@ -1261,7 +1259,7 @@ The parameters for the function `scoreHVT` are explained below:
 
 * __`seed`__  - A Random Numeric Seed to preserve the repeatability.
 
-* __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
+* __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * __`error_metric`__ - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
@@ -1306,7 +1304,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 * **Example I: HVT with the Torus dataset**
 
-*  We have considered torus dataset for multidimensional data visualization using sammons projection.
+*  We have considered torus dataset for multidimensional data visualization using Sammons projection.
 
 *  We have randomly selected 9600 datapoints for training and remaining datapoints for validation.
 
@@ -1320,7 +1318,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 * **Example II: HVT with the Personal Computer dataset**
 
-*  We have considered Computer dataset for multidimensional data visualization using sammons projection.
+*  We have considered Computer dataset for multidimensional data visualization using Sammons projection.
 
 *  We have randomly selected 80% of datapoints for training and rest for validation.
 

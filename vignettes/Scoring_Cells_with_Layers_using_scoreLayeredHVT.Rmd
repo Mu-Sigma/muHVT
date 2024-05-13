@@ -263,7 +263,7 @@ This package can perform vector quantization using the following algorithms -
 -   Hierarchical Vector Quantization using k−means
 -   Hierarchical Vector Quantization using k−medoids
 
-For more information on vector quantization, refer the following [link](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html).
+For more information on vector quantization, refer the following [link](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html).
 
 The trainHVT function constructs highly compressed hierarchical Voronoi tessellations. The raw data is first scaled and this scaled data is supplied as input to the vector quantization algorithm. The vector quantization algorithm compresses the dataset until a user-defined compression percentage rate is achieved using a parameter called quantization error which acts as a threshold and determines the compression percentage. It means that for a given user-defined compression percentage we get the 'n' number of cells, then all of these cells formed will have a quantization error less than the threshold quantization error.
 
@@ -305,7 +305,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
-* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
+* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell.
 
@@ -343,7 +343,7 @@ knitr::include_graphics('hvt_results_list_score.png')
 
 We will use the `trainHVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the trainHVT function again.
 
-As this is already done in  [**HVT Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html)  please refer for more information.
+As this is already done in  [**HVT Vignette:**](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html)  please refer for more information.
 
 **Model Parameters**
 
@@ -407,7 +407,7 @@ Now let's try to understand **plotHVT** function. The parameters have been expla
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
 plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, 
-           title = NULL, maxDepth = NULL, child.level, hmap.cols,
+           title = NULL, maxDepth = NULL, child.level, hmap.cols,cell_id,
            quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, 
            sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, plot.type = '2Dhvt') 
 ```
@@ -799,7 +799,7 @@ Before that, the approach of `scoreLayeredHVT` function is to use scoreHVT funct
 
 -  **`seed`**   - A Random Numeric Seed to preserve the repeatability.
 
--   **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
+-   **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 -   **`error_metric`** - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
