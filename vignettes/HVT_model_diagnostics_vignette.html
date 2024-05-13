@@ -3424,7 +3424,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">HVT Model diagnostics and validation</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj,
 Praditi Shah, Somya Shambhawi,Vishwavani</h4>
-<h4 class="date">Built on: 05/07/2024</h4>
+<h4 class="date">Built on: 05/13/2024</h4>
 
 
 <div id="TOC">
@@ -5066,7 +5066,7 @@ of 1 (Z-score)</p></li>
 preserve the repeatability.</p></li>
 <li><p><strong><code>distance_metric</code></strong> - The distance
 metric can be <code>L1_Norm</code>(Manhattan) or
-<code>L2_Norm</code>(Eucledian). <code>L1_Norm</code> is selected by
+<code>L2_Norm</code>(Euclidean). <code>L1_Norm</code> is selected by
 default. The distance metric is used to calculate the distance between
 an <code>n</code> dimensional point and centroid.</p></li>
 <li><p><strong><code>error_metric</code></strong> - The error metric can
@@ -5133,7 +5133,7 @@ generated timestamp, input parameters passed to the model and the
 validation results.</p></li>
 </ul>
 <p>More information on building an HVT model at different levels and
-visualizing the output can be found <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/HVT/dev/vignettes/HVT_vignette.html">here</a></p>
+visualizing the output can be found <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html">here</a></p>
 <p>In the section below, we build a Level 1 HVT model. The number of
 clusters <code>n_cells</code> is set to 1035 to achieve 95%
 compression.</p>
@@ -8405,7 +8405,7 @@ dataset referred from the trainHVT(). When set to FALSE, the
 preserve the repeatability.</p></li>
 <li><p><strong><code>distance_metric</code></strong> - The distance
 metric can be <code>L1_Norm</code>(Manhattan) or
-<code>L2_Norm</code>(Eucledian). The metric is used when calculating
+<code>L2_Norm</code>(Euclidean). The metric is used when calculating
 distance between each datapoint(in test dataset) with the centroids
 obtained from results of trainHVT. Default is
 <code>L1_Norm</code>.</p></li>

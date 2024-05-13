@@ -11,7 +11,7 @@
 lastMiKTeXException
 NULL
 ^LICENSE
-^.*.tar.gz
+.*.tar.gz
 ^Meta$
 ^vignettes/HVT_model_diagnostics_vignette.*
 ^vignettes/HVT_Temporal_Analysis.*

@@ -1041,7 +1041,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
-* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
+* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell.
 
@@ -1081,7 +1081,7 @@ knitr::include_graphics('hvt_result_diag.png')
 
 More information on building an HVT model at different levels and
 visualizing the output can be found
-[here](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Mu-Sigma/HVT/dev/vignettes/HVT_vignette.html)
+[here](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html)
 
 In the section below, we build a Level 1 HVT model. The number of
 clusters `n_cells` is set to 1035 to achieve 95% compression.
@@ -1401,7 +1401,7 @@ The important parameters for the function `scoreHVT` are as below
 
 * **`seed`**  - A Random Numeric Seed to preserve the repeatability.
 
-* **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Eucledian). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
+* **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * **`error_metric`** - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
@@ -1621,11 +1621,9 @@ predictClusterData <- hvt.score[["scoredPredictedData"]]%>%as.data.frame()
 
 # 12. References
 
-1.  Topology Preserving Maps :
-    <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
+1.  Topology Preserving Maps : <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
 
-2.  Vector Quantization :
-    <https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/>
+2.  Vector Quantization : <https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/>
 
 3.  K-means : <https://en.wikipedia.org/wiki/K-means_clustering>
 
