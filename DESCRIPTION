@@ -1,9 +1,9 @@
 Package: HVT
 Type: Package
-Date: 2024-05-02
+Date: 2024-05-13
 Title: Constructing Hierarchical Voronoi Tessellations and Overlay
         Heatmaps for Data Analysis
-Version: 24.5.1
+Version: 24.5.2
 Authors@R: c(
 	person("Zubin", "Dowlaty", email = "zubin.dowlaty@mu-sigma.com", role = "aut"),
     	person("Mu Sigma, Inc.", email = "ird.experiencelab@mu-sigma.com", role = "cre"))
@@ -24,10 +24,10 @@ Suggests: rmarkdown, testthat, geozoo, plotly, DT, patchwork, sp, Hmisc,
         tidyverse, DataExplorer, htmltools, corrplot,knitr,kableExtra
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2024-05-02 12:35:23 UTC;
+Packaged: 2024-05-13 20:35:23 UTC;
 Author: Zubin Dowlaty [aut],
 	Mu Sigma, Inc. [cre]
 Maintainer: "Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>
 Repository: CRAN
-Date/Publication: 2024-05-02 02:20:00 UTC
+Date/Publication: 2024-05-13 21:20:00 UTC
 

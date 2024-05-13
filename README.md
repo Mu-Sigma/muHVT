@@ -13,10 +13,10 @@
     *   [<span class="toc-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT ](#hvt-scoring-cells-with-layers-using-scoreLayeredHVT)
     *   [<span class="toc-section-number">2.4</span> Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT](#temporal-analysis-and-visualization-leveraging-time-series-capabilities-in-hvt)
 *   [<span class="toc-section-number">3.</span> Version History](#version-history)
-    *   [<span class="toc-section-number">3.3</span> HVT (v24.5.1) | What’s New?](#hvt-(v24.5.1)-whats-new)
+    *   [<span class="toc-section-number">3.3</span> HVT (v24.5.2) | What’s New?](#hvt-(v24.5.2)-whats-new)
     *   [<span class="toc-section-number">3.2</span> HVT (v23.11.02)](#hvt-(v23.11.02))
     *   [<span class="toc-section-number">3.1</span> HVT (v22.12.06)](#hvt-(v22.12.06))
-*   [<span class="toc-section-number">4.</span> Installation of HVT (v24.5.1)](#installation-of-hvt-(v24.5.1))
+*   [<span class="toc-section-number">4.</span> Installation of HVT (v24.5.2)](#installation-of-hvt-(v24.5.2))
 
 
 </div>
@@ -91,9 +91,9 @@ Following are the links to the vignettes for the HVT package:
 # <span class="header-section-number">3.</span> Version History 
 
 
-<div id="hvt-(v24.5.1)-whats-new" class="section level2" number="3.1">
+<div id="hvt-(v24.5.2)-whats-new" class="section level2" number="3.1">
 
-## HVT (v24.5.1) 
+## HVT (v24.5.2) 
 
 2nd May, 2024
 
@@ -169,9 +169,9 @@ This version of HVT package offers features for both training an HVT model and e
 
 
 
-<div id="installation-of-hvt-(v24.5.1)" class="section level2" number="4">
+<div id="installation-of-hvt-(v24.5.2)" class="section level2" number="4">
 
-# <span class="header-section-number">4.</span> Installation of HVT (v24.5.1)
+# <span class="header-section-number">4.</span> Installation of HVT (v24.5.2)
 
 <div class="sourceCode" id="cb1">
 
