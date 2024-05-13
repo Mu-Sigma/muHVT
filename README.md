@@ -39,7 +39,7 @@ The HVT package is a collection of R functions to facilitate building [topology 
 
 The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. Below is an image depicting a captivating tessellation of a torus, see [vignette](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html) for more details.
 
-<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/torus22.png" width="642px" height="440px" />
+<img src="https://github.com/Mu-Sigma/HVT/blob/master/vignettes/torus2.png" width="642px" height="440px" />
 <p class="caption">
 Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z.
 </p>
