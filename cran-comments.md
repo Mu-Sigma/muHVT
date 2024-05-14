@@ -1,6 +1,14 @@
-## R CMD check results
-   
-── R CMD check results ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── HVT 24.3.1 ────
-Duration: 40.1s
+# Re-submission
+This is a re-submission. In this version we have fixed issues with hyperlinks on vignette.
 
-0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+# R CMD check results
+There were no ERRORs or WARNINGs. There was one note related to the re-submission in less than a week.
+
+checking CRAN incoming feasibility ... [5s/80s] NOTE
+Maintainer: ‘"Mu Sigma, Inc." <ird.experiencelab@mu-sigma.com>’
+
+Days since last update: 6
+
+Status: 1 NOTE
+
+
