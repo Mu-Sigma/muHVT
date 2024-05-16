@@ -250,7 +250,21 @@ scoreHVT <- function(data,
   plotList <- hvt.results.model[[2]] %>%
     unlist(., recursive = FALSE) %>%
     unlist(., recursive = FALSE)
-
+#############
+  hvt_res1 <- hvt.results.model[[2]][[1]]$`1`
+  hvt_res2 <- hvt.results.model[[3]]$summary$Cell.ID
+  a <- 1: length(hvt_res1)
+  b <- a[hvt_res2]
+  b <-  as.vector(b)
+  hvt_res2 <- stats::na.omit(b)
+  
+  coordinates_value1 <- lapply(1:length(hvt_res1), function(x) {
+    centroids1 <- hvt_res1[[x]]
+    coordinates1 <- centroids1$pt})
+  cellID_coordinates <- do.call(rbind.data.frame, coordinates_value1)
+  colnames(cellID_coordinates) <- c("x", "y")
+  cellID_coordinates$Cell.ID <- hvt_res2
+##################
   boundaryCoords2 <-
     lapply(plotList, function(x) {
       data.frame(
@@ -263,7 +277,10 @@ scoreHVT <- function(data,
         "bp.y" = I(x$y)
       )
     }) %>%
-    bind_rows(.) %>%
+    bind_rows(.) 
+  
+  
+  boundaryCoords2 <- merge(boundaryCoords2, cellID_coordinates, by = c("x" ,"y")) %>%
     right_join(.,
       QECompareDf2 %>% dplyr::filter(anomalyFlag == 1),
       by = paste0("Segment.", c("Level", "Parent", "Child"))

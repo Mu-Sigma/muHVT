@@ -642,26 +642,26 @@ This section focusses on projecting the sammon's dimensionality reduction from m
 Now let's try to understand **plotHVT** function. The parameters have been explained in detail below:
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
-plotHVT <-(hvt.results, line.width, color.vec,pch1 = 21, centroid.size = 1.5,
-        title = NULL, maxDepth = NULL, child.level,hmap.cols, 
-        quant.error.hmap = NULL, n_cells.hmap = NULL,cell_id, 
-        label.size = 0.5, sepration_width = 7,layer_opacity = c(0.5, 0.75, 0.99),
-        dim_size = 1000, plot.type = '2Dhvt') 
+plotHVT <-(hvt.results, line.width, color.vec, pch1, centroid.size,
+           title, maxDepth, child.level, hmap.cols, 
+           quant.error.hmap, n_cells.hmap, cell_id, 
+           label.size, sepration_width, layer_opacity,
+           dim_size, plot.type = '2Dhvt') 
 ```
 
-* __`hvt.results`__ - (2Dproj/2Dhvt/2Dheatmap/surface_plot)  A list obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+* __`hvt.results`__ - (1D/2Dproj/2Dhvt/2Dheatmap/surface_plot)  A list obtained from the trainHVT function. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
 * __`line.width`__	- (2Dhvt/2Dheatmap) A vector indicating the line widths of the tessellation boundaries for each layer.
 
 * __`color.vec`__	- (2Dhvt/2Dheatmap) A vector indicating the colors of the tessellations boundaries at each layer.
 
-* __`pch1`__	- (2Dhvt/2Dheatmap) Symbol, It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations.(default = 21 i.e filled circle).
+* __`pch1`__	- (2Dhvt/2Dheatmap) Symbol. It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations.(default = 21 i.e filled circle).
 
 * __`centroid.size`__	- (2Dhvt/2Dheatmap) Size of centroids for each level of tessellations (default = 3).
 
 * __`title`__	-  (2Dhvt) Set a title for the plot (default = NULL).
 
-* __`maxDepth`__ -  (2Dhvt) An integer indicating the number of levels. (default = NULL)
+* __`maxDepth`__ -  (2Dhvt) An integer indicating the number of levels.
 
 * __`cell_id`__ - (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not for the level 1. (default = FALSE)
 
@@ -678,9 +678,9 @@ be scaled.(default = 0.5)
 
 * __`n_cells.hmap`__ - (2Dheatmap) An integer indicating the number of cells/clusters per hierarchy 
 
-* __`sepration_width`__ - (surface_plot) An integer indicating the width between two Levels.
+* __`sepration_width`__ - (surface_plot) An integer indicating the width between two levels.
 
-* __`layer_opacity`__ - (surface_plot) A vector indicating the opacity of each layer/ level.
+* __`layer_opacity`__ - (surface_plot) A vector indicating the opacity of each layer/level.
 
 * __`dim_size`__ - (surface_plot) An integer indicating the dimension size used to create the matrix for the plot.
 

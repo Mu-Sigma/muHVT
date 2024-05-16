@@ -2,7 +2,7 @@
 #' @title Plot the hierarchical tessellations.
 #' @description This is the main plotting function to construct hierarchical voronoi tessellations in 1D,2D or
 #'  Interactive surface plot.
-#' @param hvt.results (2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the output of \code{trainHVT} function
+#' @param hvt.results (1D/2DProj/2Dhvt/2Dheatmap/surface_plot) List. A list containing the output of \code{trainHVT} function
 #' which has the details of the tessellations to be plotted.
 #' @param plot.type Character. An option to indicate which type of plot should be generated. Accepted entries are 
 #' '1D','2Dproj','2Dhvt','2Dheatmap'and 'surface_plot'. Default value is '2Dhvt'.
@@ -15,7 +15,7 @@
 #' @param centroid.size (2Dhvt/2Dheatmap) Numeric. Size of centroids of first level
 #' tessellations. 
 #' @param title (2Dhvt) Character. Set a title for the plot. (default = NULL)
-#' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels. (default = NULL)
+#' @param maxDepth (2Dhvt) Numeric. An integer indicating the number of levels.
 #' @param cell_id (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not for the first layer. 
 #' (default = FALSE)
 #' @param child.level (2Dheatmap/surface_plot) Numeric. Indicating the level for which the heat map is

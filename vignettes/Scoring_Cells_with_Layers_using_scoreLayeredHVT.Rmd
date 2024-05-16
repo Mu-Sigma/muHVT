@@ -406,13 +406,14 @@ All the columns after this will contain centroids for each cell. They can also b
 Now let's try to understand **plotHVT** function. The parameters have been explained in detail below:
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
-plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5, 
-           title = NULL, maxDepth = NULL, child.level, hmap.cols,cell_id,
-           quant.error.hmap = NULL, n_cells.hmap = NULL, label.size = 0.5, 
-           sepration_width = 7, layer_opacity = c(0.5, 0.75, 0.99), dim_size = 1000, plot.type = '2Dhvt') 
+plotHVT <-(hvt.results, line.width, color.vec, pch1, centroid.size, 
+           title, maxDepth, child.level, hmap.cols, cell_id,
+           quant.error.hmap, n_cells.hmap, label.size, 
+           sepration_width, layer_opacity, 
+           dim_size, plot.type = '2Dhvt') 
 ```
 
-*  **`hvt.results`** - (2Dproj/2Dhvt/2Dheatmap/surface_plot)  A list obtained from the trainHVT function while performing hierarchical vector quantization on training dataset. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
+*  **`hvt.results`** - (1D/2Dproj/2Dhvt/2Dheatmap/surface_plot)  A list obtained from the trainHVT function while performing hierarchical vector quantization on training dataset. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
 * **`line.width`**	- (2Dhvt/2Dheatmap) A vector indicating the line widths of the tessellation boundaries for each layer.
 
@@ -424,7 +425,7 @@ plotHVT <-(hvt.results, line.width, color.vec, pch1 = 21, centroid.size = 1.5,
 
 * **`title`**	-  (2Dhvt) Set a title for the plot (default = NULL).
 
-* **`maxDepth`** -  (2Dhvt) An integer indicating the number of levels. (default = NULL)
+* **`maxDepth`** -  (2Dhvt) An integer indicating the number of levels.
 
 * **`cell_id`** - (2Dhvt) Logical. To indicate whether the plot should have Cell IDs or not for the level 1. (default = FALSE)
 
@@ -444,7 +445,7 @@ be scaled.(default = 0.5)
 
 * **`dim_size`** - (surface_plot) An integer indicating the dimension size used to create the matrix for the plot.
 
-* **`plot.type`** -  A Character indicating which type of plot should be generated. Accepted entries are '1D','2Dproj',  '2Dhvt','2Dheatmap', 'surface_plot'. Default value is '2Dhvt'.
+* **`plot.type`** -  A Character indicating which type of plot should be generated. Accepted entries are '1D','2Dproj', '2Dhvt','2Dheatmap', 'surface_plot'. Default value is '2Dhvt'.
 
 
 
