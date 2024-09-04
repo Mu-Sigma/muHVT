@@ -64,6 +64,7 @@ Following are the links to the vignettes for the HVT package:
 
 <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">**HVT Vignette:**</a> Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
 
+
 </div>
 
 <div id="hvt-model-diagnostics-vignette" class="section level2" number="2.2">
