@@ -71,7 +71,7 @@ hvq <-
             quant_method=c("kmeans","kmedoids")
   ) {    
     requireNamespace("dplyr")
-    # browser()  
+#browser()  
     rescl <- list()
     resid <- list()
     resm <- list()
@@ -88,16 +88,17 @@ hvq <-
       std<-matrix(0, nrow = ncol(x), n_cells)
     }
     set.seed(seed)
-    # flog.info("Parameters are initialized")
-    #outkinit will have centroids and datapoints and size of the cluster
-    # outkinit <- getOptimalCentroids(x, iter.max=100, algorithm=algorithm, n_cells,distance_metric=distance_metric,error_metric=error_metric,quant.err=quant.err)
+  
     colSd <- function (x, na.rm=FALSE) apply(X=x, MARGIN=2, FUN=stats::sd, na.rm=na.rm)
-    calculate_euclidean_distance_for_each_cluster <- function(x){
-      sqrt(rowSums(scale(x,center = TRUE,scale = FALSE)^2))/ncol(x)
+ 
+    calculate_euclidean_distance_for_each_cluster <- function(centroid, data) {
+      as.matrix(stats::dist(rbind(centroid, data)))[1, -1]
     }
-    calculate_manhattan_distance_for_each_cluster <- function(x){
-      rowSums(abs(scale(x,center = TRUE,scale = FALSE)))/ncol(x)
-    } 
+
+    calculate_manhattan_distance_for_each_cluster <- function(centroid, data) {
+      as.matrix(stats::dist(rbind(centroid, data), method = "manhattan"))[1, -1]
+    }
+    
     ## for distance metrics i.e; manhattan or eucleadian
     if(distance_metric == "L1_Norm"){
       function_to_calculate_distance_metric <- calculate_manhattan_distance_for_each_cluster
@@ -107,12 +108,17 @@ hvq <-
       stop('distance_metric must be L1_Norm (Manhattan), L2_Norm (Euclidean) or a custom distance function')
     }
     
-    ## for error metric i.e; mean or max
+    # for error metric i.e; mean or max
     if(error_metric %in% c("mean","max")){
       function_to_calculate_error_metric <- error_metric
     } else{
       stop('error_metric must be max,mean or custom function')
     }
+    
+   
+
+    
+    
     
     if(!is.na(min_compression_perc)){
       depth <- 1
@@ -133,6 +139,7 @@ hvq <-
                                function_to_calculate_distance_metric=function_to_calculate_distance_metric,
                                function_to_calculate_error_metric=function_to_calculate_error_metric,
                                distance_metric=distance_metric,
+                               error_metric = error_metric,
                                quant_method = quant_method)
 
       n_cells_quant_err_list <- unlist(outkinit$cent)
@@ -150,10 +157,13 @@ hvq <-
                              function_to_calculate_distance_metric=function_to_calculate_distance_metric,
                              function_to_calculate_error_metric=function_to_calculate_error_metric,
                              distance_metric=distance_metric,
+                             error_metric = error_metric,
                              quant_method = quant_method)
     
       n_cells_optimal <- n_cells
     }
+    
+#browser()    
     # names(outkinit$val) <- seq_along(outkinit$val)
     rescl[[1]] <- outkinit$val
     tet <- lapply(outkinit$val, row.names) 
@@ -388,5 +398,5 @@ hvq <-
     rclnames <- rescl
     return(list(clusters = initclust, nodes.clust = rescl, idnodes = resid, 
                 error.quant = resm, max_QE = maxqe, plt.clust = resplt, summary = ztab, compression_summary = compression_summary,
-                meanClust = meanCol, sdClust = std,mean_QE = meanqe ))   
+                meanClust = meanCol, sdClust = std,mean_QE = meanqe, centroid_data = outkinit$dataframe_clusters))   
   }

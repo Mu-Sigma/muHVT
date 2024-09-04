@@ -6,20 +6,31 @@ getCentroids_for_opti <- function (x, kout, n_cells,function_to_calculate_distan
   requireNamespace("dplyr")   
   requireNamespace("tidyr")   
   requireNamespace("magrittr")   
-   # browser()
   calculate_error<- centl <- list()
-  # calculate_error <- x %>% dplyr::group_by(kout$clust) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
+  
   calculate_error <-
     x %>%
-    dplyr::group_by(kout$cluster) %>%
-    tidyr::nest() %>%
-    dplyr::mutate(data = purrr::map(.x = data, .f = function_to_calculate_distance_metric)) %>%
-    dplyr::arrange(`kout$cluster`) %>%
-    dplyr::rename(err = data)
+    group_by(kout$cluster) %>%
+    tidyr::nest()
   
-  centl <-lapply(calculate_error$err,function_to_calculate_error_metric)
-  maxQE<- lapply(calculate_error$err, "max")
-  meanQE<- lapply(calculate_error$err, "mean")
+  centroid_data <- kout[["centers"]] %>% as.data.frame()
+  calculate_error <- calculate_error %>% arrange(calculate_error$`kout$cluster`)
+  
+  cluster_distances <- purrr::map2(
+    1:nrow(centroid_data),
+    calculate_error$data,
+    function(i, cluster_data) {
+      centroid_row <- centroid_data[i, ]
+      apply(cluster_data, 1, function(row) function_to_calculate_distance_metric(centroid_row, row))
+    }
+  )
+  
+  
+  calculate_error_for_each_cluster <- unlist(lapply(cluster_distances, function_to_calculate_error_metric)) 
+  maxQE <- unlist(lapply(cluster_distances, function(x) {   return(max(x))}))
+  meanQE <-  unlist(lapply(cluster_distances, function(x) {   return(mean(x))}))
+  centl <- calculate_error_for_each_cluster
+  
   
   return(list(centl,maxQE,meanQE))
   

@@ -6,10 +6,10 @@
 \usage{
 displayTable(
   data,
-  columnName,
-  value,
+  columnName = NULL,
+  value = NULL,
   tableType = "summary",
-  scroll = TRUE,
+  scroll = FALSE,
   limit = 100
 )
 }
@@ -20,7 +20,7 @@ displayTable(
 
 \item{value}{Numeric. The value above will be highlighted in red or green.}
 
-\item{tableType}{Character. Type of table to generate ('summary', 'compression')}
+\item{tableType}{Character. Type of table to generate ('summary', 'compression' and 'metrics')}
 
 \item{scroll}{Logical. A value to have a scroll or not in the table.}
 
@@ -28,31 +28,29 @@ displayTable(
 Applicable for summary tableType.}
 }
 \value{
-A consolidated table of results
+A consolidated table of results from trainHVT and scoreHVT.
 }
 \description{
 This is the main function for displaying summary from model training and scoring
 }
 \examples{
-dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
-                      DAX = EuStockMarkets[, "DAX"],
-                      SMI = EuStockMarkets[, "SMI"],
-                      CAC = EuStockMarkets[, "CAC"],
-                      FTSE = EuStockMarkets[, "FTSE"])
-hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
-                       distance_metric = "L1_Norm", error_metric = "max",
-                       normalize = TRUE,quant_method = "kmeans")
+data <- datasets::EuStockMarkets
+dataset <- as.data.frame(data)
+#model training
+hvt.results <- trainHVT(dataset, n_cells = 60, depth = 1, quant.err = 0.1,
+                      distance_metric = "L1_Norm", error_metric = "max",
+                      normalize = TRUE, quant_method = "kmeans", dim_reduction_method = 'sammon')
+displayTable(data =  hvt.results$model_info$distance_measures, tableType = "metrics")
 displayTable(data = hvt.results[[3]]$compression_summary,
 columnName = 'percentOfCellsBelowQuantizationErrorThreshold', 
 value = 0.8, tableType = "compression")
-
 displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error',
- value = 0.1, tableType = "summary")
+value = 0.1, tableType = "summary", scroll = TRUE)
 }
 \seealso{
 \code{\link{trainHVT}}
 }
 \author{
-Vishwavani <vishwavani@mu-sigma.com>
+Vishwavani <vishwavani@mu-sigma.com>, Alimpan Dey <alimpan.dey@mu-sigma.com>
 }
 \keyword{EDA}

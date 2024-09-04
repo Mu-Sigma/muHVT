@@ -36,9 +36,8 @@ train <- EuStockMarkets[1:1302, ]
 test <- EuStockMarkets[1303:1860, ]
 hvt_summary <- list()
 hvt_summary<- trainHVT(train,n_cells = 15, depth = 1, quant.err = 0.2,
-                      distance_metric = "L1_Norm", error_metric = "mean",
-                      projection.scale = 10, normalize = TRUE,seed = 123,
-                      quant_method = "kmeans")
+                      distance_metric = "L1_Norm", error_metric = "mean", 
+                      normalize = TRUE, quant_method = "kmeans")
 score_var <- scoreHVT(test, hvt_summary, child.level = 2, mad.threshold = 0.2)
 madPlot(hvt.scoring=score_var)
 }

@@ -127,7 +127,7 @@ diagPlot <- function(hvt.results,
   ####### MAD Plot ################
   predictions_train = list()
   predictions_train <- scoreHVT(
-    data = data,
+    dataset = data,
     hvt.results.model=hvt.results,
     child.level = level,
     line.width = c(0.6, 0.4, 0.2),

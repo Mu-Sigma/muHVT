@@ -61,18 +61,6 @@ img {
 }
 ```
 
-```{=html}
-<style>
-  .superbigimage{
-      overflow-x:scroll;
-      white-space: nowrap;
-  }
-  .superbigimage img{
-     max-width: none;
-  }
-</style>
-```
-
 
 ```{r, warning=FALSE, message=FALSE, include=FALSE, error=FALSE }
 
@@ -199,8 +187,7 @@ set.seed(240)
 # 1. Abstract
 
 The HVT package is a collection of R functions to facilitate building
-[topology preserving
-maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich
+<a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7" target="_blank">topology preserving maps</a> for rich
 multivariate data. Tending towards a big data preponderance, a large
 number of rows. A collection of R functions for this typical workflow is
 organized below :
@@ -212,7 +199,7 @@ organized below :
 2.  **Data Projection**: Dimension projection of the compressed cells to
     1D,2D and Interactive surface plot with the Sammons Nonlinear Algorithm. This step creates
     topology preserving map(also called as
-    [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates
+    <a href="https://en.wikipedia.org/wiki/Embedding" target="_blank">embedding </a> coordinates
     into the desired output dimension.
 
 3.  **Tessellation**: Create cells required for object visualization
@@ -293,8 +280,8 @@ one of the below conditions
 
 Let us try to understand quantization error with an example.
 
-```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
-knitr::include_graphics('quant_explainer.png')
+```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed', fig.width=4, fig.height=4}
+knitr::include_graphics('./pngs/quant_explainer.png')
 ```
 
 An example of a 2 dimensional VQ is shown above.
@@ -929,25 +916,52 @@ dataset_updated %>% head(10) %>%
 ```
 
 
-# 7. Data distribution
+# 7. Data distribution {.tabset}
 
 This section displays four objects.
 
-1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
+**Variable Histograms**: The histogram distribution of all the features in the dataset.
 
-2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
+**Box Plots**: Box plots for all the features in the dataset. These plots will display the median and Interquartile range of each column at a panel level.
 
-3) *Correlation Matrix*: This calculates the pearson correlation which is a
-bivariate correlation value measuring the linear correlation between two
-numeric columns. The output plot is shown as a matrix.
+**Correlation Matrix**: This calculates the Pearson correlation which is a bivariate correlation value measuring the linear correlation between two numeric columns. The output plot is shown as a matrix.
 
-4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
+**Summary EDA**: The table provides descriptive statistics for all the features in the dataset.
 
-It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
+- *variable*: The features/columns of the dataset
+- *min*: Minimum value of that feature/column
+- *1st Quartile*: The value that splits the lower 25% of the data when arranged in ascending order
+- *median*: Middle value in the ascendingly ordered dataset
+- *mean*: Sum of all values in the dataset divided by the total number of values
+- *sd*: Measure of the dispersion of dataset relative to its mean.
+- *3rd Quartile*: The value that splits the lower 75% of the data when arranged in ascending order
+- *max*:  Maximum value of that feature/column
+- *hist*: The basic barchart of the data distribution of a feature/column
+- *n_row*: Number of rows for that feature/column
+- *n_missing*: Number of missing values/NAs for that feature/column
 
-```{r, edaPlots function, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated, time_series = FALSE, time_column = NULL)
+It uses an inbuilt function called `edaPlots` to display the above-mentioned four objects.
+
+## Summary Table
+```{r}
+edaPlots(dataset_updated, output_type = "summary", n_cols = 3)
 ```
+
+## Histograms
+```{r hist, figures-side, fig.show="hold", fig.height=2.2, fig.width =2.95, warning=FALSE, message=FALSE}
+edaPlots(dataset_updated, output_type = "histogram", n_cols = 3)
+```
+
+## Box Plots
+```{r  boxx, figures-side, fig.show="hold",fig.height=2.2, fig.width = 2.95,warning=FALSE, message=FALSE}
+edaPlots(dataset_updated, output_type = "boxplot", n_cols = 3)
+```
+
+## Correlation Plot
+```{r corr, warning=FALSE, message=FALSE, fig.align='center', fig.height = 4, fig.width = 4}
+edaPlots(dataset_updated, output_type = "correlation", n_cols = 3)
+```
+
 
 ## 7.1 Train - Test Split
 
@@ -971,19 +985,51 @@ The train data contains `r nrow(dataset_updated_train)` rows and
 `r nrow(dataset_updated_test)` rows and `r ncol(dataset_updated_test)`
 columns.
 
-### 7.1.1 Train Distribution
+### 7.1.1 Train Distribution {.tabset}
 
-```{r dist_plots_true23, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated_train, time_series = FALSE, time_column = NULL)
- 
+#### Summary Table
+```{r}
+edaPlots(dataset_updated_train, output_type = "summary", n_cols = 3)
 ```
 
-### 7.1.2 Test Distribution
-
-```{r dist_plots_true234, purl = FALSE,message=FALSE,warning=FALSE, fig.height=6, fig.width=6,fig.align='center'}
-edaPlots(dataset_updated_test, time_series = FALSE, time_column = NULL)
-
+#### Histograms
+```{r histtrain, figures-side, fig.show="hold", fig.height=2.2, fig.width =2.95, warning=FALSE, message=FALSE}
+edaPlots(dataset_updated_train, output_type = "histogram", n_cols = 3)
 ```
+
+#### Box Plots
+```{r  boxxtrain, figures-side, fig.show="hold",fig.height=2.2, fig.width = 2.95,warning=FALSE, message=FALSE}
+edaPlots(dataset_updated_train, output_type = "boxplot", n_cols = 3)
+```
+
+#### Correlation Plot
+```{r corrtrain, warning=FALSE, message=FALSE, fig.align='center', fig.height = 4, fig.width = 4}
+edaPlots(dataset_updated_train, output_type = "correlation", n_cols = 3)
+```
+
+### 7.1.2 Test Distribution {.tabset}
+
+#### Summary Table
+```{r}
+edaPlots(dataset_updated_test, output_type = "summary", n_cols = 3)
+```
+
+#### Histograms
+```{r histtest, figures-side, fig.show="hold", fig.height=2.2, fig.width =2.95, warning=FALSE, message=FALSE}
+edaPlots(dataset_updated_test, output_type = "histogram", n_cols = 3)
+```
+
+#### Box Plots
+```{r  boxxtest, figures-side, fig.show="hold",fig.height=2.2, fig.width = 2.95,warning=FALSE, message=FALSE}
+edaPlots(dataset_updated_test, output_type = "boxplot", n_cols = 3)
+```
+
+#### Correlation Plot
+```{r corrtest, warning=FALSE, message=FALSE, fig.align='center', fig.height = 4, fig.width = 4}
+edaPlots(dataset_updated_test, output_type = "correlation", n_cols = 3)
+```
+
+
 
 # 8. Model Training
 
@@ -1005,21 +1051,24 @@ polygon. This is done for all the subsequent levels.
 Let us try to understand the trainHVT function first.
 
 ```         
-HVT::trainHVT(
+trainHVT(
   dataset,
   min_compression_perc,
   n_cells,
   depth,
   quant.err,
-  projection.scale,
   normalize = TRUE,
-  seed = 279,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
+  projection.scale,
+  dim_reduction_method = c("sammon" , "tsne" , "umap")
   diagnose = FALSE,
   hvt_validation = FALSE,
-  train_validation_split_ratio = 0.8
+  train_validation_split_ratio,
+  tsne_perplexity,tsne_theta,tsne_verbose,
+  tsne_eta,tsne_max_iter,
+  umap_n_neighbors,umap_min_dist
 )
 ```
 
@@ -1035,11 +1084,7 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`quant.err`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tessellations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
-
 * __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
-
-* __`seed`__ - A Random Numeric Seed to preserve the repeatability.
 
 * __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
 
@@ -1047,20 +1092,40 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. Kmeans uses means (centroids) as cluster centers while Kmedoids uses actual data points (medoids) as cluster centers. `kmeans` is selected by default.
 
+* __`projection.scale`__ - A number indicating the scale factor for the tessellations to visualize the sub-tessellations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible. Default is 10.
+
+* __`dim_reduction_method`__ - The dimensionality reduction method to be chosen. options are 'tsne' , 'umap' & 'sammon'. Default is 'sammon'. 
+
 * __`scale_summary`__ -  A list with user defined mean and standard deviation values for all the features in the dataset. Pass the scale summary when normalize is set to FALSE.
     
 * __`diagnose`__ - A logical value indicating whether user wants to perform diagnostics on the model. Default value is FALSE. 
 
 * __`hvt_validation`__ - A logical value indicating whether user wants to holdout a validation set and find mean absolute deviation of the validation points from the centroid. Default value is FALSE.
 
-* __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
+* __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8
+
+* __`tsne_perplexity`__ - A numeric, balances the attention t-SNE gives to local and global aspects of the data. Lower values focus more on local structure, while higher values consider more global structure. It is recommended to be between 5 and 50. Default value is 30.
+
+
+* __`tsne_theta`__ - A numeric, speed/accuracy trade-off parameter for Barnes-Hut approximation. If set to 0, exact t-SNE is performed, which is slower. If set to greater than 0, an approximation is used, which speeds up the process but may reduce accuracy. Default value is 0.5
+
+
+* __`tsne_eta (learning_rate)`__ - A numeric, learning rate for t-SNE optimization.Determines the step size during optimization. If too low, the algorithm might get stuck in local minima; if too high, the solution may become unstable. Default value is 200.
+
+* __`tsne_max_iter`__ - An integer, maximum number of iterations. Number of iterations for    the optimization process. More iterations can improve results but increase computation time. Default value is 1000.
+
+* __`umap_n_neighbors`__  - An integer, the size of the local neighborhood (in terms of number of neighboring sample points) used for manifold approximation, controls the balance  between local and global structure in the data, smaller values focus on local structure, while larger values capture more global structures. Default value is 15.
+
+* __`umap_min_dist`__  - A numeric, the minimum distance between points in the embedded space, controls how tightly UMAP packs points together, lower values result in a more clustered embedding. Default value is 0.1
+
+
 
 The output of trainHVT function (list of 7 elements) have been explained below with an image attached for clear understanding.
 
 **NOTE: Here the attached image is the snapshot of output list generated from model training which can be referred later in this section**
 
 ```{r trainhvt list,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 3: The Output list generated by trainHVT function.', out.width="50%", out.height=  "20%", fig.align='center'}
-knitr::include_graphics('hvt_result_diag.png')
+knitr::include_graphics('./pngs/hvt_result_diag.png')
 ```
 
 * The '1st element' is a list containing information related to plotting tessellations. This information might include coordinates, boundaries, or other details necessary for visualizing the tessellations
@@ -1075,37 +1140,36 @@ knitr::include_graphics('hvt_result_diag.png')
 
 * The '6th element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`.
 
-* The '7th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
+* The ‘7th element’ (model info) is a list that contains model generated time, input parameters passed to the model, validation results and the dimensionality reduction evaluation metrics table.
 
 
 
 More information on building an HVT model at different levels and
 visualizing the output can be found
-[here](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html)
+<a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">here</a>.
 
 In the section below, we build a Level 1 HVT model. The number of
-clusters `n_cells` is set to 1035 to achieve 95% compression.
+cells (`n_cells`) is set to 500.
 
-```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show'}
-set.seed(240)
-hvt.results <- list()
+```{r level one sample data,warning=FALSE,message=FALSE,eval = global_var,echo=TRUE,class.source = 'fold-show', results='hide'}
 hvt.results <-trainHVT(dataset_updated_train,
-                          n_cells = 1035,
+                          n_cells = 500,
                           depth = 1,
                           quant.err = 0.1,
                           normalize = FALSE,
-                          distance_metric = "L1_Norm",
+                          distance_metric = "L2_Norm",
                           error_metric = "max",
                           quant_method = "kmeans",
                           diagnose = TRUE,
                           hvt_validation = TRUE,
-                          train_validation_split_ratio=0.8)
+                          train_validation_split_ratio=0.8,
+                          dim_reduction_method = "sammon")
 ```
 
 ```{r fig.height=4, fig.width=6,fig.align='center'}
 plotHVT(hvt.results,
         line.width = c(0.6 ),
-        color.vec = c("navy blue"),
+        color.vec = c("black"),
         centroid.size = 1,
         maxDepth = 1, 
         plot.type = '2Dhvt')
@@ -1119,7 +1183,7 @@ threshold.
 displayTable(data = hvt.results[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 ```
 
-As seen in the above table, 95% of the cells have a quantization error
+As seen in the above table, 94% of the cells have a quantization error
 below the threshold. Let's have a closer look at `Quant.Error` variable
 in the below table. The values for `Quant.Error` of the cells which have
 hit the Quantization Error threshold are shown in red. Here we are
@@ -1236,7 +1300,7 @@ p2=hvt.results[[4]]$cent_plot+ggtitle("Minimum Intra-Centroid Distance Plot: HVT
 p2
 ```
 
-<font color="red"> As seen in the plot above the mean value is **0.72**.
+<font color="red"> As seen in the plot above the mean value is **0.8**.
 This value can be selected as the Mean Absolute Deviation Threshold for
 scoring data using scoreHVT function </font>
 
@@ -1252,7 +1316,7 @@ p4
 ```
 
 As shown in the plot above the mean number of records in each HVT cell
-is **7**.
+is **15**.
 
 ### 8.2.5 Singleton Count
 
@@ -1275,7 +1339,7 @@ m1=hvt.results[[5]][["mad_plot"]]+ggtitle("Mean Absolute Deviation Plot:Validati
 m1
 ```
 
-As seen in the plot the mean absolute deviation for the validation data from the given `dataset_updated_train` is **0.13**.
+As seen in the plot the mean absolute deviation for the validation data from the given `dataset_updated_train` is **0.11**.
 
 # 9. Scoring
 
@@ -1357,10 +1421,7 @@ In this section we will subset the test data based on numeric columns
 present in train data.
 
 ```{r, purl = FALSE,results='asis',class.source = 'fold-show'}
-
-
 dataset_updated_test=dataset_updated_test %>% dplyr::select(nums)
-
 ```
 
 Now once we have the test data ready, lets look at how the scoreHVT
@@ -1369,22 +1430,23 @@ function looks like.
 ## 9.3 Scoring on Test Data
 
 ```         
-scoreHVT(data,
+scoreHVT(dataset,
          hvt.results,
          child.level,
          mad.threshold,
          line.width,
          color.vec,
          normalize,
-         seed,
          distance_metric,
          error_metric,
-         yVar)
+         yVar,
+         analysis.plots, 
+         names.column)
 ```
 
 The important parameters for the function `scoreHVT` are as below
 
-- **`data`** - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
+- **`dataset`** - A dataframe containing the test dataset. The dataframe should have all the variable(features) used for training. 
 
 -  **`hvt.results.model`** - A list obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
@@ -1399,34 +1461,36 @@ The important parameters for the function `scoreHVT` are as below
 
 * **`normalize`** - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset referred from the trainHVT(). When set to FALSE, the `data` is used as such without any changes.
 
-* **`seed`**  - A Random Numeric Seed to preserve the repeatability.
-
 * **`distance_metric`** - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * **`error_metric`** - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
 * **`yVar`** - A character or a vector representing the name of the dependent variable(s)
 
+*The below given arguments are used only when character column can be mapped over the scored results. since torus doesn't have a character column, we are not using them in this vignette.*
+
+* **`analysis.plots`** - A logical value to indicate whether to include the insight plots which are useful in viewing the contents and clusters of cells. Default is FALSE.
+
+* **`names.column`** - The column of names of the datapoints which will be displayed as the contents of the cell in 'scoredPlotly'. Default is NULL.
+
+
+
 
 <p style="color:red;">
 
-Here the mad_threshold has been selected as 0.7 which is based on Mean
+Here the mad_threshold has been selected as 0.8 which is based on Mean
 of Minimum Intra-Centroid Distance plot from above.
 </p>
 
 ```{r,class.source = 'fold-show'}
-hvt.score = list()
-mad_threshold= 0.7 #Mean of Minimum Intra-Centroid Distance
-hvt.score <- scoreHVT(
-  data = dataset_updated_test,
-  hvt.results.model=hvt.results,
-  child.level = 1,
-  mad.threshold = mad_threshold,
-  line.width = c(0.6, 0.4, 0.2),
-  color.vec = c("navyblue", "slateblue", "lavender"),
-  distance_metric = "L1_Norm",
-  error_metric = "max"
-)
+hvt.score <- scoreHVT(dataset_updated_test,
+                      hvt.results,
+                      child.level = 1,
+                      mad.threshold = 0.8, 
+                      line.width = c(0.6, 0.4, 0.2),
+                      color.vec = c("navyblue", "slateblue", "lavender"),
+                      distance_metric = "L1_Norm",
+                      error_metric = "max")
 ```
 
 The `plotModelDiagnostics()` function can be called for scoring object as well.
@@ -1621,13 +1685,12 @@ predictClusterData <- hvt.score[["scoredPredictedData"]]%>%as.data.frame()
 
 # 12. References
 
-1.  Topology Preserving Maps : <https://users.ics.aalto.fi/jhollmen/dippa/node9.html>
+1. <a href="https://users.ics.aalto.fi/jhollmen/dippa/node9.html" target="_blank">Topology Preserving Maps</a>
 
-2.  Vector Quantization : <https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/>
+2. <a href="https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/" target="_blank">Vector Quantization</a>
 
-3.  K-means : <https://en.wikipedia.org/wiki/K-means_clustering>
+3. <a href="https://en.wikipedia.org/wiki/K-means_clustering" target="_blank">K-means</a>
 
-4.  Sammon's Projection : <https://en.wikipedia.org/wiki/Sammon_mapping>
+4. <a href="https://en.wikipedia.org/wiki/Sammon_mapping" target="_blank">Sammon's Projection</a>
 
-5.  Voronoi Tessellations :
-    <https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation>
+5. <a href="https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation" target="_blank">Voronoi Tessellations</a>

@@ -4,14 +4,19 @@
 \alias{edaPlots}
 \title{plots for data analysis}
 \usage{
-edaPlots(df, time_series = FALSE, time_column)
+edaPlots(df, time_column, output_type = NULL, n_cols = 2)
 }
 \arguments{
 \item{df}{Dataframe. A data frame object.}
 
-\item{time_series}{Logical. A value to indicate whether the dataset is time_series or not.}
+\item{time_column}{Character. The name of the time column in the data frame.
+Can be given only when the data is time series}
 
-\item{time_column}{Character. The name of the time column in the data frame.}
+\item{output_type}{Character. The name of the output to be displayed. Options are 'summary',
+'histogram', 'boxplot', 'timeseries' & 'correlation'. Default value is NULL.}
+
+\item{n_cols}{Numeric. A value to indicate how many columns to be included in the output.
+Default value is 2.}
 }
 \value{
 Five objects which include time series plots, data distribution plots, 
@@ -26,7 +31,8 @@ dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
                       SMI = EuStockMarkets[, "SMI"],
                       CAC = EuStockMarkets[, "CAC"],
                       FTSE = EuStockMarkets[, "FTSE"])
-edaPlots(dataset, time_series = TRUE, time_column = 'date')
+edaPlots(dataset, time_column = 'date', output_type = 'timeseries', n_cols = 5)
+edaPlots(dataset, time_column = 'date', output_type = 'histogram', n_cols = 5)
 }
 \author{
 Vishwavani <vishwavani@mu-sigma.com>

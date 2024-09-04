@@ -1,0 +1,1484 @@
+---
+title: "Implementation of t-SNE and UMAP in trainHVT function"
+author: "Bidesh Ghosh, Alimpan Dey"
+date: "`r Sys.Date()`"
+fig.height: 4
+fig.width: 15
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth : 3
+    tabset: true
+vignette: >
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Implementation of t-SNE and UMAP in trainHVT function}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{css, echo=FALSE}
+
+/* CSS for floating TOC on the left side */
+#TOC {
+    position: fixed;
+    left: 40px;
+    width: 360px;
+    height: fit-content;
+    overflow-y: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    background-color: #f9f9f9;
+    border-right: 1px solid #ddd;
+    margin-top: -10.5em;
+}
+.main-container {
+  margin-left: 222px; /* Adjust this value to match the width of the TOC + some margin */
+}
+body{
+    margin-top: 3em;
+    margin-right: 50px;
+    max-width: calc(100% - 600px);
+}
+p {
+text-align: justify;
+}
+.plotly {
+  margin: auto;
+}
+.caption {
+  text-align: center;
+}
+
+
+li {
+  padding-bottom: 5px;
+}
+#visualization-of-the-three-different-outcomes-of-trainhvt-function-on-torus-dataset-with-depth1 img{
+  height: 330px !important;
+  width: 100%  
+}
+#visualization-of-the-three-different-outcomes-of-trainhvt-function-on-torus-dataset-with-depth2 img{
+  height: 330px !important;
+  width: 100%  
+}
+#visualization-of-the-three-different-outcomes-of-trainhvt-function-on-torus-dataset-with-depth3 img{
+  height: 330px !important;
+  width: 100%  
+}
+img {
+  width: 98%;
+  height: auto;
+}
+<!-- /* CSS for adding dots after section numbers */ -->
+<!-- h1::before, h2::before, h3::before, h4::before, h5::before, h6::before { -->
+<!--  content: counter(section) ". "; -->
+<!--   counter-increment: section; -->
+<!-- } -->
+
+
+```
+
+```{r setup, warning=FALSE,message=FALSE,include = FALSE}
+
+ knitr::opts_chunk$set(
+   collapse = TRUE,
+   comment = "#>",
+   out.width = "672px",
+   out.height = "480px",
+   fig.width = 7.5,
+   fig.height = 5,
+   fig.align = "center",
+   fig.retina = 1,
+   dpi = 150
+ )
+```
+
+# 1. Background
+
+The HVT package is a collection of R functions to facilitate building <a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7" target="_blank">topology preserving maps</a> for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+
+1.  **Data Compression**: Vector Quantization (VQ), HVQ (Hierarchical Vector Quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
+
+2.  **Data Projection**: Dimension projection of the compressed cells to 2D with t-SNE, UMAP and Sammon's Mapping Algorithm. This step creates a topology preserving map (also called as <a href="https://en.wikipedia.org/wiki/Embedding" target="_blank"> mathematical embeddings</a>) coordinates into the desired output dimension.
+
+3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes Heatmap plots for Hierarchical Voronoi Tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
+
+4.  **Scoring**: Scoring data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
+
+5. **Temporal Analysis and Visualization**: A Collection of functions that leverages the capacity of the HVT package by analyzing time series data for its underlying patterns, calculation of transitioning probabilities and the visualizations for the flow of data over time.
+
+<span style="font-size: 22px;">**What's New?**</span>
+
+This notebook showcases the enhancement made to the `trainHVT` function through the integration of dimensionality reduction techniques and comprehensive evaluation metrics. These advancements aim to enhance the visualization, analysis, and interpretability of high-dimensional data within the HVT framework. 
+
+**1. Integration of Advanced Dimensionality Reduction Techniques**:
+
+The `trainHVT` function now includes dimensionality reduction techniques like t-SNE and UMAP, alongside the previously implemented Sammon’s method. This integration enhances the function's capacity to explore and apply various dimensionality reduction approaches.
+
+- **t-Distributed Stochastic Neighbor Embedding (t-SNE)**: Integrating t-SNE into the `trainHVT` function facilitates non-linear dimensionality reduction, particularly by preserving local structures and visualization of intricate data structures. It efficiently processes large datasets with minimal computational overhead.
+
+- **Uniform Manifold Approximation and Projection (UMAP)**: Integrating UMAP into the `trainHVT` function used to preserve both local and global data structures. UMAP excels at maintaining local relationships between data points while also preserving the broader global structure, which helps in revealing more meaningful clusters and patterns in complex datasets. 
+
+**2. Integration of Evaluation Metrics**:
+
+Dimensionality reduction evaluation metrics help to determine the quality and effectiveness of the dimensionality reduction process by evaluating aspects such as data point proximity, cluster separation, and overall fidelity of the reduced representation.
+
+- Integrated key metrics such as Trustworthiness, Continuity, RMSE, Silhouette Score, KNN Retention Score, Sammon's Stress and Likert Scale which address the five major area of dimensionality reduction, which are Structure Preservation Metrics, Distance Preservation Metrics, Interpretive Quality Metrics, Computational Efficiency Metrics, Human Centered Metrics.
+
+  
+# 2. t-Distributed Stochastic Neighbor Embedding
+
+t-SNE is a widely recognized technique for visualizing high-dimensional data in a low-dimensional space, typically two or three dimensions. Developed by Laurens van der Maaten and Geoffrey Hinton, t-SNE is particularly effective at preserving the local structure of the data, ensuring that similar data points are positioned close to one another in the reduced dimensional space.
+
+<span style="font-size: 22px;">**Advantages of t-SNE**</span>
+
+- The key advantage of using t-SNE for dimensionality reduction lies in its probabilistic approach to measuring the similarities between data points. 
+
+- t-SNE focuses on preserving the relative distances between data points, rather than just the absolute distances. This results in visually intuitive maps where similar data points form dense clusters, while dissimilar points are more spread out. 
+
+- This property makes the resulting visualizations not only accurate in terms of capturing the underlying data structure, but also highly interpretable, even for users without extensive statistical expertise. 
+
+  
+# 3. Uniform Manifold Approximation and Projection
+
+UMAP is a cutting-edge technique for dimension reduction and data visualization, known for its speed, scalability, and ability to maintain both global and local data structure. Developed by Leland McInnes, John Healy, and James Melville, UMAP has quickly become a favorite among data scientists for its versatility and robust performance across a wide range of applications.
+
+<span style="font-size: 22px;">**Advantages of UMAP**</span>
+
+- The key advantage of using UMAP as a dimensionality reduction technique is its ability to simultaneously preserve the global structure of the data while also highlighting the local relationships between data points.
+
+- This dual focus results in visualizations that accurately represent the underlying clusters and patterns within the dataset, providing insights that may be missed by other dimensionality reduction methods. 
+
+- UMAP delivers high-quality, interpretable visualizations that significantly enhance our understanding of complex, multi-dimensional datasets. 
+
+# 4. Dimensionality reduction evaluation metrics
+
+Dimensionality reduction evaluation metrics are measures used to assess the effectiveness of dimensionality reduction techniques. They help evaluate how well these techniques preserve the structure, relationships, and quality of the data when reducing its dimensions. 
+
+These six metrics are organized into three main categories. Below is a brief overview of each metric included in the `trainHVT` function:
+
+<span style="font-size: 22px;">**Structure Preservation Metrics**</span>
+
+
+1. **Trustworthiness**:
+
+- Range: 0 to 1
+- Description: Trustworthiness measures how well the local structure of the high-dimensional data is preserved in   the low-dimensional embedding. A score close to 1 indicates that the nearest neighbors in the high-dimensional    space are well represented in the lower-dimensional space.
+
+2. **Continuity**:
+
+- Range: 0 to 1
+- Description: Continuity assesses how well the low-dimensional embedding captures the global structure of the      high-dimensional data. Like trustworthiness, a higher score closer to 1 indicates better preservation of the      data’s global structure during dimensionality reduction.
+
+3. **Sammon's Stress**:
+
+- Range: 0 to 1 (though typically not bounded)
+- Description: Sammon's Stress evaluates how faithfully the distances in the high-dimensional space are             represented   in the low-dimensional embedding. Lower values indicate a better representation of the original     data structure.
+
+<span style="font-size: 22px;">**Distance Preservation Metrics**</span>
+
+4. **RMSE(Root Mean Square Error)**:
+
+- Range: 0 to ∞
+- Description: Root Mean Square Error (RMSE) measures the average magnitude of the difference between the distances in the high-dimensional space and those in the low-dimensional space. It reflects the overall error in the distance preservation after dimensionality reduction. A lower RMSE value indicates that the distances in the reduced-dimensional space are closer to those in the original high-dimensional space, implying better preservation of the overall structure.
+
+
+<span style="font-size: 22px;">**Human Centered Metrics**</span>
+
+
+5. **Likert Scale**:
+
+- Range: 1, 2 or 3
+- Description: Ideally, the projection would separate clusters or highlight features of the data that a human could easily identify. In this case, it should ideally resemble an annulus. It is a subjective score where 
+  - 1 indicates a poor projection - significant distortion or overlap; unclear data structure.
+  - 2 represents an average projection - adequate representation with minor distortions.
+  - 3 signifies a good projection - accurate, distinct, and insightful representation.
+  
+**Ground Truth**: We have performed dimensionality reduction techniques on torus data. The underlying structure of this data is a torus, a surface shaped like a doughnut. The true shape of the data in its original high-dimensional space must resemble an **annulus**(two concentric circles) when properly reduced to two or three dimensions. 
+
+6. **Spatial Orientation**:
+- Range: 0° to 360°
+- Description: Spatial orientation describes how an object or point is positioned and directed in space relative to a reference frame. This includes both the object's location and its rotation or angular orientation. In mathematical or data contexts, spatial orientation is often represented using vectors, matrices, or angles (e.g., Euler angles or quaternions in 3D space).
+
+
+<span style="font-size: 22px;">**Interpretive Quality Metrics**</span>
+
+
+7. **Silhouette Score**:
+
+- Range: -1 to 1
+- Description: The Silhouette Score measures the quality of clustering within the low-dimensional space. A higher   score closer to 1 suggests that the data points are well clustered, with distinct separation between different    clusters.
+
+8. **KNN Retention Score**:
+
+- Range: 0 to 1
+- Description: The K-Nearest Neighbors (KNN) Retention Score measures the proportion of K-nearest neighbors that    are preserved from the high-dimensional space to the low-dimensional embedding. A score of 1 indicates perfect    retention, meaning all nearest neighbors are preserved.
+ 
+
+
+
+
+<span style="font-size: 22px;">**Computational Efficiency Metrics**</span>
+
+9. **Execution Duration**:
+
+- Range: 0 to ∞
+- Description: Execution duration refers to the amount of time it takes for an algorithm to complete its task from start to finish. In the context of dimensionality reduction, it measures how long it takes for methods like t-SNE, UMAP, or Sammon projection to process the data and produce a reduced-dimensionality output. Lower execution duration indicates faster performance, which is particularly important when working with large datasets or in time-sensitive applications.
+  
+# 5. Importing Code Modules
+
+**NOTE**: At the time of documenting this notebook, the updated changes
+were not still in CRAN, hence we are sourcing the scripts from the R
+folder directly to the session environment.
+
+```{r, message = FALSE,warning=FALSE}
+# Sourcing required code scripts for HVT
+script_dir <- "../R"
+r_files <- list.files(script_dir, pattern = "\\.R$", full.names = TRUE)
+invisible(lapply(r_files, function(file) { source(file, echo = FALSE); }))
+```
+
+```{r lib, warning=FALSE, message=FALSE, include=FALSE, error=FALSE}
+### First install(if not already installed) and call the necessary libraries
+
+list.of.packages <<- c("DT",'plotly', "magrittr", "data.table", "tidyverse", "crosstalk", "kableExtra", "gganimate","gdata", "data.table", "jmuOutlier", "viridis", "deldir", "conf.design", "splancs","Hmisc","xfun","sp","cowplot",
+"polyclip","devtools","deldir","gdata","tidyverse","skimr","patchwork", "crosstalk", "ggforce","htmltools", "scales", "ggplot2", "htmlwidgets", "gridExtra","gtable","tibble")
+
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages)){install.packages(new.packages, repos='https://cloud.r-project.org/')}
+invisible(lapply(list.of.packages, library, character.only = TRUE))
+
+Table <- function(data,scroll = F, limit = NULL){
+  if(!is.null(limit)){
+    data <- head(data,limit)}
+kable_table <- data %>% kable(escape = F,align = "c") %>% kable_styling(bootstrap_options = c("striped", "hover", "responsive"))
+if(scroll == T){
+kable_table <- kable_table %>% scroll_box(width = "100%" , height = scrolLimit(nrow(data)))
+  }
+return(kable_table)
+}
+
+set.seed(20)
+```
+  
+# 6. Data Understanding
+
+First, let us see how to generate data for torus. We are using a
+library geozoo for this purpose. Geo Zoo (stands for Geometric Zoo) is a
+compilation of geometric objects ranging from three to 10 dimensions.
+Geo Zoo contains regular or well-known objects, e.g., cube and sphere, and
+some abstract objects, e.g., Boy’s surface, Torus and Hyper-Torus.
+
+Here, we will generate a 3D torus (a torus is a surface of revolution
+generated by revolving a circle in three-dimensional space one full
+revolution about an axis that is coplanar with the circle) with 12000
+points.
+
+The torus dataset includes the following columns:
+
+-   x: This column represents the X-coordinate of each point in the
+    torus.
+-   y: This column represents the Y-coordinate of each point in the
+    torus.
+-   z: This column represents the Z-coordinate of each point in the
+    torus.
+
+Lets, explore the raw torus dataset containing 12000 points. For the
+sake of brevity, we are displaying the 10 rows.
+
+```{r}
+set.seed(124)
+torus <- geozoo::torus(p = 3,n = 12000)
+torus_df <- data.frame(torus$points)
+colnames(torus_df) <- c("x","y","z")
+
+torus_df1 <- torus_df %>% round(4)
+colnames(torus_df1) <- c("x","y","z")
+torus_df1$Row.No <- as.numeric(row.names(torus_df))
+torus_df1 <- torus_df1 %>% dplyr::select(x,y,z)
+displayTable(head(torus_df1, 10), scroll = FALSE)
+```
+
+Now, let’s try to visualize the torus dataset in 3D.
+
+```{r torus plot,warning=FALSE,message=FALSE,fig.show="hold",fig.cap='Figure 1: 3D Torus',eval =TRUE,echo=TRUE, fig.align='center'}
+plot_ly(x = torus_df1$x, y = torus_df1$y, z = torus_df1$z, type = 'scatter3d',mode = 'markers',
+marker = list(color = torus_df1$z,colorscale = c('#F50000', '#000FFF'),showscale = TRUE,size = 3,colorbar = list(title = 'z'))) %>%
+layout(scene = list(xaxis = list(title = 'x'),yaxis = list(title = 'y'),zaxis = list(title = 'z'),
+aspectratio = list(x = 1, y = 1, z = 0.5)))
+ 
+```
+  
+# 7. Model Training and Visualization
+
+The core function for compression in the workflow is `hvq` (hierarchical
+vector quantization), which is called within the `trainHVT` function. we
+have a parameter called 'quantization error'. This parameter acts as a
+threshold and determines the number of levels in the hierarchy. It means
+that, if there are 'n' number of levels in the hierarchy, then all the
+clusters formed till this level will have quantization error equal to or
+less than the threshold quantization error. The user can define the
+number of clusters in the first level of the hierarchy and then each
+cluster in the upcoming levels is subdivided into the same number of
+clusters. This process continues for all the clusters until the
+threshold quantization error is met. The output of this technique will
+be hierarchically arranged vector quantized data.
+
+## 7.1 Understanding `trainHVT()` Function: Parameters and Hyperparameters for Dimensionality Reduction Methods
+
+The `trainHVT()` function is used to train a hierarchical Voronoi tessellation (HVT) model. When integrating dimensionality reduction techniques such as t-SNE, UMAP, and Sammon's projection, it's essential to understand both the parameters of the trainHVT() function and the specific hyperparameters for each dimensionality reduction method.
+
+```{r trainHVT function, echo = TRUE, eval= FALSE}
+trainHVT(
+  dataset, min_compression_perc, n_cells,
+  depth, quant.err,normalize,
+  distance_metric,error_metric,quant_method,
+  scale_summary, diagnose, hvt_validation,
+  train_validation_split_ratio, projection.scale,
+  dim_reduction_method,
+  tsne_perplexity,tsne_theta,tsne_verbose,
+  tsne_eta,tsne_max_iter,
+  umap_n_neighbors,umap_min_dist
+)
+```
+
+Each of the parameters of `trainHVT` function has been explained below:
+
+-   **`dataset`** - A data frame, with numeric columns (features) that
+    will be used for training the model.
+
+-   **`min_compression_perc`** - An integer, indicating the minimum
+    compression percentage to be achieved for the dataset. It indicates
+    the desired level of reduction in dataset size compared to its
+    original size. This parameter need not be called if n_cells are
+    specified.
+
+-   **`n_cells`** - An integer, indicating the number of cells per
+    hierarchy (level). This parameter determines the granularity or
+    level of detail in the hierarchical vector quantization.
+
+-   **`depth`** - An integer, indicating the number of levels. A depth
+    of 1 means no hierarchy (single level), while higher values indicate
+    multiple levels (hierarchy).
+
+-   **`quant.err`** - A number indicating the quantization error
+    threshold. A cell will only break down into further cells if the
+    quantization error of the cell is above the defined quantization
+    error threshold.
+
+-   **`normalize`** - A logical value indicating if the dataset should
+    be normalized. When set to TRUE, scales the values of all features
+    to have a mean of 0 and a standard deviation of 1 (Z-score). if
+    FALSE, the dataset is used without scaling.
+
+-   **`distance_metric`** - The distance metric can be
+    `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected
+    by default. The distance metric is used to calculate the distance
+    between a clustered datapoint point and a centroid.
+
+-   **`error_metric`** - The error metric can be `mean` or `max`. `max`
+    is selected by default. `max` will return the max of `m` values and
+    `mean` will take the mean of `m` values where each value is a
+    distance between a point and centroid.
+
+-   **`quant_method`** - The quantization method can be `kmeans` or
+    `kmedoids`. Kmeans uses means (centroids) as cluster centers while
+    Kmedoids uses actual data points (medoids) as cluster centers.
+    `kmeans` is selected by default.
+
+-   **`scale_summary`** - A list with user-defined mean and standard
+    deviation values for all the features in the dataset. Pass the scale
+    summary when normalize is set to FALSE.
+
+-   **`diagnose`** - A logical value indicating whether the user wants
+    to perform diagnostics on the model. Default value is FALSE.
+
+-   **`hvt_validation`** - A logical value indicating whether the user
+    wants to hold out a validation set and find the Mean Absolute
+    Deviation of the validation points from the centroid. Default value
+    is FALSE.
+
+-   **`train_validation_split_ratio`** - A numeric value indicating
+    train validation split ratio. This argument is only used when
+    `hvt_validation` has been set to TRUE. Default value for the
+    argument is 0.8
+    
+-   **`projection.scale`** - A number indicating the scale factor for the tessellations to          visualize the sub-tessellations well enough. It helps in adjusting the visual                   representation     of the hierarchy to make the sub-tessellations more visible. Default is      10.    
+
+-   **`dim_reduction_method`** - The `trainHVT` function above has been
+    modified to include an additional parameter **dim_reduction_method**
+    that accepts **"sammon"**, **"tsne"**, or **"umap"**. This parameter
+    is used to determine which dimensionality reduction technique to
+    apply within the function. Default    value is 'sammon'.
+
+**Hyperparameters for different dimensionality reduction methods**:    
+
+The `trainHVT()` function allows for fine-tuning t-SNE hyperparameters, including perplexity, learning_rate, n_iter, and metric, which are managed using the **Rtsne** library. Adjusting these parameters can optimize the balance between local and global data structures, convergence speed, and distance metrics for effective dimensionality reduction.:
+
+-  **`tsne_perplexity`** - A numeric, balances the attention t-SNE gives to local and global    aspects of the data.     Lower values focus more on local structure, while higher values        consider more global structure. It is          recommended to be between 5 and 50. Default value     is 30.
+
+
+-  **`tsne_theta`** - A numeric, speed/accuracy trade-off parameter for Barnes-Hut
+   approximation. If set to 0, exact t-SNE is performed, which is slower. If set to greater    than 0, an                approximation is used, which speeds up the process but may reduce accuracy. Default value is 0.5
+
+
+-  **`tsne_eta (learning_rate)`** - A numeric, learning rate for t-SNE optimization.Determines the step       size       during optimization. If too low, the algorithm might get stuck in local minima; if too high, the solution may         become unstable. Default value is 200.
+
+
+-  **`tsne_max_iter`** - An integer, maximum number of iterations. Number of iterations for    the optimization          process. More iterations can improve results but increase computation time. Default value is 1000.
+
+The `trainHVT()` function leverages the UMAP hyperparameters—n_neighbors, min_dist—through the **uwot** library. Fine-tuning these parameters helps control neighborhood size, spacing in the reduced space, and overall structure preservation in dimensionality reduction.
+
+-  **`umap_n_neighbors`** - An integer, the size of the local neighborhood (in terms of number of neighboring sample     points) used for manifold approximation, controls the          balance  between local and global structure in the     data, smaller values focus on local      structure, while larger values capture more global structures. Default       value is 15.
+
+-  **`umap_min_dist`** - A numeric, the minimum distance between points in the embedded        space, controls how       tightly UMAP packs points together, lower values result in a more       clustered embedding. Default value is 0.1
+
+## 7.2 A guidance to choose the dimensionality reduction methods
+
+- **t-SNE**: Use **t-SNE** when your primary focus is on maintaining **local relationships** between data points. This method excels at preserving local structure, meaning points that are close in high-dimensional space will remain close in the lower-dimensional space. However, global relationships (the larger structure or overall distribution) might not be well-preserved. It is computationally intensive, so it may not be suitable for very large datasets.
+
+- **Key characteristics**: Good for clustering small groups, preserves local distances, high computational cost, sensitive to parameter tuning (e.g., perplexity).
+
+- **UMAP**: Use **UMAP** when you want to achieve a balance between **local and global structure**. It offers a good compromise by maintaining both small-scale relationships and large-scale global features. UMAP is more scalable and faster than t-SNE, which makes it a more practical choice for large datasets. Additionally, UMAP has better generalization properties, meaning that new data points can be effectively mapped into the lower-dimensional space without recomputing everything.
+
+- **Key characteristics**: Balances local and global structure, scalable to large datasets, relatively fast, good at embedding new data points.
+
+- **Sammon's Mapping**: Use **Sammon's Mapping** when the exact **pairwise distances between data points** are critical. This method minimizes the distortion of distances as much as possible, making it suitable for cases where you need high fidelity in distance preservation. However, Sammon's Mapping is computationally expensive and not suitable for very large datasets.
+
+- **Key characteristics**: Preserves pairwise distances accurately, computationally expensive, suitable for small to medium-sized datasets.
+
+
+
+The output of the `trainHVT` function (list of 7 elements) has been
+explained below with an image attached for clear understanding.
+
+</br> **NOTE: Here the attached 'Figure:2' is the example snapshot of
+the output list generated from `trainHVT`**
+
+```{r trainhvt list,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 2: The Output list generated by trainHVT function.',out.width="50%",out.height = "40%",fig.align='center'}
+knitr::include_graphics("./pngs/HVT Summary.png")
+```
+
+-   The '1st element' is a list containing information related to
+    plotting tessellations. This information includes coordinates,
+    boundaries and other details necessary for visualizing the
+    tessellations.
+
+-   The '2nd element' is a list containing information related to
+    Sammon's projection coordinates of the data points in the
+    reduced-dimensional space.
+
+-   The '3rd element' is a list containing detailed information about
+    the hierarchical vector quantized data along with a summary section
+    containing no. of points, quantization error and the centroids for
+    each cell in 2D.
+
+-   The '4th element' is a list that contains all the diagnostics
+    information of the model when `diagnose` is set to TRUE. Otherwise
+    NA
+
+-   The '5th element' is a list that contains all the information
+    required to generate a Mean Absolute Deviation (MAD) plot, if
+    hvt_validation is set to TRUE. Otherwise NA
+
+-   The '6th element' is a list containing detailed information about
+    the hierarchical vector quantized data along with a summary section
+    containing no. of points, quantization error and the centroids for
+    each cell in 1D, which is the output of `hvq`.
+
+-   The '7th element' (model info) is a list that contains model
+    generated time passed to the model and the validation results, input_parameters and
+    distance_measures which is the metrics evaluation table .
+
+We will use the `trainHVT` function to compress our data while
+preserving essential features of the dataset. Our goal is to achieve
+data compression to atleast `80%`. In situations where the compression
+ratio does not meet the desired target, we can explore adjusting the
+model parameters as a potential solution. This involves making
+modifications to parameters such as the quantization error threshold or
+increasing the number of cells and then rerunning the `trainHVT`
+function.
+
+## 7.2 Training and Visualization of t-SNE
+
+**t-SNE** is a powerful technique for visualizing high-dimensional data by reducing it to two or three dimensions while preserving local structures. By performing and plotting t-SNE, intricate patterns and relationships within the data can be effectively explored and interpreted.
+
+#### 7.2.1 Performing t-SNE 
+
+Here, we will perform **t-SNE** as dimensionality reduction technique in
+`trainHVT` function with n_cells=20.
+
+We have passed the below mentioned model parameters along with depth=1, 2, 3 respectively to `trainHVT` function.
+
+**Model Parameters**
+
+* dataset = torus_df1,
+* n_cells = 20,         
+* quant.err = 0.1,           
+* normalize = TRUE,          
+* distance_metric = "L2_Norm",   
+* error_metric = "mean",    
+* quant_method = "kmeans",   
+* dim_reduction_method = "tsne",
+* tsne_perplexity = 6,
+* tsne_theta = 0.5,
+* tsne_verbose = TRUE,
+* tsne_eta = 200,
+* tsne_max_iter = 1000
+
+**Performing t-SNE on the torus data using `trainHVT` function with depth=1**
+
+```{r tsne_example, message=FALSE, warning=FALSE, results="hide"}
+# Apply trainHVT to the simulated data with dim_reduction_method="tsne" and depth=1
+  hvt_results_tsne1 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,               
+  depth = 1,                 
+  quant.err = 0.1,           
+  normalize = TRUE,         
+  distance_metric = "L2_Norm",  
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "tsne", 
+  tsne_perplexity = 6,
+  tsne_theta = 0.5,
+  tsne_verbose = TRUE,
+  tsne_eta = 200,
+  tsne_max_iter = 1000
+  )
+```
+
+
+**Performing t-SNE on the torus data using `trainHVT` function with depth=2**
+
+```{r tsne_example2, message=FALSE, warning=FALSE, results="hide"}
+# Apply trainHVT to the simulated data with dim_reduction_method="tsne" and depth=2
+hvt_results_tsne2 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,         
+  depth = 2,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "tsne",
+  tsne_perplexity = 6,
+  tsne_theta = 0.5,
+  tsne_verbose = TRUE,
+  tsne_eta = 200,
+  tsne_max_iter = 1000
+)
+```
+
+
+**Performing t-SNE on the torus data using `trainHVT` function with depth=3**
+
+```{r tsne_example3, message=FALSE, warning=FALSE, results="hide"}
+# Apply trainHVT to the simulated data with dim_reduction_method="tsne" and depth=3
+hvt_results_tsne3 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,         
+  depth = 3,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "tsne",
+  tsne_perplexity = 6,
+  tsne_theta = 0.5,
+  tsne_verbose = TRUE,
+  tsne_eta = 200,
+  tsne_max_iter = 1000
+)
+```
+
+
+#### 7.2.2 Plotting the outcome of `trainHVT` function with dim_reduction_method="tsne" using `plotHVT` {.tabset}
+
+Now let’s plot all the features for each cell at level 1,2 and 3 respectively as a Heatmap for better visualization.
+
+The Heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the Heatmaps, while the indigo shades indicate areas with the lowest values in each of the Heatmaps. By analyzing these Heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
+
+##### tSNE_depth1
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r, message=FALSE, warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 3: 2D projection with tsne as dim_reduction_method and depth=1"}
+tSNE_depth1_x = plotHVT(hvt_results_tsne1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        child.level = 1, 
+        hmap.cols = 'x',
+        centroid.color = c("navyblue"),
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1 and hmap.cols='x'")
+
+tSNE_depth1_y = plotHVT(hvt_results_tsne1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        centroid.color = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        child.level = 1,
+        hmap.cols = 'y',
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1 and hmap.cols='y'")
+
+tSNE_depth1_z = plotHVT(hvt_results_tsne1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),centroid.color = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        child.level = 1,
+        hmap.cols = 'z',
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1 and hmap.cols='z'")
+
+tSNE_depth1 = grid.arrange(tSNE_depth1_x, tSNE_depth1_y, tSNE_depth1_z, ncol=3)
+```
+##### tSNE_depth2
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 4: 2D projection with tsne as dim_reduction_method, depth=2"}
+tSNE_depth2_x =plotHVT(hvt_results_tsne2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("navyblue","steelblue"), 
+        centroid.size = c(0.2, 0.1) ,
+        child.level = 2, 
+        hmap.cols = 'x',
+        n_cells.hmap = 10,
+        title = "2D projection with tsne as dim_reduction_method, depth=2 and hmap.cols='x'")
+
+tSNE_depth2_y =plotHVT(hvt_results_tsne2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("navyblue","steelblue"), 
+        child.level = 2,
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'y',
+        n_cells.hmap = 10,
+        title = "2D projection with tsne as dim_reduction_method, depth=2 and hmap.cols='y'")
+
+tSNE_depth2_z =plotHVT(hvt_results_tsne2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"), 
+        child.level = 2,
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'z',
+        n_cells.hmap = 10,
+        title = "2D projection with tsne as dim_reduction_method, depth=2 and hmap.cols='z'")
+
+tSNE_depth2 = grid.arrange(tSNE_depth2_x, tSNE_depth2_y, tSNE_depth2_z, ncol=3)
+```
+##### tSNE_depth3
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 5: 2D projection with tsne as dim_reduction_method, depth=3"}
+tSNE_depth3_x =plotHVT(hvt_results_tsne3,
+        line.width = c(0.3, 0.2, 0.1),
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level= 3,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "x",
+        n_cells.hmap = 10,
+        title = "2D projection with tsne as dim_reduction_method, depth=3 and hmap.cols='x'")
+
+tSNE_depth3_y =plotHVT(hvt_results_tsne3,
+        line.width = c(0.3, 0.2, 0.1),
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level= 3,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "y",
+        n_cells.hmap = 10,
+        title = "2D projection with tsne as dim_reduction_method, depth=3 and hmap.cols='y'")
+
+tSNE_depth3_z =plotHVT(hvt_results_tsne3,
+        line.width = c(0.3, 0.2, 0.1),
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level= 3,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "z",
+        n_cells.hmap = 10 ,
+        title = "2D projection with tsne as dim_reduction_method, depth=3 and hmap.cols='z'")
+
+tSNE_depth3 = grid.arrange(tSNE_depth3_x, tSNE_depth3_y, tSNE_depth3_z, ncol = 3)
+```
+
+## 7.3 Training and Visualization of UMAP
+
+**UMAP** is a powerful technique for visualizing high-dimensional data by reducing it to two or three dimensions while preserving both global and local structures. By performing and plotting UMAP, intricate patterns and relationships within the data can be effectively explored and interpreted.
+
+#### 7.3.1 Performing UMAP 
+
+Here, we will perform **UMAP** as dimensionality reduction technique in
+`trainHVT` function with n_cells=20.
+
+We have passed the below mentioned model parameters along with depth=1, 2, 3 respectively to `trainHVT` function.
+
+**Model Parameters**
+
+* dataset = torus_df1,
+* n_cells = 20,          
+* quant.err = 0.1,           
+* normalize = TRUE,       
+* distance_metric = "L2_Norm",
+* error_metric = "mean",      
+* quant_method = "kmeans",   
+* dim_reduction_method = "umap",
+* umap_n_neighbors = 6,
+* umap_min_dist = 0.2
+
+**Performing UMAP on the torus data using `trainHVT` function with depth=1**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="umap" and depth=1
+hvt_results_umap1 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,          
+  depth = 1,                
+  quant.err = 0.1,           
+  normalize = TRUE,       
+  distance_metric = "L2_Norm",
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "umap",
+  umap_n_neighbors = 6,
+  umap_min_dist = 0.2
+)
+```
+
+
+**Performing UMAP on the torus data using `trainHVT` function with depth=2**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="umap" and depth=2
+hvt_results_umap2 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,          
+  depth = 2,                
+  quant.err = 0.1,           
+  normalize = TRUE,       
+  distance_metric = "L2_Norm",
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "umap",
+  umap_n_neighbors = 6,
+  umap_min_dist = 0.2
+)
+```
+
+
+**Performing UMAP on the torus data using `trainHVT` function with depth=3**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="umap" and depth=3
+hvt_results_umap3 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,          
+  depth = 3,                
+  quant.err = 0.1,           
+  normalize = TRUE,       
+  distance_metric = "L2_Norm",
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "umap",
+  umap_n_neighbors = 6,
+  umap_min_dist = 0.2
+)
+```
+
+
+#### 7.3.2 Plotting the outcome of `trainHVT` function with dim_reduction_method="UMAP" using `plotHVT` {.tabset}
+
+Now let’s plot all the features for each cell at level 1,2 and 3 respectively as a Heatmap for better visualization.
+
+The Heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the Heatmaps, while the indigo shades indicate areas with the lowest values in each of the Heatmaps. By analyzing these Heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
+
+
+##### UMAP_depth1
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 6: 2D projection with UMAP as dim_reduction_method, depth=1"}
+UMAP_depth1_x=plotHVT(hvt_results_umap1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'x',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method, depth=1 and hmap.cols='x'")
+
+UMAP_depth1_y=plotHVT(hvt_results_umap1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'y',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method, depth=1 and hmap.cols='y'")
+
+UMAP_depth1_z=plotHVT(hvt_results_umap1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'z',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method, depth=1 and hamp.cols='z'")
+UMAP_depth1 = grid.arrange(UMAP_depth1_x, UMAP_depth1_y, UMAP_depth1_z, ncol = 3)
+```
+
+##### UMAP_depth2
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 7: 2D projection with UMAP as dim_reduction_method, depth=2"}
+UMAP_depth2_x=plotHVT(hvt_results_umap2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2,
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'x',
+        n_cells.hmap = 10,
+        title = "2D projection with UMAP as dim_reduction_method, depth=2 and hmap.cols='x'")
+
+UMAP_depth2_y=plotHVT(hvt_results_umap2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2,
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'y',
+        n_cells.hmap = 10,
+        title = "2D projection with UMAP as dim_reduction_method, depth=2 and hmap.cols='y'")
+
+UMAP_depth2_z=plotHVT(hvt_results_umap2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2,
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'z',
+        n_cells.hmap = 10,
+        title = "2D projection with UMAP as dim_reduction_method, depth=2 and hmap.cols='z'")
+
+UMAP_depth2 = grid.arrange(UMAP_depth2_x, UMAP_depth2_y, UMAP_depth2_z, ncol= 3)
+```
+
+##### UMAP_depth3
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 8: 2D projection with UMAP as dim_reduction_method, depth=3"}
+UMAP_depth3_x=plotHVT(hvt_results_umap3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3,
+        n_cells.hmap = 10,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "x",
+        title = "2D projection with UMAP as dim_reduction_method, depth=3 and hmap.cols='x'")
+
+UMAP_depth3_y=plotHVT(hvt_results_umap3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3,
+        n_cells.hmap = 10,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "y",
+        title = "2D projection with UMAP as dim_reduction_method, depth=3 and hmap.cols='y'")
+
+UMAP_depth3_z=plotHVT(hvt_results_umap3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3,
+        n_cells.hmap = 10,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "z",
+        title = "2D projection with UMAP as dim_reduction_method, depth=3 and hmap.cols='z'")
+UMAP_depth3 = grid.arrange(UMAP_depth3_x, UMAP_depth3_y, UMAP_depth3_z, ncol= 3)
+```
+## 7.4 Training and Visualization of Sammon's projection
+
+**Sammon's mapping** is a powerful technique for visualizing high-dimensional data by reducing it to two or three dimensions while preserving the structure of the data as much as possible. By performing and plotting Sammon's mapping, intricate patterns and relationships within the data can be effectively explored and interpreted.
+
+#### 7.4.1 Performing Sammon's Mapping
+
+Here, we will perform **Sammon's mapping** as dimensionality reduction technique in
+`trainHVT` function with n_cells=20.
+
+We have passed the below mentioned model parameters along with depth=1, 2, 3 respectively to `trainHVT` function.
+
+**Model Parameters**
+
+* dataset = torus_df1,
+* n_cells = 20,         
+* quant.err = 0.1,           
+* normalize = TRUE,          
+* distance_metric = "L2_Norm",   
+* error_metric = "mean",    
+* quant_method = "kmeans",   
+* dim_reduction_method = "sammon"
+
+
+**Performing Sammon's projection on the torus data using `trainHVT` function with depth=1**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="sammon" and depth=1
+hvt_results_sammon1 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,         
+  depth = 1,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "sammon" 
+)
+```
+
+
+**Performing Sammon's projection on the torus data using `trainHVT` function with depth=2**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="sammon" and depth=2
+hvt_results_sammon2 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,         
+  depth = 2,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "sammon" 
+)
+```
+
+
+**Performing Sammon's projection on the torus data using `trainHVT` function with depth=3**
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="sammon" and depth=3
+hvt_results_sammon3 <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 20,         
+  depth = 3,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "sammon" 
+)
+```
+
+#### 7.4.2 Plotting the outcome of `trainHVT` function with dim_reduction_method="sammon" using `plotHVT` {.tabset}
+
+Now let’s plot all the features for each cell at level 1,2 and 3 respectively as a Heatmap for better visualization.
+
+The Heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the Heatmaps, while the indigo shades indicate areas with the lowest values in each of the Heatmaps. By analyzing these Heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
+
+##### Sammon_depth1
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 9: 2D projection with Sammon as dim_reduction_method, depth=1"}
+Sammon_depth1_x = plotHVT(hvt_results_sammon1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        centroid.color  = c("navyblue"),
+        plot.type = "2Dheatmap", child.level = 1, hmap.cols = 'x',cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method with depth=1 and hmap.cols='x'")
+
+Sammon_depth1_y = plotHVT(hvt_results_sammon1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        centroid.color  = c("navyblue"),
+        plot.type = "2Dheatmap", child.level = 1, hmap.cols = 'y',cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method with depth=1 and hmap.cols='y'")
+
+Sammon_depth1_z = plotHVT(hvt_results_sammon1,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        centroid.color  = c("navyblue"),
+        plot.type = "2Dheatmap", child.level = 1, hmap.cols = 'z',cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method with depth=1 and hmap.cols='z'")
+
+Sammon_depth1 = grid.arrange(Sammon_depth1_x, Sammon_depth1_y, Sammon_depth1_z, ncol=3)
+```
+
+##### Sammon_depth2
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 10: 2D projection with Sammon as dim_reduction_method, depth=2"}
+Sammon_depth2_x = plotHVT(hvt_results_sammon2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2, 
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'x',
+        title = "2D projection with Sammon as dim_reduction_method with depth=2 and hmap.cols='x'")
+
+Sammon_depth2_y = plotHVT(hvt_results_sammon2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2, 
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'y',
+        title = "2D projection with Sammon as dim_reduction_method with depth=2 and hmap.cols='y'")
+
+Sammon_depth2_z = plotHVT(hvt_results_sammon2,
+        line.width = c(0.2, 0.1) ,
+        color.vec = c("navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue","steelblue"),
+        child.level = 2, 
+        centroid.size = c(0.2, 0.1) ,
+        hmap.cols = 'z',
+        title = "2D projection with Sammon as dim_reduction_method with depth=2 and hmap.cols='z'")
+Sammon_depth2 = grid.arrange(Sammon_depth2_x, Sammon_depth2_y, Sammon_depth2_z, ncol=3)
+```
+
+##### Sammon_depth3
+Here, we have drawn the 2D Heatmap with respect to "x", "y" and "z" columns.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 11: 2D projection with Sammon as dim_reduction_method, depth=3"}
+Sammon_depth3_x = plotHVT(hvt_results_sammon3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3, 
+        hmap.cols = "x",
+        centroid.size = c(0.3, 0.2, 0.1),
+        n_cells.hmap = 20,
+        title = "2D projection with Sammon as dim_reduction_method with depth=3 and hmap.cols='x'")
+
+Sammon_depth3_y = plotHVT(hvt_results_sammon3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3, 
+        hmap.cols = "y",
+        centroid.size = c(0.3, 0.2, 0.1),
+        n_cells.hmap = 20,
+        title = "2D projection with Sammon as dim_reduction_method with depth=3 and hmap.cols='y'")
+
+Sammon_depth3_z = plotHVT(hvt_results_sammon3,
+        line.width = c(0.3, 0.2,0.1) ,
+        color.vec = c("#0047ab","navyblue","steelblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("#0047ab","navyblue","steelblue"),
+        child.level = 3,
+        centroid.size = c(0.3, 0.2, 0.1),
+        hmap.cols = "z",
+        n_cells.hmap = 20,
+        title = "2D projection with Sammon as dim_reduction_method with depth=3 and hmap.cols='z'")
+
+Sammon_depth3 = grid.arrange(Sammon_depth3_x, Sammon_depth3_y, Sammon_depth3_z, ncol =3)
+```
+## 7.5 Visual Comparison of t-SNE, UMAP and Sammon's Projection on Torus Dataset in  `trainHVT` with 20 cells{.tabset}
+
+In the context of applying dimensionality reduction techniques in the `trainHVT` function on torus dataset, a visual comparison of three methods (t-SNE, UMAP, and Sammons) can provide valuable insights on their performance. With `n_cells` set to 20, these methods are evaluated based on how effectively the topological and geometric features are preserved when projected in lower dimensions.
+We have drawn the 2D Heatmaps with respect to "x", "y" and "z" columns from torus dataset when depth is 1,2 and 3 respectively.
+
+#### depth=1
+Here, we have drawn the 2D Heatmap with respect to "x" column.
+```{r,message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output="comparision-plot-depth=1",fig.cap='Figure 12: From left to right tSNE_depth1, UMAP_depth1, Sammon_depth1'}
+grid.arrange(tSNE_depth1_x, UMAP_depth1_x, Sammon_depth1_x, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "y" column.
+```{r,message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output="comparision-plot-depth=1",fig.cap='Figure 13: From left to right tSNE_depth1, UMAP_depth1, Sammon_depth1'}
+grid.arrange(tSNE_depth1_y, UMAP_depth1_y, Sammon_depth1_y, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "z" column.
+```{r,message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output="comparision-plot-depth=1",fig.cap='Figure 14: Fromt left to right SNE_depth1, UMAP_depth1, Sammon_depth1'}
+grid.arrange(tSNE_depth1_z, UMAP_depth1_z, Sammon_depth1_z, ncol=3)
+```
+
+#### depth=2
+Here, we have drawn the 2D Heatmap with respect to "x" column.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5, class.output='comparision-plot-depth=2',fig.cap= 'Figure 15: From left to right tSNE_depth2, UMAP_depth2, Sammon_depth2'}
+grid.arrange(tSNE_depth2_x, UMAP_depth2_x, Sammon_depth2_x, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "y" column.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5, class.output='comparision-plot-depth=2',fig.cap= 'Figure 16: From left to right tSNE_depth2, UMAP_depth2, Sammon_depth2'}
+
+grid.arrange(tSNE_depth2_y, UMAP_depth2_y, Sammon_depth2_y, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "z" column.
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5, class.output='comparision-plot-depth=2',fig.cap= 'Figure 17: From left to right tSNE_depth2, UMAP_depth2, Sammon_depth2'}
+grid.arrange(tSNE_depth2_z, UMAP_depth2_z, Sammon_depth2_z, ncol=3)
+```
+
+#### depth=3
+Here, we have drawn the 2D Heatmap with respect to "x" column.
+```{r, message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output='comparision-plot-depth=3',fig.cap='Figure 18: From left to right tSNE_depth3, UMAP_depth3, Sammon_depth3'}
+grid.arrange(tSNE_depth3_x, UMAP_depth3_x, Sammon_depth3_x, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "y" column.
+```{r,message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output='comparision-plot-depth=3',fig.cap='Figure 19: From left to right tSNE_depth3, UMAP_depth3, Sammon_depth3'}
+grid.arrange(tSNE_depth3_y, UMAP_depth3_y, Sammon_depth3_y, ncol=3)
+```
+Here, we have drawn the 2D Heatmap with respect to "z" column.
+```{r,message=FALSE,warning=FALSE, fig.width=15, fig.height=5,class.output='comparision-plot-depth=3',fig.cap='Figure 20: From left to right tSNE_depth3, UMAP_depth3, Sammon_depth3'}
+grid.arrange(tSNE_depth3_z, UMAP_depth3_z, Sammon_depth3_z, ncol=3)
+```
+
+# 8. Evaluation of t-SNE, UMAP and Sammon's projection
+
+For evaluation purpose we have set n_cells to 100 and depth to 1, so that the trainHVT function can capture more detailed hierarchical structures, allowing for a comprehensive visual and analytical comparison of how well each technique retains the torus's geometric properties in the reduced dimensional space.
+
+##  8.1 Training
+
+**Performing t-SNE, UMAP and Sammon**
+
+We have passed the below mentioned model parameters to `trainHVT` function.
+
+**Model Parameters**
+
+* dataset = torus_df1,
+* n_cells = 100,          
+* depth = 1,                
+* quant.err = 0.1,           
+* normalize = TRUE,       
+* distance_metric = "L2_Norm",
+* error_metric = "mean",      
+* quant_method = "kmeans"
+* dim_reduction_method = "sammon" (default)
+
+for dim_reduction_method = "tsne",
+
+* tsne_perplexity = 30,
+* tsne_theta = 0.5,
+* tsne_verbose = TRUE,
+* tsne_eta = 200,
+* tsne_max_iter = 1000 
+
+
+for dim_reduction_method = "umap",
+
+* umap_n_neighbors = 30,
+* umap_min_dist = 0.2
+
+```{r tsne_example1, message=FALSE, warning=FALSE, results="hide"}
+# Apply trainHVT to the simulated data with dim_reduction_method="tsne", depth=1 and n_cells=100
+set.seed(123)
+hvt_results_tsne <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 100,               
+  depth = 1,                 
+  quant.err = 0.1,           
+  normalize = TRUE,         
+  distance_metric = "L2_Norm",  
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "tsne", 
+  tsne_perplexity = 30,
+  tsne_theta = 0.5,
+  tsne_verbose = TRUE,
+  tsne_eta = 200,
+  tsne_max_iter = 1000
+  )
+```
+
+Compression summary
+```{r}
+displayTable(data = hvt_results_tsne[[3]][["compression_summary"]], tableType = "compression")
+```
+  
+
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="umap", depth=1 and n_cells=100
+set.seed(123)
+hvt_results_umap <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 100,          
+  depth = 1,                
+  quant.err = 0.1,           
+  normalize = TRUE,       
+  distance_metric = "L2_Norm",
+  error_metric = "mean",      
+  quant_method = "kmeans",   
+  dim_reduction_method = "umap",
+  umap_n_neighbors = 23,
+  umap_min_dist = 0.2)
+```
+
+Compression summary
+```{r}
+displayTable(data = hvt_results_umap[[3]][["compression_summary"]], tableType = "compression")
+```
+  
+
+
+```{r,message=FALSE,warning=FALSE, results='hide'}
+# Apply trainHVT to the simulated data with dim_reduction_method="sammon", depth=1 and n_cells=100
+set.seed(123)
+hvt_results_sammon <- trainHVT(
+  dataset = torus_df1,
+  n_cells = 100,         
+  depth = 1,                
+  quant.err = 0.1,           
+  normalize = TRUE,          
+  distance_metric = "L2_Norm",   
+  error_metric = "mean",    
+  quant_method = "kmeans",   
+  dim_reduction_method = "sammon" 
+)
+```
+
+Compression summary
+```{r}
+displayTable(data = hvt_results_sammon[[3]][["compression_summary"]], tableType = "compression")
+```
+  
+
+
+## 8.2 Visual comparision of t-SNE, UMAP and Sammon in `trainHVT` function for Human Centered Metrics on Torus Data with 100 cells and depth 1
+
+##### {.tabset}
+
+Now let’s plot all the features for each cell at level one as a Heatmap for better visualization.
+
+The Heatmaps displayed below provides a visual representation of the spatial characteristics of the torus dataset, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher values in each of the Heatmaps, while the indigo shades indicate areas with the lowest values in each of the Heatmaps. By analyzing these Heatmaps, we can gain insights into the variations and relationships between each of these features within the torus dataset.
+
+The underlying structure of this data is a torus, a surface shaped like a doughnut. The true shape of the data in its original high-dimensional space must resemble an **annulus**(two concentric circles) when properly reduced to two or three dimensions.
+
+###### 2DHeatmap of Column X
+```{r, message=FALSE, warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 21: From left to right tsne_x, umap_x, Sammon_x with n_cells=100 and depth=1"}
+tsne_x = plotHVT(hvt_results_tsne,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'x',
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1, hmap.cols='x' and n_cells=100")
+umap_x = plotHVT(hvt_results_umap,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1, 
+        hmap.cols = 'x',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method, depth=1, hmap.cols='x' and n_cells=100")
+Sammon_x = plotHVT(hvt_results_sammon,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1, 
+        hmap.cols = 'x',
+        cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method, depth=1, hmap.cols='x' and n_cells=100")
+
+plot_x = grid.arrange(tsne_x, umap_x, Sammon_x, ncol=3)
+```
+
+###### 2DHeatmap of Column Y
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 22: From left to right tsne_y, umap_y, Sammon_y with n_cells=100 and depth=1"}
+tsne_y = plotHVT(hvt_results_tsne,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'y',
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1, hmap.cols='y' and n_cells=100")
+
+umap_y=plotHVT(hvt_results_umap,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'y',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method, depth=1, hmap.cols='y' and n_cells=100")
+
+Sammon_y = plotHVT(hvt_results_sammon,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'y',
+        cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method, depth=1, hmap.cols='y' and n_cells=100")
+
+plot_y = grid.arrange(tsne_y, umap_y, Sammon_y, ncol = 3)
+```
+
+###### 2DHeatmap of Column Z 
+```{r,message=FALSE,warning=FALSE,fig.width=15, fig.height=5,fig.cap="Figure 23: From left to right tsne_z, umap_z, Sammon_z with n_cells=100 and depth=1"}
+set.seed(123)
+tsne_z = plotHVT(hvt_results_tsne,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1, 
+        hmap.cols = 'z',
+        cell_id = TRUE,
+        title = "2D projection with t-SNE as dim_reduction_method, depth=1, hmap.cols='z' and n_cells=100")
+
+umap_z=plotHVT(hvt_results_umap,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap", 
+        centroid.color = c("navyblue"),
+        child.level = 1,
+        hmap.cols = 'z',
+        cell_id = TRUE,
+        title = "2D projection with UMAP as dim_reduction_method with depth=1, hamp.cols='z' and n_cells=100")
+
+
+Sammon_z = plotHVT(hvt_results_sammon,
+        line.width = c(0.2) ,
+        color.vec = c("navyblue"),
+        plot.type = "2Dheatmap",
+        centroid.color = c("navyblue"),
+        child.level = 1, 
+        hmap.cols = 'z',
+        cell_id = TRUE,
+        title = "2D projection with Sammon as dim_reduction_method with depth=1 hmap.cols='z' and n_cells=100")
+
+plot_z = grid.arrange(tsne_z, umap_z, Sammon_z, ncol=3)
+```
+
+#####
+
+<b>Human Centered Metric: Likert Scale[1-3]   </b>   
+
+We presented the **2DHeatmap of column Z** to five different individuals and informed of the ground truth i.e. the underlying structure of the data forms a torus—a surface resembling a doughnut. When appropriately reduced to two or three dimensions, the true shape of this high-dimensional data should resemble an **annulus** (two concentric circles). Afterward, participants were asked to provide their scores from 1 to 3 based on their observations.
+
+  - 1 indicates a poor projection - significant distortion or overlap; unclear data structure.
+  
+  - 2 represents an average projection - adequate representation with minor distortions.
+  
+  - 3 signifies a good projection - accurate, distinct, and insightful representation.
+
+The likert scores provided by the participants are being displayed in table below:
+```{r,warning=FALSE,message=FALSE,echo=FALSE}
+# Create the Likert scale data
+data <- data.frame(
+  Participant = c("Person 1", "Person 2", "Person 3", "Person 4", "Person 5"),
+  tSNE = c(1, 2, 1, 2, 1),
+  UMAP = c(1, 1, 2, 1, 2),
+  Sammon = c(3, 3, 3, 3, 3)
+)
+
+# Calculate the average for each method
+averages <- data.frame(
+  Participant = "Average",
+  tSNE = mean(data$tSNE),
+  UMAP = mean(data$UMAP),
+  Sammon = mean(data$Sammon)
+)
+
+# Combine the original data with the averages
+combined_data <- rbind(data, averages)
+
+#  Display table with the last row in bold
+Show_Table <- function(data, tableType = 'metrics') {
+  n <- nrow(data)
+   
+   # Apply bold formatting to the last row (average row)
+   data <- data %>%
+     mutate(across(everything(), ~ if_else(row_number() == n, 
+                                           cell_spec(as.character(.), bold = TRUE), 
+                                           as.character(.))))
+   
+   # Generate the kable table with options
+   kable_table <- knitr::kable(data, "html", escape = FALSE, align = "c") %>%
+     kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "responsive", "bordered"))
+  
+  return(kable_table)
+ }
+
+# Call the function to display the table
+Show_Table(data = combined_data, tableType = 'metrics')
+
+```
+<small style="display: block; text-align: center;">Likert Scale Responses</small>
+
+## 8.3 Evaluation metrics for t-SNE, UMAP and Sammon's projection 
+
+Evaluation metrics for dimensionality reduction methods like t-SNE, Sammon's mapping, and UMAP are crucial for assessing how well these techniques preserve the structure of the original high-dimensional data when reduced to lower dimensions. Below a table has been displayed to compare the performance of three dimensionality reduction techniques—t-SNE, UMAP, and Sammon's mapping—across various evaluation metrics, categorized into **Structure Preservation Metrics**, **Distance Preservation Metrics**, **Interpretive Quality Metrics**, **Computational Efficiency Metrics** and **Human Centered Metrics**.
+```{r,message=FALSE,warning=FALSE,fig.width=15,fig.cap= "Table: Comparison Table of the different performance metrics with n_cells 100 and depth is 1 "}
+tsne_score = "1.4"
+umap_score = "1.4"
+sammon_score = "3"
+ 
+metrics_table_sammon = c(round(hvt_results_sammon$model_info$distance_measures$Value,4))
+metrics_table_umap = c(round(hvt_results_umap$model_info$distance_measures$Value,4))
+metrics_table_tsne = c(round(hvt_results_tsne$model_info$distance_measures$Value,4))
+ 
+metrics_table <- data.frame(
+  L1_Metrics = c(hvt_results_sammon$model_info$distance_measures$L1_Metrics[1:4],"Human Centered Metrics","Human Centered Metrics",hvt_results_sammon$model_info$distance_measures$L1_Metrics[5:7]),
+  L2_Metrics = c(hvt_results_sammon$model_info$distance_measures$L2_Metrics[1:4],"Likert Scale [1-3]","Spatial Orientation",hvt_results_sammon$model_info$distance_measures$L2_Metrics[5:7]) ,
+  tSNE = c(metrics_table_tsne[1], metrics_table_tsne[2], metrics_table_tsne[3], metrics_table_tsne[4],tsne_score,"NA", metrics_table_tsne[5] , metrics_table_tsne[6],metrics_table_tsne[7]),
+  UMAP = c(metrics_table_umap[1], metrics_table_umap[2], metrics_table_umap[3], metrics_table_umap[4], umap_score,"NA", metrics_table_umap[5], metrics_table_umap[6],metrics_table_umap[7]),
+  Sammon = c(metrics_table_sammon[1], metrics_table_sammon[2], metrics_table_sammon[3], metrics_table_sammon[4], sammon_score, "NA",metrics_table_sammon[5], metrics_table_sammon[6], metrics_table_sammon[7])
+)
+displayTable(data = metrics_table,tableType= "metrics")
+
+```
+
+<small style="display: block; text-align: center;">The table shows a comparison of different evaluation metrics for t-SNE, UMAP, and Sammon on torus data with 100 cells and a depth of 1.For details on the evaluation methods listed above. [More Details](#dimensionality-reduction-evaluation-metrics).</small>
+
+
+**Note**: The Spatial Orientation metric is marked as NA for all the methods (t-SNE, UMAP, Sammon). In the HVT (Hierarchical Voronoi Tessellation) process, data compression is performed as the first step, where the centroids of clusters are calculated and utilized. This compression effectively reduces the data to a smaller set of representative points, which are then subjected to dimensionality reduction methods. Due to this prior compression step, spatial orientation becomes less relevant. The original spatial relationships between individual data points are inherently altered during the compression process, meaning that the preservation of spatial orientation is no longer a critical or meaningful metric for evaluating the effectiveness of the dimensionality reduction techniques in this context.
+
+## 8.4 Insights of the three different outcomes of `trainHVT` function
+
+**t-SNE**:
+
+t-SNE demonstrates exceptional performance in structure preservation, with the highest trustworthiness and continuity scores. However, it suffers in distance preservation, reflected by the highest RMSE and Sammon’s stress values. Despite its computational efficiency, with the shortest execution duration, its interpretative quality is moderate, with a good silhouette score. t-SNE has relatively poor ratings (1.4) on the Likert scale, likely due to issues with interpretability or potential distortion of data structure that negatively impacts user perception.
+
+**UMAP**:
+
+UMAP strikes a balance between structure and distance preservation, offering competitive trustworthiness and continuity scores, alongside a significantly lower RMSE and Sammon’s stress compared to t-SNE. Though less computationally efficient and slightly lower in KNN retention, UMAP provides a favorable trade-off in projection quality, making it a versatile choice. UMAP has relatively poor ratings (1.4) on the Likert scale, likely due to issues with interpretability or potential distortion of data structure that negatively impacts user perception.
+
+**Sammon**:
+
+Sammon's mapping excels in distance preservation, achieving the lowest RMSE and Sammon’s stress. It also maintains strong structure preservation, particularly in continuity. However, it is highly efficient in terms of execution duration, though this comes at the expense of interpretative quality, as reflected in its lower silhouette score and the lowest KNN retention. Despite this, Sammon's mapping offers a unique advantage in scenarios prioritizing distance preservation and computational efficiency. It got the highest Likert scale score (3), because it is the most favorable for human visualization, due to its accurate distance representation and efficiency.
+
+
+# 9. Conclusion
+
+The integration of t-SNE, UMAP, and performance metrics into the `trainHVT` function enhances its ability to process, analyze, and visualize high-dimensional data. By incorporating various dimensionality reduction techniques and performance metrics—such as Trustworthiness, Continuity, RMSE, Silhouette Score, KNN Retention Score, Sammon's Stress, Execution Duration, and Likert Scale [1-3]—trainHVT now provides more flexibility for evaluating the quality of dimensionality reduction and clustering, meeting diverse data analysis requirements.
+
+# 10. References
+ 
+- Link for the paper on <a href="https://www.jmlr.org/papers/volume9/vandermaaten08a/vandermaaten08a.pdf" target="_blank">t-SNE</a>
+ 
+- Link for the paper on <a href="https://arxiv.org/pdf/1802.03426" target="_blank">UMAP</a>
+
+- Link for the paper on <a href="https://www.cse.msu.edu/~cse802/Papers/sammon.pdf" target="_blank">Sammon's Mapping</a>

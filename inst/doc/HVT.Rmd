@@ -1,6 +1,6 @@
 ---
 title: "HVT: Collection of functions used to build hierarchical topology preserving maps"
-author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi, Vishwavani"
+author: "Zubin Dowlaty, Shubhra Prakash, Sangeet Moy Das, Shantanu Vaidya, Praditi Shah, Srinivasan Sudarsanam, Somya Shambhawi,  Pon Anureka Seenivasan, Vishwavani, Bidesh Ghosh, Alimpan Dey"
 date: "`r Sys.Date()`"
 fig.height: 4
 fig.width: 15
@@ -49,13 +49,6 @@ li {
 .caption {
   text-align: center;
 }
-
-<!-- /* CSS for adding dots after section numbers */ -->
-<!-- h1::before, h2::before, h3::before, h4::before, h5::before, h6::before { -->
-<!--  content: counter(section) ". "; -->
-<!--   counter-increment: section; -->
-<!-- } -->
-
 ```
 
 ```{r setup, warning = FALSE, include = FALSE}
@@ -74,52 +67,85 @@ knitr::opts_chunk$set(
 
 # 1. Abstract
 
-The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html#:~:text=The%20property%20of%20topology%20preserving,tool%20of%20high-dimensional%20data) for rich multivariate data analysis, see `Figure 1` as an example of a 3D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The HVT package is a collection of R functions to facilitate building <a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7" target="_blank">topology preserving maps</a> for rich multivariate data analysis, see `Figure 1` as an example of a 3D torus map generated from the package. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
 1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called <a href="https://en.wikipedia.org/wiki/Embedding" target="_blank"> mathematical embeddings</a>) coordinates into the desired output dimension. 
 
 3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map useful for semi-supervised tasks.
 
-4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
+4.  **Scoring**: Scoring new data sets or test data and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
 
 5. **Temporal Analysis and Visualization**: A Collection of new functions that leverages the capacity of the HVT package by analyzing time series data for its underlying patterns, calculation of transitioning probabilities and the visualizations for the flow of data over time.
 
 The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. below is an image depicting a captivating tessellation of a torus.
 
 ```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1:  Heatmap Visualization of a Torus with 900 Cells'}
-knitr::include_graphics('./torus2.png')
+knitr::include_graphics('./pngs/torus2.png')
 ```
 
 # 2. Vignettes
 
 Following are the links to the vignettes for the HVT package:
 
+1. <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">**HVT Vignette:**</a> Contains descriptions of the functions used for vector quantization and construction of Hierarchical Voronoi Tessellations for data analysis.
 
-1. [**HVT Vignette:**](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html) Contains descriptions of the functions used for vector quantization and construction of hierarchical voronoi tessellations for data analysis.
+2. <a href="https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html" target="_blank">**HVT Model Diagnostics Vignette:**</a> Contains descriptions of functions used to perform model diagnostics and validation for the HVT model.
 
-2. [**HVT Model Diagnostics Vignette:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html) Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+3. <a href="https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html" target="_blank">**HVT Scoring Cells with Layers using scoreLayeredHVT:**</a> Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
-3. [**HVT Scoring Cells with Layers using scoreLayeredHVT:**](https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html) Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
+4. <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_Temporal_Analysis.html" target="_blank">**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT:**</a> Contains descriptions of the functions used for analyzing time series data and its flow maps.
 
-4. [**Temporal Analysis and Visualization: Leveraging Time Series Capabilities in HVT:**](https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_Temporal_Analysis.html) Contains descriptions of the functions used for analyzing time series data and its flow maps.
+5. <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_Temporal_Analysis.html" target="_blank">**Visualizing LLM Embeddings using HVT (Hierarchical Voronoi Tessellation):**</a> Contains the implementation and analysis of hierarchical clustering using the `clustHVT` function to evaluate and visualize token embeddings generated by OpenAI.
+
+6. <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_Temporal_Analysis.html" target="_blank">**Implementation of t-SNE and UMAP in trainHVT function:**</a> Contains enhancements to the `trainHVT` function with advanced dimensionality reduction techniques such as t-SNE and UMAP, and includes a table of evaluation metrics to improve analysis, visualization, and interpretability.
 
 # 3. Version History
 
-## HVT (v24.5.2) | What's New? {-}
+## HVT (v24.9.1) | What's New? {-}
+
+4th September, 2024
+
+In this version of the HVT package, the following new features and vignettes have been introduced:
+
+**Features**
+
+1. **Implementation of t-SNE and UMAP in `trainHVT`**: This update incorporates dimensionality reduction methods like t-SNE and UMAP in the `trainHVT` function, complementing the existing Sammon's projection. It also enables the visualization of these techniques across all hierarchical levels within the HVT framework.
+
+2. **Implementation of dimensionality reduction evaluation metrics**: This update introduces highly effective dimensionality reduction evaluation metrics as part of the output list of the `trainHVT` function. These metrics are organized into two levels: Level 1 (L1) and Level 2 (L2). The L1 metrics address key areas of dimensionality reduction which are mentioned below, by ensuring comprehensive evaluation and performance.
+
+- Structure Preservation Metrics 
+- Distance Preservation Metrics
+- Human Centered Metrics
+- Interpretive Quality Metrics
+- Computational Efficiency Metrics
+
+
+3. **Introduction of `clustHVT` function**: In this update, we introduced a new function called `clustHVT` specifically designed for Hierarchical clustering analysis. The function performs clustering of cells exclusively when the hierarchy level is set to 1, determining the optimal number of clusters by evaluating various indices. Based on user input, it conducts hierarchical clustering using AGNES with the default ward.D2 method. The output includes a dendrogram and an interactive 2D clustered HVT map that reveals cell context upon hovering. This function is not applicable when the hierarchy level is greater than 1.
+
+
+
+**Vignettes** 
+
+1. **Implementation of t-SNE and UMAP in `trainHVT` function**: This vignette showcases the integration of t-SNE and UMAP in the `trainHVT` function, offering a comprehensive guide on how to apply and visualize these dimensionality reduction techniques. It also covers the dimensionality reduction evaluation metrics and provides insights into their interpretation.
+
+2. **Visualizing LLM Embeddings using HVT (Hierarchical Voronoi Tessellation)**: This vignette will outline the process of analyzing OpenAI-generated token embeddings using the HVT package, covering data compression, visualization, and hierarchical clustering, as well as comparing domain name assignments for clusters. It examines HVT's effectiveness in preserving contextual relationships between embeddings. Additionally, it provides a brief overview of the newly added `clustHVT` function and its parameters.
+
+
+## HVT (v24.5.2) 
 
 2nd May, 2024
 
-In this version of HVT package, the following new features have been introduced:
+In this version of the HVT package, the following new features have been introduced:
 
-1. **Updated Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are the few instances.
+1. **Updated Nomenclature:** To make the function names more consistent and understandable/intuitive, we have renamed the functions throughout the package. Given below are a few instances.
 
 * `HVT` to `trainHVT`
 * `predictHVT` to `scoreHVT`
 * `predictLayerHVT` to `scoreLayeredHVT`
 
-2. **Restructured Functions:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of package’s PDF documentation. Given below are the few instances.
+2. **Restructured Functions:** The functions have been rearranged and grouped into new sections which are highlighted on the index page of the package’s PDF documentation. Given below are a few instances.
 
 * `trainHVT` function now resides within the `Training_or_Compression` section.
 * `plotHVT` function now resides within the `Tessellation_and_Heatmap` section.
@@ -129,9 +155,9 @@ In this version of HVT package, the following new features have been introduced:
 
 4. **Temporal Analysis** 
 - The new update focuses on the integration of time series capabilities into the HVT package by extending its foundational operations to time series data which is emphasized in this vignette.
-- The new functionalities are introduced to analyze underlying patterns and trends within the data, providing insights into its evolution over time and also offering the capability to analyze the movement of the data by calculating its transitioning probability and creates elegant plots and GIFs.
+- The new functionalities are introduced to analyze underlying patterns and trends within the data, providing insights into its evolution over time and also offering the capability to analyze the movement of the data by calculating its transitioning probability and create elegant plots and GIFs.
 
-Below are the new functions and its brief descriptions:
+Below are the new functions and their brief descriptions:
 
 - `plotStateTransition`: Provides the time series flowmap plot.
 - `getTransitionProbability`: Provides a list of transition probabilities.
@@ -143,7 +169,7 @@ Below are the new functions and its brief descriptions:
 17th November, 2023
 
 
-This version of HVT package offers functionality to score cells with layers based on a sequence of maps created using `scoreLayeredHVT`. Given below are the steps to created the successive set of maps.
+This version of the HVT package offers functionality to score cells with layers based on a sequence of maps created using `scoreLayeredHVT`. Given below are the steps to create the successive set of maps.
 
 1. **Map A** - The output of `trainHVT` function which is trained on parent data.
 
@@ -156,14 +182,14 @@ The `scoreLayeredHVT` function uses these three maps to score the test datapoint
 Let us try to understand the steps with the help of the diagram below
 
 ```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()'}
-knitr::include_graphics('./scoreLayeredHVT_function.png')
+knitr::include_graphics('./pngs/scoreLayeredHVT_function.png')
 ```
 
 ## HVT (v22.12.06) {-}
 
 06th December, 2022
 
-This version of HVT package offers features for both training an HVT model and eliminating outlier cells from the trained model.
+This version of the HVT package offers features for both training an HVT model and eliminating outlier cells from the trained model.
 
 1. **Training or Compression:** The initial step entails training the parent data using the `trainHVT` function, specifying the desired compression percentage and quantization error.
 
@@ -171,7 +197,7 @@ This version of HVT package offers features for both training an HVT model and e
 
 
 
-# 4. Installation of HVT (v24.5.2)
+# 4. Installation of HVT (v24.9.1)
 
 ``` r
 library(devtools)

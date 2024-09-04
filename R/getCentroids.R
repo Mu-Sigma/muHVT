@@ -8,28 +8,50 @@ getCentroids <-
             function_to_calculate_distance_metric,
             function_to_calculate_error_metric,
             distance_metric = "L1_Norm",
+            error_metric,
             quant_method=c("kmeans","kmedoids"),
             ...) {
-    # browser()
+    set.seed(279)
+    
+#browser()
+
     if (quant_method == "kmeans") {
       centl <- nout <- outl <- list()
-      x <- data.frame(x)
-      # calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
+      x <- data.frame(x) %>% stats::na.omit()
+      col_dim <- ncol(x)
+  ###############################################################    
+      
       calculate_error <-
         x %>%
         group_by(kout$cluster) %>%
-        tidyr::nest() %>%
-        # calculate the distance for each datapoint for each cluster wrt to its centroid as per L1 or L2 norm
-        dplyr::mutate(data = purrr::map(.x = data, .f = function_to_calculate_distance_metric)) %>%
-        # arrange the dataframe by cluster number
-        dplyr::arrange(`kout$cluster`) %>%
-        dplyr::rename(err = data)
+        tidyr::nest()
+    
+      centroid_data <- kout$centers %>% as.data.frame()
+      calculate_error <- calculate_error %>% arrange(calculate_error$`kout$cluster`)
       
-      # calcuate the quant error for each cluster as per error_metric = "mean" or "max"
-      calculate_error_for_each_cluster <-
-        lapply(calculate_error$err, function_to_calculate_error_metric)
-      maxQE_each_cluster <- lapply(calculate_error$err, "max")
-      meanQE_each_cluster <- lapply(calculate_error$err, "mean")
+      
+      cluster_distances <- purrr::map2(
+        1:nrow(centroid_data),
+        calculate_error$data,
+        function(i, cluster_data) {
+          centroid_row <- centroid_data[i, ]
+          apply(cluster_data, 1, function(row) function_to_calculate_distance_metric(centroid_row, row))
+        }
+      )
+     
+      calculate_error_for_each_cluster <- unlist(lapply(cluster_distances, function(x) {
+        if (error_metric == "mean") {
+          return(mean(x)/col_dim)
+        } else if (error_metric == "max") {
+          return(max(x)/col_dim)
+        } else {
+          return(error_metric(x))
+        }
+      }))
+      
+
+      maxQE_each_cluster <- unlist(lapply(cluster_distances, function(x) {   return(max(x))}))
+      meanQE_each_cluster <-  unlist(lapply(cluster_distances, function(x) {   return(mean(x))}))
       centl <- calculate_error_for_each_cluster
       outl <-
         c(1:n_cells) %>% purrr::map( ~ x[kout$cluster == .x, ])
@@ -41,10 +63,14 @@ getCentroids <-
           maxQE = maxQE_each_cluster,
           values = outl,
           nsize = nout,
-          meanQE = meanQE_each_cluster
+          meanQE = meanQE_each_cluster,
+          dataframe_clusters = centroid_data,
+          cluster_distance = cluster_distances
         )
       )
+     
       
+       
       ############################## Medoid implementation ###############################################
       
     } else if (quant_method == "kmedoids") {
@@ -54,7 +80,8 @@ getCentroids <-
         distance_metric = "euclidean"
       }
       
-      
+
+
       kmedoids_model <-
         cluster::pam(
           x = cluster::daisy(x, metric = distance_metric),
@@ -65,7 +92,6 @@ getCentroids <-
       
       centl <- nout <- outl <- list()
       x <- data.frame(x)
-      # calculate_error <- x %>% dplyr::group_by(kout$cluster) %>% dplyr::do(err = function_to_calculate_distance_metric(.))
       calculate_error <-
         x %>% dplyr::group_by(kmedoids_model[["clustering"]]) %>% tidyr::nest() %>% dplyr::mutate(data = purrr::map(.x = data, .f = function_to_calculate_distance_metric)) %>% arrange(`kmedoids_model[["clustering"]]`) %>% dplyr::rename(err =
                                                                                                                                                                                                            data)

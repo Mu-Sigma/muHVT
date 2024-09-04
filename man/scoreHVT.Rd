@@ -5,21 +5,22 @@
 \title{Score which cell each point in the test dataset belongs to.}
 \usage{
 scoreHVT(
-  data,
+  dataset,
   hvt.results.model,
   child.level = 1,
   mad.threshold = 0.2,
-  line.width = c(0.6, 0.4, 0.2),
+  line.width = 0.6,
   color.vec = c("navyblue", "slateblue", "lavender"),
   normalize = TRUE,
-  seed = 300,
   distance_metric = "L1_Norm",
   error_metric = "max",
-  yVar = NULL
+  yVar = NULL,
+  analysis.plots = FALSE,
+  names.column = NULL
 )
 }
 \arguments{
-\item{data}{Data frame. A data frame containing the test dataset.}
+\item{dataset}{Data frame. A data frame which to be scored. Can have categorical columns if `analysis.plots` are required.}
 
 \item{hvt.results.model}{List. A list obtained from the trainHVT function}
 
@@ -35,8 +36,6 @@ scoreHVT(
 the data (testing dataset) is standardized by ‘mean’ and ‘sd’ of the training dataset referred from the trainHVT(). 
 When set to FALSE, the data is used as such without any changes.}
 
-\item{seed}{Numeric. Random Seed to preserve the repeatability}
-
 \item{distance_metric}{Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
 The distance metric is used to calculate the distance between an n dimensional point and centroid.
  The distance metric can be different from the one used during training.}
@@ -46,6 +45,12 @@ max will return the max of m values and mean will take mean of m values where
 each value is a distance between a point and centroid of the cell.}
 
 \item{yVar}{Character. A character or a vector representing the name of the dependent variable(s)}
+
+\item{analysis.plots}{Logical. A logical value indicating that the scored plot should be plotted or not. If TRUE, 
+the identifier column(character column) name should be supplied in `names.column` argument. The output will
+be a 2D heatmap plotly which gives info on the cell id and the observations of a cell.}
+
+\item{names.column}{Character. A character or a vector representing the name of the identifier column/character column.}
 }
 \value{
 Dataframe containing scored data, plots and summary

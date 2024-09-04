@@ -10,16 +10,24 @@ trainHVT(
   n_cells = NA,
   depth = 1,
   quant.err = 0.2,
-  projection.scale = 10,
   normalize = FALSE,
-  seed = 279,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
   scale_summary = NA,
+  projection.scale = 10,
   diagnose = FALSE,
   hvt_validation = FALSE,
-  train_validation_split_ratio = 0.8
+  train_validation_split_ratio = 0.8,
+  dim_reduction_method = "sammon",
+  tsne_theta = 0.2,
+  tsne_eta = 200,
+  tsne_perplexity = 30,
+  tsne_verbose = TRUE,
+  tsne_max_iter = 500,
+  umap_n_neighbors = 60,
+  umap_n_components = 2,
+  umap_min_dist = 0.1
 )
 }
 \arguments{
@@ -37,13 +45,8 @@ while higher values indicate multiple levels (hierarchy).}
 A cell will only breakdown into further cells if the quantization error of the cell is 
 above the defined quantization error threshold.}
 
-\item{projection.scale}{Numeric. A number indicating the scale factor for the tessellations to visualize the sub-tessellations
-well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible.}
-
 \item{normalize}{Logical. A logical value indicating if the dataset should be normalized. When set to TRUE, 
 scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score).}
-
-\item{seed}{Numeric. A Random Numeric Seed to preserve the repeatability.}
 
 \item{distance_metric}{Character. The distance metric can be L1_Norm(Manhattan) or L2_Norm(Eucledian). L1_Norm is selected by default.
 The distance metric is used to calculate the distance between an n dimensional point and centroid.}
@@ -58,6 +61,10 @@ while Kmedoids uses actual data points (medoids) as cluster centers. kmeans is s
 \item{scale_summary}{List. A list with user-defined mean and standard deviation values for all the features in the dataset. 
 Pass the scale summary when normalize is set to FALSE.}
 
+\item{projection.scale}{Numeric. A number indicating the scale factor for the tessellations to visualize the sub-tessellations
+well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible.
+Default is 10.}
+
 \item{diagnose}{Logical. A logical value indicating whether user wants to perform diagnostics on the model. 
 Default value is FALSE.}
 
@@ -65,7 +72,33 @@ Default value is FALSE.}
 mean absolute deviation of the validation points from the centroid. Default value is FALSE.}
 
 \item{train_validation_split_ratio}{Numeric. A numeric value indicating train validation split ratio. 
-This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8}
+This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.}
+
+\item{dim_reduction_method}{Character.The dim_reduction_method can be one of "tsne", "umap", "sammon".}
+
+\item{tsne_theta}{Numeric.The tsne_theta is only used when dim_reduction_method is set to "tsne".
+Default value is 0.5 and common values are between 0.2 and 0.5.}
+
+\item{tsne_eta}{Numeric.The tsne_eta are used only when dim_reduction method is set to "tsne".
+Default value is 200.}
+
+\item{tsne_perplexity}{Numeric.The tsne_perplexity is only used when dim_reduction_method is set to "tsne".
+Default value is 30 and common values are between between 30 and 50.}
+
+\item{tsne_verbose}{Logical. A logical value which indicates the t-SNE algorithm to print 
+detailed information about its progress to the console.}
+
+\item{tsne_max_iter}{Numeric.The tsne_max_iter is used only when dim_reduction_method is set to "tsne".
+Default value is 1000.More iterations can improve results but increase computation time.}
+
+\item{umap_n_neighbors}{Integer.The umap_n_neighbors is used only when dim_reduction_method is set to "umap".
+Default value is 15.Controls the balance between local and global structure in data.}
+
+\item{umap_n_components}{Integer.The umap_n_components is used only when dim_reduction_method is set to "umap".
+Default value is 2.Indicates the number of dimensions for embedding.}
+
+\item{umap_min_dist}{Numeric.The umap_map_dist is used only when dim_reduction_method is set to "umap".
+Default value is 0.1.Controls how tightly UMAP packs points together.}
 }
 \value{
 A Nested list that contains the hierarchical tessellation information. This
@@ -82,8 +115,8 @@ Otherwise NA.}
 if hvt_validation is set to TRUE. Otherwise NA}
 \item{[[6]]}{A list containing detailed information about the hierarchical vector quantized data along with a
  summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`}
-\item{[[7]]}{model info: A list that contains model-generated timestamp, input parameters passed to the model 
-and the validation results}
+\item{[[7]]}{model info: A list that contains model-generated timestamp, input parameters passed to the model ,
+the validation results and the dimensionality reduction evaluation metrics table.}
 }
 \description{
 This is the main function to construct hierarchical voronoi tessellations.
@@ -103,6 +136,6 @@ hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1
 \code{\link{plotHVT}}
 }
 \author{
-Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>
+Shubhra Prakash <shubhra.prakash@mu-sigma.com>, Sangeet Moy Das <sangeet.das@mu-sigma.com>, Shantanu Vaidya <shantanu.vaidya@mu-sigma.com>,Bidesh Ghosh <bidesh.gosh@mu-sigma.com>,Alimpan Dey <alimpan.dey@mu-sigma.com>
 }
 \keyword{Training_or_Compression}

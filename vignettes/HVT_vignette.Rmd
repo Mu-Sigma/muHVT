@@ -58,17 +58,16 @@ ul {
 
 
 ```{r setup, warning = FALSE, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  out.width = "auto",
-  out.height = "480px",
-  fig.width = 7,
-  fig.height = 5,
-  fig.align = "center",
-  fig.retina = 1,
-  dpi = 150
-)
+# knitr::opts_chunk$set(
+#   collapse = TRUE,
+#   comment = "#>",
+#   out.width = "auto",
+#   out.height = "480px",
+#   fig.width = 7,
+#   fig.height = 5,
+#   fig.align = "center",
+#   fig.retina = 1,
+#   dpi = 150)
 
 list.of.packages <- c("dplyr", "kableExtra", "geozoo", "plotly", "purrr", "sp",  "data.table", "gridExtra","plyr")
 new.packages <-
@@ -105,17 +104,19 @@ Table <- function(data,scroll = FALSE, limit = NULL){
 set.seed(240)
 ```
 
-# 1. Abstract
+# 1. Background
 
-The HVT package is a collection of R functions to facilitate building [topology preserving maps](https://users.ics.aalto.fi/jhollmen/dippa/node9.html) for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
+The HVT package is a collection of R functions to facilitate building <a href="https://link.springer.com/chapter/10.1007/1-84628-118-0_7" target="_blank">topology preserving maps </a> for rich multivariate data analysis. Tending towards a big data preponderance, a large number of rows. A collection of R functions for this typical workflow is organized below:
 
-1.  **Data Compression**: Vector quantization (VQ), HVQ (hierarchical vector quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
+1.  **Data Compression**: Vector Quantization (VQ), HVQ (Hierarchical Vector Quantization) using means or medians. This step compresses the rows (long data frame) using a compression objective.
 
-2.  **Data Projection**: Dimension projection of the compressed cells to 1D,2D or Interactive surface plot with the Sammons Non-linear Algorithm. This step creates topology preserving map (also called an [embedding](https://en.wikipedia.org/wiki/Embedding)) coordinates into the desired output dimension. 
+2.  **Data Projection**: Dimension projection of the compressed cells to 1D, 2D and Interactive surface plot with the Sammons Non-linear Algorithm. This step creates a topology preserving map (also called <a href="https://en.wikipedia.org/wiki/Embedding" target="_blank"> mathematical embeddings</a>) coordinates into the desired output dimension.
 
-3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for hierarchical Voronoi tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map useful for semi-supervised tasks.
+3.  **Tessellation**: Create cells required for object visualization using the Voronoi Tessellation method, package includes heatmap plots for Hierarchical Voronoi Tessellations (HVT). This step enables data insights, visualization, and interaction with the topology preserving map. Useful for semi-supervised tasks.
 
-4.  **Scoring**: Scoring new data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
+4.  **Scoring**: Scoring data sets and recording their assignment using the map objects from the above steps, in a sequence of maps if required.
+
+5. **Temporal Analysis and Visualization**: A Collection of functions that leverages the capacity of the HVT package by analyzing time series data for its underlying patterns, calculation of transitioning probabilities and the visualizations for the flow of data over time.
 
 # 2. Data Compression
 
@@ -195,8 +196,8 @@ where
 
 Let us try to understand quantization error with an example.
 
-```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed'}
-knitr::include_graphics('quant_explainer.png')
+```{r Quantization Error,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1: The Voronoi tessellation for level 1 shown for the 5 cells with the points overlayed',  fig.width = 7, fig.height = 5}
+knitr::include_graphics('./pngs/quant_explainer.png')
 ```
 
 An example of a 2 dimensional VQ is shown above.
@@ -340,21 +341,61 @@ str(torus_df)
 
 This section displays four objects.
 
-1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
+**Variable Histograms**: The histogram distribution of all the features in the dataset.
 
-2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
+**Box Plots**: Box plots for all the features in the dataset. These plots will display the median and Interquartile range of each column at a panel level.
 
-3) *Correlation Matrix*: This calculates the pearson correlation which is a
-bivariate correlation value measuring the linear correlation between two
-numeric columns. The output plot is shown as a matrix.
+**Correlation Matrix**: This calculates the Pearson correlation which is a bivariate correlation value measuring the linear correlation between two numeric columns. The output plot is shown as a matrix.
 
-4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
+**Summary EDA**: The table provides descriptive statistics for all the features in the dataset.
 
-It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
+- *variable*: The features/columns of the dataset
+- *min*: Minimum value of that feature/column
+- *1st Quartile*: The value that splits the lower 25% of the data when arranged in ascending order
+- *median*: Middle value in the ascendingly ordered dataset
+- *mean*: Sum of all values in the dataset divided by the total number of values
+- *sd*: Measure of the dispersion of dataset relative to its mean.
+- *3rd Quartile*: The value that splits the lower 75% of the data when arranged in ascending order
+- *max*:  Maximum value of that feature/column
+- *hist*: The basic barchart of the data distribution of a feature/column
+- *n_row*: Number of rows for that feature/column
+- *n_missing*: Number of missing values/NAs for that feature/column
 
-```{r, warning=FALSE,message=FALSE}
-edaPlots(torus_df)
+It uses an inbuilt function called `edaPlots` to display the above-mentioned four objects.
+
+*NOTE: The input dataset should be a data frame object and the columns should be only numeric type.*
+
+
+```{r plot twotab,out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_df, output_type = 'summary', n_cols = 3)
 ```
+
+</br>
+
+
+```{r plot twohist,figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_df, output_type = 'histogram', n_cols = 3)
+```
+
+</br>
+
+
+```{r plot twobox,figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_df, output_type = 'boxplot', n_cols = 3)
+```
+
+
+</br>
+
+
+```{r plot twocor,figures-side, fig.show="hold", fig.width = 7, fig.height = 5, fig.align='center', warning = FALSE, message=FALSE}
+edaPlots(torus_df, output_type = 'correlation', n_cols = 3)
+```
+
+</br>
+
+
+</br>
 
 **Train - Test Split**
 
@@ -387,10 +428,33 @@ str(torus_train)
 
 **Data Distribution**
 
-```{r, train distribution, warning=FALSE,message=FALSE}
-edaPlots(torus_train)
+```{r plot onetab, warning = FALSE, message=FALSE}
+edaPlots(torus_train, n_cols = 3, output_type = "summary")
 ```
 
+
+</br>
+
+
+```{r plot onehist, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_train, n_cols = 3, output_type = "histogram")
+```
+
+
+</br>
+
+
+```{r plot onebox, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_train, n_cols = 3, output_type = "boxplot")
+```
+
+
+</br>
+
+
+```{r plot onecorr, figures-side, fig.show="hold", fig.width = 7, fig.height = 5, fig.align='center', warning = FALSE, message=FALSE}
+edaPlots(torus_train, n_cols = 3, output_type = "correlation")
+```
 
 **Testing Dataset**
 
@@ -410,12 +474,30 @@ str(torus_test)
 
 **Data Distribution**
 
-```{r torus test summary, warning=FALSE,message=FALSE}
-edaPlots(torus_test)
+```{r torus test summarytab, warning = FALSE, message=FALSE}
+edaPlots(torus_test,n_cols = 3, output_type = "summary")
+```
+
+</br>
+
+
+```{r torus test summaryhist, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_test,n_cols = 3, output_type = "histogram")
+```
+
+</br>
+
+
+```{r torus test summarybox, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(torus_test,n_cols = 3, output_type = "boxplot")
 ```
 
 
+</br>
 
+```{r torus test summarycorr, figures-side, fig.show="hold", fig.width = 7, fig.height = 5, fig.align='center', warning = FALSE, message=FALSE}
+edaPlots(torus_test,n_cols = 3, output_type = "correlation")
+```
 
 ## 7.1 Step 1: Data Compression
 
@@ -428,27 +510,30 @@ However, let's try to comprehend the **trainHVT function** first before moving o
  
 ```{r trainHVT function, echo = TRUE, eval= FALSE}
 trainHVT(
-  dataset,
+  data,
   min_compression_perc,
   n_cells,
   depth,
   quant.err,
-  projection.scale,
   normalize = TRUE,
-  seed = 279,
   distance_metric = c("L1_Norm", "L2_Norm"),
   error_metric = c("mean", "max"),
   quant_method = c("kmeans", "kmedoids"),
+  dim_reduction_method = c("sammon" , "tsne" , "umap")
   scale_summary = NA,
   diagnose = FALSE,
   hvt_validation = FALSE,
-  train_validation_split_ratio = 0.8
+  train_validation_split_ratio = 0.8,
+  projection.scale,
+  tsne_perplexity,tsne_theta,tsne_verbose,
+  tsne_eta,tsne_max_iter,
+  umap_n_neighbors,umap_min_dist
 )
 ```
 
 Each of the parameters of trainHVT function have been explained below:
 
-* __`dataset`__ - A dataframe, with numeric columns (features) that will be used for training the model.
+* __`data`__ - A dataframe, with numeric columns (features) that will be used for training the model.
 
 * __`min_compression_perc`__ - An integer, indicating the minimum compression percentage to be achieved for the dataset. It indicates the desired level of reduction in dataset size compared to its original size.
 
@@ -458,17 +543,15 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`quant.err`__ - A number indicating the quantization error threshold. A cell will only breakdown into further cells if the quantization error of the cell is above the defined quantization error threshold.
 
-* __`projection.scale`__ - A number indicating the scale factor for the tesselations so as to visualize the sub-tesselations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tesselations more visible.
-
 * __`normalize`__	- A logical value indicating if the dataset should be normalized. When set to TRUE, scales the values of all features to have a mean of 0 and a standard deviation of 1 (Z-score)
 
-* __`seed`__ - A Random Numeric Seed to preserve the repeatability.
-
-* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between an `n` dimensional point and centroid. 
+* __`distance_metric`__	- The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). `L1_Norm` is selected by default. The distance metric is used to calculate the distance between a datapoint and its centroid. 
 
 * __`error_metric`__ - The error metric can be `mean` or `max`. `max` is selected by default. `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between a point and centroid of the cell.
 
 * __`quant_method`__ - The quantization method can be `kmeans` or `kmedoids`. Kmeans uses means (centroids) as cluster centers while Kmedoids uses actual data points (medoids) as cluster centers. `kmeans` is selected by default.
+
+* __`dim_reduction_method`__ - The dimensionality reduction method to be chosen. options are 'tsne' , 'umap' & 'sammon'. Default is 'sammon'. 
     
 * __`scale_summary`__ -  A list with user defined mean and standard deviation values for all the features in the dataset. Pass the scale summary when normalize is set to FALSE.
 
@@ -478,12 +561,29 @@ Each of the parameters of trainHVT function have been explained below:
 
 * __`train_validation_split_ratio`__ - A numeric value indicating train validation split ratio. This argument is only used when hvt_validation has been set to TRUE. Default value for the argument is 0.8.
 
+* __`projection.scale`__ - A number indicating the scale factor for the tessellations to visualize the sub-tessellations well enough. It helps in adjusting the visual representation of the hierarchy to make the sub-tessellations more visible. Default is 10.
+
+* __`tsne_perplexity`__ - A numeric, balances the attention t-SNE gives to local and global    aspects of the data. Lower values focus more on local structure, while higher values consider more global structure. It is recommended to be between 5 and 50. Default value is 30.
+
+
+* __`tsne_theta`__ - A numeric, speed/accuracy trade-off parameter for Barnes-Hut approximation. If set to 0, exact t-SNE is performed, which is slower. If set to greater than 0, an approximation is used, which speeds up the process but may reduce accuracy. Default value is 0.5
+
+
+* __`tsne_eta (learning_rate)`__ - A numeric, learning rate for t-SNE optimization.Determines the step size during optimization. If too low, the algorithm might get stuck in local minima; if too high, the solution may         become unstable. Default value is 200.
+
+
+* __`tsne_max_iter`__ - An integer, maximum number of iterations. Number of iterations for the optimization process. More iterations can improve results but increase computation time. Default value is 1000.
+
+* __`umap_n_neighbors`__  - An integer, the size of the local neighborhood (in terms of number of neighboring sample points) used for manifold approximation, controls the balance  between local and global structure in the data, smaller values focus on local structure, while larger values capture more global structures. Default value is 15.
+
+* __`umap_min_dist`__  - A numeric, the minimum distance between points in the embedded space, controls how tightly UMAP packs points together, lower values result in a more clustered embedding. Default value is 0.1
+
 The output of trainHVT function (list of 7 elements) have been explained below with an image attached for clear understanding.
 
 **NOTE: Here the attached image is the snapshot of output list generated from iteration 1 which can be referred later in this section**
 
 ```{r trainhvt list,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 3: The Output list generated by trainHVT function.', out.width="50%", out.height=  "20%", fig.align='center'}
-knitr::include_graphics('hvt_results_list.png')
+knitr::include_graphics('./pngs/hvt_results_list.png')
 ```
 
 * The '1st element' is a list containing information related to plotting tessellations. This information might include coordinates, boundaries, or other details necessary for visualizing the tessellations
@@ -498,7 +598,7 @@ knitr::include_graphics('hvt_results_list.png')
 
 * The '6th element'  is a list containing detailed information about the hierarchical vector quantized data along with a summary section containing no of points, Quantization Error and the centroids for each cell which is the output of `hvq`.
 
-* The '7th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model and the validation results.
+* The '7th element' (model info) is a list that contains model generated timestamp, input parameters passed to the model, validation results and the dimensionality reduction evaluation metrics table.
 
 We will use the `trainHVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the trainHVT function again.
 
@@ -516,19 +616,21 @@ We will pass the below mentioned model parameters along with torus training data
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.1
 * Error Metric = Max
-* Distance Metric = Manhattan
+* Distance Metric = Euclidean
+* Dimensionality Reduction method = Sammon
+
 
 ```{r torus hvt first,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
-set.seed(240)
 hvt.torus <- trainHVT(
   torus_train,
   n_cells = 100,
   depth = 1,
   quant.err = 0.1,
   normalize = FALSE,
-  distance_metric = "L1_Norm",
+  distance_metric = "L2_Norm",
   error_metric = "max",
-  quant_method = "kmeans"
+  quant_method = "kmeans",
+  dim_reduction_method = "sammon"
 )
 
 ```
@@ -559,20 +661,21 @@ Let's retry by increasing the n_cells parameter to 300 for torus training datase
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.1
 * Error Metric = Max
-* Distance Metric = Manhattan
+* Distance Metric = Euclidean
+* Dimensionality Reduction method = Sammon
 
 
 ```{r torus hvt second,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
-set.seed(240)
 hvt.torus2 <- trainHVT(
   torus_train,
   n_cells = 300,
   depth = 1,
   quant.err = 0.1,
   normalize = FALSE,
-  distance_metric = "L1_Norm",
+  distance_metric = "L2_Norm",
   error_metric = "max",
-  quant_method = "kmeans"
+  quant_method = "kmeans",
+  dim_reduction_method = "sammon"
 )
 
 ```
@@ -584,7 +687,7 @@ Let's checkout the compression summary again.
 displayTable(data = hvt.torus2[[3]]$compression_summary,columnName = 'percentOfCellsBelowQuantizationErrorThreshold', value = 0.8, tableType = "compression")
 
 ```
-**It can be observed from the table above that only 6 cells out of 300 i.e. `2%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
+**It can be observed from the table above that only 143 cells out of 300 i.e. `48%` of the cells reached the Quantization Error threshold. Therefore we can further subdivide the cells by increasing the n_cells parameters and then see if 80% compression is reached **
 
 ```{r, warning=FALSE,message=FALSE,fig.cap='Figure 5: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the torus training dataset',out.width="100%", out.height="60%"}
 plotHVT(hvt.torus2, plot.type = '1D')
@@ -593,27 +696,30 @@ plotHVT(hvt.torus2, plot.type = '1D')
 
 <span style="color:blue">Iteration 3: </span>
 
-Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 900 for torus training dataset (containing 9600 datapoints) .
+Since we are yet to achieve the compression of atleast 80%, lets try again by increasing the n_cells parameter to 500 for torus training dataset (containing 9600 datapoints) .
 
 **Model Parameters**
 
-* Number of Cells at each Level = 900
+* Number of Cells at each Level = 500
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.1
 * Error Metric = Max
-* Distance Metric = Manhattan
+* Distance Metric = Euclidean
+* Dimensionality Reduction method = Sammon
+
 
 ```{r torus hvt third ,warning=FALSE,fig.show='hold',results='hide',message=FALSE,eval = global_var}
 set.seed(240)
 hvt.torus3 <- trainHVT(
   torus_train,
-  n_cells = 900,
+  n_cells = 500,
   depth = 1,
   quant.err = 0.1,
   normalize = FALSE,
-  distance_metric = "L1_Norm",
+  distance_metric = "L2_Norm",
   error_metric = "max",
-  quant_method = "kmeans"
+  quant_method = "kmeans",
+  dim_reduction_method = "sammon"
 )
 
 ```
@@ -626,12 +732,12 @@ displayTable(data = hvt.torus3[[3]]$compression_summary,columnName = 'percentOfC
 
 ```
 
-**By increasing the number of cells to 900, we were successfully able to compress `83%` of the data, so we will not further subdivide the cells**
+**By increasing the number of cells to 500, we were successfully able to compress `90%` of the data, so we will not further subdivide the cells**
 
-We successfully compressed 83% of the data using n_cells parameter as 900, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
+We successfully compressed data to 90% using n_cells parameter as 500, the next step involves performing data projection on the compressed data. In this step, the compressed data will be transformed and projected onto a lower-dimensional space to visualize and analyze the data in a more manageable form.
 
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 6: Sammons 1D x Cell ID plot for layer 1 shown for the 900 cells in the torus training dataset',out.width="100%", out.height="60%"}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 6: Sammons 1D x Cell ID plot for layer 1 shown for the 500 cells in the torus training dataset',out.width="100%", out.height="60%"}
 plotHVT(hvt.torus3, plot.type = '1D')
 ```
 
@@ -643,7 +749,7 @@ Now let's try to understand **plotHVT** function. The parameters have been expla
 
 ```{r plotHVT function,echo = TRUE, eval= FALSE}
 plotHVT <-(hvt.results, line.width, color.vec, pch1, centroid.size,
-           title, maxDepth, child.level, hmap.cols, 
+           title, maxDepth, child.level, hmap.cols, centroid.color,
            quant.error.hmap, n_cells.hmap, cell_id, 
            label.size, sepration_width, layer_opacity,
            dim_size, plot.type = '2Dhvt') 
@@ -657,7 +763,9 @@ plotHVT <-(hvt.results, line.width, color.vec, pch1, centroid.size,
 
 * __`pch1`__	- (2Dhvt/2Dheatmap) Symbol. It plots the centroids with a particular symbol such as (solid circle, bullet, filled square, filled diamond) in the tessellations.(default = 21 i.e filled circle).
 
-* __`centroid.size`__	- (2Dhvt/2Dheatmap) Size of centroids for each level of tessellations (default = 3).
+* __`centroid.size`__	- (2Dhvt/2Dheatmap)  Vector of Size of centroids for each level of tessellations.
+
+* __`centroid.color`__	- (2Dhvt/2Dheatmap) Vector of color of centroids for each level of tessellations.
 
 * __`title`__	-  (2Dhvt) Set a title for the plot (default = NULL).
 
@@ -690,7 +798,7 @@ be scaled.(default = 0.5)
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 100 in first iteration.
 
-```{r, warning=FALSE,message=FALSE, fig.cap='Figure 7: Sammons 2D Plot for 100 cells'}
+```{r, warning=FALSE,message=FALSE, fig.cap='Figure 7: Sammons 2D Plot for 100 cells',  fig.width = 7, fig.height = 5}
 plotHVT(hvt.torus, plot.type = '2Dproj')
 ```
 
@@ -699,15 +807,15 @@ plotHVT(hvt.torus, plot.type = '2Dproj')
 
 Lets see the projected Sammons 2D onto a plane with n_cell set to 300 in second iteration.
 
-```{r, message=FALSE,warning=FALSE,fig.cap='Figure 8: Sammons 2D Plot for 300 cells'}
+```{r, message=FALSE,warning=FALSE,fig.cap='Figure 8: Sammons 2D Plot for 300 cells',  fig.width = 7, fig.height = 5}
 plotHVT(hvt.torus2, plot.type = '2Dproj')
 ```
 
 <span style="color:blue">Iteration 3: </span>
 
-Lets see the projected Sammons 2D onto a plane with n_cell set to 900 in third iteration.
+Lets see the projected Sammons 2D onto a plane with n_cell set to 500 in third iteration.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 9: Sammons 2D Plot for 900 cells'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 9: Sammons 2D Plot for 500 cells',  fig.width = 7, fig.height = 5}
 plotHVT(hvt.torus3, plot.type = '2Dproj')
 ```
 
@@ -719,11 +827,11 @@ The `deldir` package computes the Delaunay triangulation (and hence the Dirichle
 
 To enhance visualization, let's generate a plot of the Voronoi tessellation for the **first iteration** where we set **n_cells parameter as 100**. This plot will provide a visual representation of the Voronoi regions corresponding to the data points, aiding in the analysis and understanding of the data distribution.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 10: The Voronoi tessellation for layer 1 shown for the 100 cells in the torus training dataset'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 10: The Voronoi tessellation for layer 1 shown for the 100 cells in the torus training dataset', fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus,
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.6,
   maxDepth = 1, 
   plot.type = '2Dhvt'
@@ -734,11 +842,11 @@ plotHVT(
 
 Now, let's plot the Voronoi tessellation for the **second iteration** where we set **n_cells parameter to 300**.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 shown for the 300 cells in the torus training dataset'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 11: The Voronoi tessellation for layer 1 shown for the 300 cells in the torus training dataset', fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus2,
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.6,
   maxDepth = 1,
   plot.type = '2Dhvt'
@@ -747,13 +855,13 @@ plotHVT(
 
  <span style="color:blue">Iteration 3: </span>
 
-Now, let's plot the Voronoi tessellation again, for the **third iteration** where we set **n_cells parameter to 900**.
+Now, let's plot the Voronoi tessellation again, for the **third iteration** where we set **n_cells parameter to 500**.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 shown for the 900 cells in the torus training dataset'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 12: The Voronoi tessellation for layer 1 shown for the 500 cells in the torus training dataset', fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus3,
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.6,
   maxDepth = 1,
   plot.type = '2Dhvt'
@@ -771,49 +879,49 @@ Now let’s plot the Voronoi Tessellation with the heatmap overlaid for all the 
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the torus, allowing us to observe patterns and trends in the distribution of each of the features (x,y,z). The sheer green shades highlight regions with higher coordinate values in each of the heatmaps, while the indigo  shades indicate areas with the lowest coordinate values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the torus structure.
 
 
-```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for `No. of entities in each cell` in the torus dataset',eval = global_var}
+```{r hmp level two quantization torus n demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 13: The Voronoi tessellation for layer 1 and number of cells 500 with the heat map overlaid for `No. of entities in each cell` in the torus dataset',eval = global_var, fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus3,
   child.level = 1,
   hmap.cols = "n",
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.8,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable `x` in the torus dataset',eval = global_var}
+```{r hmp level two quantization torus x demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 14: The Voronoi tessellation for layer 1 and number of cells 500 with the heat map overlaid for variable `x` in the torus dataset',eval = global_var, fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus3,
   child.level = 1,
   hmap.cols = "x",
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.8,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable `y` in the torus dataset',eval = global_var}
+```{r hmp level two quantization torus y demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 15: The Voronoi tessellation for layer 1 and number of cells 500 with the heat map overlaid for variable `y` in the torus dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus3,
   child.level = 1,
   hmap.cols = "y",
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.8,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable `z` in the torus dataset',eval = global_var}
+```{r hmp level two quantization torus z demo,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 16: The Voronoi tessellation for layer 1 and number of cells 500 with the heat map overlaid for variable `z` in the torus dataset',eval = global_var, fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.torus3,
   child.level = 1,
   hmap.cols = "z",
   line.width = c(0.4),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.8,
   plot.type = '2Dheatmap'
 )
@@ -824,22 +932,23 @@ plotHVT(
 Let's try to comprehend the **scoreHVT function** first before moving on
 
 ```{r scoreHVT function1,echo = TRUE, eval= FALSE}
-scoreHVT(data,
+scoreHVT(dataset,
          hvt.results.model,
          child.level,
          mad.threshold,
          line.width,
          color.vec,
          normalize,
-         seed,
          distance_metric,
          error_metric,
-         yVar)
+         yVar,
+         analysis.plots,
+         names.column)
 ```
 
 The parameters for the function `scoreHVT` are explained below:
 
-* __`data`__ - A dataframe containing the testing dataset. The dataframe should have all the variable(features) used for training. 
+* __`dataset`__ - A dataframe containing the testing dataset. The dataframe should have all the variable(features) used for training. 
 
 * __`hvt.results.model`__ - A list obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
@@ -854,13 +963,18 @@ The parameters for the function `scoreHVT` are explained below:
 
 * __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset referred from the trainHVT(). When set to FALSE, the `data` is used as such without any changes.
 
-* __`seed`__  - A Random Numeric Seed to preserve the repeatability.
-
 * __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * __`error_metric`__ - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
 * __`yVar`__ - A character or a vector representing the name of the dependent variable(s)
+
+*The below given arguments are used only when character column can be mapped over the scored results. since torus doesn't have a character column, we are not using them in this vignette.*
+
+* __`analysis.plots`__ - A logical value to indicate whether to include the insight plots which are useful in viewing the contents and clusters of cells. Default is FALSE.
+
+* __`names.column`__ - The column of names of the datapoints which will be displayed as the contents of the cell in 'scoredPlotly'. Default is NULL.
+
 
 
 
@@ -873,7 +987,7 @@ scoring_torus <- scoreHVT(
   hvt.torus3,
   child.level = 1,
   line.width = c(1.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   normalize = FALSE
 )
 ```
@@ -884,13 +998,13 @@ Let's see which cell and level each point belongs to and check the mean absolute
 
 
 ```{r}
-Act_pred_Table <- scoring_torus[["actual_predictedTable"]]
+Act_pred_Table <- scoring_torus[["scoredPredictedData"]]
 rownames(Act_pred_Table) <- NULL
 Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 100)
 ```
 
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 17: Mean Absolute Difference'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 17: Mean Absolute Difference', fig.width=7, fig.height=5}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.20), ylim = c(0,500))
 
 
@@ -900,14 +1014,14 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 **Data Understanding**
 
-In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from [here](https://github.com/Mu-Sigma/HVT/-/blob/master/vignettes/sample_dataset/Computers.csv).
+In this section, we will use the `Prices of Personal Computers` dataset. This dataset contains 6259 observations and 10 features. The dataset observes the price from 1993 to 1995 of 486 personal computers in the US. The variables are price, speed, ram, screen, cd, etc. The dataset can be downloaded from
+<a href="https://github.com/Mu-Sigma/HVT/-/blob/master/vignettes/sample_dataset/Computers.csv" target="_blank">here</a>.
 
 In this example, we will compress this dataset by using hierarchical VQ via k-means and visualize the Voronoi Tessellation plots using Sammons projection. Later on, we will overlay all the variables as a heatmap to generate further insights.
 
 Here, we load the data and store into a variable `computers`.
 
 ```{r load data computer,warning=FALSE,message=FALSE,eval = TRUE}
-set.seed(240)
 computers <- read.csv("https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/sample_dataset/Computers.csv")
 ```
 
@@ -947,22 +1061,45 @@ computers <-computers %>% dplyr::select(-c( cd, multi, premium, trend))
 
 This section displays four objects.
 
-1) *Variable Histograms*: The histogram distribution of all the variables in the dataset.
+**Variable Histograms**: The histogram distribution of all the features in the dataset.
 
-2) *Box Plots*: Box plots for each numeric column in the dataset across panels. These plots will display the median and Inter Quartile Range of each column at a panel level.
+**Box Plots**: Box plots for all the features in the dataset. These plots will display the median and Interquartile range of each column at a panel level.
 
-3) *Correlation Matrix*: This calculates the pearson correlation which is a
-bivariate correlation value measuring the linear correlation between two
-numeric columns. The output plot is shown as a matrix.
+**Correlation Matrix**: This calculates the Pearson correlation which is a bivariate correlation value measuring the linear correlation between two numeric columns. The output plot is shown as a matrix.
 
-4) *Summary EDA*: The table provides descriptive statistics for all the variables in the dataset.
+**Summary EDA**: The table provides descriptive statistics for all the features in the dataset.
 
-It uses an inbuilt function called `edaPlots` to display the above mentioned four objects.
+- *variable*: The features/columns of the dataset
+- *min*: Minimum value of that feature/column
+- *1st Quartile*: The value that splits the lower 25% of the data when arranged in ascending order
+- *median*: Middle value in the ascendingly ordered dataset
+- *mean*: Sum of all values in the dataset divided by the total number of values
+- *sd*: Measure of the dispersion of dataset relative to its mean.
+- *3rd Quartile*: The value that splits the lower 75% of the data when arranged in ascending order
+- *max*:  Maximum value of that feature/column
+- *hist*: The basic barchart of the data distribution of a feature/column
+- *n_row*: Number of rows for that feature/column
+- *n_missing*: Number of missing values/NAs for that feature/column
 
-```{r, computers dataset distribution, warning=FALSE,message=FALSE}
-edaPlots(computers)
+It uses an inbuilt function called `edaPlots` to display the above-mentioned four objects.
+
+*NOTE: The input dataset should be a data frame object and the columns should be only numeric type.*
+
+```{r, computers dataset distributiontable, warning = FALSE, message=FALSE}
+edaPlots(computers, output_type = 'summary', n_cols = 6)
 ```
 
+```{r, computers dataset distributionhist, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(computers, output_type = 'histogram', n_cols = 6)
+```
+
+```{r, computers dataset distributionbox, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(computers, output_type = 'boxplot', n_cols = 6)
+```
+
+```{r, computers dataset distributioncor, warning = FALSE, message=FALSE,  fig.width = 7, fig.height = 5, fig.align='center'}
+edaPlots(computers, output_type = 'correlation', n_cols = 6)
+```
 
 **Train - Test Split**
 
@@ -996,11 +1133,21 @@ str(trainComputers_data)
 
 **Data Distribution**
 
-```{r, warning=FALSE,message=FALSE}
-edaPlots(trainComputers_data)
+```{r plot threetab, warning = FALSE, message=FALSE }
+edaPlots(trainComputers_data,output_type = 'summary', n_cols = 6)
 ```
 
+```{r plot threehist, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE }
+edaPlots(trainComputers_data,output_type = 'histogram', n_cols = 6)
+```
 
+```{r plot threebox, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE }
+edaPlots(trainComputers_data,output_type = 'boxplot', n_cols = 6)
+```
+
+```{r plot threecorr, figures-side, fig.show="hold", warning = FALSE, message=FALSE, fig.width = 7, fig.height = 5, fig.align='center' }
+edaPlots(trainComputers_data,output_type = 'correlation', n_cols = 6)
+```
 
 **Testing Dataset**
 
@@ -1017,15 +1164,26 @@ Table(head(testComputers_data))
 Now let's have a look at **structure** of the testing dataset.
 
 ```{r computers structure, warning=FALSE, eval = global_var}
-str(testComputers_data)
+str(testComputers_data,output_type = 'all', n_cols = 6)
 ```
 
 **Data Distribution**
 
-```{r, warning=FALSE,message=FALSE}
-edaPlots(testComputers_data)
+```{r tab,  warning = FALSE, message=FALSE}
+edaPlots(testComputers_data, output_type = "summary", n_cols = 6)
 ```
 
+```{r hist, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(testComputers_data, output_type = "histogram", n_cols = 6)
+```
+
+```{r box, figures-side, fig.show="hold", out.width="30%", warning = FALSE, message=FALSE}
+edaPlots(testComputers_data, output_type = "boxplot", n_cols = 6)
+```
+
+```{r corr, figures-side, fig.show="hold", warning = FALSE, message=FALSE, fig.width = 7, fig.height = 5, fig.align='center'}
+edaPlots(testComputers_data, output_type = "correlation", n_cols = 6)
+```
 
 As we are familiar with the structure of the computers data, we will now follow the following steps to get the scores using the Computers dataset.
 
@@ -1039,24 +1197,23 @@ We will pass the below mentioned model parameters along with computers training 
 
 **Model Parameters**
 
-* Number of Cells at each Level = 440
+* Number of Cells at each Level = 300
 * Maximum Depth = 1
 * Quantization Error Threshold = 0.2
 * Error Metric = Max
-* Distance Metric = Manhattan
-
+* Distance Metric = Euclidean
+* Dimensionality Reduction method = Sammon
 
 ```{r level one computers,warning=FALSE,message=FALSE,results='asis',eval = global_var}
-set.seed(240)
-hvt.results <- list()
 hvt.results <- trainHVT(trainComputers,   
-                          n_cells = 440,
+                          n_cells = 300,
                           depth = 1,
                           quant.err = 0.2,
                           normalize = TRUE,
-                          distance_metric = "L1_Norm",
+                          distance_metric = "L2_Norm",
                           error_metric = "max",
-                          quant_method = "kmeans")
+                          quant_method = "kmeans",
+                          dim_reduction_method = "sammon")
 
 ```
 
@@ -1068,13 +1225,13 @@ displayTable(data = hvt.results[[3]]$compression_summary,columnName = 'percentOf
 ```
 
 
-**As it can be seen from the table above, __`81%`__ of the cells have reached the quantization threshold error. Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells **
+**As it can be seen from the table above, __`91%`__ of the cells have reached the quantization threshold error. Since we are successfully able to attain the desired compression percentage, so we will not further subdivide the cells **
 
 __`hvt.results[[3]]`__ gives us detailed information about the hierarchical vector quantized data.
 
-__`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the codebook.
+__`hvt.results[[3]][['summary']]`__ gives a nice tabular data containing no of points, Quantization Error and the centroids.
 
-The datatable displayed below is the summary from hvt.results showing Cell.IDs, Centroids and Quantization Error for the 440 cells.
+The datatable displayed below is the summary from hvt.results showing Cell.IDs, Centroids and Quantization Error for the 300 cells.
 
 For the sake of brevity, we are displaying only the first 100 rows.
 
@@ -1099,7 +1256,7 @@ Now let us understand what each column in the above summary table means:
 
 All the columns after this will contain centroids for each cell. They can also be called a codebook, which represents a collection of all centroids or codewords.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 1D x Cell ID plot for layer 1 shown for the 440 cells in the dataset ’computers’',out.width="100%", out.height="60%"}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 18: Sammons 1D x Cell ID plot for layer 1 shown for the 300 cells in the dataset ’computers’',out.width="100%", out.height="60%"}
 plotHVT(hvt.results, plot.type = '1D')
 ```
 
@@ -1110,9 +1267,9 @@ plotHVT(hvt.results, plot.type = '1D')
 For more detailed information on Data Projection please refer to [section 7.2](#step-2-data-projection) of this vignette.
 
 
-Lets visualize the projected Sammons 2D for n_cell set to 440 onto a plane.
+Lets visualize the projected Sammons 2D for n_cell set to 300 onto a plane.
 
-```{r, warning=FALSE,message=FALSE,fig.cap='Figure 19: Sammons 2D Plot for 440 cells'}
+```{r, warning=FALSE,message=FALSE,fig.cap='Figure 19: Sammons 2D Plot for 300 cells', fig.width = 7, fig.height = 5}
 plotHVT(hvt.results, plot.type = '2Dproj')
 ```
 
@@ -1122,10 +1279,10 @@ For more detailed information on voronoi tessellation please refer to [section 7
 
 For better visualisation, let's plot the Voronoi tessellation using the `plotHVT` function.
 
-```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation for layer 1 shown for the 440 cells in the dataset ’computers’',eval = global_var}
+```{r plot level one computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 20: The Voronoi Tessellation for layer 1 shown for the 300 cells in the dataset ’computers’',eval = global_var,  fig.width = 7, fig.height = 5}
 plotHVT(hvt.results,
         line.width = c(0.2), 
-        color.vec = c("navy blue"),
+        color.vec = c("black"),
         centroid.size = 0.01,  
         maxDepth = 1,
         plot.type = '2Dhvt')
@@ -1141,78 +1298,78 @@ Now let's plot the Voronoi Tessellation with the heatmap overlaid for all the fe
 The heatmaps displayed below provides a visual representation of the spatial characteristics of the computers data, allowing us to observe patterns and trends in the distribution of each of the features (price,speed,hd,ram,screen,ads). The sheer green  shades highlight regions with higher values in each of the heatmaps, while the indigo shades indicate areas with the lowest  values in each of the heatmaps. By analyzing these heatmaps, we can gain insights into the variations and relationships between each of these features within the computers data
 
 
-```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the `No. of entities in each cell` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one n computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 21: The Voronoi Tessellation with the heat map overlaid over the `No. of entities in each cell` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "n",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi Tessellation with the heat map overlaid over the variable `price` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one price computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 22: The Voronoi Tessellation with the heat map overlaid over the variable `price` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "price",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi Tessellation with the heat map overlaid over the variable `hd` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one hd computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 23: The Voronoi Tessellation with the heat map overlaid over the variable `hd` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "hd",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
 
 ```
 
-```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi Tessellation with the heat map overlaid over the variable `ram` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one ram computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 24: The Voronoi Tessellation with the heat map overlaid over the variable `ram` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "ram",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
 ```
 
-```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi Tessellation with the heat map overlaid over the variable `screen` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one screen computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 25: The Voronoi Tessellation with the heat map overlaid over the variable `screen` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "screen",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
 
 ```
 
-```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 26: The Voronoi Tessellation with the heat map overlaid over the variable `ads` in the ’computers’ dataset',eval = global_var}
+```{r hmp level one ads computers,warning=FALSE,fig.show='hold',results='hide',message=FALSE,fig.cap='Figure 26: The Voronoi Tessellation with the heat map overlaid over the variable `ads` in the ’computers’ dataset',eval = global_var,  fig.width = 7, fig.height = 5}
 
 plotHVT(
   hvt.results,
   child.level = 1,
   hmap.cols = "ads",
   line.width = c(0.2),
-  color.vec = c("navy blue"),
+  color.vec = c("black"),
   centroid.size = 0.03,
   plot.type = '2Dheatmap'
 )
@@ -1227,7 +1384,7 @@ Now once we have built the model, let us try to score using our testing dataset 
 
 
 ```{r scoreHVT function,echo = TRUE, eval= FALSE}
-scoreHVT(data,
+scoreHVT(dataset,
          hvt.results.model,
          child.level,
          mad.threshold,
@@ -1237,12 +1394,14 @@ scoreHVT(data,
          seed,
          distance_metric,
          error_metric,
-         yVar)
+         yVar,
+         analysis.plots,
+         names.column)
 ```
 
 The parameters for the function `scoreHVT` are explained below:
 
-* __`data`__ - A dataframe containing the testing dataset. The dataframe should have all the variable(features) used for training. 
+* __`dataset`__ - A dataframe containing the testing dataset. The dataframe should have all the variable(features) used for training. 
 
 * __`hvt.results.model`__ - A list obtained from the trainHVT function while performing hierarchical vector quantization on training data. This list provides an overview of the hierarchical vector quantized data, including diagnostics, tessellation details, Sammon's projection coordinates, and model input information.
 
@@ -1257,13 +1416,18 @@ The parameters for the function `scoreHVT` are explained below:
 
 * __`normalize`__ - A logical value indicating if the dataset should be normalized. When set to TRUE, the data (testing dataset) is standardized by mean and sd of the training dataset referred from the trainHVT(). When set to FALSE, the `data` is used as such without any changes.
 
-* __`seed`__  - A Random Numeric Seed to preserve the repeatability.
-
 * __`distance_metric`__ - The distance metric can be `L1_Norm`(Manhattan) or `L2_Norm`(Euclidean). The metric is used when calculating distance between each datapoint(in test dataset) with the centroids obtained from results of trainHVT. Default is `L1_Norm`.
 
 * __`error_metric`__ - The error metric can be `mean` or `max`.  `max` will return the max of `m` values and `mean` will take mean of `m` values where each value is a distance between the datapoint and centroid of the cell. This helps in calculating the scored quantization error. Default value is `max`.
 
 * __`yVar`__ - A character or a vector representing the name of the dependent variable(s)
+
+*The below given arguments are used only when character column can be mapped over the scored results. since torus doesn't have a character column, we are not using them in this vignette.*
+
+* __`analysis.plots`__ - A logical value to indicate whether to include the insight plots which are useful in viewing the contents and clusters of cells. Default is FALSE.
+
+* __`names.column`__ - The column of names of the datapoints which will be displayed as the contents of the cell in 'scoredPlotly'. Default is NULL.
+
 
 
 
@@ -1273,8 +1437,6 @@ scoring_comp <-scoreHVT(
   testComputers,
   hvt.results,
   child.level = 1,
-  line.width = c(1.2),
-  color.vec = c("navy blue"),
   normalize = TRUE
 )
 ```
@@ -1296,7 +1458,7 @@ Act_pred_Table %>% head(100) %>%as.data.frame() %>%Table(scroll = TRUE, limit = 
 ```
 
 
-```{r,message=FALSE,warning=FALSE,fig.cap='Figure 27: Mean Absolute Difference'}
+```{r,message=FALSE,warning=FALSE,fig.cap='Figure 27: Mean Absolute Difference', fig.width=7, fig.height=5}
 hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Difference", xlab = "Difference",xlim = c(0,0.6), ylim = c(0,250))
 ```
 
@@ -1310,11 +1472,11 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
-* We constructed a compressed HVT map (hvt.torus) by applying the trainHVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells exceeded the quantization threshold error.
+* We constructed a compressed HVT map (hvt.torus) by applying the trainHVT() on the torus dataset. We set the parameters as   follows: `n_cells = 100`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we found that none    of the  100 cells has the quantization error below the threshold.
 
-* We created another compressed HVT map (hvt.torus2) using the trainHVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 2% of the cells have reached the quantization threshold error.
+* We created another compressed HVT map (hvt.torus2) using the trainHVT() algorithm on the torus dataset. This time, we adjusted     the parameters to `n_cells = 300`, `quant.error = 0.1`, and `depth = 1`. After examining the compression summary, we          discovered that 48% of the cells have reached the quantization threshold error.
 
-* Once again, we generated a compressed HVT map (hvt.torus3) using the trainHVT() algorithm on the torus dataset. The parameters for this map were set to `n_cells = 900`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 83% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
+* Once again, we generated a compressed HVT map (hvt.torus3) using the trainHVT() algorithm on the torus dataset. The parameters for this map were set to `n_cells = 500`, `quant.error = 0.1`, and `depth = 1`. Upon analyzing the compression summary, we    found that 90% of the 100 cells have reached the quantization threshold error and we can clearly visualize the 3D torus(donut) in 2D   space.
 
 * **Example II: HVT with the Personal Computer dataset**
 
@@ -1324,7 +1486,7 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 *  Our goal is to achieve data compression upto atleast `80%`
 
-*  We construct a compressed HVT map using the trainHVT() on the training dataset by setting __`n_cells`__ to 440 and  __`quant.error`__ to 0.2, and we were able to attain a compression of 81%
+*  We construct a compressed HVT map using the trainHVT() on the training dataset by setting __`n_cells`__ to 300 and  __`quant.error`__ to 0.2, and we were able to attain a compression of 91%
 
 * We then plot the Voronoi Tessellation with the heatmap overlaid for all the features in the computers dataset for better visualization
 
@@ -1347,17 +1509,15 @@ hist(Act_pred_Table$diff, breaks = 20, col = "blue", main = "Mean Absolute Diffe
 
 # 11. References
 
-1. Topology Preserving Maps : https://users.ics.aalto.fi/jhollmen/dippa/node9.html
+1. <a href="https://users.ics.aalto.fi/jhollmen/dippa/node9.html" target="_blank">Topology Preserving Maps</a>
 
-2. Vector Quantization : https://en.wikipedia.org/wiki/Vector_quantization
+2. <a href="https://ocw.mit.edu/courses/6-450-principles-of-digital-communications-i-fall-2006/resources/book_3/" target="_blank">Vector Quantization</a>
 
-3. K-means : https://en.wikipedia.org/wiki/K-means_clustering
+3. <a href="https://en.wikipedia.org/wiki/K-means_clustering" target="_blank">K-means</a>
 
-4. Sammon’s Projection : https://en.wikipedia.org/wiki/Sammon_mapping
+4. <a href="https://en.wikipedia.org/wiki/Sammon_mapping" target="_blank">Sammon's Projection</a>
 
-5. Voronoi Tessellations : https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation
-
-6. Embedding : https://en.wikipedia.org/wiki/Embedding
+5. <a href="https://en.wikipedia.org/wiki/Centroidal_Voronoi_tessellation" target="_blank">Voronoi Tessellations</a>
 
 
 
