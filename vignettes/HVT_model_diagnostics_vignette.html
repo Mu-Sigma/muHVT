@@ -3444,7 +3444,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <h1 class="title toc-ignore">HVT Model diagnostics and validation</h1>
 <h4 class="author">Zubin Dowlaty, Shubhra Prakash, Sunuganty Achyut Raj,
 Praditi Shah, Somya Shambhawi,Vishwavani</h4>
-<h4 class="date">Built on: 09/04/2024</h4>
+<h4 class="date">Built on: 09/05/2024</h4>
 
 
 <div id="TOC">
@@ -4895,35 +4895,36 @@ error below the threshold. Let’s have a closer look at
 <code>Quant.Error</code> of the cells which have hit the Quantization
 Error threshold are shown in red. Here we are showing just top 100 rows
 for the sake of brevity.</p>
-<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">displayTable</span>(<span class="at">data =</span>hvt.results[[<span class="dv">3</span>]][[<span class="st">&#39;summary&#39;</span>]], <span class="at">columnName=</span> <span class="st">&#39;Quant.Error&#39;</span>, <span class="at">value =</span> <span class="fl">0.1</span>, <span class="at">tableType =</span> <span class="st">&quot;summary&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb72"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">displayTable</span>(<span class="at">data =</span>hvt.results[[<span class="dv">3</span>]][[<span class="st">&#39;summary&#39;</span>]], <span class="at">columnName=</span> <span class="st">&#39;Quant.Error&#39;</span>, <span class="at">value =</span> <span class="fl">0.1</span>, <span class="at">tableType =</span> <span class="st">&quot;summary&quot;</span>, <span class="at">scroll =</span> T)</span></code></pre></div>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:500px; overflow-x: scroll; width:100%; ">
 <table class="table table-striped table-hover table-responsive" style="margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Segment.Level
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Segment.Parent
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Segment.Child
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 n
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Cell.ID
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 Quant.Error
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 x
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 y
 </th>
-<th style="text-align:center;">
+<th style="text-align:center;position: sticky; top:0; background-color: #FFFFFF;">
 z
 </th>
 </tr>
@@ -7831,6 +7832,7 @@ z
 </tr>
 </tbody>
 </table>
+</div>
 <div id="model-diagnostics-and-validation" class="section level2">
 <h2>8.1 Model Diagnostics and Validation</h2>
 <div id="diagnostics" class="section level3 unlisted unnumbered">

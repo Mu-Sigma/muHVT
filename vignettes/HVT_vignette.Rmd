@@ -1236,7 +1236,7 @@ The datatable displayed below is the summary from hvt.results showing Cell.IDs, 
 For the sake of brevity, we are displaying only the first 100 rows.
 
 ```{r summary level one computers,warning=FALSE,eval = global_var}
-displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error', value = 0.2, tableType = "summary")
+displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error', value = 0.2, tableType = "summary", scroll = T)
 
 ```
 

@@ -414,7 +414,7 @@ knitr::include_graphics('./pngs/hvt_results_list_score.png')
 
 We will use the `trainHVT` function to compress our data while preserving essential features of the dataset. Our goal is to achieve data compression upto atleast `80%`. In situations where the compression ratio does not meet the desired target, we can explore adjusting the model parameters as a potential solution. This involves making modifications to parameters such as the `quantization error threshold` or `increasing the number of cells` and then rerunning the trainHVT function again.
 
-As this is already done in **HVT Vignette:** <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html</a> please refer for more information.
+As this is already done in <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">**HVT Vignette:**</a> please refer for more information.
 
 **Model Parameters**
 

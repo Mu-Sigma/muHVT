@@ -1190,7 +1190,7 @@ hit the Quantization Error threshold are shown in red. Here we are
 showing just top 100 rows for the sake of brevity.
 
 ```{r}
-displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary")
+displayTable(data =hvt.results[[3]][['summary']], columnName= 'Quant.Error', value = 0.1, tableType = "summary", scroll = T)
 
 ```
 
