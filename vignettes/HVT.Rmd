@@ -82,7 +82,7 @@ The HVT package is a collection of R functions to facilitate building <a href="h
 The HVT package allows creation of visually stunning tessellations, showcasing the power of topology preserving maps. below is an image depicting a captivating tessellation of a torus.
 
 ```{r predictlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 1:  Heatmap Visualization of a Torus with 900 Cells'}
-knitr::include_graphics('./pngs/torus2.png')
+knitr::include_graphics('./torus2.png')
 ```
 
 # 2. Vignettes
@@ -182,7 +182,7 @@ The `scoreLayeredHVT` function uses these three maps to score the test datapoint
 Let us try to understand the steps with the help of the diagram below
 
 ```{r mlayer_flow,echo=FALSE,warning=FALSE,fig.show='hold',message=FALSE,fig.cap='Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()'}
-knitr::include_graphics('./pngs/scoreLayeredHVT_function.png')
+knitr::include_graphics('./scoreLayeredHVT_function.png')
 ```
 
 ## HVT (v22.12.06) {-}
