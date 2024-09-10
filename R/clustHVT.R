@@ -22,6 +22,7 @@
 #' @author Vishwavani <vishwavani@@mu-sigma.com>
 #' @keywords Clustering_Analysis
 #' @include clusterPlot.R
+#' @importFrom utils data head tail
 #' @examples 
 #'data("EuStockMarkets")
 #'dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
@@ -33,7 +34,7 @@
 #'hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
 #'                       distance_metric = "L1_Norm", error_metric = "max",
 #'                       normalize = TRUE,quant_method = "kmeans")
-#'scoring <- scoreHVT(dataset, hvt.results, analysis.plots = T, names.column = dataset[,1])
+#'scoring <- scoreHVT(dataset, hvt.results, analysis.plots = TRUE, names.column = dataset[,1])
 #'centroid_data <- scoring$centroidData
 #'hclust_data_1 <- centroid_data[,2:3]
 #'clust.results <- clustHVT(data = hclust_data_1, 
@@ -46,8 +47,12 @@
 
 clustHVT <- function(data, trainHVT_results, scoreHVT_results, clustering_method = 'ward.D2',
                      indices, clusters_k = "champion") {
+  requireNamespace('NbClust')
   
   hclust_data <- data
+  
+  results_df <- c()
+
   
   # Function to run NbClust and extract results
   print_nbclust_results <- function(hclust_data, indices) {
@@ -110,10 +115,10 @@ clustHVT <- function(data, trainHVT_results, scoreHVT_results, clustering_method
   } else {
     stop("Invalid input for clusters_k. Use 'champion', 'challenger', or a numeric value between 1 and 20.")
   }
-  
+#browser()  
   # Perform hierarchical clustering
-  hc <<- stats::hclust(dist(hclust_data), clustering_method)
-  clusters <<- stats::cutree(hc, k = no_of_clusters)
+  hc <- stats::hclust(dist(hclust_data), clustering_method)
+  clusters <- stats::cutree(hc, k = no_of_clusters)
   
 
   # Replace the existing plot_dendrogram function with this:
@@ -129,13 +134,16 @@ clustHVT <- function(data, trainHVT_results, scoreHVT_results, clustering_method
 
   
   # Prepare data for clusterPlotly
-  cluster_data <<- centroid_data %>% 
+  cluster_data <- scoreHVT_results$centroidData %>% 
     dplyr::select("Cell.ID", "names.column") %>%
     mutate(clusters =  clusters)
   
   b <- clusterPlot(dataset= cluster_data, hvt.results  = trainHVT_results, domains.column = "clusters" )
     
   output_list <- list(
+    hc = hc,
+    clusters = clusters,
+    cluster_data =cluster_data,
     dendogram = a,
     clusterplot = b
   )

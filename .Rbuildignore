@@ -13,4 +13,4 @@ NULL
 ^LICENSE
 .*.tar.gz
 ^Meta$
-^vignettes$
+^vignettes/*

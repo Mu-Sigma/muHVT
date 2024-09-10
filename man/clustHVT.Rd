@@ -54,7 +54,7 @@ rownames(EuStockMarkets) <- dataset$date
 hvt.results<- trainHVT(dataset,n_cells = 60, depth = 1, quant.err = 0.1,
                       distance_metric = "L1_Norm", error_metric = "max",
                       normalize = TRUE,quant_method = "kmeans")
-scoring <- scoreHVT(dataset, hvt.results, analysis.plots = T, names.column = dataset[,1])
+scoring <- scoreHVT(dataset, hvt.results, analysis.plots = TRUE, names.column = dataset[,1])
 centroid_data <- scoring$centroidData
 hclust_data_1 <- centroid_data[,2:3]
 clust.results <- clustHVT(data = hclust_data_1, 

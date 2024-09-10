@@ -71,7 +71,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.2</span> HVT Model Diagnostics Vignette
 
-<a href="https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html" target="_blank">**HVT Model Diagnostics Vignette:**</a> Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
+<a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_model_diagnostics_vignette.html" target="_blank">**HVT Model Diagnostics Vignette:**</a> Contains descriptions of functions used to perform model diagnostics and validation for HVT model.
 
 </div>
 
@@ -79,7 +79,7 @@ Following are the links to the vignettes for the HVT package:
 
 ## <span class="header-section-number">2.3</span> HVT Scoring Cells with Layers using scoreLayeredHVT
 
-<a href="https://htmlpreview.github.io/?https://github.com/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html" target="_blank">**HVT Scoring Cells with Layers using scoreLayeredHVT:**</a> Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
+<a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/Scoring_Cells_with_Layers_using_scoreLayeredHVT.html" target="_blank">**HVT Scoring Cells with Layers using scoreLayeredHVT:**</a> Contains descriptions of the functions used for scoring cells with layers based on a sequence of maps using scoreLayeredHVT.
 
 </div>
 

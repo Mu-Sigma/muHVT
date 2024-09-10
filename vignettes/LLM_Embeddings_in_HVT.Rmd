@@ -1328,7 +1328,7 @@ clust.results$clusterplot
 - Let's call the [Function for writing clusters as .txt files](#function-for-writing-clusters-as-.txt-files) which is explained in section 3.2 for this process.
 
 ```{r}
-create_and_write_clusters(cluster_numbers = 1:15, cluster_method = cluster_data)
+create_and_write_clusters(cluster_numbers = 1:15, cluster_method = clust.results$cluster_data)
 ```
 
 - The below chunk makes a call to **OpenAI's gpt-3.5-Turbo** via chat completions API and print the responses for clusters below. 
@@ -1345,6 +1345,7 @@ print(result$mode)
 Let's replace the cluster numbers to above generated `domain names` in the dataset.
 
 ```{r}
+cluster_data <- clust.results$cluster_data
 invisible(lapply(1:15, function(i) {
   cluster_data$cluster_name[cluster_data$clusters == i] <<- result$mode[[i]]}))
 ```
@@ -1413,6 +1414,7 @@ plotly::layout(annotations = list(
 - The Average Silhouette Width (ASW) is a measure to evaluate the quality of clusters in a clustering analysis. It assess how similar each point in a cluster is to other points in the same cluster compared to points in different clusters. Higher ASW indicates better-defined and more separated clusters.
 
 ```{r}
+clusters <- clust.results$clusters
 ward_sil <- silhouette(clusters, dist(hclust_data_1))
 ward_asw <- round(mean(ward_sil[, "sil_width"]), digits = 2)
 print(ward_asw)
@@ -1432,7 +1434,7 @@ centroid_cluster_data <- cluster_data %>% dplyr::select('Cell.ID', 'cluster_name
 hclust_plot_2 <- clusterPlot(dataset = centroid_cluster_data, hvt.results = hvt.results, domains.column = "cluster_name")
 
 ward_cluster <- cluster_data
-hc_1 <- hc
+hc_1 <- clust.results$hc
 ```
 
 ## 8.3 `hclust` on 1538D data
@@ -1512,6 +1514,7 @@ Subsetting the data in each cluster by the below code and processing it without 
 Let's call the [Function for writing clusters as .txt files](#function-for-writing-clusters-as-.txt-files) which is explained in section 3.2 for this process.
 
 ```{r}
+cluster_data <- clust.results$cluster_data
 create_and_write_clusters(cluster_numbers = 1:15, cluster_method = cluster_data)
 ```
 
@@ -1553,7 +1556,7 @@ hclust_plot_2 <- clusterPlot(dataset = centroid_cluster_data, hvt.results = hvt.
 
 
 ```{r, eval=FALSE}
-clust_1 <- subset(cluster_data$names.column, ward_clusters_2$clusters == 1)
+clust_1 <- subset(cluster_data$names.column, cluster_data$clusters == 1)
 ```
 
 ```{r}
@@ -1602,7 +1605,7 @@ plotly::layout(annotations = list(
 - The Average Silhouette Width (ASW) is a measure to evaluate the quality of clusters in a clustering analysis. It assesses how similar each point in a cluster is to other points in the same cluster compared to points in different clusters. Higher ASW indicates better-defined and more separated clusters.
 
 ```{r}
-set.seed(123)
+clusters <- clust.results$clusters
 ward_sil_2 <- silhouette(clusters, dist(hclust_data_2))
 ```
 
@@ -1621,8 +1624,8 @@ invisible(lapply(1:15, function(i) {
 centroid_cluster_data <- cluster_data %>% dplyr::select('Cell.ID', 'cluster_name','names.column')
 hclust_plot_2 <- clusterPlot(dataset = centroid_cluster_data, hvt.results = hvt.results, domains.column = "cluster_name")
 
-ward_clusters_2 <- cluster_data
-hc_2 <- hc
+cluster_data <- cluster_data
+hc_2 <- clust.results$hc
 
 ```
 
@@ -1649,22 +1652,22 @@ manual_plot_1 <-clusterPlot(dataset = centroid_cluster_data, hvt.results = hvt.r
 
 
 ```{r, message=FALSE, warning=FALSE, include=FALSE}
-ward_clusters_2$cluster_name <- ifelse(ward_clusters_2$clusters == 1, "Announcements_1538D",
-                                 ifelse(ward_clusters_2$clusters == 2, "Engagement_1538D",
-                                 ifelse(ward_clusters_2$clusters == 3, "Personal Freedom_1538D",
-                                 ifelse(ward_clusters_2$clusters == 4, "Upcoming Events_1538D",
-                                 ifelse(ward_clusters_2$clusters == 5, "Social Ideology_1538D",
-                                 ifelse(ward_clusters_2$clusters == 6, "Thoughts_1538D",
-                                 ifelse(ward_clusters_2$clusters == 7, "Heartwarming_1538D",
-                                 ifelse(ward_clusters_2$clusters == 8, "Promotion_1538D",
-                                 ifelse(ward_clusters_2$clusters == 9, "Governance_1538D",
-                                 ifelse(ward_clusters_2$clusters == 10, "Exhilaration_1538D",
-                                 ifelse(ward_clusters_2$clusters == 11, "Media Posts_1538D",
-                                 ifelse(ward_clusters_2$clusters == 12, "Gratitude_1538D",
-                                 ifelse(ward_clusters_2$clusters == 13, "Excitement_1538D",
-                                 ifelse(ward_clusters_2$clusters == 14, "Appreciation_1538D", "Wishes_1538D"))))))))))))))
+cluster_data$cluster_name <- ifelse(cluster_data$clusters == 1, "Announcements_1538D",
+                                 ifelse(cluster_data$clusters == 2, "Engagement_1538D",
+                                 ifelse(cluster_data$clusters == 3, "Personal Freedom_1538D",
+                                 ifelse(cluster_data$clusters == 4, "Upcoming Events_1538D",
+                                 ifelse(cluster_data$clusters == 5, "Social Ideology_1538D",
+                                 ifelse(cluster_data$clusters == 6, "Thoughts_1538D",
+                                 ifelse(cluster_data$clusters == 7, "Heartwarming_1538D",
+                                 ifelse(cluster_data$clusters == 8, "Promotion_1538D",
+                                 ifelse(cluster_data$clusters == 9, "Governance_1538D",
+                                 ifelse(cluster_data$clusters == 10, "Exhilaration_1538D",
+                                 ifelse(cluster_data$clusters == 11, "Media Posts_1538D",
+                                 ifelse(cluster_data$clusters == 12, "Gratitude_1538D",
+                                 ifelse(cluster_data$clusters == 13, "Excitement_1538D",
+                                 ifelse(cluster_data$clusters == 14, "Appreciation_1538D", "Wishes_1538D"))))))))))))))
 
-centroid_cluster_data <- ward_clusters_2 %>% dplyr::select('Cell.ID', 'cluster_name','names.column')
+centroid_cluster_data <- cluster_data %>% dplyr::select('Cell.ID', 'cluster_name','names.column')
 manual_plot_2 <- clusterPlot(dataset = centroid_cluster_data, hvt.results = hvt.results, domains.column = "cluster_name")
 ```
 

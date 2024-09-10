@@ -72,6 +72,7 @@
 #' @seealso \code{\link{plotHVT}}
 #' @keywords Training_or_Compression
 #' @importFrom magrittr %>%
+#' @importFrom stats dist kmeans
 #' @examples
 #' data("EuStockMarkets")
 #' hvt.results <- trainHVT(EuStockMarkets, n_cells = 60, depth = 1, quant.err = 0.1, 
@@ -116,10 +117,7 @@ trainHVT <-
     requireNamespace("splancs")      #csr function
     requireNamespace("sp")           #point.in.polygon function
     requireNamespace("conf.design")  #factorize functionScreenshot from 2022-10-26 16-15-44
-    # requireNamespace("Rtsne")        
-    # requireNamespace("umap")
     # requireNamespace("uwot")
-    # requireNamespace("MASS")
     # requireNamespace("dplyr")
     # requireNamespace("scales")
     # requireNamespace("Matrix")
@@ -127,7 +125,6 @@ trainHVT <-
     # requireNamespace("cluster")
     # requireNamespace("magrittr")
     # requireNamespace("kableExtra")
-    # requireNamespace("FNN")
     
     if(quant_method=="kmedoids"){message(' K-Medoids: Run time for vector quantization using K-Medoids is very high for large number of clusters.')}
     # browser()
@@ -245,6 +242,10 @@ trainHVT <-
     
     
     dim_reduction <- function(x){
+    requireNamespace("Rtsne")        
+    requireNamespace("umap")
+    requireNamespace("FNN")
+    requireNamespace("MASS")
       data <- unique(tessdata[[x]][,(newcols +1):ncol(hvqoutput)])
       
       if (dim_reduction_method == "sammon"){
@@ -905,7 +906,7 @@ trainHVT <-
         ####### MAD Plot ################
         predictions_validation = list()
         predictions_validation <- scoreHVT(
-          data = validation_data,
+          dataset = validation_data,
           hvt.results.model=fin_out,
           child.level = depth,
           line.width = c(0.6, 0.4, 0.2),
