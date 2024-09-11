@@ -44,7 +44,7 @@ The HVT package allows creation of visually stunning tessellations, showcasing t
 <a href="https://nbviewer.org/github/Mu-Sigma/HVT/blob/master/vignettes/HVT_vignette.html" target="_blank">**vignette:**</a> for more details.
 
 <div style="text-align: center;">
-  <img src="https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/pngs/torus2.png" width="642px" height="440px" />
+  <img src="https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/torus2.png" width="642px" height="440px" />
   <p class="caption">Figure 1: The Voronoi tessellation for layer 1 and number of cells 900 with the heat map overlaid for variable z.</p>
 </div>
 
@@ -206,7 +206,7 @@ The `scoreLayeredHVT` function uses these three maps to score the test datapoint
 
 Let us try to understand the steps with the help of the diagram below
 
-<img src="https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/pngs/scoreLayeredHVT_function.png" width="672px" height="480px" />
+<img src="https://raw.githubusercontent.com/Mu-Sigma/HVT/master/vignettes/scoreLayeredHVT_function.png" width="672px" height="480px" />
 <p class="caption">
 Figure 2: Data Segregation for scoring based on a sequence of maps using scoreLayeredHVT()</p>
 
