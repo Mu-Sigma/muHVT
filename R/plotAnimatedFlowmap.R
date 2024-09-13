@@ -25,7 +25,6 @@
 #' @seealso \code{\link{trainHVT}} \cr \code{\link{scoreHVT}} \cr \code{\link{getTransitionProbability}}
 #' @keywords Transition_or_Prediction
 #' @importFrom magrittr %>%
-#' @import gganimate gifski
 #' @examples
 #' dataset <- data.frame(date = as.numeric(time(EuStockMarkets)),
 #'                       DAX = EuStockMarkets[, "DAX"],

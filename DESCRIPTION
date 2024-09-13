@@ -14,13 +14,13 @@ Encoding: UTF-8
 Imports: MASS, grDevices, splancs, stats, dplyr, NbClust,
         purrr, magrittr, ggplot2, tidyr, scales, cluster,
         reshape2, ggforce, FNN,Rtsne,umap, plyr, rlang,
-        gganimate, gifski, markovchain, methods
+        gganimate, markovchain, methods
 Depends: R (>= 3.6.0)
 BugReports: https://github.com/Mu-Sigma/HVT/issues
 URL: https://github.com/Mu-Sigma/HVT
 RoxygenNote: 7.3.1
 Suggests: rmarkdown, testthat, geozoo, plotly, DT, patchwork, sp, Hmisc,data.table,
-        gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools, deldir,
+        gridExtra, gtable, htmlwidgets, installr, skimr, tibble, devtools, deldir,gifski,
         tidyverse, DataExplorer, htmltools, corrplot,knitr,kableExtra, polyclip,conf.design
 VignetteBuilder: knitr
 NeedsCompilation: no
