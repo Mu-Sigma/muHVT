@@ -1,4 +1,4 @@
-**IMPORTANT NOTICE**: This repository has been archived. All future updates and releases will be made available in [Mu-Sigma/HVT](/Mu-Sigma/HVT) repository. Similarly, CRAN package [muHVT](https://cran.r-project.org/web/packages/muHVT/) has been discontinued and all the future releases will be made available on [HVT](https://cran.r-project.org/web/packages/HVT/) package.
+**IMPORTANT NOTICE**: This repository has been archived. All future updates and releases will be made available in [Mu-Sigma/HVT](https://github.com/Mu-Sigma/HVT/) repository. Similarly, CRAN package [muHVT](https://cran.r-project.org/web/packages/muHVT/) has been discontinued and all the future releases will be made available on [HVT](https://cran.r-project.org/web/packages/HVT/) package.
 
 
 # muHVT: Collection of functions used to build hierarchical topology preserving maps
